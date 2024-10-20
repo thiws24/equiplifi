@@ -43,11 +43,19 @@ public class InventoryItemResource {
         if (existingItem == null) {
             throw new WebApplicationException("Inventory item with id '" + id + "' not found", 404);
         }
-        // TODO: Nur updaten wenn nicht null (?)
-        existingItem.setName(item.getName());
-        existingItem.setPhoto(item.getPhoto());
-        existingItem.setIcon(item.getIcon());
-        existingItem.setUrn(item.getUrn());
+        //ToDO: Es kann aktuell nicht auf "null" gesetzt werden
+        if (item.getName() != null) {
+            existingItem.setName(item.getName());
+        }
+        if (item.getPhoto() != null) {
+            existingItem.setPhoto(item.getPhoto());
+        }
+        if (item.getIcon() != null) {
+            existingItem.setIcon(item.getIcon());
+        }
+        if (item.getUrn() != null) {
+            existingItem.setUrn(item.getUrn());
+        }
         inventoryItemRepository.persist(existingItem);
         return existingItem;
     }
