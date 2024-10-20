@@ -1,10 +1,9 @@
 import React from 'react';
 import './globals.css';
-import { Card, CardContent, CardHeader, CardTitle } from "./components/ui/card";
-import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { ColDef } from "ag-grid-community"
+import InventoryCard from './components/ui/InventoryCard';
 
 interface ColDefProps {
   id: string;
@@ -109,29 +108,16 @@ function App() {
 
   return (
     <div className="m-10">
-      <header className="">
-
-      </header>
       <main className="main">
-        <Card>
-          <CardHeader>
-            <CardTitle>Inventory Items</CardTitle>
-          </CardHeader>
-          <CardContent className='h-[500px] ag-theme-quartz'>
-            <AgGridReact
-              rowData={inventoryItems}
-              columnDefs={colDefs}
-              pagination={true}
-              paginationPageSize={10}
-              paginationPageSizeSelector={[10, 25, 50]}
-              loading={loading}
-            />
-          </CardContent>
-        </Card>
-
+        <InventoryCard 
+          inventoryItems={inventoryItems} 
+          colDefs={colDefs} 
+          loading={loading} 
+        />
       </main>
     </div>
   );
+
 }
 
 export default App;
