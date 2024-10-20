@@ -3,6 +3,6 @@ package de.thi.inv;
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 
 @QuarkusIntegrationTest
-class GreetingResourceIT extends GreetingResourceTest {
+class InventoryItemResourceIT extends InventoryItemResourceTest {
     // Execute the same tests but in packaged mode.
 }
