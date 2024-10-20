@@ -1,2 +1,6 @@
 # Intellij
 .idea
+.DS_Store
+# Structurizr
+doc/.structurizr
+doc/workspace.json
