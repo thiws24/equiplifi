@@ -1,0 +1,216 @@
+{
+  "configuration" : {
+    "scope" : "SoftwareSystem"
+  },
+  "description" : "Description",
+  "documentation" : { },
+  "id" : 1,
+  "lastModifiedAgent" : "structurizr-ui",
+  "lastModifiedDate" : "2024-10-20T20:11:11Z",
+  "model" : {
+    "people" : [ {
+      "id" : "1",
+      "location" : "Unspecified",
+      "name" : "User",
+      "properties" : {
+        "structurizr.dsl.identifier" : "u"
+      },
+      "relationships" : [ {
+        "description" : "Uses",
+        "destinationId" : "3",
+        "id" : "7",
+        "properties" : {
+          "structurizr.dsl.identifier" : "e00506d1-1940-4921-b957-392f1d40284a"
+        },
+        "sourceId" : "1",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Uses",
+        "destinationId" : "2",
+        "id" : "8",
+        "linkedRelationshipId" : "7",
+        "sourceId" : "1"
+      } ],
+      "tags" : "Element,Person"
+    } ],
+    "softwareSystems" : [ {
+      "containers" : [ {
+        "documentation" : { },
+        "id" : "3",
+        "name" : "Frontend",
+        "properties" : {
+          "structurizr.dsl.identifier" : "pda.fe"
+        },
+        "relationships" : [ {
+          "description" : "interacts with",
+          "destinationId" : "4",
+          "id" : "9",
+          "properties" : {
+            "structurizr.dsl.identifier" : "e546682c-b07b-4069-a3a7-9b86f21d6522"
+          },
+          "sourceId" : "3",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,frontend"
+      }, {
+        "documentation" : { },
+        "id" : "4",
+        "name" : "Process Engine",
+        "properties" : {
+          "structurizr.dsl.identifier" : "pda.pe"
+        },
+        "relationships" : [ {
+          "description" : "invokes",
+          "destinationId" : "5",
+          "id" : "10",
+          "properties" : {
+            "structurizr.dsl.identifier" : "a163a1ca-de5b-494a-aff5-def13bce1045"
+          },
+          "sourceId" : "4",
+          "tags" : "Relationship"
+        }, {
+          "description" : "invokes",
+          "destinationId" : "6",
+          "id" : "11",
+          "properties" : {
+            "structurizr.dsl.identifier" : "c5c8c082-1583-4836-91b7-cbbe75043fee"
+          },
+          "sourceId" : "4",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,process engine"
+      }, {
+        "documentation" : { },
+        "id" : "5",
+        "name" : "QR-Label-Code Service",
+        "properties" : {
+          "structurizr.dsl.identifier" : "pda.qr-label-code-service"
+        },
+        "tags" : "Element,Container,qr-label-code"
+      }, {
+        "documentation" : { },
+        "id" : "6",
+        "name" : "InventoryItem Service",
+        "properties" : {
+          "structurizr.dsl.identifier" : "pda.inventoryitem-service"
+        },
+        "tags" : "Element,Container,inventory-item"
+      } ],
+      "documentation" : { },
+      "id" : "2",
+      "location" : "Unspecified",
+      "name" : "PDA",
+      "properties" : {
+        "structurizr.dsl.identifier" : "pda"
+      },
+      "tags" : "Element,Software System"
+    } ]
+  },
+  "name" : "Name",
+  "properties" : {
+    "structurizr.dsl" : "d29ya3NwYWNlICJOYW1lIiAiRGVzY3JpcHRpb24iIHsKCiAgICAhaWRlbnRpZmllcnMgaGllcmFyY2hpY2FsCgogICAgbW9kZWwgewogICAgICAgIHUgPSBwZXJzb24gIlVzZXIiCiAgICAgICAgcGRhID0gc29mdHdhcmVTeXN0ZW0gIlBEQSIgewogICAgICAgICAgICBmZSA9IGNvbnRhaW5lciAiRnJvbnRlbmQiIHsKICAgICAgICAgICAgICAgIHRhZ3MgImZyb250ZW5kIgogICAgICAgICAgICB9CiAgICAgICAgICAgIHBlID0gY29udGFpbmVyICJQcm9jZXNzIEVuZ2luZSIgewogICAgICAgICAgICAgICAgdGFncyAicHJvY2VzcyBlbmdpbmUiCiAgICAgICAgICAgIH0KICAgICAgICAgICAgcXItTGFiZWwtQ29kZS1TZXJ2aWNlID0gY29udGFpbmVyICJRUi1MYWJlbC1Db2RlIFNlcnZpY2UiIHsKICAgICAgICAgICAgICAgIHRhZ3MgInFyLWxhYmVsLWNvZGUiCiAgICAgICAgICAgIH0KICAgICAgICAgICAgaW52ZW50b3J5SXRlbS1TZXJ2aWNlID0gY29udGFpbmVyICJJbnZlbnRvcnlJdGVtIFNlcnZpY2UiIHsKICAgICAgICAgICAgICAgIHRhZ3MgImludmVudG9yeS1pdGVtIgogICAgICAgICAgICB9CgogICAgICAgIH0KCiAgICAgICAgdSAtPiBwZGEuZmUgIlVzZXMiCiAgICAgICAgcGRhLmZlIC0+IHBkYS5wZSAiaW50ZXJhY3RzIHdpdGgiCgogICAgICAgIHBkYS5wZSAtPiBwZGEucXItTGFiZWwtQ29kZS1TZXJ2aWNlICJpbnZva2VzIgogICAgICAgIHBkYS5wZSAtPiBwZGEuaW52ZW50b3J5SXRlbS1TZXJ2aWNlICJpbnZva2VzIgogICAgfQoKCgogICAgdmlld3MgewogICAgICAgIHN5c3RlbUNvbnRleHQgcGRhICJEaWFncmFtMSIgewogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICAgICAgYXV0b2xheW91dCBscgogICAgICAgIH0KCiAgICAgICAgY29udGFpbmVyIHBkYSAiRGlhZ3JhbTIiIHsKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGF1dG9sYXlvdXQgbHIKICAgICAgICB9CgogICAgICAgIHN0eWxlcyB7CiAgICAgICAgICAgIGVsZW1lbnQgIkVsZW1lbnQiIHsKICAgICAgICAgICAgICAgIGNvbG9yICNmZmZmZmYKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJQZXJzb24xMjMiIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzA1NTI3ZAogICAgICAgICAgICAgICAgc2hhcGUgcGVyc29uCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiU29mdHdhcmUgU3lzdGVtIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICMwNjYyOTYKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJDb250YWluZXIiIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzA3NzNhZgogICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBlbGVtZW50ICJEYXRhYmFzZSIgewogICAgICAgICAgICAgICAgc2hhcGUgY3lsaW5kZXIKICAgICAgICAgICAgfQogICAgICAgIH0KICAgIH0KCiAgICBjb25maWd1cmF0aW9uIHsKICAgICAgICBzY29wZSBzb2Z0d2FyZXN5c3RlbQogICAgfQoKfQ=="
+  },
+  "views" : {
+    "configuration" : {
+      "branding" : { },
+      "lastSavedView" : "Diagram2",
+      "metadataSymbols" : "SquareBrackets",
+      "styles" : {
+        "elements" : [ {
+          "color" : "#ffffff",
+          "tag" : "Element"
+        }, {
+          "background" : "#05527d",
+          "shape" : "Person",
+          "tag" : "Person123"
+        }, {
+          "background" : "#066296",
+          "tag" : "Software System"
+        }, {
+          "background" : "#0773af",
+          "tag" : "Container"
+        }, {
+          "shape" : "Cylinder",
+          "tag" : "Database"
+        } ]
+      },
+      "terminology" : { }
+    },
+    "containerViews" : [ {
+      "automaticLayout" : {
+        "applied" : true,
+        "edgeSeparation" : 0,
+        "implementation" : "Graphviz",
+        "nodeSeparation" : 300,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 300,
+        "vertices" : false
+      },
+      "dimensions" : {
+        "height" : 1411,
+        "width" : 3120
+      },
+      "elements" : [ {
+        "id" : "1",
+        "x" : 199,
+        "y" : 520
+      }, {
+        "id" : "3",
+        "x" : 949,
+        "y" : 520
+      }, {
+        "id" : "4",
+        "x" : 1699,
+        "y" : 520
+      }, {
+        "id" : "5",
+        "x" : 2449,
+        "y" : 820
+      }, {
+        "id" : "6",
+        "x" : 2449,
+        "y" : 220
+      } ],
+      "externalSoftwareSystemBoundariesVisible" : false,
+      "key" : "Diagram2",
+      "order" : 2,
+      "relationships" : [ {
+        "id" : "10"
+      }, {
+        "id" : "11"
+      }, {
+        "id" : "7"
+      }, {
+        "id" : "9"
+      } ],
+      "softwareSystemId" : "2"
+    } ],
+    "systemContextViews" : [ {
+      "automaticLayout" : {
+        "applied" : false,
+        "edgeSeparation" : 0,
+        "implementation" : "Graphviz",
+        "nodeSeparation" : 300,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 300,
+        "vertices" : false
+      },
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "2",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "enterpriseBoundaryVisible" : true,
+      "key" : "Diagram1",
+      "order" : 1,
+      "relationships" : [ {
+        "id" : "8"
+      } ],
+      "softwareSystemId" : "2"
+    } ]
+  }
+}

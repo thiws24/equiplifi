@@ -1,0 +1,10 @@
+# C4 cocumentation tool
+services:
+  structurizr:
+    image: structurizr/lite
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./doc:/usr/local/structurizr"
+    stdin_open: true
+    tty: true
