@@ -27,6 +27,13 @@ public class QRGeneratorResource {
     public Response generateQR(QRInput qrInput) throws IOException {
 
         //Generate QR-Code
+        File qrCodeDir = new File("src/main/resources/qrCodes");
+        if (!qrCodeDir.exists()) {
+            boolean dirCreated = qrCodeDir.mkdirs();
+            if (!dirCreated) {
+                throw new IOException("Failed to create directory: " + qrCodeDir.getAbsolutePath());
+            }
+        }
         QRCode.from(qrInput.getUrn()).to(ImageType.PNG).writeTo(new FileOutputStream("src/main/resources/qrCodes/qr1.png"));
 
         //Creating PDF document object
