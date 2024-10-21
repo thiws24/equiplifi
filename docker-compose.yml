@@ -1,5 +1,6 @@
-# C4 cocumentation tool
 services:
+
+# C4 documentation tool
   structurizr:
     image: structurizr/lite
     ports:
