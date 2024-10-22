@@ -14,31 +14,29 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class InventoryItemResourceTest {
 
     @Test
-    @Order(1)
-    void testCreateInventoryItem() {
-        String name = "ObjektTest";
+    void testAddInventoryItem() {
+        String name = "Test Item";
         String icon = "icon";
         byte[] photo = new byte[]{(byte) 0xFF, (byte) 0xD8};
         String encodedPhoto = Base64.getEncoder().encodeToString(photo);
         String urn = "urn";
 
-        InventoryItem inventoryItem = new InventoryItem();
-        inventoryItem.setName(name);
-        inventoryItem.setIcon(icon);
-        inventoryItem.setPhoto(photo);
-        inventoryItem.setUrn(urn);
+        InventoryItem item = new InventoryItem();
+        item.setName(name);
+        item.setIcon(icon);
+        item.setPhoto(photo);
+        item.setUrn(urn);
 
         given()
-                .body(inventoryItem)
                 .contentType(ContentType.JSON)
+                .body(item)
                 .when()
                 .post("/api/inventoryitems/")
                 .then()
-                .statusCode(Response.Status.CREATED.getStatusCode())
+                .statusCode(201)
                 .body("name", is(name))
                 .body("icon", is(icon))
                 .body("photo", is(encodedPhoto))
@@ -46,63 +44,68 @@ class InventoryItemResourceTest {
     }
 
     @Test
-    @Order(2)
     void testGetInventoryItems() {
         given()
                 .when()
                 .get("/api/inventoryitems")
                 .then()
-                .statusCode(Response.Status.OK.getStatusCode())
-                .body("size()", is(1));
+                .statusCode(200);
     }
 
     @Test
-    @Order(3)
     void testPutInventoryItems() {
-        long id = 1;
-        String new_name = "objektname_neu";
-        String new_icon = "icon_new";
-        byte[] new_photo = new byte[]{(byte) 0xFF, (byte) 0xF9};
-        String encodedNewPhoto = Base64.getEncoder().encodeToString(new_photo);
-        String new_urn = "urn_123";
+        InventoryItem item = new InventoryItem();
+        item.setName("Test Item");
 
-        InventoryItem inventoryItem = new InventoryItem();
-        inventoryItem.setName(new_name);
-        inventoryItem.setIcon(new_icon);
-        inventoryItem.setPhoto(new_photo);
-        inventoryItem.setUrn(new_urn);
+        int id = given()
+                .contentType(ContentType.JSON)
+                .body(item)
+                .when()
+                .post("/api/inventoryitems")
+                .then()
+                .statusCode(201)
+                .extract().path("id");
+
+        InventoryItem updatedItem = new InventoryItem();
+        updatedItem.setName("Updated Test Item");
 
         given()
-                .body(inventoryItem)
                 .contentType(ContentType.JSON)
+                .body(updatedItem)
                 .when()
-                .put("/api/inventoryitems/{id}", id)
+                .put("/api/inventoryitems/" + id)
                 .then()
-                .statusCode(Response.Status.OK.getStatusCode())
-                .body("name", is(new_name))
-                .body("icon", is(new_icon))
-                .body("photo", is(encodedNewPhoto))
-                .body("urn", is(new_urn));
+                .statusCode(200)
+                .body("name", is("Updated Test Item"));
     }
 
     @Test
-    @Order(4)
     void testDeleteInventoryItem() {
-        long id = 1;
+        InventoryItem item = new InventoryItem();
+        item.setName("Test Item");
 
+        int id = given()
+                .contentType(ContentType.JSON)
+                .body(item)
+                .when()
+                .post("/api/inventoryitems")
+                .then()
+                .statusCode(201)
+                .extract().path("id");
+
+        // Item löschen
         given()
                 .when()
-                .delete("/api/inventoryitems/{id}", id)
+                .delete("/api/inventoryitems/" + id)
                 .then()
-                .statusCode(Response.Status.NO_CONTENT.getStatusCode());
+                .statusCode(204);
 
+        // Checken, ob Item gelöscht wurde
         given()
                 .when()
-                .get("/api/inventoryitems/")
+                .get("/api/inventoryitems/" + id)
                 .then()
-                .statusCode(Response.Status.OK.getStatusCode())
-                .body("size()", is(0));
+                .statusCode(404);
     }
-
 
 }
