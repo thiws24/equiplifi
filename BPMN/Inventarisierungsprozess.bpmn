@@ -11,11 +11,11 @@
     </bpmn:textAnnotation>
     <bpmn:association id="Association_1dvvdcn" associationDirection="None" sourceRef="DataObjectReference_1wsqa0r" targetRef="TextAnnotation_057vkw6" />
     <bpmn:textAnnotation id="TextAnnotation_17fdgod">
-      <bpmn:text>URN: String Name:String Icon: jpg    Foto: jpg</bpmn:text>
+      <bpmn:text>URN: String Name:String Icon: String Foto: String</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_1v6s2co" associationDirection="None" sourceRef="DataObjectReference_0a2dh50" targetRef="TextAnnotation_17fdgod" />
     <bpmn:textAnnotation id="TextAnnotation_0grdw1i">
-      <bpmn:text>URN: String Name:String Icon: jpg    Foto: jpg  QR_code:pdf</bpmn:text>
+      <bpmn:text>URN: String Name:String Icon: String    Foto: String</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_0lnkw9a">
       <bpmn:text>Alle eingehenden Pfade müssen abgeschlossen sein, bevor es fortgesetzt wird</bpmn:text>
@@ -98,7 +98,7 @@
     <bpmn:startEvent id="Event_05o2417" name="Neues Inventory Item eingegangen">
       <bpmn:outgoing>Flow_1rvl3m2</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="Activity_1n10g27" name="Neues inventoryItem erstellen">
+    <bpmn:userTask id="Activity_1n10g27" name="Neues Inventory Item erstellen">
       <bpmn:incoming>Flow_1rvl3m2</bpmn:incoming>
       <bpmn:outgoing>Flow_0fn1g76</bpmn:outgoing>
     </bpmn:userTask>
@@ -123,10 +123,6 @@
         <bpmn:sourceRef>DataObjectReference_0a2dh50</bpmn:sourceRef>
         <bpmn:targetRef>Property_1c98qc5</bpmn:targetRef>
       </bpmn:dataInputAssociation>
-      <bpmn:dataInputAssociation id="DataInputAssociation_0je898x">
-        <bpmn:sourceRef>DataObjectReference_1wsqa0r</bpmn:sourceRef>
-        <bpmn:targetRef>Property_1c98qc5</bpmn:targetRef>
-      </bpmn:dataInputAssociation>
       <bpmn:dataOutputAssociation id="DataOutputAssociation_16mzea8">
         <bpmn:targetRef>DataObjectReference_132lkqb</bpmn:targetRef>
       </bpmn:dataOutputAssociation>
@@ -135,7 +131,7 @@
       <bpmn:incoming>Flow_19nfxt5</bpmn:incoming>
       <bpmn:outgoing>Flow_0qdty5e</bpmn:outgoing>
     </bpmn:manualTask>
-    <bpmn:dataObjectReference id="DataObjectReference_132lkqb" name="InventoryItem" dataObjectRef="DataObject_0fvje75" />
+    <bpmn:dataObjectReference id="DataObjectReference_132lkqb" name="Inventory Item" dataObjectRef="DataObject_0fvje75" />
     <bpmn:dataObject id="DataObject_0fvje75" />
     <bpmn:association id="Association_1kgce99" associationDirection="None" sourceRef="DataObjectReference_132lkqb" targetRef="TextAnnotation_0grdw1i" />
   </bpmn:process>
@@ -208,6 +204,7 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_18p6hel_di" bpmnElement="Activity_1n10g27">
         <dc:Bounds x="-30" y="320" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1es9k50_di" bpmnElement="Activity_1h6buk5">
         <dc:Bounds x="760" y="350" width="100" height="80" />
@@ -224,7 +221,7 @@
       <bpmndi:BPMNShape id="DataObjectReference_132lkqb_di" bpmnElement="DataObjectReference_132lkqb">
         <dc:Bounds x="1252" y="-305" width="36" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1237" y="-335" width="67" height="14" />
+          <dc:Bounds x="1236" y="-335" width="70" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0fn1g76_di" bpmnElement="Flow_0fn1g76">
@@ -279,10 +276,6 @@
         <di:waypoint x="1288" y="-284" />
         <di:waypoint x="1330" y="-294" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1tc3b70_di" bpmnElement="Association_1tc3b70" bioc:stroke="#6b3c00" color:border-color="#6b3c00">
-        <di:waypoint x="1089" y="-36" />
-        <di:waypoint x="1122" y="-92" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="TextAnnotation_1xkl9oj_di" bpmnElement="TextAnnotation_1xkl9oj">
         <dc:Bounds x="560" y="-140" width="100" height="30" />
         <bpmndi:BPMNLabel />
@@ -296,7 +289,11 @@
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0grdw1i_di" bpmnElement="TextAnnotation_0grdw1i">
-        <dc:Bounds x="1330" y="-320" width="100" height="84" />
+        <dc:Bounds x="1330" y="-320" width="100" height="70" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0lnkw9a_di" bpmnElement="TextAnnotation_0lnkw9a" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
+        <dc:Bounds x="1120" y="-190" width="100" height="98" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="DataInputAssociation_120nbfe_di" bpmnElement="DataInputAssociation_120nbfe">
@@ -323,10 +320,6 @@
         <di:waypoint x="938" y="312" />
         <di:waypoint x="1228" y="19" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="DataInputAssociation_0je898x_di" bpmnElement="DataInputAssociation_0je898x">
-        <di:waypoint x="858" y="-126" />
-        <di:waypoint x="1220" y="-51" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="DataOutputAssociation_16mzea8_di" bpmnElement="DataOutputAssociation_16mzea8">
         <di:waypoint x="1270" y="-60" />
         <di:waypoint x="1272" y="-255" />
@@ -343,10 +336,10 @@
         <di:waypoint x="938" y="325" />
         <di:waypoint x="990" y="310" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_0lnkw9a_di" bpmnElement="TextAnnotation_0lnkw9a" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
-        <dc:Bounds x="1120" y="-190" width="100" height="98" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1tc3b70_di" bpmnElement="Association_1tc3b70" bioc:stroke="#6b3c00" color:border-color="#6b3c00">
+        <di:waypoint x="1089" y="-36" />
+        <di:waypoint x="1122" y="-92" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
