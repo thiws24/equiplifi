@@ -19,9 +19,6 @@ workspace "Name" "Description" {
                 bpmn = component "BPMN" {
                     tags "BPMN"
                 }
-                generator = component "Architekturmodell (C4)" {
-                    tags "C4_modell"
-                }
             }
             qrLabelCodeService = container "qrLabelCodeService" {
                 tags "qrLabelCode"
