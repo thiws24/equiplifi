@@ -33,6 +33,19 @@ public class InventoryItemResource {
         return inventoryItemRepository.listAll();
     }
 
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getInventoryItem(@PathParam("id") Long id) {
+        InventoryItem item = inventoryItemRepository.findById(id);
+        
+        if (item == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        return Response.ok(item).build();
+    }
+
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
