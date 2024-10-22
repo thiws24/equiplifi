@@ -13,13 +13,24 @@ workspace "Name" "Description" {
                 uiComponent = component "UI Component" {
                     tags "uiComponent"
                 }
-
             }
             pe = container "Process Engine" {
                 tags "processEngine"
+                bpmn = component "BPMN" {
+                    tags "BPMN"
+                }
+                generator = component "Architekturmodell (C4)" {
+                    tags "C4_modell"
+                }
             }
             qrLabelCodeService = container "qrLabelCodeService" {
                 tags "qrLabelCode"
+                endpoint_QR = component "Enpoint (Rest)" {
+                    tags "endpoint_QR"
+                }
+                generator = component "QR-Code Generator" {
+                    tags "generator"
+                }
             }
             inventoryItemService = container "inventoryItemService" {
                 tags "inventoryItem"
@@ -71,6 +82,11 @@ workspace "Name" "Description" {
             autolayout lr
         }
 
+        component pda.pe "Components-of-processEngine" {
+            include *
+            autolayout lr
+        }
+
         styles {
             element "Element" {
                 color #ffffff
@@ -81,11 +97,12 @@ workspace "Name" "Description" {
             }
             element "Software System" {
                 background #066296
+    
             }
             element "Container" {
                 background #0773af
             }
-                element "Database" {
+            element "Database" {
                 shape cylinder
             }
         }
