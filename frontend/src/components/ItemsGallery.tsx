@@ -11,15 +11,13 @@ import {
 
 interface Props {
   items: InventoryItemProps[]
-  onPageChange: (page: number) => void;
-  totalPages: number;
 }
 
-export const ItemsGallery: React.FC<Props> = ({items, onPageChange, totalPages}) => {
+export const ItemsGallery: React.FC<Props> = ({ items }) => {
   const [currentPage, setCurrentPage] = React.useState(1);
+  const totalPages = Math.ceil(items.length/10)
 
   function handlePageChange(newPage: number) {
-    onPageChange(newPage);
     setCurrentPage(newPage);
   }
 

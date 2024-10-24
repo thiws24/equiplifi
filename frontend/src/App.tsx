@@ -17,16 +17,10 @@ function App() {
   ]
 
   const [loading, setLoading] = React.useState(true);
-  const [totalCount, setTotalCount] = React.useState(0);
 
-  async function fetchInventoryItems(page: number) {
+  async function fetchInventoryItems() {
     try {
-      const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/api/inventoryitems`, {
-        method: "POST",
-        body: JSON.stringify({
-          page: page,
-        })
-      })
+      const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/api/inventoryitems`)
       if (response.ok) {
         const data = await response.json();
         setInventoryItems(data);
@@ -38,24 +32,9 @@ function App() {
     setLoading(false);
   }
 
-async function getTotalCount() {
-  try {
-    const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/api/inventoryItems/count`, {
-      method: "GET",
-    })
-    if (response.ok) {
-      const total = await response.json();
-      setTotalCount(total);
-    }
-  } catch (e) {
-    console.log(e)
-    setTotalCount(10);
-  }
-}
 
   React.useEffect(() => {
-    void fetchInventoryItems(1);
-    void getTotalCount();
+    void fetchInventoryItems();
   }, [])
 
   return (
@@ -65,8 +44,6 @@ async function getTotalCount() {
           data={inventoryItems}
           colDefs={colDefs}
           loading={loading}
-          totalPages={totalCount/10}
-          onPageChange={fetchInventoryItems}
         />
       </main>
     </div>

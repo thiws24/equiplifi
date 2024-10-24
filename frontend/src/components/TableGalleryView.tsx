@@ -11,11 +11,9 @@ interface Props {
   data: InventoryItemProps[]
   colDefs: ColDef<InventoryItemProps, any>[];
   loading: boolean
-  onPageChange: (page: number) => void;
-  totalPages: number;
 }
 
-export const TableGalleryView: React.FC<Props> = ({ data, colDefs, loading, totalPages, onPageChange }) => {
+export const TableGalleryView: React.FC<Props> = ({ data, colDefs, loading }) => {
   return (
     <Tabs defaultValue="table-view" className="w-full">
       <TabsList className="grid grid-cols-2 justify-end w-[200px] ml-auto mb-4">
@@ -30,7 +28,7 @@ export const TableGalleryView: React.FC<Props> = ({ data, colDefs, loading, tota
         <InventoryCard inventoryItems={data} colDefs={colDefs} loading={loading}/>
       </TabsContent>
       <TabsContent value="gallery-view">
-        <ItemsGallery items={data} totalPages={totalPages} onPageChange={onPageChange}/>
+        <ItemsGallery items={data} />
       </TabsContent>
     </Tabs>
   );
