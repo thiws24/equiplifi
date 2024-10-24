@@ -1,14 +1,14 @@
 import React from 'react';
-import '../../globals.css';
-import { Card, CardContent, CardHeader, CardTitle } from "./card";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { ColDef } from "ag-grid-community";
+import { InventoryItemProps } from "../interfaces/InventoryItemProps";
 
 interface InventoryCardProps {
-    inventoryItems: any[];
-    colDefs: ColDef<any, any>[];
+    inventoryItems: InventoryItemProps[];
+    colDefs: ColDef<InventoryItemProps, any>[];
     loading: boolean;
   }
   
@@ -26,6 +26,8 @@ interface InventoryCardProps {
             paginationPageSize={10}
             paginationPageSizeSelector={[10, 25, 50]}
             loading={loading}
+            onFilterChanged={() => {console.log('Filter changed!')}}
+            onFilterModified={() => {console.log('Filter modified!')}}
           />
         </CardContent>
       </Card>

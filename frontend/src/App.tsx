@@ -1,118 +1,72 @@
 import React from 'react';
-import './globals.css';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { ColDef } from "ag-grid-community"
-import InventoryCard from './components/ui/InventoryCard';
-
-interface ColDefProps {
-  id: string;
-  name: string;
-  icon: string;
-  foto: string;
-  "qrCode": string;
-}
+import { InventoryItemProps } from "./interfaces/InventoryItemProps";
+import { TableGalleryView } from "./components/TableGalleryView";
 
 function App() {
-  const [inventoryItems, setInventoryItems] = React.useState<ColDefProps[]>([])
+  const [inventoryItems, setInventoryItems] = React.useState<InventoryItemProps[]>([])
 
-  const colDefs: ColDef<ColDefProps, any>[] = [
-    {field: "id", flex: 1},
-    {field: "name", flex: 1},
-    {field: "icon", flex: 1},
-    {field: "foto", flex: 1},
-    {field: "qrCode", flex: 1}
+  const colDefs: ColDef<InventoryItemProps, any>[] = [
+    {field: "id", flex: 1, filter: 'agSetColumnFilter' },
+    {field: "name", flex: 1, filter: 'agSetColumnFilter' },
+    {field: "icon", flex: 1, filter: 'agSetColumnFilter' },
+    {field: "photo", flex: 1},
+    {field: "urn", flex: 1, filter: 'agSetColumnFilter' }
   ]
 
   const [loading, setLoading] = React.useState(true);
+  const [totalCount, setTotalCount] = React.useState(0);
+
+  async function fetchInventoryItems(page: number) {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/api/inventoryitems`, {
+        method: "POST",
+        body: JSON.stringify({
+          page: page,
+        })
+      })
+      if (response.ok) {
+        const data = await response.json();
+        setInventoryItems(data);
+      }
+    } catch (e) {
+      console.log(e)
+    }
+
+    setLoading(false);
+  }
+
+async function getTotalCount() {
+  try {
+    const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/api/inventoryItems/count`, {
+      method: "GET",
+    })
+    if (response.ok) {
+      const total = await response.json();
+      setTotalCount(total);
+    }
+  } catch (e) {
+    console.log(e)
+    setTotalCount(10);
+  }
+}
 
   React.useEffect(() => {
-    // TODO: Fetch data from DB - remove setTimeout
-    setTimeout(() => {
-      setInventoryItems([
-        {
-          id: "001",
-          name: "Magischer Schlüssel",
-          icon: "🗝️",
-          foto: "",
-          qrCode: "QR-Code 001"
-        },
-        {
-          id: "002",
-          name: "Heiltrank",
-          icon: "🧪",
-          foto: "",
-          qrCode: "QR-Code 002"
-        },
-        {
-          id: "003",
-          name: "Drachenfeuer",
-          icon: "🔥",
-          foto: "",
-          qrCode: "QR-Code 003"
-        },
-        {
-          id: "004",
-          name: "Schatzkarte",
-          icon: "🗺️",
-          foto: "",
-          qrCode: "QR-Code 004"
-        },
-        {
-          id: "005",
-          name: "Unsichtbarkeitstrank",
-          icon: "🧙‍♂️",
-          foto: "",
-          qrCode: "QR-Code 005"
-        },
-        {
-          id: "006",
-          name: "Elfenbogen",
-          icon: "🏹",
-          foto: "",
-          qrCode: "QR-Code 006"
-        },
-        {
-          id: "007",
-          name: "Zeitstopper",
-          icon: "⏳",
-          foto: "",
-          qrCode: "QR-Code 007"
-        },
-        {
-          id: "008",
-          name: "Kristall der Weisheit",
-          icon: "💎",
-          foto: "",
-          qrCode: "QR-Code 008"
-        },
-        {
-          id: "009",
-          name: "Portalstein",
-          icon: "🌌",
-          foto: "",
-          qrCode: "QR-Code 009"
-        },
-        {
-          id: "010",
-          name: "Rune der Macht",
-          icon: "⚡",
-          foto: "",
-          qrCode: "QR-Code 010"
-        }
-      ])
-      setLoading(false)
-    }, 1250)
-
+    void fetchInventoryItems(1);
+    void getTotalCount();
   }, [])
 
   return (
     <div className="m-10">
       <main className="main">
-        <InventoryCard 
-          inventoryItems={inventoryItems} 
-          colDefs={colDefs} 
-          loading={loading} 
+        <TableGalleryView
+          data={inventoryItems}
+          colDefs={colDefs}
+          loading={loading}
+          totalPages={totalCount/10}
+          onPageChange={fetchInventoryItems}
         />
       </main>
     </div>
