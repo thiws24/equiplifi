@@ -9,11 +9,11 @@ function App() {
   const [inventoryItems, setInventoryItems] = React.useState<InventoryItemProps[]>([])
 
   const colDefs: ColDef<InventoryItemProps, any>[] = [
-    {field: "id", flex: 1, filter: 'agSetColumnFilter' },
-    {field: "name", flex: 1, filter: 'agSetColumnFilter' },
-    {field: "icon", flex: 1, filter: 'agSetColumnFilter' },
-    {field: "photo", flex: 1},
-    {field: "urn", flex: 1, filter: 'agSetColumnFilter' }
+    { field: "id", flex: 1, filter: 'agSetColumnFilter' },
+    { field: "name", flex: 1, filter: 'agSetColumnFilter' },
+    { field: "icon", flex: 1, filter: 'agSetColumnFilter' },
+    { field: "photo", flex: 1 },
+    { field: "urn", flex: 1, filter: 'agSetColumnFilter' }
   ]
 
   const [loading, setLoading] = React.useState(true);
