@@ -35,7 +35,7 @@ export const ItemsGallery: React.FC<Props> = ({items, onPageChange, totalPages})
               <PaginationPrevious href="#"/>
             </PaginationItem>
           )}
-          {currentPage} of {totalPages}
+          {currentPage} von {totalPages}
           {currentPage < totalPages && (
             <PaginationItem onClick={() => handlePageChange(currentPage + 1)}>
               <PaginationNext href="#"/>

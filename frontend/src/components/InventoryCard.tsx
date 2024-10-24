@@ -5,6 +5,7 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { ColDef } from "ag-grid-community";
 import { InventoryItemProps } from "../interfaces/InventoryItemProps";
+import { AG_GRID_LOCALE_DE } from '@ag-grid-community/locale';
 
 interface InventoryCardProps {
     inventoryItems: InventoryItemProps[];
@@ -28,6 +29,7 @@ interface InventoryCardProps {
             loading={loading}
             onFilterChanged={() => {console.log('Filter changed!')}}
             onFilterModified={() => {console.log('Filter modified!')}}
+            localeText={AG_GRID_LOCALE_DE}
           />
         </CardContent>
       </Card>
