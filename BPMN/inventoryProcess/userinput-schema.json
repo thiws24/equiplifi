@@ -1,0 +1,27 @@
+{
+  "title": "Text Field",
+  "description": "Add inventory Item",
+  "type": "object",
+  "required": [
+    "name",
+    "icon",
+    "photo"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name",
+      "default": "default name"
+    },
+    "icon": {
+      "type": "string",
+      "title": "Icon",
+      "default": "default icon"
+    },
+    "photo": {
+      "type": "string",
+      "title": "Photo",
+      "default": "default photo"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "title": "Text Field",
+  "description": "Add inventory Item",
+  "type": "object",
+  "required": [
+    "inventory Item"
+  ],
+  "properties": {
+    "inventory Item": {
+      "type": "string",
+      "title": "Inventory Item",
+      "default": "item"
+    }
+  }
+}
