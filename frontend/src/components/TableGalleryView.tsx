@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTable, faTableCells } from "@fortawesome/free-solid-svg-icons";
 import { ColDef } from "ag-grid-community"
 import { InventoryItemProps } from "../interfaces/InventoryItemProps";
-import InventoryCard from "./InventoryCard";
+import InventoryTable from "./InventoryTable";
 import { ItemsGallery } from "./ItemsGallery";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
@@ -25,7 +25,7 @@ export const TableGalleryView: React.FC<Props> = ({ data, colDefs, loading }) =>
         </TabsTrigger>
       </TabsList>
       <TabsContent value="table-view">
-        <InventoryCard inventoryItems={data} colDefs={colDefs} loading={loading}/>
+        <InventoryTable inventoryItems={data} colDefs={colDefs} loading={loading}/>
       </TabsContent>
       <TabsContent value="gallery-view">
         <ItemsGallery items={data} />

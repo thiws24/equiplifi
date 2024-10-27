@@ -6,6 +6,7 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import { ColDef } from "ag-grid-community";
 import { InventoryItemProps } from "../interfaces/InventoryItemProps";
 import { AG_GRID_LOCALE_DE } from '@ag-grid-community/locale';
+import { useNavigate } from 'react-router-dom';
 
 interface InventoryCardProps {
     inventoryItems: InventoryItemProps[];
@@ -13,7 +14,8 @@ interface InventoryCardProps {
     loading: boolean;
   }
   
-  const InventoryCard: React.FC<InventoryCardProps> = ({ inventoryItems, colDefs, loading }) => {
+  const InventoryTable: React.FC<InventoryCardProps> = ({ inventoryItems, colDefs, loading }) => {
+    const navigate = useNavigate()
     return (
       <Card>
         <CardHeader>
@@ -27,8 +29,7 @@ interface InventoryCardProps {
             paginationPageSize={10}
             paginationPageSizeSelector={[10, 25, 50]}
             loading={loading}
-            onFilterChanged={() => {console.log('Filter changed!')}}
-            onFilterModified={() => {console.log('Filter modified!')}}
+            onRowClicked={(e) => navigate(`/inventory-item/${e?.data?.id}`)}
             localeText={AG_GRID_LOCALE_DE}
           />
         </CardContent>
@@ -36,6 +37,6 @@ interface InventoryCardProps {
     );
   }
   
-  export default InventoryCard;
+  export default InventoryTable;
 
   

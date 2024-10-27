@@ -12,7 +12,7 @@ function Home() {
         { field: "id", flex: 1, filter: 'agSetColumnFilter' },
         { field: "name", flex: 1, filter: 'agSetColumnFilter' },
         { field: "icon", flex: 1, filter: 'agSetColumnFilter' },
-        { field: "photo", flex: 1 },
+        { field: "photo", flex: 1, cellRenderer: (params: any) => <img style={{ height: 40 }} src={`data:image/jpeg;base64,${params.data.photo}`} alt="Picture"/> },
         { field: "urn", flex: 1, filter: 'agSetColumnFilter' }
     ]
 

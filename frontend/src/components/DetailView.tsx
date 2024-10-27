@@ -3,6 +3,7 @@ import { InventoryItemProps } from "../interfaces/InventoryItemProps";
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "./ui/card";
 import {useState} from "react";
+import { Button } from "./ui/button";
 
 export const DetailView: React.FC<InventoryItemProps> = ({ id, photo, name, description, icon, urn }) => {
     const navigate = useNavigate()
@@ -18,7 +19,7 @@ export const DetailView: React.FC<InventoryItemProps> = ({ id, photo, name, desc
     return (
         <Card>
             <CardHeader className="flex items-center">
-                <CardTitle> {`${icon}`} Detailansicht </CardTitle>
+                <CardTitle> {`${icon ?? 'x'}`} Detailansicht </CardTitle>
             </CardHeader>
             <div>
                 <CardContent>
@@ -39,7 +40,9 @@ export const DetailView: React.FC<InventoryItemProps> = ({ id, photo, name, desc
                             <div className="px-4 py-6 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-0">
                                 <dt className="text-sm font-medium leading-6 text-gray-900">Foto</dt>
                                 <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0
-                                w-64 h-64 border-4 border-gray-300 rounded-lg overflow-hidden object-cover">{photo}</dd>
+                                w-64 h-64 border-4 border-gray-300 rounded-lg overflow-hidden">
+                                    <img src={`data:image/jpeg;base64,${photo}`} alt={description} className='w-full h-full object-cover'/>
+                                </dd>
                             </div>
                             <div className="px-4 py-6 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-0">
                                 <dt className="text-sm font-medium leading-6 text-gray-900">QR-Code</dt>
@@ -63,8 +66,7 @@ export const DetailView: React.FC<InventoryItemProps> = ({ id, photo, name, desc
                     </div>
                 </CardContent>
                 <CardFooter>
-                    <button className="px-4 py-2 font-bold border-2 border-blue-500 rounded-lg text-black hover:bg-blue-200
-                    hover:text-black transition-colors" onClick={() => navigate('/')}> &larr; Zurück </button>
+                    <Button onClick={() => navigate('/')}> &larr; Zurück </Button>
                 </CardFooter>
             </div>
         </Card>
