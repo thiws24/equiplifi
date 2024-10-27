@@ -1,3 +1,9 @@
-import React from "react";
+import { render, screen } from "@testing-library/react";
+import { ItemCard } from "./ItemCard";
 
-describe('ItemCard', () => {})
+describe('ItemCard', () => {
+    test('renders correct link', () => {
+        render(<ItemCard id={2} photo={''} name={''} icon={''} urn={''}/>)
+        expect(screen.getByRole('link')).toHaveAttribute('href', '/inventory-item/2')
+    })
+})

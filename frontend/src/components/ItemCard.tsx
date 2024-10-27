@@ -4,14 +4,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/
 
 export const ItemCard: React.FC<InventoryItemProps> = ({ id, name, description, icon, photo, urn }) => {
   return (
-    <a href={`/inventory-item/${id}`} target="_blank" rel="noopener noreferrer">
+    <a href={`/inventory-item/${id}`} target="_self">
       <Card className='h-full'>
         <CardHeader>
           <CardTitle>{name}</CardTitle>
           <CardDescription>{description}</CardDescription>
         </CardHeader>
         <CardContent>
-          <img src={photo} alt={name} className='w-full'/>
+          <img src={`data:image/jpeg;base64,${photo}`} alt={name} className='w-full'/>
         </CardContent>
       </Card>
     </a>

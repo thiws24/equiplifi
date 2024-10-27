@@ -13,18 +13,20 @@ interface Props {
   items: InventoryItemProps[]
 }
 
+const itemsPerPage = 10
+
 export const ItemsGallery: React.FC<Props> = ({ items }) => {
   const [currentPage, setCurrentPage] = React.useState(1);
-  const totalPages = Math.ceil(items.length/10)
+  const totalPages = Math.ceil(items.length/itemsPerPage) || 1;
 
   function handlePageChange(newPage: number) {
     setCurrentPage(newPage);
   }
 
   return (
-    <div>
+    <div id='items-gallery'>
       <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5'>
-        {items.map(item => (<ItemCard {...item} key={item.id}/>))}
+        {items.slice(itemsPerPage*(currentPage-1), itemsPerPage*currentPage).map(item => (<ItemCard {...item} key={item.id}/>))}
       </div>
       <Pagination className='mx-auto mt-5'>
         <PaginationContent>
