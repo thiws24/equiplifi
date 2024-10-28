@@ -1,0 +1,11 @@
+{
+  "title": "Checkbox",
+  "description": "Is the reservation okay and in the system?",
+  "properties": {
+    "done": {
+      "type": "boolean",
+      "title": "Done?",
+      "default": false
+    }
+  }
+}

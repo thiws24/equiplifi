@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
+  <bpmn:collaboration id="Collaboration_0314o54">
+    <bpmn:participant id="Participant_0p4a5rk" name="Lending Process" processRef="Process_lending_b6ipg5b" />
+    <bpmn:correlationKey id="CorrelationKey_1axi6uf" name="MainCorrelationKey" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_lending_b6ipg5b" isExecutable="true">
+    <bpmn:laneSet id="LaneSet_1kakmrt">
+      <bpmn:lane id="Lane_1erupop" name="Customer">
+        <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0qpzdpu</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0vfe7kr</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0ktcona</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_1qsqkfc" name="Admin">
+        <bpmn:flowNodeRef>Activity_1y9frzo</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0c9yg1t</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1mtqzk0</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0qxssne</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0wj1656</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_056kzjf</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:sequenceFlow id="Flow_17db3yp" sourceRef="StartEvent_1" targetRef="Activity_0qpzdpu" />
+    <bpmn:sequenceFlow id="Flow_14ujna8" sourceRef="Activity_0qpzdpu" targetRef="Activity_1y9frzo" />
+    <bpmn:sequenceFlow id="Flow_18hrac4" sourceRef="Activity_0qxssne" targetRef="Activity_0wj1656" />
+    <bpmn:sequenceFlow id="Flow_1xed9b3" sourceRef="Activity_1mtqzk0" targetRef="Activity_0ktcona" />
+    <bpmn:startEvent id="StartEvent_1" name="Lending wanted">
+      <bpmn:outgoing>Flow_17db3yp</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Activity_0qpzdpu" name="Get reservation confirmation">
+      <bpmn:extensionElements>
+        <spiffworkflow:instructionsForEndUser>This is an example **Manual Task**. A **Manual Task** is designed to allow someone to complete a task outside of the system and then report back that it is complete. You can click the *Continue* button to proceed. When you are done running this process, you can edit the **Process Model** to include a:
+ 
+* **Script Task** - write a short snippet of python code to update some data
+*  **User Task** - generate a form that collects information from a user
+* **Service Task** - communicate with an external API to fetch or update some data.
+ 
+You can also change the text you are reading here by updating the *Instructions* on this example manual task.</spiffworkflow:instructionsForEndUser>
+        <spiffworkflow:properties>
+          <spiffworkflow:property name="formJsonSchemaFilename" value="reservation-confirmation-schema.json" />
+          <spiffworkflow:property name="formUiSchemaFilename" value="reservation-confirmation-uischema.json" />
+        </spiffworkflow:properties>
+        <spiffworkflow:preScript># Script task to assign lane owners
+lane_owners = {
+    "Customer": ["jan2930@thi.de"]
+}</spiffworkflow:preScript>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_17db3yp</bpmn:incoming>
+      <bpmn:outgoing>Flow_14ujna8</bpmn:outgoing>
+      <bpmn:ioSpecification>
+        <bpmn:inputSet />
+      </bpmn:ioSpecification>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_1y9frzo" name="Search for reservation">
+      <bpmn:extensionElements>
+        <spiffworkflow:properties>
+          <spiffworkflow:property name="formJsonSchemaFilename" value="search-reservation-schema.json" />
+          <spiffworkflow:property name="formUiSchemaFilename" value="search-reservation-uischema.json" />
+        </spiffworkflow:properties>
+        <spiffworkflow:preScript># Script task to assign lane owners
+lane_owners = {
+    "Admin": ["jan2930@thi.de", "user2@example.com"]
+}</spiffworkflow:preScript>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_14ujna8</bpmn:incoming>
+      <bpmn:outgoing>Flow_08esa6i</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_08esa6i" sourceRef="Activity_1y9frzo" targetRef="Activity_0c9yg1t" />
+    <bpmn:sequenceFlow id="Flow_1obfkky" sourceRef="Activity_0c9yg1t" targetRef="Activity_0qxssne" />
+    <bpmn:serviceTask id="Activity_0c9yg1t" name="Get InventoryItem details">
+      <bpmn:extensionElements>
+        <spiffworkflow:serviceTaskOperator id="http/GetRequest" resultVariable="testvariable">
+          <spiffworkflow:parameters>
+            <spiffworkflow:parameter id="url" type="str" value="&#34;https://api.predic8.de/shop/v2/products/&#34;+str(1)" />
+            <spiffworkflow:parameter id="headers" type="any" value="{&#34;Accept&#34;:&#34;application/json&#34;}" />
+            <spiffworkflow:parameter id="params" type="any" />
+            <spiffworkflow:parameter id="basic_auth_username" type="str" />
+            <spiffworkflow:parameter id="basic_auth_password" type="str" />
+          </spiffworkflow:parameters>
+        </spiffworkflow:serviceTaskOperator>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_08esa6i</bpmn:incoming>
+      <bpmn:outgoing>Flow_1obfkky</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:manualTask id="Activity_1mtqzk0" name="Hand over InventoryItem to customer">
+      <bpmn:incoming>Flow_04eh7ua</bpmn:incoming>
+      <bpmn:outgoing>Flow_1xed9b3</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:manualTask id="Activity_0qxssne" name="Collect InventoryItem from storage">
+      <bpmn:incoming>Flow_1obfkky</bpmn:incoming>
+      <bpmn:outgoing>Flow_18hrac4</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:sequenceFlow id="Flow_0vv7yks" sourceRef="Activity_0wj1656" targetRef="Activity_056kzjf" />
+    <bpmn:userTask id="Activity_0wj1656" name="Check-out of Inventory Item">
+      <bpmn:extensionElements>
+        <spiffworkflow:preScript># Script task to assign lane owners
+lane_owners = {
+    "Admin": ["jan2930@thi.de", "user2@example.com"]
+}</spiffworkflow:preScript>
+        <spiffworkflow:properties>
+          <spiffworkflow:property name="formJsonSchemaFilename" value="checkout-inventory-item-schema.json" />
+          <spiffworkflow:property name="formUiSchemaFilename" value="checkout-inventory-item-uischema.json" />
+        </spiffworkflow:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_18hrac4</bpmn:incoming>
+      <bpmn:outgoing>Flow_0vv7yks</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_04eh7ua" sourceRef="Activity_056kzjf" targetRef="Activity_1mtqzk0" />
+    <bpmn:serviceTask id="Activity_056kzjf" name="Update Reservation Item and Inventory Item">
+      <bpmn:extensionElements>
+        <spiffworkflow:serviceTaskOperator id="http/PostRequestV2">
+          <spiffworkflow:parameters>
+            <spiffworkflow:parameter id="url" type="str" value="&#34;https://webhook.site/326876b2-84e2-4a19-8382-32ba19769fb5&#34;" />
+            <spiffworkflow:parameter id="headers" type="any" />
+            <spiffworkflow:parameter id="data" type="any" value="{   &#34;name&#34;: &#34;Fußball&#34;,   &#34;icon&#34;: &#34;⚽️&#34;,   &#34;photo&#34;: &#34;&#34;,   &#34;URN&#34;: &#34;testemail&#34; }" />
+            <spiffworkflow:parameter id="basic_auth_username" type="str" />
+            <spiffworkflow:parameter id="basic_auth_password" type="str" />
+          </spiffworkflow:parameters>
+        </spiffworkflow:serviceTaskOperator>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0vv7yks</bpmn:incoming>
+      <bpmn:outgoing>Flow_04eh7ua</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0vfe7kr" name="Item lent">
+      <bpmn:incoming>Flow_1qi3jke</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1qi3jke" sourceRef="Activity_0ktcona" targetRef="Event_0vfe7kr" />
+    <bpmn:sendTask id="Activity_0ktcona" name="Send Receipt to customer" messageRef="Testemail">
+      <bpmn:extensionElements />
+      <bpmn:incoming>Flow_1xed9b3</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qi3jke</bpmn:outgoing>
+    </bpmn:sendTask>
+  </bpmn:process>
+  <bpmn:message id="Testemail" name="Testemail" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0314o54">
+      <bpmndi:BPMNShape id="Participant_0p4a5rk_di" bpmnElement="Participant_0p4a5rk" isHorizontal="true">
+        <dc:Bounds x="129" y="40" width="1461" height="360" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1qsqkfc_di" bpmnElement="Lane_1qsqkfc" isHorizontal="true">
+        <dc:Bounds x="159" y="280" width="1431" height="120" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1erupop_di" bpmnElement="Lane_1erupop" isHorizontal="true">
+        <dc:Bounds x="159" y="40" width="1431" height="240" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="222" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="201" y="185" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1o07t3a_di" bpmnElement="Activity_0qpzdpu">
+        <dc:Bounds x="310" y="120" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_15o4saq_di" bpmnElement="Activity_1y9frzo">
+        <dc:Bounds x="400" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1nshk2i_di" bpmnElement="Activity_0c9yg1t">
+        <dc:Bounds x="560" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_19rdszu_di" bpmnElement="Activity_1mtqzk0">
+        <dc:Bounds x="1180" y="300" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18jye1m_di" bpmnElement="Activity_0qxssne">
+        <dc:Bounds x="740" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1oareyz_di" bpmnElement="Activity_0wj1656">
+        <dc:Bounds x="890" y="300" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1v3tru0_di" bpmnElement="Activity_056kzjf">
+        <dc:Bounds x="1030" y="300" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0vfe7kr_di" bpmnElement="Event_0vfe7kr">
+        <dc:Bounds x="1512" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1509" y="185" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0vlvl6k_di" bpmnElement="Activity_0ktcona">
+        <dc:Bounds x="1350" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_17db3yp_di" bpmnElement="Flow_17db3yp">
+        <di:waypoint x="258" y="160" />
+        <di:waypoint x="310" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14ujna8_di" bpmnElement="Flow_14ujna8">
+        <di:waypoint x="360" y="200" />
+        <di:waypoint x="360" y="340" />
+        <di:waypoint x="400" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18hrac4_di" bpmnElement="Flow_18hrac4">
+        <di:waypoint x="840" y="340" />
+        <di:waypoint x="890" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xed9b3_di" bpmnElement="Flow_1xed9b3">
+        <di:waypoint x="1280" y="340" />
+        <di:waypoint x="1311" y="340" />
+        <di:waypoint x="1311" y="160" />
+        <di:waypoint x="1350" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08esa6i_di" bpmnElement="Flow_08esa6i">
+        <di:waypoint x="500" y="340" />
+        <di:waypoint x="560" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1obfkky_di" bpmnElement="Flow_1obfkky">
+        <di:waypoint x="660" y="340" />
+        <di:waypoint x="740" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0vv7yks_di" bpmnElement="Flow_0vv7yks">
+        <di:waypoint x="990" y="340" />
+        <di:waypoint x="1030" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04eh7ua_di" bpmnElement="Flow_04eh7ua">
+        <di:waypoint x="1130" y="340" />
+        <di:waypoint x="1180" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qi3jke_di" bpmnElement="Flow_1qi3jke">
+        <di:waypoint x="1450" y="160" />
+        <di:waypoint x="1512" y="160" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

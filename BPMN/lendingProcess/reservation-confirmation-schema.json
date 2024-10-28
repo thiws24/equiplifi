@@ -1,0 +1,27 @@
+{
+  "title": "Get reservation confirmation",
+  "description": "",
+  "type": "object",
+  "required": [
+    "inventoryItemId"
+  ],
+  "properties": {
+    "from_date": {
+      "type": "string",
+      "format": "date",
+      "title": "From Date",
+      "validationErrorMessage": "Date must be today's date or later"
+    },
+    "to_date": {
+      "type": "string",
+      "format": "date",
+      "title": "To Date",
+      "validationErrorMessage": "Date must be today's date or later"
+    },
+    "inventoryItemId": {
+      "type": "string",
+      "title": "Inventory Item ID",
+      "default": "1"
+    }
+  }
+}
