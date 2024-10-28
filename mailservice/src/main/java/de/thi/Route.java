@@ -2,14 +2,20 @@ package de.thi;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class Route extends RouteBuilder {
     
     @Inject
     MailProcessor mailProcessor;
+
+    @ConfigProperty(name = "smtp.host")
+    String smtpHost;
+    
+    @ConfigProperty(name = "smtp.port")
+    String smtpPort;
     
     @Override
     public void configure() throws Exception {
@@ -25,6 +31,6 @@ public class Route extends RouteBuilder {
         from("direct:sendmail")
                 .unmarshal().json(MailDTO.class)
                 .process(mailProcessor)
-                .to("smtp://localhost:2525");
+                .to("smtp://" + smtpHost + ":" + smtpPort );
     }
 }
