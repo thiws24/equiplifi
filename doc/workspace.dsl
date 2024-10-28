@@ -86,18 +86,23 @@ workspace "Name" "Description" {
 
         styles {
             element "Element" {
-                color #ffffff
-            }
-            element "Person123" {
-                background #05527d
-                shape person
+                color #FFFFFF
             }
             element "Software System" {
-                background #066296
-    
+                background #184864
             }
             element "Container" {
+                background #075E8D
+            }
+            element "Component" {
                 background #0773af
+            }
+            element "Component" {
+                background #1289C9
+            }
+            element "Person" {
+                background #43B794
+                # background #135801
             }
             element "Database" {
                 shape cylinder
