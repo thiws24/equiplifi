@@ -42,6 +42,16 @@ workspace "Name" "Description" {
                 }
             }
 
+            mailService = container "Mail Service" {
+                tags "mailService"
+                camelSMTP = component "Camel SMTP" {
+                    tags "camelSMTP"
+                }
+                camelRest = component "Camel REST" {
+                    tags "camelRest"
+                }
+            }
+
         }
 
         u -> pda.fe "Uses"
@@ -49,6 +59,7 @@ workspace "Name" "Description" {
 
         pda.pe -> pda.qrLabelCodeService "invokes"
         pda.pe -> pda.inventoryItemService "invokes"
+        pda.pe -> pda.mailService "invokes"
     }
 
 
@@ -84,6 +95,11 @@ workspace "Name" "Description" {
             autolayout lr
         }
 
+        component pda.mailService "Components-of-mailService" {
+            include *
+            autolayout lr
+        }
+
         styles {
             element "Element" {
                 color #FFFFFF
@@ -108,6 +124,7 @@ workspace "Name" "Description" {
                 shape cylinder
             }
         }
+    }
     }
 
     configuration {
