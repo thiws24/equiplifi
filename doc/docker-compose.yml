@@ -6,6 +6,6 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - "./doc:/usr/local/structurizr"
+      - ".:/usr/local/structurizr"
     stdin_open: true
     tty: true
