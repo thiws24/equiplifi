@@ -124,7 +124,7 @@ workspace "Name" "Description" {
                 shape cylinder
             }
         }
-    }
+    
     }
 
     configuration {
