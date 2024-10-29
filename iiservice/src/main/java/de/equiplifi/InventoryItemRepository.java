@@ -1,4 +1,4 @@
-package de.thi.inv;
+package de.equiplifi;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;

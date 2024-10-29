@@ -1,8 +1,8 @@
-package de.thi.inv;
+package de.equiplifi;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 
 @QuarkusIntegrationTest
-class InventoryItemResourceIT extends InventoryItemResourceTest {
+class QRGeneratorResourceIT extends QRGeneratorResourceTest {
     // Execute the same tests but in packaged mode.
 }

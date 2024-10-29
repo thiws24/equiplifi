@@ -1,4 +1,4 @@
-package org.thiws24;
+package de.equiplifi;
 
 public class QRInput {
     private String urn;
