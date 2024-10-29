@@ -1,0 +1,38 @@
+{
+  "title": "Reservation Details",
+  "description": "Select an item, start date, and end date for your reservation.",
+  "type": "object",
+  "properties": {
+    "selecteditem": {
+      "title": "Select your item",
+      "type": "string",
+      "enum": [
+        "volleyball",
+        "tennisbat",
+        "football"
+      ],
+      "default": "tennisbat",
+      "enumNames": [
+        "Volleyball",
+        "Tennis bat",
+        "Football"
+      ]
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Reservation Start Date",
+      "description": "Select the day the reservation starts.",
+      "validationErrorMessage": "Start date must be today's date or later."
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Reservation End Date",
+      "description": "Select the day the reservation ends.",
+      "validationErrorMessage": "End date must be after the start date."
+    }
+  },
+  "required": ["selecteditem", "start_date", "end_date"]
+}
+

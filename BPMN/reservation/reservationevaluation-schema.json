@@ -1,0 +1,14 @@
+{
+  "title": "Checkbox",
+  "description": "Select one action",
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "title": "Select one action",
+      "enum": ["Confirm", "Cancel", "Reschedule"],
+      "enumNames": ["Confirm", "Cancel", "Reschedule"],
+      "default": "Confirm"
+    }
+  }
+}

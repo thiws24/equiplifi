@@ -1,0 +1,30 @@
+{
+  "title": "Reservation Details",
+  "description": "Select an item, start date, and end date for your reservation.",
+  "type": "object",
+  "properties": {
+    "selecteditem": {
+      "title": "Select your item",
+      "type": "string",
+      "anyOf": [
+        "options_from_task_data_var:items"
+      ]
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Reservation Start Date",
+      "description": "Select the day the reservation starts.",
+      "validationErrorMessage": "Start date must be today's date or later."
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Reservation End Date",
+      "description": "Select the day the reservation ends.",
+      "validationErrorMessage": "End date must be after the start date."
+    }
+  },
+  "required": ["selecteditem", "start_date", "end_date"]
+}
+

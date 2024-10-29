@@ -1,0 +1,17 @@
+{
+  "items": [
+    {
+      "value": "volleyball",
+      "label": "Volleyball"
+    },
+    {
+      "value": "tennisbat",
+      "label": "Tennis bat"
+    },
+    {
+      "value": "football",
+      "label": "Football"
+    }
+  ],
+  "selecteditem": "tennisbat"
+}
