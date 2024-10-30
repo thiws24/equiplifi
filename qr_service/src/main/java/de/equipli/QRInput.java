@@ -1,4 +1,4 @@
-package de.equiplifi;
+package de.equipli;
 
 public class QRInput {
     private String urn;

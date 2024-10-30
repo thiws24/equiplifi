@@ -1,4 +1,4 @@
-package de.equiplifi;
+package de.equipli;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;

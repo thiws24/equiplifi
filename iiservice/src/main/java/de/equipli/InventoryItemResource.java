@@ -1,4 +1,4 @@
-package de.equiplifi;
+package de.equipli;
 
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
