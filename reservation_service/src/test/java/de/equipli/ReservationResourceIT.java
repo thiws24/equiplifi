@@ -3,6 +3,6 @@ package de.equipli;
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 
 @QuarkusIntegrationTest
-class GreetingResourceIT extends GreetingResourceTest {
+class ReservationResourceIT extends ReservationResourceTest {
     // Execute the same tests but in packaged mode.
 }
