@@ -103,5 +103,4 @@ class InventoryItemResourceTest {
                 .then()
                 .statusCode(404);
     }
-
 }
