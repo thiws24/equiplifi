@@ -30,11 +30,21 @@ public class ReservationResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
     public Response addReservation(Reservation reservation){
+
+        if (reservation.getEndDate().isBefore(reservation.getStartDate())) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("End-Datum muss vor Start-Datum liegen!").build();
+        }
+
+        if (reservation.getStartDate().isBefore(LocalDate.now())) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Start-Datum liegt in Vergangenheit").build();
+        }
+
+
         List<Reservation> reservations = Reservation.list("itemId", reservation.getItemId());
 
         for(Reservation r : reservations)
             if (!reservation.getEndDate().isBefore( r.getStartDate()) && !reservation.getStartDate().isAfter(r.getEndDate())) {
-                return Response.status(Response.Status.BAD_REQUEST).entity("Inventory item is not available at this period").build();
+                return Response.status(Response.Status.BAD_REQUEST).entity("Das Item ist in diesem Zeitraum nicht verfügbar").build();
             }
 
         reservation.setReservationNumber(nextReservationNumber.getAndIncrement());
