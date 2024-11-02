@@ -2,9 +2,12 @@ package de.equipli;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 @Entity
 public class InventoryItem extends PanacheEntity {
+
+    @Schema(hidden = true)
     public long id;
     public String name;
     public String icon;
@@ -39,7 +42,7 @@ public class InventoryItem extends PanacheEntity {
         return photoUrl;
     }
 
-    public void setPhoto(String photoUrl) {
+    public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
     }
 
