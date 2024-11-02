@@ -22,16 +22,12 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-          # Ensure QEMU is installed for cross-building
+      # Ensure QEMU is installed for cross-building
       - name: Install QEMU for cross-platform builds
         uses: docker/setup-qemu-action@v3
 
       - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build the Maven artifact
         working-directory: iiservice/
