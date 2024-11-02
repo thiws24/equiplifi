@@ -16,8 +16,7 @@ class InventoryItemResourceTest {
     void testAddInventoryItem() {
         String name = "Test Item";
         String icon = "icon";
-        byte[] photo = new byte[]{(byte) 0xFF, (byte) 0xD8};
-        String encodedPhoto = Base64.getEncoder().encodeToString(photo);
+        String photo = "https://www.thi.de/fileadmin/daten/allgemein/Inhalte_von_alter_Website/thi_logo_wb_RGB_office_DIN_A4.jpg";
         String urn = "urn";
 
         InventoryItem item = new InventoryItem();
@@ -35,7 +34,7 @@ class InventoryItemResourceTest {
                 .statusCode(201)
                 .body("name", is(name))
                 .body("icon", is(icon))
-                .body("photo", is(encodedPhoto))
+                .body("photo", is(photo))
                 .body("urn", is(urn));
     }
 
