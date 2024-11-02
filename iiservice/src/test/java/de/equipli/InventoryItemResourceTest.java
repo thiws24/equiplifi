@@ -22,7 +22,7 @@ class InventoryItemResourceTest {
         InventoryItem item = new InventoryItem();
         item.setName(name);
         item.setIcon(icon);
-        item.setPhoto(photo);
+        item.setPhotoUrl(photo);
         item.setUrn(urn);
 
         given()
