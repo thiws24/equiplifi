@@ -60,8 +60,8 @@ public class InventoryItemResource {
         if (item.getName() != null) {
             existingItem.setName(item.getName());
         }
-        if (item.getPhoto() != null) {
-            existingItem.setPhoto(item.getPhoto());
+        if (item.getPhotoUrl() != null) {
+            existingItem.setPhoto(item.getPhotoUrl());
         }
         if (item.getIcon() != null) {
             existingItem.setIcon(item.getIcon());
