@@ -10,7 +10,7 @@
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
+    --primary: #f2e9d7;
     --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
@@ -66,4 +66,63 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* App.css */
+body {
+  font-family: 'Public Sans', sans-serif;
+}
+.font-regular {
+  font-weight: 400; /* Regular */
+}
+.font-semibold {
+  font-weight: 600; /* SemiBold */
+}
+
+.tabs-trigger:hover {
+  background-color: #f27428; /* Hover-Hintergrundfarbe */
+  color: #f27428;
+  border-color: #f27428;
+}
+.tabs-trigger-active {
+  background-color: #f27428; /* Aktive Hintergrundfarbe */
+  color: #f27428;
+  border-color: #f27428;
+}
+.tabs-trigger {
+  background-color: #f2e9d7; /* Hintergrundfarbe */
+  color: #f2e9d7;
+  border-color: #f2e9d7;
+}
+
+
+.bg-muted {
+  background-color: transparent !important;
+}
+
+#items-gallery {
+  font-family: 'Public Sans', sans-serif;
+  color: #0e0e0e;
+}
+.pagination-content {
+  color: #0e0e0e;
+  font-size: 20px;
+}
+.pagination-item {
+  color: #0e0e0e; /* Standardfarbe für die Pagination-Items */
+}
+.pagination-item:hover {
+  text-decoration: underline; /* Hover-Effekt */
+}
+.tabs-trigger svg {
+  color: #5588c7 !important; /* Fixierte Farbe für das Symbol */
+}
+
+.item-card-title {
+  color: #0E0E0E; /* Schriftfarbe für den Titel */
+  font-family: 'Public Sans', sans-serif; /* Schriftart für den Titel */
+}
+.item-card-description {
+  color: #0E0E0E; /* Schriftfarbe für die Beschreibung */
+  font-family: 'Public Sans', sans-serif; /* Schriftart für die Beschreibung */
 }

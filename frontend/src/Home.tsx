@@ -1,6 +1,4 @@
 import React from 'react';
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
 import { ColDef } from "ag-grid-community"
 import { InventoryItemProps } from "./interfaces/InventoryItemProps";
 import { TableGalleryView } from "./components/TableGalleryView";
