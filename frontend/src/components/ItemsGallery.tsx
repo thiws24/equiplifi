@@ -8,6 +8,7 @@ import {
   PaginationNext,
   PaginationPrevious
 } from "./ui/pagination";
+import "../globals.css"
 
 interface Props {
   items: InventoryItemProps[]
@@ -24,7 +25,7 @@ export const ItemsGallery: React.FC<Props> = ({ items }) => {
   }
 
   return (
-    <div id='items-gallery'>
+    <div id='items-gallery' style={{ color: '#0E0E0E' }} className="font-sans text-black p-4">
       <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5'>
         {items.slice(itemsPerPage*(currentPage-1), itemsPerPage*currentPage).map(item => (<ItemCard {...item} key={item.id}/>))}
       </div>
