@@ -11,25 +11,25 @@ import java.util.List;
 @Entity
 public class Reservation extends PanacheEntity {
 
-    public long id;
-    public long reservationNumber;
+    public Long id;
+    public Long reservationNumber;
     public LocalDate startDate;
     public LocalDate endDate;
-    public long itemId;
+    public Long itemId;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public long getReservationNumber() {
+    public Long getReservationNumber() {
         return reservationNumber;
     }
 
-    public void setReservationNumber(long reservationNumber) {
+    public void setReservationNumber(Long reservationNumber) {
         this.reservationNumber = reservationNumber;
     }
 
@@ -49,11 +49,11 @@ public class Reservation extends PanacheEntity {
         this.endDate = endDate;
     }
 
-    public long getItemId() {
+    public Long getItemId() {
         return itemId;
     }
 
-    public void setItemId(long itemId) {
+    public void setItemId(Long itemId) {
         this.itemId = itemId;
     }
 }

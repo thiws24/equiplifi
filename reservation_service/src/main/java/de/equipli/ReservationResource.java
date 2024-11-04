@@ -29,27 +29,40 @@ public class ReservationResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response addReservation(Reservation reservation){
+    public Response addReservation(Reservation reservation) {
 
-        if (reservation.getEndDate().isBefore(reservation.getStartDate())) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("End-Datum muss vor Start-Datum liegen!").build();
+        LocalDate startDate = reservation.getStartDate();
+        LocalDate endDate = reservation.getEndDate();
+
+        Period periodBetweenDates = Period.between(startDate, endDate);
+
+        if (periodBetweenDates.isNegative()) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("End-Datum muss nach Start-Datum liegen!")
+                    .build();
         }
 
-        if (reservation.getStartDate().isBefore(LocalDate.now())) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Start-Datum liegt in Vergangenheit").build();
+        if (startDate.isBefore(LocalDate.now())) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Start-Datum liegt in der Vergangenheit")
+                    .build();
         }
-
 
         List<Reservation> reservations = Reservation.list("itemId", reservation.getItemId());
 
-        for(Reservation r : reservations)
-            if (!reservation.getEndDate().isBefore( r.getStartDate()) && !reservation.getStartDate().isAfter(r.getEndDate())) {
-                return Response.status(Response.Status.BAD_REQUEST).entity("Das Item ist in diesem Zeitraum nicht verfügbar").build();
+        for (Reservation r : reservations) {
+            Period overlapPeriod = Period.between(startDate, r.getEndDate());
+
+            if (!endDate.isBefore(r.getStartDate()) && !startDate.isAfter(r.getEndDate())) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("Das Item ist in diesem Zeitraum nicht verfügbar")
+                        .build();
             }
+        }
 
         reservation.setReservationNumber(nextReservationNumber.getAndIncrement());
         reservationRepository.persist(reservation);
+
         return Response.status(Response.Status.CREATED).entity(reservation).build();
     }
-
 }
