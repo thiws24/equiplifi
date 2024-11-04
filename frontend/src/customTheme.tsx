@@ -9,8 +9,9 @@ export const customTheme = themeQuartz
         fontFamily: "inherit",
         headerFontSize: 14,
         headerFontWeight: 600,
+        headerTextColor: "#F2E9D7",
         foregroundColor: "#0E0E0E",
-        headerBackgroundColor: "#5588C7",
+        headerBackgroundColor: "#F27428",
         borderColor: "#F2E9D7",
-        oddRowBackgroundColor: "#5689C72E"
+        oddRowBackgroundColor: "#F2762940",
     });
