@@ -17,11 +17,11 @@ interface InventoryCardProps {
   const InventoryTable: React.FC<InventoryCardProps> = ({ inventoryItems, colDefs, loading }) => {
     const navigate = useNavigate()
     return (
-        <Card className="bg-primary_color text-black p-4 font-semibold">
+        <Card className="bg-customBeige text-customBeige p-4 font-semibold">
             <CardHeader>
-                <CardTitle className="text-black font-semibold">Inventory Items</CardTitle>
+                <CardTitle className="text-customBlack font-semibold">Inventory Items</CardTitle>
             </CardHeader>
-            <CardContent className='h-[500px]'>
+            <CardContent className='h-[550px]'>
                 <AgGridReact
                     rowData={inventoryItems}
                     columnDefs={colDefs}

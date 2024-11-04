@@ -79,23 +79,6 @@ body {
   font-weight: 600; /* SemiBold */
 }
 
-.tabs-trigger:hover {
-  background-color: #f27428; /* Hover-Hintergrundfarbe */
-  color: #f27428;
-  border-color: #f27428;
-}
-.tabs-trigger-active {
-  background-color: #f27428; /* Aktive Hintergrundfarbe */
-  color: #f27428;
-  border-color: #f27428;
-}
-.tabs-trigger {
-  background-color: #f2e9d7; /* Hintergrundfarbe */
-  color: #f2e9d7;
-  border-color: #f2e9d7;
-}
-
-
 .bg-muted {
   background-color: transparent !important;
 }
@@ -108,21 +91,15 @@ body {
   color: #0e0e0e;
   font-size: 20px;
 }
-.pagination-item {
-  color: #0e0e0e; /* Standardfarbe für die Pagination-Items */
-}
-.pagination-item:hover {
-  text-decoration: underline; /* Hover-Effekt */
-}
+
 .tabs-trigger svg {
-  color: #5588c7 !important; /* Fixierte Farbe für das Symbol */
+  color: #f2e9d7 !important;
 }
 
 .item-card-title {
-  color: #0E0E0E; /* Schriftfarbe für den Titel */
-  font-family: 'Public Sans', sans-serif; /* Schriftart für den Titel */
+  font-family: 'Public Sans', sans-serif;
 }
 .item-card-description {
-  color: #0E0E0E; /* Schriftfarbe für die Beschreibung */
-  font-family: 'Public Sans', sans-serif; /* Schriftart für die Beschreibung */
+  color: #0E0E0E;
+  font-family: 'Public Sans', sans-serif;
 }
