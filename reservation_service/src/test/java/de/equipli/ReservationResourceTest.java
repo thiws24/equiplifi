@@ -33,7 +33,7 @@ class ReservationResourceTest {
     }
 
     @Test
-    void testAddReservation_EndDateBeforeStartDate() {
+    void testAddReservationEndDateBeforeStartDate() {
 
         // case 2: negative test - startDate >, endDate <
 
@@ -59,7 +59,7 @@ class ReservationResourceTest {
 
 
     @Test
-    void testAddReservation_StartDateInPast() {
+    void testAddReservationStartDateInPast() {
 
         // case 3: negative test - startDate <, endDate >
         LocalDate startDate3 = LocalDate.now().minusDays(10);
@@ -82,7 +82,7 @@ class ReservationResourceTest {
     }
 
     @Test
-    void testAddReservation_StartAndEndDateInFuture() {
+    void testAddReservationStartAndEndDateInFuture() {
 
         // case 4: positive test - startDate >, endDate >
         LocalDate startDate4 = LocalDate.now().plusDays(20);
