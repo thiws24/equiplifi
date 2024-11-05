@@ -1,5 +1,7 @@
-package de.equipli;
+package de.equipli.Routes;
 
+import de.equipli.DTOs.MailDTO;
+import de.equipli.Processors.ReturnMailProcessor;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.apache.camel.builder.RouteBuilder;
@@ -9,7 +11,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 public class Route extends RouteBuilder {
     
     @Inject
-    MailProcessor mailProcessor;
+    ReturnMailProcessor mailProcessor;
 
     @ConfigProperty(name = "smtp.host")
     String smtpHost;
@@ -19,16 +21,23 @@ public class Route extends RouteBuilder {
     
     @Override
     public void configure() throws Exception {
-        rest().get("/hello")
-                .to("direct:hello")
-                .post("sendMail")
+        rest()
+                .post("sendCollectionMail")
                 .type(MailDTO.class)
-                .to("direct:sendmail");
+                .to("direct:sendCollectionMail")
+                
+                .post("sendReturnMail")
+                .type(MailDTO.class)
+                .to("direct:sendReturnMail");
         
-        from("direct:hello")
-                .transform().constant("Hello World");
+
         
-        from("direct:sendmail")
+        from("direct:sendCollectionMail")
+                .unmarshal().json(MailDTO.class)
+                .process(mailProcessor)
+                .to("smtp://" + smtpHost + ":" + smtpPort );
+
+        from("direct:sendReturnMail")
                 .unmarshal().json(MailDTO.class)
                 .process(mailProcessor)
                 .to("smtp://" + smtpHost + ":" + smtpPort );
