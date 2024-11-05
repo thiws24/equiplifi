@@ -38,6 +38,7 @@ function Home() {
     return (
         <div className="m-10">
             <main className="main">
+                <div className='font-semibold text-2xl flex justify-center w-full text-center -mb-10'>Inventarverwaltung</div>
                 <TableGalleryView
                     data={inventoryItems}
                     colDefs={colDefs}

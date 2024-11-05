@@ -64,14 +64,11 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-customBeige text-customBlack;
+    font-family: 'Public Sans', sans-serif;
   }
 }
 
-/* App.css */
-body {
-  font-family: 'Public Sans', sans-serif;
-}
 .font-regular {
   font-weight: 400; /* Regular */
 }

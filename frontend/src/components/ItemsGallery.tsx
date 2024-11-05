@@ -25,7 +25,7 @@ export const ItemsGallery: React.FC<Props> = ({ items }) => {
   }
 
   return (
-    <div id='items-gallery' style={{ color: '#0E0E0E' }} className="font-sans text-custom_black p-4">
+    <div id='items-gallery' className="font-sans text-customBlack p-4">
       <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5'>
         {items.slice(itemsPerPage*(currentPage-1), itemsPerPage*currentPage).map(item => (<ItemCard {...item} key={item.id}/>))}
       </div>

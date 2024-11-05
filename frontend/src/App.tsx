@@ -4,7 +4,7 @@ import Home from "./Home";
 
 const App = () => {
   return (
-      <div style={{ backgroundColor: '#f2e9d7'}}>
+      <div className='bg-customBeige'>
           <Routes>
               <Route path="/" element={<Home/>}/>
               <Route path="/inventory-item/:id" element={<Detail/>}/>

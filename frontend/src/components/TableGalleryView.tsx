@@ -18,10 +18,10 @@ export const TableGalleryView: React.FC<Props> = ({ data, colDefs, loading }) =>
     <Tabs defaultValue="table-view" className="w-full">
       <TabsList className="grid grid-cols-2 justify-end w-[200px] ml-auto mb-4">
         <TabsTrigger value="table-view" className="tabs-trigger">
-          <FontAwesomeIcon icon={faTable} style={{ color: "#f2e9d7" }}/>
+          <FontAwesomeIcon icon={faTable}/>
         </TabsTrigger>
         <TabsTrigger value="gallery-view" className="tabs-trigger">
-          <FontAwesomeIcon icon={faTableCells} style={{ color: "#f2e9d7" }}/>
+          <FontAwesomeIcon icon={faTableCells}/>
         </TabsTrigger>
       </TabsList>
       <TabsContent value="table-view">
