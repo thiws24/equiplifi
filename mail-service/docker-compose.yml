@@ -1,0 +1,9 @@
+
+services:
+  smtp4dev:
+    image: rnwood/smtp4dev:3.5.0
+    ports:
+      - "3300:80"
+      - "2525:25"
+    environment:
+      - ServerOptions__DisableMessageSanitisation=true
