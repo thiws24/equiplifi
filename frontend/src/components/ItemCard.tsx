@@ -5,9 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/
 export const ItemCard: React.FC<InventoryItemProps> = ({ id, name, description, icon, photo, urn }) => {
   return (
     <a href={`/inventory-item/${id}`} target="_self">
-      <Card className='h-full bg-customOrange text-customBeige'>
+      <Card className='h-full bg-white text-customBlack'>
         <CardHeader className='text-customBeige'>
-          <CardTitle className='item-card-title text-customBeige'>{name}</CardTitle>
+          <CardTitle className='item-card-title text-customBlack'>{name}</CardTitle>
           <CardDescription className='item-card-description'>{description}</CardDescription>
         </CardHeader>
         <CardContent>
