@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "./ui/card";
 import {useState} from "react";
 import { Button } from "./ui/button";
+import {KeyValueRow} from "./KeyValueRow";
 
 export const DetailView: React.FC<InventoryItemProps> = ({ id, photo, name, description, icon, urn }) => {
     const navigate = useNavigate()
@@ -25,43 +26,21 @@ export const DetailView: React.FC<InventoryItemProps> = ({ id, photo, name, desc
                 <CardContent>
                     <div className="mt-6 border-t border-customOrange">
                         <dl className="divide-y divide-customOrange">
-                            <div className="px-4 py-6 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-0">
-                                <dt className="text-sm font-medium leading-6 text-customBlack">Name</dt>
-                                <dd className="mt-1 text-sm leading-6 text-customBlack sm:col-span-2 sm:mt-0">{name}</dd>
-                            </div>
-                            <div className="px-4 py-6 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-0">
-                                <dt className="text-sm font-medium leading-6 text-customBlack">Artikelnummer</dt>
-                                <dd className="mt-1 text-sm leading-6 text-customBlack sm:col-span-2 sm:mt-0">{id}</dd>
-                            </div>
-                            <div className="px-4 py-6 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-0">
-                                <dt className="text-sm font-medium leading-6 text-customBlack">Beschreibung</dt>
-                                <dd className="mt-1 text-sm leading-6 text-customBlack sm:col-span-2 sm:mt-0">{description}</dd>
-                            </div>
-                            <div className="px-4 py-6 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-0">
-                                <dt className="text-sm font-medium leading-6 text-customBlack">Foto</dt>
-                                <dd className="mt-1 text-sm leading-6 text-customBlack sm:col-span-2 sm:mt-0
-                                w-64 h-64 border-4 border-customOrange rounded-lg overflow-hidden">
-                                    <img src={`data:image/jpeg;base64,${photo}`} alt={description} className='w-full h-full object-cover'/>
-                                </dd>
-                            </div>
-                            <div className="px-4 py-6 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-0">
-                                <dt className="text-sm font-medium leading-6 text-customBlack">QR-Code</dt>
-                                <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                    <button onClick={openModal} className="px-4 py-2 bg-customBlue text-customBeige rounded
-                                        hover:bg-customRed"> Show QR-Code
-                                    </button>
-                                    {isOpen && (
-                                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                                        <div className="bg-customBeige rounded-lg shadow-lg p-6 w-96">
-                                            <p>{urn}</p>
-                                            <button onClick={closeModal} className="mt-4 px-4 py-2 bg-customBlue
-                                                text-white rounded hover:bg-customRed flex items-center"> Close
-                                            </button>
-                                        </div>
+                            <KeyValueRow label="Name" value={name}/>
+                            <KeyValueRow label="Artikelnummer" value={id}/>
+                            <KeyValueRow label="Beschreibung" value={description}/>
+                            <KeyValueRow label="Foto" value={ <img src={`data:image/jpeg;base64,${photo}`} alt={description} className='w-full h-full object-cover'/> }/>
+                            <KeyValueRow label="" value={ <button onClick={openModal} className="px-4 py-2 bg-customBlue text-customBeige rounded hover:bg-customRed"> Show QR-Code </button> } />
+                            {isOpen && (
+                                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                                    <div className="bg-customBeige rounded-lg shadow-lg p-6 w-96">
+                                        <p className="text-center mb-4">{urn}</p>
+                                        <button onClick={closeModal} className="mt-4 px-4 py-2 bg-customBlue
+                                            text-white rounded hover:bg-customRed flex items-center justify-center"> Close
+                                        </button>
                                     </div>
-                                    )}
-                                </dd>
-                            </div>
+                                </div>
+                            )}
                         </dl>
                     </div>
                 </CardContent>
