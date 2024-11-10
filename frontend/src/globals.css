@@ -69,17 +69,6 @@
   }
 }
 
-.font-regular {
-  font-weight: 400; /* Regular */
-}
-.font-semibold {
-  font-weight: 600; /* SemiBold */
-}
-
-.bg-muted {
-  background-color: transparent !important;
-}
-
 #items-gallery {
   font-family: 'Public Sans', sans-serif;
   color: #0e0e0e;
