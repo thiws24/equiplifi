@@ -1,6 +1,17 @@
-# Getting Started with Create React App
+# Equipli Frontend
+
+## Getting Started
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Setup
+In the frontend folder create a .env file. There you should set following variables:
+`REACT_APP_II_SERVICE_HOST='http://localhost:8080'`
+
+With localhost:8080 being your iiservice running locally. Change it if port or host differ. 
+
+Install dependencies:
+ `npm install`
 
 ## Available Scripts
 
