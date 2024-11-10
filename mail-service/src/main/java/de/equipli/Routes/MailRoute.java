@@ -37,6 +37,7 @@ public class MailRoute extends RouteBuilder {
 
 
         from("direct:sendCollectionMail")
+                .routeId("sendCollectionMail-Route")
                 .unmarshal().json(MailDTO.class)
                 .process(collectMailProcessor)
                 .to("smtp://" + smtpHost + ":" + smtpPort)
@@ -48,6 +49,7 @@ public class MailRoute extends RouteBuilder {
                 .marshal().json();
 
         from("direct:sendReturnMail")
+                .routeId("sendReturnMail-Route")
                 .unmarshal().json(MailDTO.class)
                 .process(returnMailProcessor)
                 .to("smtp://" + smtpHost + ":" + smtpPort);
