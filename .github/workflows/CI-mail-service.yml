@@ -2,7 +2,7 @@ name: CI-mail-service
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "47-notification-per-email-als-erinnerung-ci-test" ]
 
 jobs:
   build:
