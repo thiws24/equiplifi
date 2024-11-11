@@ -13,9 +13,9 @@ jobs:
         service: [ iiservice, qr_service ]
         include:
           - service: iiservice
-            webhook_var: II
+            webhook_var: PORTAINER_II_WEBHOOK_URL
           - service: qr_service
-            webhook_var: QR
+            webhook_var: PORTAINER_QR_WEBHOOK_URL
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -57,4 +57,4 @@ jobs:
         uses: distributhor/workflow-webhook@v3
         env:
           webhook_type: 'json'
-          webhook_url: ${{ secrets['PORTAINER_' + matrix.webhook_var + '_WEBHOOK_URL'] }}
+          webhook_url: ${{ secrets[matrix.webhook_var] }}
