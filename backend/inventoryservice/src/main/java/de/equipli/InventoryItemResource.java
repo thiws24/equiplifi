@@ -8,7 +8,7 @@ import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 
-@Path("/api/inventoryitems")
+@Path("/inventoryitems")
 public class InventoryItemResource {
 
     @Inject
