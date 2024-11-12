@@ -45,7 +45,7 @@ jobs:
         id: changes
         uses: tj-actions/changed-files@v45
         with:
-          files: ${{ matrix.service }}/**
+          files: "${{ matrix.service }}/**"
 
       - name: Build the Maven artifact
         if: steps.changes.outputs.any_changed == 'true'
