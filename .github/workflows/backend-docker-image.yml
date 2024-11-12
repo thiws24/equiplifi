@@ -49,14 +49,15 @@ jobs:
 
       - name: List all changed files
         env:
-          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+          ALL_CHANGED_AND_MODIFIED_FILES: ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
         run: |
-          for file in ${ALL_CHANGED_FILES}; do
+          echo ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
+          for file in ${{ steps.changed-files.outputs.all_changed_and_modified_files }}; do
             echo "$file was changed"
           done
 
       - name: Build the Maven artifact
-        if: steps.changes.outputs.any_changed == 'true'
+        if: steps.changed-files.outputs.all_changed_and_modified_files == 'true'
         working-directory: ${{ matrix.service }}/
         run: ./mvnw package -Pprod -DskipTests
 
