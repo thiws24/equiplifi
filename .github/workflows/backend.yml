@@ -10,12 +10,12 @@ jobs:
   build:
     strategy:
       matrix:
-        service: [ iiservice, qr_service ]
+        service: [ inventoryservice, qrservice ]
         include:
-          - service: iiservice
-            webhook_var: PORTAINER_II_WEBHOOK_URL
-          - service: qr_service
-            webhook_var: PORTAINER_QR_WEBHOOK_URL
+          - service: inventoryservice
+            webhook_var: PORTAINER_INVENTORYSERVICE_WEBHOOK_URL
+          - service: qrservice
+            webhook_var: PORTAINER_QRSERVICE_WEBHOOK_URL
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
