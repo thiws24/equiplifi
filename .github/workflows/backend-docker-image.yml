@@ -49,20 +49,20 @@ jobs:
 
       - name: List all changed files
         env:
-          ALL_CHANGED_AND_MODIFIED_FILES: ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
+          ALL_CHANGED_AND_MODIFIED_FILES: ${{ steps.changes.outputs.all_changed_and_modified_files }}
         run: |
-          echo ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
-          for file in ${{ steps.changed-files.outputs.all_changed_and_modified_files }}; do
+          echo ${{ steps.changes.outputs.all_changed_and_modified_files }}
+          for file in ${{ steps.changes.outputs.all_changed_and_modified_files }}; do
             echo "$file was changed"
           done
 
       - name: Build the Maven artifact
-        if: steps.changed-files.outputs.all_changed_and_modified_files == 'true'
+        if: steps.changes.outputs.all_changed_and_modified_files == 'true'
         working-directory: ${{ matrix.service }}/
         run: ./mvnw package -Pprod -DskipTests
 
       - name: Build and push
-        if: steps.changes.outputs.any_changed == 'true'
+        if: steps.changes.outputs.all_changed_and_modified_files == 'true'
         uses: docker/build-push-action@v6
         with:
           context: ${{ matrix.service }}/
@@ -72,7 +72,7 @@ jobs:
           tags: ghcr.io/thiws24/${{ matrix.service }}:latest
 
       - name: Call a webhook for Portainer
-        if: steps.changes.outputs.any_changed == 'true'
+        if: steps.changes.outputs.all_changed_and_modified_files == 'true'
         uses: distributhor/workflow-webhook@v3
         with:
           webhook_type: 'json'
