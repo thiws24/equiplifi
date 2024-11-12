@@ -3,15 +3,25 @@ workspace "Name" "Description" {
     !identifiers hierarchical
 
     model {
-        u = person "User"
+        u = person "User" "Will einen Gegenstand mieten"
         pda = softwareSystem "PDA" {
-            fe = container "Frontend" {
+            fe = container "Frontend" ""{
                 tags "frontend"
-                authComponent = component "Authentication Component" {
-                    tags "authComponent"
+                authComponent = component "Authentication Service" {
+                    tags "authComponent" 
+                    description "Keycloak"
                 }
-                uiComponent = component "UI Component" {
+                uiComponent = component "Tailwind UI Component" {
                     tags "uiComponent"
+                    description "Tailwind + shadcn"
+                }
+                routingComponent = component "Routing Component" {
+                    tags "routingComponent"
+                    description "React Router"
+                }
+                restComponent = component "API-Service" {
+                    tags "uiComponent"
+                    description "REST"
                 }
             }
             pe = container "Process Engine" {
@@ -22,7 +32,7 @@ workspace "Name" "Description" {
             }
             qrLabelCodeService = container "qrLabelCodeService" {
                 tags "qrLabelCode"
-                endpoint_QR = component "Enpoint (Rest)" {
+                endpoint_QR = component "Endpoint (Rest)" {
                     tags "endpoint_QR"
                 }
                 generator = component "QR-Code Generator" {
@@ -41,7 +51,6 @@ workspace "Name" "Description" {
                     tags "endpoint"
                 }
             }
-
             mailService = container "Mail Service" {
                 tags "mailService"
                 camelSMTP = component "Camel SMTP" {
@@ -51,15 +60,21 @@ workspace "Name" "Description" {
                     tags "camelRest"
                 }
             }
-
+            reservationService = container "Reservation Service" {
+                tags "reservationService"
+                restComponent = component "API-Service" {
+                    tags "uiComponent"
+                    description "REST"
+                }
+            }
         }
-
         u -> pda.fe "Uses"
         pda.fe -> pda.pe "interacts with"
 
         pda.pe -> pda.qrLabelCodeService "invokes"
         pda.pe -> pda.inventoryItemService "invokes"
         pda.pe -> pda.mailService "invokes"
+        pda.pe -> pda.reservationService "invokes"
     }
 
 
@@ -67,36 +82,56 @@ workspace "Name" "Description" {
     views {
         systemContext pda "Overview" {
             include *
-            autolayout lr
+            title "[System Context] Overview" 
+            autolayout tb
         }
 
         container pda "Services" {
             include *
-            autolayout lr
+            title "[Container] Services" 
+            description ""
+            autolayout tb
         }
 
         component pda.fe "Components-of-Frontend" {
             include *
-            autolayout lr
+            title "[Component] Frontend" 
+            description ""
+            autoLayout tb
         }
 
         component pda.qrLabelCodeService "Components-of-qrLabelCodeService" {
             include *
-            autolayout lr
+            title "[Component] QR-Code Label Service" 
+            description ""
+            autolayout tb
         }
 
         component pda.inventoryItemService "Components-of-inventoryItemService" {
             include *
-            autolayout lr
+            title "[Component] Inventory Item Service" 
+            description ""
+            autolayout tb
         }
 
         component pda.pe "Components-of-processEngine" {
             include *
-            autolayout lr
+            title "[Component] Process Engine" 
+            description ""
+            autolayout tb
         }
 
         component pda.mailService "Components-of-mailService" {
             include *
+            title "[Component] Mail Service" 
+            description ""
+            autolayout tb
+        }
+
+        component pda.reservationService "Components-of-reservationService" {
+            include *
+            title "[Component] Reservation Service" 
+            description ""
             autolayout lr
         }
 
