@@ -43,7 +43,7 @@ public class MailRoute extends RouteBuilder {
                 .to("smtp://" + smtpHost + ":" + smtpPort)
                 .process(
                         exchange -> exchange.getIn().setBody(
-                                new GenericResponse("Mail sent successfully")
+                                new GenericResponse("Collection reminder sent successfully")
                         )
                 )
                 .marshal().json();
@@ -52,6 +52,13 @@ public class MailRoute extends RouteBuilder {
                 .routeId("sendReturnMail-Route")
                 .unmarshal().json(MailDTO.class)
                 .process(returnMailProcessor)
-                .to("smtp://" + smtpHost + ":" + smtpPort);
+                .to("smtp://" + smtpHost + ":" + smtpPort)
+                .process(
+                        exchange -> exchange.getIn().setBody(
+                                new GenericResponse("Return reminder sent successfully")
+                        )
+                )
+                .marshal().json();
+
     }
 }
