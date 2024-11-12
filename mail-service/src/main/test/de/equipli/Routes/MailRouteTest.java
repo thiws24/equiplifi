@@ -78,7 +78,8 @@ public class MailRouteTest extends CamelQuarkusTestSupport {
         expectedhtmlTemplate = expectedhtmlTemplate.replace("{{collectionDate}}", mailDTO.getCollectionDate());
         expectedhtmlTemplate = expectedhtmlTemplate.replace("{{returnDate}}", mailDTO.getReturnDate());
         expectedhtmlTemplate = expectedhtmlTemplate.replace("{{receiver}}", mailDTO.getTo());
-        
+
+
         return expectedhtmlTemplate;
         
     }
