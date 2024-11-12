@@ -52,6 +52,7 @@ jobs:
           ALL_CHANGED_AND_MODIFIED_FILES: ${{ steps.changes.outputs.all_changed_and_modified_files }}
         run: |
           echo ${{ steps.changes.outputs.all_changed_and_modified_files }}
+          echo steps.changes.outputs.all_changed_and_modified_files
           for file in ${{ steps.changes.outputs.all_changed_and_modified_files }}; do
             echo "$file was changed"
           done
