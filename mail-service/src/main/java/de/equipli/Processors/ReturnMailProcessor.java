@@ -16,8 +16,8 @@ public class ReturnMailProcessor implements Processor {
 
         // Replace placeholders
         htmlTemplate = htmlTemplate.replace("{{item}}", mailDTO.getItem());
-        htmlTemplate = htmlTemplate.replace("{{collectionDate}}", mailDTO.getCollectionDate());
         htmlTemplate = htmlTemplate.replace("{{returnDate}}", mailDTO.getReturnDate());
+        htmlTemplate = htmlTemplate.replace("{{returnLocation}}", mailDTO.getReturnLocation());
         htmlTemplate = htmlTemplate.replace("{{receiver}}", mailDTO.getTo());
 
         // Set headers and body for return email
