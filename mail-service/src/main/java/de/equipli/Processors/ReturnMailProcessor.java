@@ -5,6 +5,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 @ApplicationScoped
 public class ReturnMailProcessor implements Processor {
     @Override

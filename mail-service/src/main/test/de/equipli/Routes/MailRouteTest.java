@@ -37,7 +37,7 @@ public class MailRouteTest extends CamelQuarkusTestSupport {
     void testSendCollectionMailEndPoint() {
 
 
-        MailDTO mailDTO = new MailDTO("test@test.de", "item", "2021-01-01", "2021-01-02");
+        MailDTO mailDTO = new MailDTO("test@test.de", "item", "2021-01-01", "2021-01-02", "", "");
         
         given()
                 .contentType("application/json")
