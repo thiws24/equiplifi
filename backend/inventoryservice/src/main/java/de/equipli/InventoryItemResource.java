@@ -81,7 +81,6 @@ public class InventoryItemResource {
         if (existingItem == null) {
             throw new WebApplicationException("Inventory item with id '" + id + "' not found", 404);
         }
-        System.out.println("test");
         inventoryItemRepository.delete(existingItem);
     }
 }
