@@ -1,18 +1,14 @@
-package de.equipli.Routes;
+package de.equipli.routes;
 
-import de.equipli.DTOs.MailDTO;
+import de.equipli.dto.MailDTO;
 import io.quarkus.test.junit.QuarkusTest;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.AdviceWithRouteBuilder;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
-import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.quarkus.test.CamelQuarkusTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -46,7 +42,7 @@ public class MailRouteTest extends CamelQuarkusTestSupport {
                 .then()
                 .statusCode(200)
                 .assertThat()
-                .body(is("{\"result\":\"Mail sent successfully\"}"));
+                .body(is("{\"result\":\"Collection reminder sent successfully\"}"));
         
     }
     
@@ -83,7 +79,5 @@ public class MailRouteTest extends CamelQuarkusTestSupport {
         return expectedhtmlTemplate;
         
     }
-
-
 
 }

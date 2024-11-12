@@ -1,9 +1,9 @@
-package de.equipli.Routes;
+package de.equipli.routes;
 
-import de.equipli.DTOs.MailDTO;
+import de.equipli.dto.MailDTO;
 import de.equipli.GenericResponse;
-import de.equipli.Processors.CollectMailProcessor;
-import de.equipli.Processors.ReturnMailProcessor;
+import de.equipli.processors.CollectMailProcessor;
+import de.equipli.processors.ReturnMailProcessor;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.apache.camel.builder.RouteBuilder;
