@@ -67,6 +67,12 @@ workspace "Name" "Description" {
                     description "REST"
                 }
             }
+            keycloak = container "Keycloak" {
+                tags "keycloak"
+                keycloak = component "Keycloak" {
+                    tags "keycloak"
+                }
+            }
         }
         u -> pda.fe "Uses"
         pda.fe -> pda.pe "interacts with"
@@ -75,9 +81,12 @@ workspace "Name" "Description" {
         pda.pe -> pda.inventoryItemService "invokes"
         pda.pe -> pda.mailService "invokes"
         pda.pe -> pda.reservationService "invokes"
+
+        pda.fe -> pda.keycloak "interacts"
+        pda.pe -> pda.keycloak "interacts"
+
+        pda.keycloak -> u "authenticates"
     }
-
-
 
     views {
         systemContext pda "Overview" {
