@@ -40,11 +40,20 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+
+      - name: Check for changes in the service
+        id: changes
+        uses: tj-actions/changed-files@v45
+        with:
+          files: ${{ matrix.service }}/**
+
       - name: Build the Maven artifact
+        if: steps.changes.outputs.any_changed == 'true'
         working-directory: ${{ matrix.service }}/
         run: ./mvnw package -Pprod -DskipTests
 
       - name: Build and push
+        if: steps.changes.outputs.any_changed == 'true'
         uses: docker/build-push-action@v6
         with:
           context: ${{ matrix.service }}/
@@ -54,6 +63,7 @@ jobs:
           tags: ghcr.io/thiws24/${{ matrix.service }}:latest
 
       - name: Call a webhook for Portainer
+        if: steps.changes.outputs.any_changed == 'true'
         uses: distributhor/workflow-webhook@v3
         with:
           webhook_type: 'json'
