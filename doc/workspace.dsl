@@ -60,20 +60,26 @@ workspace "Name" "Description" {
                     tags "camelRest"
                 }
             }
-            reservationService = container "Reservation Service" {
-                tags "reservationService"
-                restComponent = component "API-Service" {
-                    tags "uiComponent"
-                    description "REST"
-                }
-            }
             keycloak = container "Keycloak" {
                 tags "keycloak"
                 keycloak = component "Keycloak" {
                     tags "keycloak"
                 }
             }
+            reservationService = container "Reservation Service" {
+                tags "reservationService"
+                endpoint = component "Endpoint (REST)" {
+                    tags "endpoint"
+                }
+                modelLayer = component "Model Layer" {
+                    tags "modelLayer"
+                }
+                repositoryService = component "Repository (Service Layer)" {
+                    tags "repositoryService"
+                }
+            }
         }
+
         u -> pda.fe "Uses"
         pda.fe -> pda.pe "interacts with"
 
@@ -141,6 +147,11 @@ workspace "Name" "Description" {
             include *
             title "[Component] Reservation Service" 
             description ""
+            autolayout lr
+        }
+
+        component pda.keycloak "Components-of-keycloak" {
+            include *
             autolayout lr
         }
 
