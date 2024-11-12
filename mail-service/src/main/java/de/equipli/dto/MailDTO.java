@@ -1,4 +1,4 @@
-package de.equipli.DTOs;
+package de.equipli.dto;
 
 
 public class MailDTO {
