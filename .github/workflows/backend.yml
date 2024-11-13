@@ -51,6 +51,7 @@ jobs:
           files: ${{ matrix.service }}/**
 
       - name: Set execute permission for mvnw
+        if: steps.changes.outputs.any_modified == 'true'
         working-directory: backend/${{ matrix.service }}/
         run: chmod +x ./mvnw
 

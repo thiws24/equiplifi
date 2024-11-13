@@ -50,3 +50,5 @@ public class InventoryItem extends PanacheEntity {
         this.urn = urn;
     }
 }
+
+//test
