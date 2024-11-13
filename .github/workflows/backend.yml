@@ -1,7 +1,7 @@
 name: backend
 
 on:
-  pull_request:
+  push:
     branches: [ "main" ]
 
   workflow_dispatch:
@@ -10,12 +10,16 @@ jobs:
   build:
     strategy:
       matrix:
-        service: [ inventoryservice, qrservice ]
+        service: [ inventoryservice, qrservice, reservationservice ]
         include:
           - service: inventoryservice
             webhook_var: PORTAINER_II_WEBHOOK_URL
           - service: qrservice
             webhook_var: PORTAINER_II_WEBHOOK_URL
+          - service: reservationservice
+            webhook_var: PORTAINER_II_WEBHOOK_URL
+          #- service: mailservice
+          #  webhook_var: PORTAINER_MAILSERVICE_WEBHOOK_URL
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
