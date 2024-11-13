@@ -1,7 +1,7 @@
-name: CI-backend
+name: backend
 
 on:
-  pull_request:
+  push:
     branches: [ "main" ]
 
   workflow_dispatch:
@@ -10,12 +10,16 @@ jobs:
   build:
     strategy:
       matrix:
-        service: [ iiservice, qr_service ]
+        service: [ inventoryservice, qrservice, reservationservice ]
         include:
-          - service: iiservice
-            webhook_var: PORTAINER_II_WEBHOOK_URL
-          - service: qr_service
-            webhook_var: PORTAINER_QR_WEBHOOK_URL
+          - service: inventoryservice
+            webhook_var: PORTAINER_INVENTORYSERVICE_WEBHOOK_URL
+          - service: qrservice
+            webhook_var: PORTAINER_QRSERVICE_WEBHOOK_URL
+          - service: reservationservice
+            webhook_var: PORTAINER_RESERVATIONSERVICE_WEBHOOK_URL
+          #- service: mailservice
+          #  webhook_var: PORTAINER_MAILSERVICE_WEBHOOK_URL
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -40,30 +44,24 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-
-      - name: Check for changes in the service
-        id: changes
-        uses: tj-actions/changed-files@v45
-        with:
-          files: ${{ matrix.service }}/**
+      - name: Set execute permission for mvnw
+        working-directory: backend/${{ matrix.service }}/
+        run: chmod +x ./mvnw
 
       - name: Build the Maven artifact
-        if: steps.changes.outputs.any_modified == 'true'
-        working-directory: ${{ matrix.service }}/
+        working-directory: backend/${{ matrix.service }}/
         run: ./mvnw package -Pprod -DskipTests
 
       - name: Build and push
-        if: steps.changes.outputs.any_modified == 'true'
         uses: docker/build-push-action@v6
         with:
-          context: ${{ matrix.service }}/
-          file: ${{ matrix.service }}/src/main/docker/Dockerfile.jvm
+          context: backend/${{ matrix.service }}/
+          file: backend/${{ matrix.service }}/src/main/docker/Dockerfile.jvm
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/thiws24/${{ matrix.service }}:latest
 
       - name: Call a webhook for Portainer
-        if: steps.changes.outputs.any_modified == 'true'
         uses: distributhor/workflow-webhook@v3
         with:
           webhook_type: 'json'
