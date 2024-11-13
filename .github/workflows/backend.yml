@@ -45,6 +45,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set execute permission for mvnw
+        working-directory: backend/${{ matrix.service }}/
         run: chmod +x ./mvnw
 
       - name: Build the Maven artifact
