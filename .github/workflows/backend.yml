@@ -50,15 +50,13 @@ jobs:
         with:
           files: backend/${{ matrix.service }}/**
 
-      - name: List all changed files
-        env:
-          ALL_CHANGED_AND_MODIFIED_FILES: ${{ steps.changes.outputs.all_changed_and_modified_files }}
-        run: |
-          echo ${{ steps.changes.outputs.all_changed_and_modified_files }}
-          echo ${{ steps.changes.outputs.any_changed }}
-          for file in ${{ steps.changes.outputs.all_changed_and_modified_files }}; do
-            echo "$file was changed"
-          done
+    #for Debugging of changed files
+      #- name: List all changed files
+      #  run: |
+      #    echo ${{ steps.changes.outputs.any_changed }}
+      #    for file in ${{ steps.changes.outputs.all_changed_and_modified_files }}; do
+      #      echo "$file was changed"
+      #    done
 
       - name: Set execute permission for mvnw
         if: steps.changes.outputs.any_modified == 'true'

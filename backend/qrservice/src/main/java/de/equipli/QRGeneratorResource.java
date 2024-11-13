@@ -16,7 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-//test1
+
 @Path("/qr")
 public class QRGeneratorResource {
 
