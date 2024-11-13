@@ -22,6 +22,7 @@
                         <directory>backend/qrservice/src/main/java</directory>
                         <directory>backend/reservationservice/src/main/java</directory>
                     </directories>
+                    <encoding>UTF-8</encoding> <!-- Encoding für die Formatierung angeben -->
                 </configuration>
                 <executions>
                     <execution>
