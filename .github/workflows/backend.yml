@@ -13,9 +13,9 @@ jobs:
         service: [ inventoryservice, qrservice ]
         include:
           - service: inventoryservice
-            webhook_var: PORTAINER_INVENTORYSERVICE_WEBHOOK_URL
+            webhook_var: PORTAINER_II_WEBHOOK_URL
           - service: qrservice
-            webhook_var: PORTAINER_QRSERVICE_WEBHOOK_URL
+            webhook_var: PORTAINER_II_WEBHOOK_URL
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
