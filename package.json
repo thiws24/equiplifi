@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "eslint . --fix",
     "format": "prettier --write .",
-    "test": "npm run lint && npm run format && echo \"No tests specified\" && exit 1"
+    "test": "npm run lint && npm run format && echo \"linting + formatting\" "
   },
   "repository": {
     "type": "git",
