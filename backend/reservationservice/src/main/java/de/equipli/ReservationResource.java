@@ -10,9 +10,9 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 
-@Path("/reservations")
+@Path("/api/reservations")
 public class ReservationResource {
-
+    private static AtomicLong nextReservationNumber = new AtomicLong(1);
     @Inject
     ReservationRepository reservationRepository;
 
@@ -70,6 +70,7 @@ public class ReservationResource {
             }
         }
 
+        reservation.setReservationNumber(nextReservationNumber.getAndIncrement());
         reservationRepository.persist(reservation);
         return Response.status(Response.Status.CREATED).entity(reservation).build();
     }
