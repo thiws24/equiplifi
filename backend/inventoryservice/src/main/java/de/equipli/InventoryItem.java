@@ -51,4 +51,4 @@ public class InventoryItem extends PanacheEntity {
     }
 }
 
-//test2
+//test22

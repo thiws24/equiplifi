@@ -48,7 +48,7 @@ jobs:
         id: changes
         uses: tj-actions/changed-files@v45
         with:
-          files: ${{ matrix.service }}/**
+          files: backend/${{ matrix.service }}/**
 
       - name: List all changed files
         env:
