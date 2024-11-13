@@ -7,11 +7,7 @@ workspace "Name" "Description" {
         pda = softwareSystem "PDA" {
             fe = container "Frontend" ""{
                 tags "frontend"
-                authComponent = component "Authentication Service" {
-                    tags "authComponent" 
-                    description "Keycloak"
-                }
-                uiComponent = component "Tailwind UI Component" {
+                uiComponent = component "UI Component" {
                     tags "uiComponent"
                     description "Tailwind + shadcn"
                 }
@@ -19,27 +15,28 @@ workspace "Name" "Description" {
                     tags "routingComponent"
                     description "React Router"
                 }
-                restComponent = component "API-Service" {
+                restComponent = component "Endpoint" {
                     tags "uiComponent"
                     description "REST"
                 }
             }
-            pe = container "Process Engine" {
+            pe = container "Process Engine" "Spiff Workflow" {
                 tags "processEngine"
                 bpmn = component "BPMN" {
                     tags "BPMN"
                 }
             }
-            qrLabelCodeService = container "qrLabelCodeService" {
+            qrLabelCodeService = container "qr-service" {
                 tags "qrLabelCode"
-                endpoint_QR = component "Endpoint (Rest)" {
+                endpoint_QR = component "Endpoint" {
                     tags "endpoint_QR"
+                    description "REST"
                 }
                 generator = component "QR-Code Generator" {
                     tags "generator"
                 }
             }
-            inventoryItemService = container "inventoryItemService" {
+            inventoryItemService = container "inventory-item-service" {
                 tags "inventoryItem"
                 modelLayer = component "Model Layer" {
                     tags "modelLayer"
@@ -47,11 +44,12 @@ workspace "Name" "Description" {
                 repositoryService = component "Repository (Service Layer)" {
                     tags "repositoryService"
                 }
-                endpoint = component "Endpoint (REST)" {
+                endpoint = component "Endpoint" {
                     tags "endpoint"
+                    description "REST"
                 }
             }
-            mailService = container "Mail Service" {
+            mailService = container "mail-service" {
                 tags "mailService"
                 camelSMTP = component "Camel SMTP" {
                     tags "camelSMTP"
@@ -66,10 +64,11 @@ workspace "Name" "Description" {
                     tags "keycloak"
                 }
             }
-            reservationService = container "Reservation Service" {
+            reservationService = container "reservation-service" {
                 tags "reservationService"
-                endpoint = component "Endpoint (REST)" {
+                endpoint = component "Endpoint" {
                     tags "endpoint"
+                    description "REST"
                 }
                 modelLayer = component "Model Layer" {
                     tags "modelLayer"
@@ -81,15 +80,15 @@ workspace "Name" "Description" {
         }
 
         u -> pda.fe "Uses"
-        pda.fe -> pda.pe "interacts with"
+
+        pda.fe -> pda.pe "sends request to"
+        pda.fe -> pda.keycloak "validates session with"
 
         pda.pe -> pda.qrLabelCodeService "invokes"
         pda.pe -> pda.inventoryItemService "invokes"
         pda.pe -> pda.mailService "invokes"
         pda.pe -> pda.reservationService "invokes"
-
-        pda.fe -> pda.keycloak "interacts"
-        pda.pe -> pda.keycloak "interacts"
+        pda.pe -> pda.keycloak "verifies token"
 
         pda.keycloak -> u "authenticates"
     }
@@ -105,7 +104,7 @@ workspace "Name" "Description" {
             include *
             title "[Container] Services" 
             description ""
-            autolayout tb
+            autolayout bt
         }
 
         component pda.fe "Components-of-Frontend" {
@@ -147,12 +146,14 @@ workspace "Name" "Description" {
             include *
             title "[Component] Reservation Service" 
             description ""
-            autolayout lr
+            autolayout tb
         }
 
         component pda.keycloak "Components-of-keycloak" {
             include *
-            autolayout lr
+            title "[Component] Keycloak" 
+            description ""
+            autolayout tb
         }
 
         styles {
@@ -172,8 +173,8 @@ workspace "Name" "Description" {
                 background #1289C9
             }
             element "Person" {
+                shape Person
                 background #43B794
-                # background #135801
             }
             element "Database" {
                 shape cylinder
