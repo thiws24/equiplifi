@@ -11,7 +11,7 @@ export const ItemCard: React.FC<InventoryItemProps> = ({ id, name, description, 
           <CardDescription className='item-card-description'>{description}</CardDescription>
         </CardHeader>
         <CardContent>
-          <img src={`data:image/jpeg;base64,${photo}`} alt={name} className='w-full'/>
+          <img src={photo} alt={name} className='w-full'/>
         </CardContent>
       </Card>
     </a>
