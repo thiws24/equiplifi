@@ -147,6 +147,20 @@ DELETE /inventoryitems/{id}
 
 ---
 
+# Deployment
+
+## Umgebungsvariablen
+
+Um den InventoryService mit einer Datenbank zu verbinden, müssen folgende Umgebungsvariablen gesetzt werden:
+
+| Variable                     | Beschreibung                   |
+|:-----------------------------|:-------------------------------|
+| QUARKUS_DATASOURCE_JDBC_URL  | JDBC-URL der Datenbank         |    
+| QUARKUS_DATASOURCE_USERNAME  | Benutzername für die Datenbank |      
+| QUARKUS_DATASOURCE_PASSWORD  | Passwort für die Datenbank     |
+
+---
+
 # inventoryservice
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
