@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://i.imgur.com/YXkoQu3.png" alt="equipli" style="max-width: 400px; width: 100%;">
+  <img src="https://i.imgur.com/YXkoQu3.png" alt="equipli" style="width: 400px;">
 </p>
 
 # equipli
