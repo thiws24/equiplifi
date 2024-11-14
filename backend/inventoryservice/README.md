@@ -9,7 +9,7 @@ Ermöglicht das Erstellen, Abrufen, Aktualisieren und Löschen von InventoryItem
 Fügt ein neues InventoryItem hinzu.
 
 ```http
-  POST /inventoryitems/{id}
+POST /inventoryitems/{id}
 ```
 
 #### Request Body
@@ -43,7 +43,7 @@ Fügt ein neues InventoryItem hinzu.
 ### Alle InventoryItems abrufen
 
 ```http
-  GET /inventoryitems
+GET /inventoryitems
 ```
 
 #### Response
@@ -76,7 +76,7 @@ Fügt ein neues InventoryItem hinzu.
 Ruft ein spezifisches InventoryItem anhand seiner ID ab.
 
 ```http
-  GET /inventoryitems/{id}
+GET /inventoryitems/{id}
 ```
 
 #### Response
@@ -101,7 +101,7 @@ Ruft ein spezifisches InventoryItem anhand seiner ID ab.
 Aktualisiert ein bestehendes InventoryItem anhand seiner ID.
 
 ```http
-  PUT /inventoryitems/{id}
+PUT /inventoryitems/{id}
 ```
 
 #### Request Body
@@ -137,7 +137,7 @@ Aktualisiert ein bestehendes InventoryItem anhand seiner ID.
 Löscht ein spezifisches InventoryItem anhand seiner ID.
 
 ```http
-  DELETE /inventoryitems/{id}
+DELETE /inventoryitems/{id}
 ```
 
 #### Response
