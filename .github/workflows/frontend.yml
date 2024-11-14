@@ -1,4 +1,4 @@
-name: frontend-image
+name: frontend
 
 on:
   push:
@@ -29,6 +29,10 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: frontend/
+          build-args: |
+            INVENTORY_HOST=https://inventory.equipli.de
+            KEYCLOAK_HOST=https://id.equipli.de
+            SPIFF_HOST=https://spiff.equipli.de
           push: true
           tags: ghcr.io/thiws24/frontend:latest
 

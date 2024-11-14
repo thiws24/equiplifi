@@ -1,14 +1,17 @@
 # Use the official Node.js image as the base image.
 FROM node:20 AS build
 
-# TODO: Remove and set in github workflow
 # Set args
 ARG NODE_ENV=production
-ARG REACT_APP_II_SERVICE_HOST="http://ii.equipli.de"
+ARG INVENTORY_HOST
+ARG KEYCLOAK_HOST
+ARG SPIFF_HOST
 
 # Env variables
 ENV NODE_ENV=$NODE_ENV
-ENV REACT_APP_II_SERVICE_HOST=$REACT_APP_II_SERVICE_HOST
+ENV REACT_APP_II_SERVICE_HOST=$INVENTORY_HOST
+ENV REACT_APP_KEYCLOAK=$KEYCLOAK_HOST
+ENV REACT_APP_SPIFF=$SPIFF_HOST
 
 # Set the working directory.
 WORKDIR /app
