@@ -35,6 +35,8 @@ GET  /reservations
 ]
 ```
 
+---
+
 ### Reservierung hinzufügen
 
 Erstellt eine neue Reservierung für ein InventoryItem.
