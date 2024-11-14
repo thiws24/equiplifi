@@ -24,4 +24,3 @@ POST /qr
 
     Status 200 (OK): PDF-Datei mit dem generierten QR-Code wird als binärer Datenstrom (application/octet-stream) zurückgegeben.
     Status 500 (Internal Server Error): Fehler bei der Generierung des QR-Codes oder PDF-Dokuments.
-```
