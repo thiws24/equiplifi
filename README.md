@@ -21,6 +21,6 @@
 </a>
 
 ## 🔗 Links
-[![equipli.de](https://img.shields.io/badge/equipli.de-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://equipli.de/)
+[![equipli.de](https://img.shields.io/badge/equipli.de-f27428?style=for-the-badge&logo=ko-fi&logoColor=fff)](https://equipli.de/)
 
 
