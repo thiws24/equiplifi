@@ -9,7 +9,7 @@ Ermöglicht das Erstellen, Abrufen, Aktualisieren und Löschen von InventoryItem
 Fügt ein neues InventoryItem hinzu.
 
 ```http
-POST /inventoryitems/{id}
+POST /inventoryitems
 ```
 
 #### Request Body
