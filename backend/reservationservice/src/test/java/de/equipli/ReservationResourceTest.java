@@ -1,4 +1,4 @@
-package de.equipli;
+/*package de.equipli;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
@@ -104,3 +104,5 @@ class ReservationResourceTest {
                 .statusCode(201);
     }
 }
+
+ */

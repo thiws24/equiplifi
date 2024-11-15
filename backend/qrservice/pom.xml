@@ -70,7 +70,10 @@
             <artifactId>qrgen</artifactId>
             <version>1.4</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jacoco</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
