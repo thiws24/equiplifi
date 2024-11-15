@@ -8,13 +8,13 @@
 
 
 ## InventoryService
-Der InventoryService ermöglicht das Erstellen, Abrufen, Aktualisieren und Löschen von InventoryItems.
+Der InventoryService ermöglicht das Erstellen, Abrufen, Aktualisieren und Löschen von Inventargegenständen.
 
 [👉 Detaillierte Dokumentation des InventoryService](./inventoryservice/README.md)
 
 
 ## QRService
-Der QRService bietet eine einfache Möglichkeit, QR-Codes aus einer gegebenen URN zu generieren und als PDF-Datei zum Download bereitzustellen.
+Der QRService kann QR-Codes aus einer gegebenen URN generieren und stellt diese als PDF-Datei zum Download bereit.
 
 [👉 Detaillierte Dokumentation des QRService](./qrservice/README.md)
 
