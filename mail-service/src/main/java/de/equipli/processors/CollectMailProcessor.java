@@ -1,7 +1,10 @@
 package de.equipli.processors;
 
 import de.equipli.dto.MailDTO;
+import io.quarkus.qute.Template;
+import io.quarkus.qute.TemplateInstance;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
@@ -10,20 +13,25 @@ import java.nio.file.Paths;
 
 @ApplicationScoped
 public class CollectMailProcessor implements Processor {
+
+
+    @Inject
+    Template pickupReminder;
+
     @Override
     public void process(Exchange exchange) throws Exception {
         MailDTO mailDTO = exchange.getIn().getBody(MailDTO.class);
-        
-        // Parse file 
-        String htmlTemplate = new String(Files.readAllBytes(Paths.get("src/main/resources/mailTemplates/PickupReminder.html")));        
-        
-        // replace placeholders with actual values
-        htmlTemplate = htmlTemplate.replace("{{item}}", mailDTO.getItem());
-        htmlTemplate = htmlTemplate.replace("{{collectionDate}}", mailDTO.getCollectionDate());
-        htmlTemplate = htmlTemplate.replace("{{returnDate}}", mailDTO.getReturnDate());
-        htmlTemplate = htmlTemplate.replace("{{pickupLocation}}", mailDTO.getPickupLocation());
-        htmlTemplate = htmlTemplate.replace("{{receiver}}", mailDTO.getTo());
-        
+
+        // Render the template with Qute
+        TemplateInstance templateInstance = pickupReminder
+                .data("item", mailDTO.getItem())
+                .data("collectionDate", mailDTO.getCollectionDate())
+                .data("returnDate", mailDTO.getReturnDate())
+                .data("pickupLocation", mailDTO.getPickupLocation())
+                .data("receiver", mailDTO.getTo());
+
+        String htmlTemplate = templateInstance.render();
+
         // create mail
         exchange.getIn().setHeader("Subject", "Abholerinnerung | Equipli");
         exchange.getIn().setHeader("To", mailDTO.getTo());
