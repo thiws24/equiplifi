@@ -33,7 +33,7 @@ public class ReturnMailProcessor implements Processor {
         // Set headers and body for return email
         exchange.getIn().setHeader("Subject", "Rückgabeerinnerung | Equipli");
         exchange.getIn().setHeader("To", mailDTO.getTo());
-        exchange.getIn().setHeader("From", "info@equipli.com");
+        exchange.getIn().setHeader("From", "info@equipli.de");
         exchange.getIn().setHeader("Content-Type", "text/html");
         exchange.getIn().setBody(htmlTemplate);
 

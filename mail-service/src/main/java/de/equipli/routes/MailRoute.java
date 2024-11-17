@@ -24,6 +24,12 @@ public class MailRoute extends RouteBuilder {
     @ConfigProperty(name = "CONFIG.SMTP.PORT", defaultValue = "2525")
     String smtpPort;
 
+    @ConfigProperty(name = "CONFIG.SMTP.USERNAME", defaultValue = "user")
+    String username;
+
+    @ConfigProperty(name = "CONFIG.SMTP.PASSWORD", defaultValue = "password")
+    String password;
+
     @Override
     public void configure() throws Exception {
         rest()
@@ -40,7 +46,9 @@ public class MailRoute extends RouteBuilder {
                 .routeId("sendCollectionMail-Route")
                 .unmarshal().json(MailDTO.class)
                 .process(collectMailProcessor)
-                .to("smtp://" + smtpHost + ":" + smtpPort)
+                // For local testing, use smtp:// instead of smtps: and without credentials
+                //.to("smtp://" + smtpHost + ":" + smtpPort)
+                .to("smtps://" + smtpHost + ":" + smtpPort+ "?username="+ username +"&password="+ password)
                 .process(
                         exchange -> exchange.getIn().setBody(
                                 new GenericResponse("Collection reminder sent successfully")
@@ -52,7 +60,10 @@ public class MailRoute extends RouteBuilder {
                 .routeId("sendReturnMail-Route")
                 .unmarshal().json(MailDTO.class)
                 .process(returnMailProcessor)
-                .to("smtp://" + smtpHost + ":" + smtpPort)
+                // For local testing, use smtp:// instead of smtps: and without credentials
+                //.to("smtp://" + smtpHost + ":" + smtpPort)
+                .to("smtps://" + smtpHost + ":" + smtpPort+ "?username="+ username +"&password="+ password)
+
                 .process(
                         exchange -> exchange.getIn().setBody(
                                 new GenericResponse("Return reminder sent successfully")

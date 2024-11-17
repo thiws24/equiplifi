@@ -35,7 +35,7 @@ public class CollectMailProcessor implements Processor {
         // create mail
         exchange.getIn().setHeader("Subject", "Abholerinnerung | Equipli");
         exchange.getIn().setHeader("To", mailDTO.getTo());
-        exchange.getIn().setHeader("From", "info@equipli.com");
+        exchange.getIn().setHeader("From", "info@equipli.de");
         exchange.getIn().setHeader("Content-Type", "text/html");
         exchange.getIn().setBody(htmlTemplate);
 
