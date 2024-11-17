@@ -1,4 +1,4 @@
-name: CI-mail-service
+name: cimailservice
 
 on:
   pull_request:
@@ -43,10 +43,5 @@ jobs:
           file: mail-service/src/main/docker/Dockerfile.jvm
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/thiws24/mail-service:latest
+          tags: ghcr.io/thiws24/mailservice:latest
 
-      - name: Call a webhook for Portainer
-        uses: distributhor/workflow-webhook@v3
-        env:
-          webhook_type: 'json'
-          webhook_url: ${{ secrets.PORTAINER_II_WEBHOOK_URL }}
