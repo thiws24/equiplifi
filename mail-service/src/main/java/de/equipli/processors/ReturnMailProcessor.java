@@ -1,7 +1,10 @@
 package de.equipli.processors;
 
 import de.equipli.dto.MailDTO;
+import io.quarkus.qute.Template;
+import io.quarkus.qute.TemplateInstance;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
@@ -10,18 +13,22 @@ import java.nio.file.Paths;
 
 @ApplicationScoped
 public class ReturnMailProcessor implements Processor {
+
+    @Inject
+    Template returnReminder;
+
     @Override
     public void process(Exchange exchange) throws Exception {
         MailDTO mailDTO = exchange.getIn().getBody(MailDTO.class);
 
-        // Load HTML template for return reminder
-        String htmlTemplate = new String(Files.readAllBytes(Paths.get("src/main/resources/mailTemplates/ReturnReminder.html")));
+        // Render the template with Qute
+        TemplateInstance templateInstance = returnReminder
+                .data("item", mailDTO.getItem())
+                .data("returnDate", mailDTO.getReturnDate())
+                .data("returnLocation", mailDTO.getReturnLocation())
+                .data("receiver", mailDTO.getTo());
 
-        // Replace placeholders
-        htmlTemplate = htmlTemplate.replace("{{item}}", mailDTO.getItem());
-        htmlTemplate = htmlTemplate.replace("{{returnDate}}", mailDTO.getReturnDate());
-        htmlTemplate = htmlTemplate.replace("{{returnLocation}}", mailDTO.getReturnLocation());
-        htmlTemplate = htmlTemplate.replace("{{receiver}}", mailDTO.getTo());
+        String htmlTemplate = templateInstance.render();
 
         // Set headers and body for return email
         exchange.getIn().setHeader("Subject", "Rückgabeerinnerung | Equipli");
