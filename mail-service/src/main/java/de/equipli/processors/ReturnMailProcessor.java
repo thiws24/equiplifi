@@ -21,6 +21,8 @@ public class ReturnMailProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         MailDTO mailDTO = exchange.getIn().getBody(MailDTO.class);
 
+        exchange.setProperty("to", mailDTO.getTo());
+
         // Render the template with Qute
         TemplateInstance templateInstance = returnReminder
                 .data("item", mailDTO.getItem())
