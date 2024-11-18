@@ -1,4 +1,46 @@
-# mail-service
+# Mail Service 📧 API Documentation
+
+## Endpoints
+
+### 1. Send Collection Mail
+
+**Endpoint:** `/sendCollectionMail`
+
+**Method:** `POST`
+
+**Request Body:**
+
+```json
+{
+  "to": "example@gmail.com",
+  "item": "Volleyball",
+  "collectionDate": "24.12.2024",
+  "returnDate": "24.01.2024",
+  "pickupLocation": "Hinter Vereinsheim in einer dunklen Ecke",
+  "returnLocation": "Hinter Vereinsheim in einer dunklen Ecke"
+}
+```
+
+### 2. Send Return Mail
+
+**Endpoint:** `/sendReturnMail`
+
+**Method:** `POST`
+
+**Request Body:**
+
+```json
+{
+  "to": "example@gmail.com",
+  "item": "Volleyball",
+  "collectionDate": "24.12.2024",
+  "returnDate": "24.01.2024",
+  "pickupLocation": "Hinter Vereinsheim in einer dunklen Ecke",
+  "returnLocation": "Hinter Vereinsheim in einer dunklen Ecke"
+}
+```
+
+# Quarkus specific Docs
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
@@ -53,12 +95,4 @@ You can then execute your native executable with: `./target/mail-service-1.0.0-S
 
 If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
 
-## Related Guides
 
-- Camel OpenAPI Java ([guide](https://camel.apache.org/camel-quarkus/latest/reference/extensions/openapi-java.html)): Expose OpenAPI resources defined in Camel REST DSL
-- Camel Core ([guide](https://camel.apache.org/camel-quarkus/latest/reference/extensions/core.html)): Camel core functionality and basic Camel languages: Constant, ExchangeProperty, Header, Ref, Simple and Tokenize
-- SmallRye OpenAPI ([guide](https://quarkus.io/guides/openapi-swaggerui)): Document your REST APIs with OpenAPI - comes with Swagger UI
-- Camel Jackson ([guide](https://camel.apache.org/camel-quarkus/latest/reference/extensions/jackson.html)): Marshal POJOs to JSON and back using Jackson
-- Camel REST OpenApi ([guide](https://camel.apache.org/camel-quarkus/latest/reference/extensions/rest-openapi.html)): To call REST services using OpenAPI specification as contract
-- Camel Mail ([guide](https://camel.apache.org/camel-quarkus/latest/reference/extensions/mail.html)): Send and receive emails using imap, pop3 and smtp protocols
-- Camel Rest ([guide](https://camel.apache.org/camel-quarkus/latest/reference/extensions/rest.html)): Expose REST services and their OpenAPI Specification or call external REST services
