@@ -1,33 +1,41 @@
 package de.equipli.dto;
 
 
-public class MailDTO {
+public class CollectMailDto {
     
-    private String to;
+    private String receiverMail;
+    private String name;
     private String item;
     private String collectionDate;
     private String returnDate;
     private String pickupLocation;
-    private String returnLocation;
 
-    public MailDTO() {
-    }
-
-    public MailDTO(String to, String item, String collectionDate, String returnDate, String pickupLocation, String returnLocation) {
-        this.to = to;
+    public CollectMailDto(String receiverMail, String name, String item, String collectionDate, String returnDate, String pickupLocation) {
+        this.receiverMail = receiverMail;
+        this.name = name;
         this.item = item;
         this.collectionDate = collectionDate;
         this.returnDate = returnDate;
         this.pickupLocation = pickupLocation;
-        this.returnLocation = returnLocation;
     }
 
-    public String getTo() {
-        return to;
+    public CollectMailDto() {
     }
 
-    public void setTo(String to) {
-        this.to = to;
+    public String getReceiverMail() {
+        return receiverMail;
+    }
+
+    public void setReceiverMail(String receiverMail) {
+        this.receiverMail = receiverMail;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getItem() {
@@ -54,19 +62,11 @@ public class MailDTO {
         this.returnDate = returnDate;
     }
 
-
     public String getPickupLocation() {
         return pickupLocation;
     }
 
-    public void setPickupLocation(String pickupLocation) {this.pickupLocation = pickupLocation;
-    }
-
-    public String getReturnLocation() {
-        return returnLocation;
-    }
-
-    public void setReturnLocation(String returnLocation) {
-        this.returnLocation = returnLocation;
+    public void setPickupLocation(String pickupLocation) {
+        this.pickupLocation = pickupLocation;
     }
 }

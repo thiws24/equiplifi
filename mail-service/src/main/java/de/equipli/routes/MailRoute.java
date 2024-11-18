@@ -1,7 +1,8 @@
 package de.equipli.routes;
 
-import de.equipli.dto.MailDTO;
+import de.equipli.dto.CollectMailDto;
 import de.equipli.GenericResponse;
+import de.equipli.dto.ReturnMailDto;
 import de.equipli.processors.CollectMailProcessor;
 import de.equipli.processors.ReturnMailProcessor;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -18,39 +19,49 @@ public class MailRoute extends RouteBuilder {
     @Inject
     ReturnMailProcessor returnMailProcessor;
 
-    @ConfigProperty(name = "CONFIG.SMTP.HOST", defaultValue = "localhost")
+    @Inject
+    @ConfigProperty(name = "quarkus.profile")
+    String activeProfile;
+
+    @ConfigProperty(name = "smtp.config.host", defaultValue = "localhost")
     String smtpHost;
     
-    @ConfigProperty(name = "CONFIG.SMTP.PORT", defaultValue = "2525")
+    @ConfigProperty(name = "smtp.config.port", defaultValue = "2525")
     String smtpPort;
 
-    @ConfigProperty(name = "CONFIG.SMTP.USERNAME", defaultValue = "user")
+    @ConfigProperty(name = "smtp.config.username", defaultValue = "user")
     String username;
 
-    @ConfigProperty(name = "CONFIG.SMTP.PASSWORD", defaultValue = "password")
+    @ConfigProperty(name = "smtp.config.password", defaultValue = "password")
     String password;
 
     @Override
     public void configure() throws Exception {
         rest()
                 .post("sendCollectionMail")
-                .type(MailDTO.class)
+                .type(CollectMailDto.class)
                 .to("direct:sendCollectionMail")
 
                 .post("sendReturnMail")
-                .type(MailDTO.class)
+                .type(ReturnMailDto.class)
                 .to("direct:sendReturnMail");
 
 
         from("direct:sendCollectionMail")
                 .routeId("sendCollectionMail-Route")
-                .unmarshal().json(MailDTO.class)
+                .unmarshal().json(CollectMailDto.class)
                 .process(collectMailProcessor)
-                // For local testing, use smtp:// instead of smtps: and without credentials
-                //.to("smtp://" + smtpHost + ":" + smtpPort)
-                .to("smtps://" + smtpHost + ":" + smtpPort+ "?username="+ username +"&password="+ password)
+                .choice()
+                    .when(simple(String.valueOf("dev".equals(activeProfile))))
+                        .to("smtp://{{smtp.config.host}}:{{smtp.config.port}}")
+                    .otherwise()
+                        .to("smtps://{{smtp.config.host}}:{{smtp.config.port}}"
+                        + "?username={{smtp.config.username}}&password={{smtp.config.password}}")
+                .end()
+                // get to address from mailDTO in Property
+                .log("CollectionMail sent successfully to ${exchangeProperty.to}")
                 .process(
-                        exchange -> exchange.getIn().setBody(
+                        exchange -> exchange.getMessage().setBody(
                                 new GenericResponse("Collection reminder sent successfully")
                         )
                 )
@@ -58,12 +69,17 @@ public class MailRoute extends RouteBuilder {
 
         from("direct:sendReturnMail")
                 .routeId("sendReturnMail-Route")
-                .unmarshal().json(MailDTO.class)
+                .unmarshal().json(ReturnMailDto.class)
                 .process(returnMailProcessor)
-                // For local testing, use smtp:// instead of smtps: and without credentials
-                //.to("smtp://" + smtpHost + ":" + smtpPort)
-                .to("smtps://" + smtpHost + ":" + smtpPort+ "?username="+ username +"&password="+ password)
 
+                .choice()
+                    .when(simple(String.valueOf("dev".equals(activeProfile))))
+                        .to("smtp://{{smtp.config.host}}:{{smtp.config.port}}")
+                    .otherwise()
+                        .to("smtps://{{smtp.config.host}}:{{smtp.config.port}}"
+                        + "?username={{smtp.config.username}}&password={{smtp.config.password}}")
+                    .end()
+                .log("ReturnMail sent successfully to ${exchangeProperty.to}")
                 .process(
                         exchange -> exchange.getIn().setBody(
                                 new GenericResponse("Return reminder sent successfully")
