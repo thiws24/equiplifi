@@ -9,7 +9,7 @@ const colDefs: ColDef<InventoryItemProps, any>[] = [
   { field: "id" },
   { field: "name" },
   { field: "icon" },
-  { field: "photo" },
+  { field: "photoUrl" },
   { field: "urn" }
 ]
 
@@ -19,21 +19,21 @@ describe("InventoryTable Tests", () => {
       id: 1,
       name: "Magischer Schlüssel",
       icon: "🗝️",
-      photo: "",
+      photoUrl: "",
       urn: "QR-Code 001"
     },
     {
       id: 2,
       name: "Heiltrank",
       icon: "🧪",
-      photo: "",
+      photoUrl: "",
       urn: "QR-Code 002"
     },
     {
       id: 3,
       name: "Drachenfeuer",
       icon: "🔥",
-      photo: "",
+      photoUrl: "",
       urn: "QR-Code 003"
     },
   ]
@@ -52,6 +52,6 @@ describe("InventoryTable Tests", () => {
       return header.textContent
     })
 
-    expect(headers).toEqual(['Id', 'Name', 'Icon', 'Photo', 'Urn']);
+    expect(headers).toEqual(['Id', 'Name', 'Icon', 'Photo Url', 'Urn']);
   });
 })

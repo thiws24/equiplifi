@@ -2,7 +2,7 @@ import * as React from 'react';
 import { InventoryItemProps } from "../interfaces/InventoryItemProps";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 
-export const ItemCard: React.FC<InventoryItemProps> = ({ id, name, description, icon, photo, urn }) => {
+export const ItemCard: React.FC<InventoryItemProps> = ({ id, name, description, icon, photoUrl, urn }) => {
   return (
     <a href={`/inventory-item/${id}`} target="_self">
       <Card className='h-full bg-white text-customBlack'>
@@ -11,7 +11,7 @@ export const ItemCard: React.FC<InventoryItemProps> = ({ id, name, description, 
           <CardDescription className='item-card-description'>{description}</CardDescription>
         </CardHeader>
         <CardContent>
-          <img src={photo} alt={name} className='w-full'/>
+          <img src={photoUrl} alt={name} className='w-full'/>
         </CardContent>
       </Card>
     </a>

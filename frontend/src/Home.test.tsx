@@ -8,21 +8,21 @@ const mockData = [
     id: 1,
     name: "Magischer Schlüssel",
     icon: "🗝️",
-    photo: "",
+    photoUrl: "",
     urn: "QR-Code 001"
   },
   {
     id: 2,
     name: "Heiltrank",
     icon: "🧪",
-    photo: "",
+    photoUrl: "",
     urn: "QR-Code 002"
   },
   {
     id: 3,
     name: "Drachenfeuer",
     icon: "🔥",
-    photo: "",
+    photoUrl: "",
     urn: "QR-Code 003"
   },
 ]

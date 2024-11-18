@@ -1,33 +1,24 @@
 .qr-reader {
-    width: 430px;
-    height: 100vh;
-    margin: 0 auto;
-    position: relative;
+    @apply w-[430px] h-screen mx-auto relative;
 }
 
 .qr-reader video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    @apply w-full h-full object-cover;
 }
 
 .qr-reader .qr-box {
-    width: 100% !important;
+    @apply w-full;
     left: 0 !important;
 }
 
 .qr-reader .qr-frame {
-    position: absolute;
-    fill: none;
-    left: 50%;
-    top: 50%;
-    transform: translateX(-50%) translateY(-50%);
+    @apply absolute left-1/2 top-1/2 transform -translate-x-[calc(50%-1px)] -translate-y-1/2 ml-[10px];
 }
 
 
-/* Media Queries for mobile screens */
 @media (max-width: 426px) {
     .qr-reader {
-        width: 100%;
+        @apply w-full;
     }
 }
+

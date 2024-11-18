@@ -7,11 +7,11 @@ function Home() {
     const [inventoryItems, setInventoryItems] = React.useState<InventoryItemProps[]>([])
 
     const colDefs: ColDef<InventoryItemProps, any>[] = [
-        { field: "id", flex: 1, filter: 'agSetColumnFilter' },
-        { field: "name", flex: 1, filter: 'agSetColumnFilter' },
-        { field: "icon", flex: 1, filter: 'agSetColumnFilter' },
-        { field: "photo", flex: 1, cellRenderer: (params: any) => <img style={{ height: 40 }} src={params.data.photo} alt={params.data.description}/> },
-        { field: "urn", flex: 1, filter: 'agSetColumnFilter' }
+        { field: "id", headerName: "ID", flex: 1, minWidth: 150, filter: 'agSetColumnFilter' },
+        { field: "name", headerName: "Name", flex: 1, minWidth: 150, filter: 'agSetColumnFilter' },
+        { field: "icon", headerName: "ICON", flex: 1, minWidth: 100, filter: 'agSetColumnFilter' },
+        { field: "photoUrl", headerName: "Foto", flex: 1, minWidth: 150, cellRenderer: (params: any) => <img style={{ height: 40 }} src={params.data.photoUrl} alt={params.data.description}/> },
+        { field: "urn", headerName: "URN", flex: 1, minWidth: 150, filter: 'agSetColumnFilter' }
     ]
 
     const [loading, setLoading] = React.useState(true);
