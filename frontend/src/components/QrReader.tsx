@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import {useNavigate} from 'react-router-dom';
 
 // Styles
 import "./QrStyles.css";
@@ -15,19 +14,12 @@ const QrReader = () => {
     const qrBoxEl = useRef<HTMLDivElement>(null);
     const [qrOn, setQrOn] = useState<boolean>(true);
 
-    // Result
-    const [scannedResult, setScannedResult] = useState<string | undefined>("");
-
-    const navigate = useNavigate();
-
     // Success
     const onScanSuccess = (result: QrScanner.ScanResult) => {
-        // 🖨 Print the "result" to browser console.
-        console.log(result);
-        setScannedResult(result?.data);
-        if(result?.data) {
+        if (result?.data) {
             const id = result.data;
-            navigate(`/inventory-item/${id}/reservation`);
+            console.log(id)
+            window.open(`/inventory-item/${id}/reservation`, '_self')
         }
     };
 
@@ -53,8 +45,7 @@ const QrReader = () => {
             });
 
             // 🚀 Start QR Scanner
-            scanner?.current
-                ?.start()
+            scanner.current?.start()
                 .then(() => setQrOn(true))
                 .catch((err) => {
                     if (err) setQrOn(false);
@@ -90,12 +81,6 @@ const QrReader = () => {
                     className="qr-frame"
                 />
             </div>
-
-            {scannedResult && (
-                <p className="absolute top-0 left-0 z-50 text-customBeige">
-                    Scanned Result: {scannedResult}
-                </p>
-            )}
         </div>
     );
 };
