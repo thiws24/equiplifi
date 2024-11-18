@@ -7,3 +7,14 @@ services:
       - "2525:25"
     environment:
       - ServerOptions__DisableMessageSanitisation=true
+
+  mailservice:
+    image: ghcr.io/thiws24/mail-service:latest
+    ports:
+      - 8080:8080
+    environment:
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+

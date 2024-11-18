@@ -1,6 +1,6 @@
 package de.equipli.processors;
 
-import de.equipli.dto.CollectMailDto;
+
 import de.equipli.dto.ReturnMailDto;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
@@ -21,7 +21,7 @@ public class ReturnMailProcessor implements Processor {
 
         exchange.setProperty("to", returnMailDto.getReceiverMail());
 
-        System.out.println(returnMailDto.getReturnDate());
+
 
         // Render the template with Qute
         TemplateInstance templateInstance = returnmail
