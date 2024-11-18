@@ -1,6 +1,6 @@
 export interface InventoryItemProps {
     id: number
-    photo: string
+    photoUrl: string
     name: string
     description?: string
     icon: string

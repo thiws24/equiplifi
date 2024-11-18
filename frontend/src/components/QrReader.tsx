@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import {useNavigate} from 'react-router-dom';
 
 // Styles
 import "./QrStyles.css";
@@ -17,13 +18,17 @@ const QrReader = () => {
     // Result
     const [scannedResult, setScannedResult] = useState<string | undefined>("");
 
+    const navigate = useNavigate();
+
     // Success
     const onScanSuccess = (result: QrScanner.ScanResult) => {
         // 🖨 Print the "result" to browser console.
         console.log(result);
-        // ✅ Handle success.
-        // 😎 You can do whatever you want with the scanned result.
         setScannedResult(result?.data);
+        if(result?.data) {
+            const id = result.data;
+            navigate(`/inventory-item/${id}/reservation`);
+        }
     };
 
     // Fail
@@ -65,11 +70,10 @@ const QrReader = () => {
         };
     }, []);
 
-    // ❌ If "camera" is not allowed in browser permissions, show an alert.
     useEffect(() => {
         if (!qrOn)
             alert(
-                "Camera is blocked or not accessible. Please allow camera in your browser permissions and Reload."
+                "Kamera kann nicht verwendet werden. Bitte überprüfe die Einstellungen im Browser und lade die Seite neu"
             );
     }, [qrOn]);
 
@@ -87,17 +91,8 @@ const QrReader = () => {
                 />
             </div>
 
-            {/* Show Data Result if scan is success */}
             {scannedResult && (
-                <p
-                    style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        zIndex: 99999,
-                        color: "white",
-                    }}
-                >
+                <p className="absolute top-0 left-0 z-50 text-customBeige">
                     Scanned Result: {scannedResult}
                 </p>
             )}
