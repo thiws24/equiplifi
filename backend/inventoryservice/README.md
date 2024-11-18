@@ -1,3 +1,166 @@
+# InventoryService API
+
+Ermöglicht das Erstellen, Abrufen, Aktualisieren und Löschen von InventoryItems.
+
+---
+
+### Hinzufügen eines InventoryItems
+
+Fügt ein neues InventoryItem hinzu.
+
+```http
+POST /inventoryitems
+```
+
+#### Request Body
+
+```json
+{
+  "name": "Volleyball",
+  "photoUrl": "https://example.com/photo.jpg",
+  "icon": "🏐",
+  "urn": "example-urn"
+}
+```
+
+#### Response
+
+    Status 201 (Created): Das InventoryItem wurde erfolgreich erstellt.
+    Status 400 (Bad Request): Der Name des InventoryItems darf nicht leer sein.
+
+```json
+{
+  "id": 1,
+  "name": "Volleyball",
+  "photoUrl": "https://example.com/photo.jpg",
+  "icon": "🏐",
+  "urn": "example-urn"
+}
+```
+
+---
+
+### Alle InventoryItems abrufen
+
+```http
+GET /inventoryitems
+```
+
+#### Response
+
+    Status 200 (OK)
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Volleyball",
+    "photoUrl": "https://example.com/photo.jpg",
+    "icon": "🏐",
+    "urn": "example-urn"
+  },
+  {
+    "id": 2,
+    "name": "Basketball",
+    "photoUrl": "https://example.com/photo.jpg",
+    "icon": "🏀",
+    "urn": "example-urn"
+  }
+]
+```
+
+---
+
+### Einzelnes InventoryItem abrufen
+
+Ruft ein spezifisches InventoryItem anhand seiner ID ab.
+
+```http
+GET /inventoryitems/{id}
+```
+
+#### Response
+
+    Status 200 (OK)
+    Status 404 (Not Found): InventoryItem nicht gefunden.
+
+```json
+{
+  "id": 1,
+  "name": "Volleyball",
+  "photoUrl": "https://example.com/photo.jpg",
+  "icon": "🏐",
+  "urn": "example-urn"
+}
+```
+
+---
+
+### InventoryItem aktualisieren
+
+Aktualisiert ein bestehendes InventoryItem anhand seiner ID.
+
+```http
+PUT /inventoryitems/{id}
+```
+
+#### Request Body
+
+```json
+{
+  "name": "Fußball",
+  "photoUrl": "https://example.com/newphoto.jpg",
+  "icon": "⚽️",
+  "urn": "new-urn"
+}
+```
+
+#### Response
+
+    Status 200 (OK): InventoryItem erfolgreich aktualisiert.
+    Status 404 (Not Found): InventoryItem nicht gefunden.
+
+```json
+{
+  "id": 1,
+  "name": "Fußball",
+  "photoUrl": "https://example.com/newphoto.jpg",
+  "icon": "⚽️",
+  "urn": "new-urn"
+}
+```
+
+---
+
+### InventoryItem löschen
+
+Löscht ein spezifisches InventoryItem anhand seiner ID.
+
+```http
+DELETE /inventoryitems/{id}
+```
+
+#### Response
+
+    Status 204 (No Content): InventoryItem erfolgreich gelöscht.
+    Status 404 (Not Found): InventoryItem nicht gefunden.
+
+---
+
+# Deployment
+
+## Umgebungsvariablen
+
+Um den InventoryService mit einer Datenbank zu verbinden, müssen folgende Umgebungsvariablen gesetzt werden:
+
+| Variable                     | Beschreibung                   |
+|:-----------------------------|:-------------------------------|
+| QUARKUS_DATASOURCE_JDBC_URL  | JDBC-URL der Datenbank         |    
+| QUARKUS_DATASOURCE_USERNAME  | Benutzername für die Datenbank |      
+| QUARKUS_DATASOURCE_PASSWORD  | Passwort für die Datenbank     |
+
+---
+
 # inventoryservice
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.

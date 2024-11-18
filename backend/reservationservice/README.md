@@ -1,3 +1,92 @@
+# ReservationService API
+
+Ermöglicht das Erstellen und Abrufen von Reservierungen für Items.
+
+---
+
+### Alle Reservierungen abrufen
+
+Gibt eine Liste aller vorhandenen Reservierungen zurück.
+
+```http
+GET  /reservations
+```
+
+#### Response
+
+    Status 200 (OK): Gibt eine Liste von Reservierungen zurück.
+
+```json
+[
+  {
+    "reservationNumber": 1,
+    "itemId": "123",
+    "startDate": "2024-11-20",
+    "endDate": "2024-11-25",
+    "userId": "user_1"
+  },
+  {
+    "reservationNumber": 2,
+    "itemId": "124",
+    "startDate": "2024-11-21",
+    "endDate": "2024-11-22",
+    "userId": "user_2"
+  }
+]
+```
+
+---
+
+### Reservierung hinzufügen
+
+Erstellt eine neue Reservierung für ein InventoryItem.
+
+```http
+POST /reservations
+```
+
+#### Request Body
+
+```json
+{
+  "itemId": "123",
+  "startDate": "2024-11-20",
+  "endDate": "2024-11-25",
+  "userId": "user_1"
+}
+```
+
+#### Response
+
+    Status 201 (Created): Reservierung wurde erfolgreich erstellt.
+    Status 400 (Bad Request): Fehlerhafte Anfrage.
+
+```json
+{
+  "reservationNumber": 1,
+  "itemId": "123",
+  "startDate": "2024-11-20",
+  "endDate": "2024-11-25",
+  "userId": "user_1"
+}
+```
+
+---
+
+# Deployment
+
+## Umgebungsvariablen
+
+Um den ReservationService mit einer Datenbank zu verbinden, müssen folgende Umgebungsvariablen gesetzt werden:
+
+| Variable                     | Beschreibung                   |
+|:-----------------------------|:-------------------------------|
+| QUARKUS_DATASOURCE_JDBC_URL  | JDBC-URL der Datenbank         |    
+| QUARKUS_DATASOURCE_USERNAME  | Benutzername für die Datenbank |      
+| QUARKUS_DATASOURCE_PASSWORD  | Passwort für die Datenbank     |
+
+---
+
 # reservationservice
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
@@ -55,10 +144,15 @@ If you want to learn more about building native executables, please consult <htt
 
 ## Related Guides
 
-- REST ([guide](https://quarkus.io/guides/rest)): A Jakarta REST implementation utilizing build time processing and Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it.
-- SmallRye OpenAPI ([guide](https://quarkus.io/guides/openapi-swaggerui)): Document your REST APIs with OpenAPI - comes with Swagger UI
-- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
-- Hibernate ORM with Panache ([guide](https://quarkus.io/guides/hibernate-orm-panache)): Simplify your persistence code for Hibernate ORM via the active record or the repository pattern
+- REST ([guide](https://quarkus.io/guides/rest)): A Jakarta REST implementation utilizing build time processing and
+  Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on
+  it.
+- SmallRye OpenAPI ([guide](https://quarkus.io/guides/openapi-swaggerui)): Document your REST APIs with OpenAPI - comes
+  with Swagger UI
+- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus
+  REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
+- Hibernate ORM with Panache ([guide](https://quarkus.io/guides/hibernate-orm-panache)): Simplify your persistence code
+  for Hibernate ORM via the active record or the repository pattern
 - JDBC Driver - PostgreSQL ([guide](https://quarkus.io/guides/datasource)): Connect to the PostgreSQL database via JDBC
 
 ## Provided Code
@@ -70,7 +164,6 @@ Create your first JPA entity
 [Related guide section...](https://quarkus.io/guides/hibernate-orm)
 
 [Related Hibernate with Panache section...](https://quarkus.io/guides/hibernate-orm-panache)
-
 
 ### REST
 

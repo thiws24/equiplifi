@@ -14,9 +14,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-@Path("/api/reservations")
+@Path("/reservations")
 public class ReservationResource {
+
     private static AtomicLong nextReservationNumber = new AtomicLong(1);
+
     @Inject
     ReservationRepository reservationRepository;
 
