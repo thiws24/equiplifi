@@ -26,11 +26,15 @@ export const DetailView: React.FC<InventoryItemProps> = ({ id, photoUrl, name, d
                 <CardContent>
                     <div className="mt-6 border-t border-customOrange">
                         <dl className="divide-y divide-customOrange">
-                            <KeyValueRow label="Name" value={name}/>
-                            <KeyValueRow label="Artikelnummer" value={id}/>
-                            <KeyValueRow label="Beschreibung" value={description}/>
-                            <KeyValueRow label="Foto" value={ <img src={photoUrl} alt={description} className='w-full h-full object-cover'/> }/>
-                            <KeyValueRow label="" value={ <button onClick={openModal} className="px-4 py-2 bg-customBlue text-customBeige rounded hover:bg-customRed"> Show QR-Code </button> } />
+                            <KeyValueRow label="Name"> {name} </KeyValueRow>
+                            <KeyValueRow label="Artikelnummer"> {id} </KeyValueRow>
+                            <KeyValueRow label="Beschreibung"> {description} </KeyValueRow>
+                            <KeyValueRow label="Foto">
+                                { <img src={photoUrl} alt={description} className='w-full h-full object-cover'/> }
+                            </KeyValueRow>
+                            <KeyValueRow label="">
+                                { <button onClick={openModal} className="px-4 py-2 bg-customBlue text-customBeige rounded hover:bg-customRed"> Show QR-Code </button> }
+                            </KeyValueRow>
                             {isOpen && (
                                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                                     <div className="bg-customBeige rounded-lg shadow-lg p-6 w-96">
