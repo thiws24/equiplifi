@@ -82,7 +82,7 @@ jobs:
           SONAR_TOKEN: sqp_b6266465f121ebbd8befd4fc2719a138f231a66a
           SONAR_HOST_URL: https://sonar.equipli.de
         #run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dproject.settings=backend/${{ matrix.service }}/sonar-project.properties
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dproject.settings=backend/inventoryservice/sonar-project.properties
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dproject.settings=backend/inventoryservice/sonar-project.properties -X
 
       - name: SonarQube Quality Gate Check
         run: echo "The Quality Gate status is zum Testen ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
