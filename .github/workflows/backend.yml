@@ -66,6 +66,8 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets[matrix.sonartoken_var] }}
           SONAR_HOST_URL: https://sonar.equipli.de
+          SONAR_SCANNER_OPTS: "-Dproject.settings=backend/${{ matrix.service }}/sonar-project.properties"
+
 
       - name: SonarQube Quality Gate Check
         run: echo "The Quality Gate status is zum Testen ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
