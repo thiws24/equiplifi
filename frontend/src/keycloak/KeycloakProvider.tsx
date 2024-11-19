@@ -13,7 +13,7 @@ interface Context {
 export const keycloakConfig = new Keycloak({
   url: process.env.REACT_APP_KEYCLOAK || '',
   realm: "master",
-  clientId: "frontend"
+  clientId: process.env.NODE_ENV === 'production' ? "frontend" : "localhost"
 });
 
 const KeycloakContext = createContext<Context>({ keycloak: undefined, authenticated: false });
@@ -23,17 +23,21 @@ export const useKeycloak = () => useContext(KeycloakContext);
 
 export const KeycloakProvider: React.FC<Props> = ({ children }) => {
   const [keycloakState, setKeycloakState] = useState<Context>({ keycloak: undefined, authenticated: false });
-
+  let run = 1
   useEffect(() => {
-    keycloakConfig.init({ onLoad: 'check-sso' }).then((authenticated: any) => {
-      if (!authenticated) {
-        keycloakConfig.login()
-      } else {
-        setKeycloakState({ keycloak: keycloakConfig, authenticated });
-      }
-    }).catch(() => {
-      window.location.reload();
-    });
+    // In development useEffect runs 2 times. To avoid error by calling init a second time, we count the renders and init on first
+    if (run === 1) {
+      keycloakConfig.init({ onLoad: 'check-sso' }).then((authenticated: any) => {
+        if (!authenticated) {
+          keycloakConfig.login()
+        } else {
+          setKeycloakState({ keycloak: keycloakConfig, authenticated });
+        }
+      }).catch((error) => {
+        console.log(error)
+      });
+    }
+    run++
   }, []);
 
   return (
