@@ -9,7 +9,7 @@ services:
       - ServerOptions__DisableMessageSanitisation=true
 
   mailservice:
-    image: ghcr.io/thiws24/mail-service:latest
+    image: ghcr.io/thiws24/mailservice:latest
     ports:
       - 8080:8080
     environment:

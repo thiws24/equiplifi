@@ -32,15 +32,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build the Maven artifact mail-service
-        working-directory: mail-service/
+      - name: Build the Maven artifact mailservice
+        working-directory: mailservice/
         run: ./mvnw package -Pprod -DskipTests
 
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: mail-service/
-          file: mail-service/src/main/docker/Dockerfile.jvm
+          context: mailservice/
+          file: mailservice/src/main/docker/Dockerfile.jvm
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/thiws24/mailservice:latest
