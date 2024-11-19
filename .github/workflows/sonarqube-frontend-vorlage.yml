@@ -24,3 +24,13 @@ jobs:
         timeout-minutes: 5
         env:
            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+
+
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets[matrix.sonartoken_var] }}
+          SONAR_HOST_URL: https://sonar.equipli.de
+          SONAR_SCANNER_OPTS: "-Dproject.settings=backend/${{ matrix.service }}/sonar-project.properties"
