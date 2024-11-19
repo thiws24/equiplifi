@@ -14,13 +14,13 @@ jobs:
         include:
           - service: inventoryservice
             webhook_var: PORTAINER_INVENTORYSERVICE_WEBHOOK_URL
-            sonartoken_var: sqp_b6266465f121ebbd8befd4fc2719a138f231a66a
+            sonartoken_var: SONAR_TOKEN_INVENTORYSERVICE
           - service: qrservice
             webhook_var: PORTAINER_QRSERVICE_WEBHOOK_URL
-            sonartoken_var: sqp_08ddd7542d5ced52bd781aa204f55e8a4fc03d10
+            sonartoken_var: SONAR_TOKEN_QRSERVICE
           - service: reservationservice
             webhook_var: PORTAINER_RESERVATIONSERVICE_WEBHOOK_URL
-            sonartoken_var: sqp_035957a18d08cead91107fc6609152899a3b664d
+            sonartoken_var: SONAR_TOKEN_RESERVATIONSERVICE
           #- service: mailservice
           #  webhook_var: PORTAINER_MAILSERVICE_WEBHOOK_URL
     runs-on: ubuntu-latest
@@ -67,7 +67,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets[matrix.sonartoken_var] }}
           SONAR_HOST_URL: sonar.equipli.de
 
-      - run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
+      - name: SonarQube Quality Gate Check
+        run: echo "The Quality Gate status is zum Testen ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
 
       - name: Set execute permission for mvnw
         if: steps.changes.outputs.any_modified == 'true'
