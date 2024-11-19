@@ -12,12 +12,12 @@
 
 ```json
 {
-  "to": "example@gmail.com",
+  "receiverMail": "example@gmail.com",
+  "name": "Hans",
   "item": "Volleyball",
   "collectionDate": "24.12.2024",
-  "returnDate": "24.01.2024",
-  "pickupLocation": "Hinter Vereinsheim in einer dunklen Ecke",
-  "returnLocation": "Hinter Vereinsheim in einer dunklen Ecke"
+  "returnDate": "25.01.2025",
+  "pickupLocation": "Hinter Vereinsheim in einer dunklen Ecke"
 }
 ```
 
@@ -31,11 +31,10 @@
 
 ```json
 {
-  "to": "example@gmail.com",
+  "receiverMail": "example@gmail.com",
+  "name": "Hans",
   "item": "Volleyball",
-  "collectionDate": "24.12.2024",
   "returnDate": "24.01.2024",
-  "pickupLocation": "Hinter Vereinsheim in einer dunklen Ecke",
   "returnLocation": "Hinter Vereinsheim in einer dunklen Ecke"
 }
 ```
