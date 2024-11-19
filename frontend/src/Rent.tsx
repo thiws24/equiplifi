@@ -6,19 +6,21 @@ import { Card, CardHeader, CardTitle, CardContent } from "./components/ui/card";
 import { Button } from "./components/ui/button";
 import { useNavigate } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.min.css";
+import { DatePicker } from "./components/DatePicker";
+
 
 const Rent = () => {
     const navigate = useNavigate();
+
+    const validationSchema = Yup.object({
+        startDate: Yup.date().required("Startdatum erforderlich"),
+        endDate: Yup.date().required("Enddatum erforderlich")
+    });
 
     const initialValues = {
         startDate: "",
         endDate: "",
     };
-
-    const validationSchema = Yup.object({
-        startDate: Yup.date().required("Startdatum erforderlich"),
-        endDate: Yup.date().required("Enddatum erforderlich"),
-    });
 
     type ValuesSchema = typeof initialValues;
 
@@ -43,13 +45,13 @@ const Rent = () => {
     return (
         <div>
             <br />
-            <CardHeader className="flex items-center">
-                <CardTitle> Ausleihformular </CardTitle>
+            <CardHeader className="flex items-center text-customBlue">
+                <CardTitle>Ausleihformular</CardTitle>
             </CardHeader>
             <div>
                 <CardContent>
                     <div>
-                        <br/>
+                        <br />
                         <div className="max-w-[600px] mx-auto">
                             <Card>
                                 <Formik
@@ -57,60 +59,49 @@ const Rent = () => {
                                     validationSchema={validationSchema}
                                     onSubmit={handleSubmit}
                                 >
-                                    {({ values, setFieldValue }) => (
-                                        <Form>
-                                            <br />
-                                            <h3 className="flex justify-center">Name des Gegenstands</h3>
-                                            <br />
-                                            <div className="flex justify-center">BILD</div>
-                                                <div className="flex flex-col sm:flex-row sm:justify-evenly mt-4 ml-8 mr-8">
-                                                    <div className="left-element flex flex-col sm:flex-row sm:items-center sm:justify-center">
-                                                        <label
-                                                            htmlFor="startDate"
-                                                            className="mb-1 sm:mb-0 sm:mr-2 text-sm font-semibold"
-                                                        >
-                                                            Ausleihdatum
-                                                        </label>
-                                                        <input
-                                                            type="date"
-                                                            id="startDate"
-                                                            value={values.startDate || ""}
-                                                            onChange={(e) => setFieldValue("startDate", e.target.value)}
-                                                            className="border border-black p-1"
-                                                        />
-                                                    </div>
-                                                    <div className="right-element flex flex-col sm:flex-row sm:items-center sm:justify-center mt-4 sm:mt-0">
-                                                        <label
-                                                            htmlFor="endDate"
-                                                            className="mb-1 sm:mb-0 sm:mr-2 text-sm font-semibold"
-                                                        >
-                                                            Abgabedatum
-                                                        </label>
-                                                        <input
-                                                            type="date"
-                                                            id="endDate"
-                                                            value={values.endDate || ""}
-                                                            onChange={(e) => setFieldValue("endDate", e.target.value)}
-                                                            className="border border-black p-1"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            <div className="flex justify-evenly mt-4">
-                                                <Button
-                                                    onClick={() => navigate("/")}
-                                                    className="bg-customBlue text-customBeige hover:bg-customRed hover:text-customBeige mr-auto ml-8 flex"
-                                                >
-                                                    &larr; Zurück
-                                                </Button>
-                                                <Button
-                                                    type="submit"
-                                                    className="bg-customBlue text-customBeige hover:bg-customRed hover:text-customBeige ml-auto mr-8 flex"
-                                                >
-                                                    &#10003; Absenden
-                                                </Button>
+                                    <Form>
+                                        <br />
+                                        <h3 className="flex justify-center">Name des Gegenstands</h3>
+                                        <br />
+                                        <div className="flex justify-center">BILD</div>
+                                        <div className="flex flex-col sm:justify-center mt-4 ml-8 mr-8 border-gray-300 p-4 rounded-lg border-2">
+                                            <div className="flex flex-col items-center mb-4">
+                                                <label htmlFor="startDate" className="mb-1 text-sm font-semibold">
+                                                    Ausleihdatum
+                                                </label>
+                                                <DatePicker/>
+                                                {/*<DatePicker*/}
+                                                {/*    value={values.startDate}*/}
+                                                {/*    onChange={(date: Date) => setFieldValue("startDate", date)}*/}
+                                                {/*/>*/}
                                             </div>
-                                        </Form>
-                                    )}
+                                            <div className="flex flex-col items-center">
+                                                <label htmlFor="endDate" className="mb-1 text-sm font-semibold">
+                                                    Abgabedatum
+                                                </label>
+                                                <DatePicker/>
+
+                                                {/*<DatePicker*/}
+                                                {/*    value={values.endDate}*/}
+                                                {/*    onChange={(date: Date) => setFieldValue("endDate", date)}*/}
+                                                {/*/>*/}
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-evenly mt-4">
+                                            <Button
+                                                onClick={() => navigate("/")}
+                                                className="bg-customBlue text-customBeige hover:bg-customRed hover:text-customBeige mr-auto ml-8 flex"
+                                            >
+                                                &larr; Zurück
+                                            </Button>
+                                            <Button
+                                                type="submit"
+                                                className="bg-customBlue text-customBeige hover:bg-customRed hover:text-customBeige ml-auto mr-8 flex"
+                                            >
+                                                &#10003; Absenden
+                                            </Button>
+                                        </div>
+                                    </Form>
                                 </Formik>
                                 <br />
                             </Card>
