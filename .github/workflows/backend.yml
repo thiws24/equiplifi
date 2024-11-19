@@ -73,6 +73,14 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+
+
+
+      - name: print sonar token
+        run: echo das ist der verwendete Token ${{ secrets[matrix.sonartoken_var] }}
+
+
+
       - name: Build and analyze
         working-directory: backend/${{ matrix.service }}/
         env:
