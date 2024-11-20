@@ -17,8 +17,6 @@ import java.util.concurrent.atomic.AtomicLong;
 @Path("/reservations")
 public class ReservationResource {
 
-    private static AtomicLong nextReservationNumber = new AtomicLong(1);
-
     @Inject
     ReservationRepository reservationRepository;
 
@@ -62,7 +60,6 @@ public class ReservationResource {
             }
         }
 
-        reservation.setReservationNumber(nextReservationNumber.getAndIncrement());
         reservationRepository.persist(reservation);
 
         return Response.status(Response.Status.CREATED).entity(reservation).build();
