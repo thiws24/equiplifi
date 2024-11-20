@@ -10,8 +10,7 @@ import java.util.List;
 
 @Entity
 public class Reservation extends PanacheEntity {
-
-    //public Long id;
+    
     public LocalDate startDate;
     public LocalDate endDate;
     public Long itemId;
@@ -23,7 +22,7 @@ public class Reservation extends PanacheEntity {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public LocalDate getStartDate() {
         return startDate;
     }
