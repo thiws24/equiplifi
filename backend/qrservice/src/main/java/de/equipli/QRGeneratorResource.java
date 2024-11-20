@@ -1,5 +1,7 @@
 package de.equipli;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -10,15 +12,25 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.UUID;
 
-
+@ApplicationScoped
 @Path("/qr")
 public class QRGeneratorResource {
+
+    @Inject
+    @ConfigProperty(name = "quarkus.profile")
+    String activeProfile;
+    private static final String DEV_PNG_PATH = "src/main/resources/qrCodes/qrCodesPNG";
+    private static final String DEV_PDF_PATH = "src/main/resources/qrCodes/qrCodesPDF";
+    private static final String PROD_PNG_PATH = "/srv/qrdata/qrCodes/qrCodesPNG";
+    private static final String PROD_PDF_PATH = "/srv/qrdata/qrCodes/qrCodesPDF";
 
     @Consumes(MediaType.APPLICATION_JSON)
     @POST
@@ -26,14 +38,29 @@ public class QRGeneratorResource {
     public Response generateQR(QRInput qrInput) throws IOException {
 
         //Generate QR-Code
-        File qrCodeDir = new File("src/main/resources/qrCodes");
-        if (!qrCodeDir.exists()) {
-            boolean dirCreated = qrCodeDir.mkdirs();
+        File qrCodeDirPng = new File(DEV_PNG_PATH);
+        if (!qrCodeDirPng.exists()) {
+            boolean dirCreated = qrCodeDirPng.mkdirs();
             if (!dirCreated) {
-                throw new IOException("Failed to create directory: " + qrCodeDir.getAbsolutePath());
+                throw new IOException("Failed to create directory: " + qrCodeDirPng.getAbsolutePath());
             }
         }
-        QRCode.from(qrInput.getUrn()).to(ImageType.PNG).writeTo(new FileOutputStream("src/main/resources/qrCodes/qr1.png"));
+        File qrCodeDirPdf = new File(DEV_PDF_PATH);
+        if (!qrCodeDirPdf.exists()) {
+            boolean dirCreated = qrCodeDirPdf.mkdirs();
+            if (!dirCreated) {
+                throw new IOException("Failed to create directory: " + qrCodeDirPdf.getAbsolutePath());
+            }
+        }
+
+        String basePngPath = isProdProfile() ? PROD_PNG_PATH : DEV_PNG_PATH;
+        String basePdfPath = isProdProfile() ? PROD_PDF_PATH : DEV_PDF_PATH;
+
+        String uuid = UUID.randomUUID().toString();
+        String qrCodePngFilePath = basePngPath + "/qr_" + uuid + ".png";
+        String qrCodePdfFilePath = basePdfPath + "/qr_" + uuid + ".pdf";
+
+        QRCode.from(qrInput.getUrn()).to(ImageType.PNG).writeTo(new FileOutputStream(qrCodePngFilePath));
 
         //Creating PDF document object
         // Define page dimensions in centimeters
@@ -49,13 +76,13 @@ public class QRGeneratorResource {
         PDDocument document = new PDDocument();
         document.addPage(page);
 
-        PDImageXObject pdimage = PDImageXObject.createFromFile("src/main/resources/qrCodes/qr1.png", document);
+        PDImageXObject pdimage = PDImageXObject.createFromFile(qrCodePngFilePath, document);
         PDPageContentStream contentStream = new PDPageContentStream(document, document.getPage(0));
         contentStream.drawImage(pdimage, 0, 0, widthInPoints, heightInPoints);
         contentStream.close();
 
         //Saving the document
-        File qrFile = new File("src/main/resources/qrCodes/qr.pdf");
+        File qrFile = new File(qrCodePdfFilePath);
         document.save(qrFile);
 
         //Closing the document
@@ -64,5 +91,10 @@ public class QRGeneratorResource {
         FileInputStream fileInputStream = new FileInputStream(qrFile);
 
         return Response.ok().entity(fileInputStream).build();
+
+    }
+
+    private boolean isProdProfile() {
+        return "prod".equals(activeProfile);
     }
 }
