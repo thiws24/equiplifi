@@ -38,20 +38,10 @@ public class QRGeneratorResource {
     public Response generateQR(QRInput qrInput) throws IOException {
 
         //Generate QR-Code
-        File qrCodeDirPng = new File(DEV_PNG_PATH);
-        if (!qrCodeDirPng.exists()) {
-            boolean dirCreated = qrCodeDirPng.mkdirs();
-            if (!dirCreated) {
-                throw new IOException("Failed to create directory: " + qrCodeDirPng.getAbsolutePath());
-            }
-        }
-        File qrCodeDirPdf = new File(DEV_PDF_PATH);
-        if (!qrCodeDirPdf.exists()) {
-            boolean dirCreated = qrCodeDirPdf.mkdirs();
-            if (!dirCreated) {
-                throw new IOException("Failed to create directory: " + qrCodeDirPdf.getAbsolutePath());
-            }
-        }
+        createDirectoryIfNotExists(DEV_PNG_PATH);
+        createDirectoryIfNotExists(DEV_PDF_PATH);
+        createDirectoryIfNotExists(PROD_PNG_PATH);
+        createDirectoryIfNotExists(PROD_PDF_PATH);
 
         String basePngPath = isProdProfile() ? PROD_PNG_PATH : DEV_PNG_PATH;
         String basePdfPath = isProdProfile() ? PROD_PDF_PATH : DEV_PDF_PATH;
@@ -96,5 +86,15 @@ public class QRGeneratorResource {
 
     private boolean isProdProfile() {
         return "prod".equals(activeProfile);
+    }
+
+    private void createDirectoryIfNotExists(String path) throws IOException {
+        File dir = new File(path);
+        if (!dir.exists()) {
+            boolean dirCreated = dir.mkdirs();
+            if (!dirCreated) {
+                throw new IOException("Failed to create directory: " + dir.getAbsolutePath());
+            }
+        }
     }
 }
