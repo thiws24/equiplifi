@@ -12,95 +12,95 @@ import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
 class ReservationResourceTest {
+
     @Test
     void testAddReservation() {
-        // Testdata for 4 cases
-        // case 1: positive test - add Reservation
-        LocalDate startDate1 = LocalDate.now();
-        LocalDate endDate1 = LocalDate.now().plusDays(10);
-        Long itemId1 = 1L;
         Reservation reservation = new Reservation();
-        reservation.setStartDate(startDate1);
-        reservation.setEndDate(endDate1);
-        reservation.setItemId(itemId1);
+        reservation.setStartDate(LocalDate.now().plusDays(10));
+        reservation.setEndDate(LocalDate.now().plusDays(15));
+        reservation.setItemId(1L);
+
         given()
                 .contentType(ContentType.JSON)
                 .body(reservation)
                 .when()
-                .post("/api/reservations/")
+                .post("/reservations")
+                .then()
+                .statusCode(201)
+                .body("startDate", is(reservation.getStartDate().toString()))
+                .body("endDate", is(reservation.getEndDate().toString()))
+                .body("itemId", is(reservation.getItemId().intValue()));
+    }
+
+    @Test
+    void testAddReservationWithInvalidDates() {
+        Reservation reservation = new Reservation();
+        reservation.setStartDate(LocalDate.now().plusDays(5));
+        reservation.setEndDate(LocalDate.now().plusDays(1));
+        reservation.setItemId(1L);
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(reservation)
+                .when()
+                .post("/reservations")
+                .then()
+                .statusCode(400);
+    }
+
+    @Test
+    void testAddReservationWithPastStartDate() {
+        Reservation reservation = new Reservation();
+        reservation.setStartDate(LocalDate.now().minusDays(1));
+        reservation.setEndDate(LocalDate.now().plusDays(5));
+        reservation.setItemId(1L);
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(reservation)
+                .when()
+                .post("/reservations")
+                .then()
+                .statusCode(400);
+    }
+
+    @Test
+    void testAddReservationWithOverlap() {
+        // Erst eine bestehende Reservierung hinzufügen
+        Reservation existingReservation = new Reservation();
+        existingReservation.setStartDate(LocalDate.now().plusDays(1));
+        existingReservation.setEndDate(LocalDate.now().plusDays(5));
+        existingReservation.setItemId(1L);
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(existingReservation)
+                .when()
+                .post("/reservations")
                 .then()
                 .statusCode(201);
-    }
 
-    @Test
-    void testAddReservationEndDateBeforeStartDate() {
-
-        // case 2: negative test - startDate >, endDate <
-
-        LocalDate startDate2 = LocalDate.now().plusDays(2);
-        LocalDate endDate2 = LocalDate.now().plusDays(12);
-        Long itemId2 = 1L;
-
-        // case 2
-        Reservation reservation2 = new Reservation();
-        reservation2.setStartDate(startDate2);
-        reservation2.setEndDate(endDate2);
-        reservation2.setItemId(itemId2);
+        // Überlappende Reservierung hinzufügen
+        Reservation newReservation = new Reservation();
+        newReservation.setStartDate(LocalDate.now().plusDays(3));
+        newReservation.setEndDate(LocalDate.now().plusDays(7));
+        newReservation.setItemId(1L);
 
         given()
                 .contentType(ContentType.JSON)
-                .body(reservation2)
+                .body(newReservation)
                 .when()
-                .post("/api/reservations/")
+                .post("/reservations")
                 .then()
-                .statusCode(400)
-                .body(is("Das Item ist in diesem Zeitraum nicht verfügbar"));
-    }
-
-
-    @Test
-    void testAddReservationStartDateInPast() {
-
-        // case 3: negative test - startDate <, endDate >
-        LocalDate startDate3 = LocalDate.now().minusDays(10);
-        LocalDate endDate3 = LocalDate.now().plusDays(2);
-        Long itemId3 = 1L;
-
-        Reservation reservation3 = new Reservation();
-        reservation3.setStartDate(startDate3);
-        reservation3.setEndDate(endDate3);
-        reservation3.setItemId(itemId3);
-
-        given()
-                .contentType(ContentType.JSON)
-                .body(reservation3)
-                .when()
-                .post("/api/reservations/")
-                .then()
-                .statusCode(400)
-                .body(is("End-Datum muss vor Start-Datum liegen!"));
+                .statusCode(400);
     }
 
     @Test
-    void testAddReservationStartAndEndDateInFuture() {
-
-        // case 4: positive test - startDate >, endDate >
-        LocalDate startDate4 = LocalDate.now().plusDays(20);
-        LocalDate endDate4 = LocalDate.now().plusDays(30);
-        Long itemId4 = 1L;
-
-        // case 4
-        Reservation reservation4 = new Reservation();
-        reservation4.setStartDate(startDate4);
-        reservation4.setEndDate(endDate4);
-        reservation4.setItemId(itemId4);
-
+    void testGetReservations() {
         given()
-                .contentType(ContentType.JSON)
-                .body(reservation4)
                 .when()
-                .post("/api/reservations/")
+                .get("/reservations")
                 .then()
-                .statusCode(201);
+                .statusCode(200);
     }
 }

@@ -15,34 +15,40 @@ class InventoryItemResourceTest {
     @Test
     void testAddInventoryItem() {
         String name = "Test Item";
+        String description = "This is a test item";
         String icon = "icon";
-        String photo = "https://www.thi.de/fileadmin/daten/allgemein/Inhalte_von_alter_Website/thi_logo_wb_RGB_office_DIN_A4.jpg";
-        String urn = "urn";
+        String urn = "urn:test:item";
+        String photoUrl = "https://www.example.com/photo.jpg";
+        String itemStatus = "damaged";
 
         InventoryItem item = new InventoryItem();
         item.setName(name);
+        item.setDescription(description);
         item.setIcon(icon);
-        item.setPhotoUrl(photo);
         item.setUrn(urn);
+        item.setPhotoUrl(photoUrl);
+        item.setItemStatus(itemStatus);
 
         given()
                 .contentType(ContentType.JSON)
                 .body(item)
                 .when()
-                .post("/api/inventoryitems/")
+                .post("/inventoryitems")
                 .then()
                 .statusCode(201)
                 .body("name", is(name))
+                .body("description", is(description))
                 .body("icon", is(icon))
-                .body("photo", is(photo))
-                .body("urn", is(urn));
+                .body("urn", is(urn))
+                .body("photoUrl", is(photoUrl))
+                .body("itemStatus", is(itemStatus));
     }
 
     @Test
     void testGetInventoryItems() {
         given()
                 .when()
-                .get("/api/inventoryitems")
+                .get("/inventoryitems")
                 .then()
                 .statusCode(200);
     }
@@ -56,7 +62,7 @@ class InventoryItemResourceTest {
                 .contentType(ContentType.JSON)
                 .body(item)
                 .when()
-                .post("/api/inventoryitems")
+                .post("/inventoryitems")
                 .then()
                 .statusCode(201)
                 .extract().path("id");
@@ -68,7 +74,7 @@ class InventoryItemResourceTest {
                 .contentType(ContentType.JSON)
                 .body(updatedItem)
                 .when()
-                .put("/api/inventoryitems/" + id)
+                .put("/inventoryitems/" + id)
                 .then()
                 .statusCode(200)
                 .body("name", is("Updated Test Item"));
@@ -83,7 +89,7 @@ class InventoryItemResourceTest {
                 .contentType(ContentType.JSON)
                 .body(item)
                 .when()
-                .post("/api/inventoryitems")
+                .post("/inventoryitems")
                 .then()
                 .statusCode(201)
                 .extract().path("id");
@@ -91,14 +97,14 @@ class InventoryItemResourceTest {
         // Item löschen
         given()
                 .when()
-                .delete("/api/inventoryitems/" + id)
+                .delete("/inventoryitems/" + id)
                 .then()
                 .statusCode(204);
 
         // Checken, ob Item gelöscht wurde
         given()
                 .when()
-                .get("/api/inventoryitems/" + id)
+                .get("/inventoryitems/" + id)
                 .then()
                 .statusCode(404);
     }
