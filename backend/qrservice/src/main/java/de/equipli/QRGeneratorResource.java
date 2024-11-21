@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.UUID;
 
 @ApplicationScoped
 @Path("/qr")
@@ -46,9 +45,9 @@ public class QRGeneratorResource {
         String basePngPath = isProdProfile() ? PROD_PNG_PATH : DEV_PNG_PATH;
         String basePdfPath = isProdProfile() ? PROD_PDF_PATH : DEV_PDF_PATH;
 
-        String uuid = UUID.randomUUID().toString();
-        String qrCodePngFilePath = basePngPath + "/qr_" + uuid + ".png";
-        String qrCodePdfFilePath = basePdfPath + "/qr_" + uuid + ".pdf";
+        String urn = qrInput.getUrn();
+        String qrCodePngFilePath = basePngPath + "/qr_" + urn + ".png";
+        String qrCodePdfFilePath = basePdfPath + "/qr_" + urn + ".pdf";
 
         QRCode.from(qrInput.getUrn()).to(ImageType.PNG).writeTo(new FileOutputStream(qrCodePngFilePath));
 
