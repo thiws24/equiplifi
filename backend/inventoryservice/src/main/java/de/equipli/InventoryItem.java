@@ -7,16 +7,19 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 @Entity
 public class InventoryItem extends PanacheEntity {
 
-    @Schema(hidden = true)
-    public long id;
     public String name;
     public String description;
     public String icon;
-    public String photoUrl;
     public String urn;
+    public String photoUrl;
+    public String itemStatus;
 
-    public long getId() {
+    public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -39,12 +42,16 @@ public class InventoryItem extends PanacheEntity {
         return icon;
     }
 
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
     public String getUrn() {
         return urn;
     }
 
-    public void setIcon(String icon) {
-        this.icon = icon;
+    public void setUrn(String urn) {
+        this.urn = urn;
     }
 
     public String getPhotoUrl() {
@@ -55,7 +62,12 @@ public class InventoryItem extends PanacheEntity {
         this.photoUrl = photoUrl;
     }
 
-    public void setUrn(String urn) {
-        this.urn = urn;
+    public String getItemStatus() {
+        return itemStatus;
     }
+
+    public void setItemStatus(String itemStatus) {
+        this.itemStatus = itemStatus;
+    }
+
 }
