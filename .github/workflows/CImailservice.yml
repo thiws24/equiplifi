@@ -33,7 +33,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build the Maven artifact mailservice
-        working-directory: mailservice/
+        working-directory: backend/mailservice
         run: ./mvnw package -Pprod -DskipTests
 
       - name: Build and push
