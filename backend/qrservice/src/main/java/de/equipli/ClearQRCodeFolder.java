@@ -12,18 +12,20 @@ import java.nio.file.Paths;
 
 
 //Clear QR-Code-Folder in Prod-Mode each day
-@jakarta.ws.rs.Path("/clear")
+@jakarta.ws.rs.Path("/qr/clear")
 @ApplicationScoped
 public class ClearQRCodeFolder {
 
     private static final String PROD_PNG_PATH = "/srv/qrdata/qrCodes/qrCodesPNG";
     private static final String PROD_PDF_PATH = "/srv/qrdata/qrCodes/qrCodesPDF";
 
-    //@Scheduled(cron = "0 0 0 * * ?") //public weg
+    //@Scheduled(cron = "0 0 0 * * ?") //
+    @Scheduled(cron = "0 0 11 * * ?")// public weg
     @GET
-    public void clearQRCodes() throws IOException {
+    public String clearQRCodes() throws IOException {
         clearDirectory(Paths.get(PROD_PNG_PATH));
         clearDirectory(Paths.get(PROD_PDF_PATH));
+        return null;
     }
 
     private void clearDirectory(Path path) throws IOException {
