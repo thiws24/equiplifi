@@ -8,11 +8,7 @@ import jakarta.ws.rs.core.Response;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Path("/reservations")
 public class ReservationResource {
@@ -30,7 +26,6 @@ public class ReservationResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
     public Response addReservation(Reservation reservation) {
-
         LocalDate startDate = reservation.getStartDate();
         LocalDate endDate = reservation.getEndDate();
 
@@ -51,8 +46,6 @@ public class ReservationResource {
         List<Reservation> reservations = Reservation.list("itemId", reservation.getItemId());
 
         for (Reservation r : reservations) {
-            Period overlapPeriod = Period.between(startDate, r.getEndDate());
-
             if (!endDate.isBefore(r.getStartDate()) && !startDate.isAfter(r.getEndDate())) {
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("Das Item ist in diesem Zeitraum nicht verfügbar")
@@ -61,7 +54,6 @@ public class ReservationResource {
         }
 
         reservationRepository.persist(reservation);
-
         return Response.status(Response.Status.CREATED).entity(reservation).build();
     }
 }
