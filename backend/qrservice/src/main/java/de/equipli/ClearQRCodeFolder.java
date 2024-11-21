@@ -19,8 +19,7 @@ public class ClearQRCodeFolder {
     private static final String PROD_PNG_PATH = "/srv/qrdata/qrCodes/qrCodesPNG";
     private static final String PROD_PDF_PATH = "/srv/qrdata/qrCodes/qrCodesPDF";
 
-    //@Scheduled(cron = "0 0 0 * * ?") //
-    @Scheduled(cron = "0 7 10 * * ?")// public weg
+    @Scheduled(cron = "0 0 23 * * ?") //
     @GET
     public void clearQRCodes() throws IOException {
         clearDirectory(Paths.get(PROD_PNG_PATH));
