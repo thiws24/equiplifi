@@ -1,7 +1,7 @@
 import React from 'react';
 import { ColDef } from "ag-grid-community"
-import { InventoryItemProps } from "./interfaces/InventoryItemProps";
-import { TableGalleryView } from "./components/TableGalleryView";
+import { InventoryItemProps } from "../interfaces/InventoryItemProps";
+import { TableGalleryView } from "../components/TableGalleryView";
 
 function Home() {
     const [inventoryItems, setInventoryItems] = React.useState<InventoryItemProps[]>([])
@@ -18,7 +18,7 @@ function Home() {
 
     async function fetchInventoryItems() {
         try {
-            const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/api/inventoryitems`)
+            const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/inventoryitems`)
             if (response.ok) {
                 const data = await response.json();
                 setInventoryItems(data);
