@@ -1,10 +1,8 @@
 name: cimailservice
 
 on:
-  pull_request:
-    branches: [ "main"]
   push:
-    branches: ["47-notification-per-email-als-erinnerung"]
+    branches: ["main"]
 
 jobs:
   build:
@@ -43,5 +41,5 @@ jobs:
           file: mailservice/src/main/docker/Dockerfile.jvm
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/thiws24/mailservice:latest
+          tags: ghcr.io/thiws24/mailservice:prod
 
