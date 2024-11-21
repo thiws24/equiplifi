@@ -23,13 +23,25 @@ import java.io.IOException;
 @Path("/qr")
 public class QRGeneratorResource {
 
+    private final String activeProfile;
+    private final String devPngPath;
+    private final String devPdfPath;
+    private final String prodPngPath;
+    private final String prodPdfPath;
+
     @Inject
-    @ConfigProperty(name = "quarkus.profile")
-    String activeProfile;
-    private static final String DEV_PNG_PATH = "src/main/resources/qrCodes/qrCodesPNG";
-    private static final String DEV_PDF_PATH = "src/main/resources/qrCodes/qrCodesPDF";
-    private static final String PROD_PNG_PATH = "/srv/qrdata/qrCodes/qrCodesPNG";
-    private static final String PROD_PDF_PATH = "/srv/qrdata/qrCodes/qrCodesPDF";
+    public QRGeneratorResource(
+            @ConfigProperty(name = "quarkus.profile") String activeProfile,
+            @ConfigProperty(name = "qrservice.dev.png.path") String devPngPath,
+            @ConfigProperty(name = "qrservice.dev.pdf.path") String devPdfPath,
+            @ConfigProperty(name = "qrservice.prod.png.path") String prodPngPath,
+            @ConfigProperty(name = "qrservice.prod.pdf.path") String prodPdfPath) {
+        this.activeProfile = activeProfile;
+        this.devPngPath = devPngPath;
+        this.devPdfPath = devPdfPath;
+        this.prodPngPath = prodPngPath;
+        this.prodPdfPath = prodPdfPath;
+    }
 
     @Consumes(MediaType.APPLICATION_JSON)
     @POST
@@ -37,13 +49,13 @@ public class QRGeneratorResource {
     public Response generateQR(QRInput qrInput) throws IOException {
 
         //Generate QR-Code
-        createDirectoryIfNotExists(DEV_PNG_PATH);
-        createDirectoryIfNotExists(DEV_PDF_PATH);
-        createDirectoryIfNotExists(PROD_PNG_PATH);
-        createDirectoryIfNotExists(PROD_PDF_PATH);
+        createDirectoryIfNotExists(devPngPath);
+        createDirectoryIfNotExists(devPdfPath);
+        createDirectoryIfNotExists(prodPngPath);
+        createDirectoryIfNotExists(prodPdfPath);
 
-        String basePngPath = isProdProfile() ? PROD_PNG_PATH : DEV_PNG_PATH;
-        String basePdfPath = isProdProfile() ? PROD_PDF_PATH : DEV_PDF_PATH;
+        String basePngPath = isProdProfile() ? prodPngPath : devPngPath;
+        String basePdfPath = isProdProfile() ? prodPdfPath : devPdfPath;
 
         String urn = qrInput.getUrn();
         String qrCodePngFilePath = basePngPath + "/qr_" + urn + ".png";
@@ -66,9 +78,9 @@ public class QRGeneratorResource {
         document.addPage(page);
 
         PDImageXObject pdimage = PDImageXObject.createFromFile(qrCodePngFilePath, document);
-        PDPageContentStream contentStream = new PDPageContentStream(document, document.getPage(0));
-        contentStream.drawImage(pdimage, 0, 0, widthInPoints, heightInPoints);
-        contentStream.close();
+        try (PDPageContentStream contentStream = new PDPageContentStream(document, document.getPage(0))) {
+            contentStream.drawImage(pdimage, 0, 0, widthInPoints, heightInPoints);
+        }
 
         //Saving the document
         File qrFile = new File(qrCodePdfFilePath);
