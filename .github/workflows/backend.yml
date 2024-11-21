@@ -2,6 +2,9 @@ name: backend
 
 on:
   push:
+    paths:
+      - backend/**
+      - .github/workflows/backend.yml
     branches: [ "main" ]
 
   workflow_dispatch:
