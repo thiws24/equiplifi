@@ -22,10 +22,9 @@ public class ClearQRCodeFolder {
     //@Scheduled(cron = "0 0 0 * * ?") //
     @Scheduled(cron = "0 0 11 * * ?")// public weg
     @GET
-    public String clearQRCodes() throws IOException {
+    public void clearQRCodes() throws IOException {
         clearDirectory(Paths.get(PROD_PNG_PATH));
         clearDirectory(Paths.get(PROD_PDF_PATH));
-        return null;
     }
 
     private void clearDirectory(Path path) throws IOException {
