@@ -1,29 +1,21 @@
-name: Build
 
+name: Build
 on:
   push:
     branches:
       - main
-
   workflow_dispatch:
 
 jobs:
-  build:
-    name: Build
+  sonarcloud:
+    name: SonarQube Cloud
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - uses: sonarsource/sonarqube-scan-action@master
+      - name: SonarQube Cloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
-          SONAR_HOST_URL: https://sonar.equipli.de
-        with:
-          projectBaseDir: frontend
-      # If you wish to fail your job when the Quality Gate is red, uncomment the
-      # following lines. This would typically be used to fail a deployment.
-      - uses: sonarsource/sonarqube-quality-gate-action@master
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: a061b3cfcc9b36d6571ec552a92d8f991bb5e38e
