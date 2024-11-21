@@ -3,6 +3,7 @@ package de.equipli;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.GET;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -16,14 +17,17 @@ import java.nio.file.Paths;
 @ApplicationScoped
 public class ClearQRCodeFolder {
 
-    private static final String PROD_PNG_PATH = "/srv/qrdata/qrCodes/qrCodesPNG";
-    private static final String PROD_PDF_PATH = "/srv/qrdata/qrCodes/qrCodesPDF";
+    @ConfigProperty(name = "qrservice.prod.png.path")
+    String prodPngPath;
+
+    @ConfigProperty(name = "qrservice.prod.pdf.path")
+    String prodPdfPath;
 
     @Scheduled(cron = "0 0 23 * * ?") //clearing at 23:00 Local Time or 00:00 Server Time
     @GET
     public void clearQRCodes() throws IOException {
-        clearDirectory(Paths.get(PROD_PNG_PATH));
-        clearDirectory(Paths.get(PROD_PDF_PATH));
+        clearDirectory(Paths.get(prodPngPath));
+        clearDirectory(Paths.get(prodPdfPath));
     }
 
     private void clearDirectory(Path path) throws IOException {
