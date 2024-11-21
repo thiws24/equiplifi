@@ -67,5 +67,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: 2223a146e73c8a97d57abfd5ed46ba12e521f7b1
+        with:
+          projectBaseDir: backend/inventoryservice/
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=equipli_inventoryservice -Dsonar.organization=equipli
 
