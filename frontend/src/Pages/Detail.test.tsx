@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import { DetailView } from './DetailView'; // Achte darauf, dass du den richtigen Pfad importierst
+import React from "react";
+import Detail from "./Detail";
 
 const mockData = {
     id: 2,
@@ -11,11 +12,22 @@ const mockData = {
     urn: 'mockUrn',
 };
 
-describe('DetailView', () => {
+function mockFetch() {
+    return jest.fn().mockImplementation(() =>
+        Promise.resolve({
+            ok: true,
+            json: () => mockData,
+        }),
+    );
+}
+
+
+describe('Detail', () => {
     test('opens and closes modal when "Show QR-Code" button is clicked', () => {
+        window.fetch = mockFetch();
         render(
             <BrowserRouter>
-                <DetailView {...mockData} />
+                <Detail />
             </BrowserRouter>
         );
 

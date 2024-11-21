@@ -8,18 +8,39 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar } from "../components/ui/calendar";
 import React, { useEffect, useState } from "react";
 import { InventoryItemProps } from "../interfaces/InventoryItemProps";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useKeycloak } from "../keycloak/KeycloakProvider";
+import { KeyCloakUserInfo } from "../interfaces/KeyCloakUserInfo";
 
-export const LentView: React.FC<InventoryItemProps> = ({ id, photo, name, description }) => {
+function Lent()  {
     const navigate = useNavigate();
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [inventoryItem, setInventoryItem] = useState<InventoryItemProps>();
+    const { id } = useParams();
+    const { keycloak, token } = useKeycloak()
+    const [userInfo, setUserInfo] = useState<KeyCloakUserInfo>()
 
-    // Place for the userId (Placeholder atm)
-    const userId = 1
+    const fetchItem = React.useCallback(async () => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/inventoryitems/${id}`);
+            if (response.ok) {
+                const data = await response.json();
+                setInventoryItem(data);
+            }
+        } catch (e) {
+            console.log(e);
+        }
+
+    }, [id]);
+
+    useEffect(() => {
+        void fetchItem();
+        keycloak?.loadUserInfo().then(val => setUserInfo(val as any), (e) => console.log(e))
+    }, [fetchItem]);
 
     const FormSchema = z.object({
         startDate: z.date({
@@ -45,34 +66,29 @@ export const LentView: React.FC<InventoryItemProps> = ({ id, photo, name, descri
     }, [form.watch("startDate")]);
 
     const onSubmit = async (values: FormschemaType) => {
-        // Debugging Code
-        // const requestData = {
-        //     "startDate": formattedStartDate,
-        //     "endDate": formattedEndDate,
-        //     "inventoryItemId": id,
-        //     "userId": userId
-        // }
-        // alert(JSON.stringify(requestData, null, 2));
-
         // Actual POST-Request
         const formattedStartDate = format(values.startDate, "yyyy-MM-dd'T'HH:mm:ss'Z'");
         const formattedEndDate = format(values.endDate, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+
         try {
             const response = await fetch("https://spiff.equipli.de/api/v1.0/messages/Reservation-request", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    "startDate": formattedStartDate,
-                    "endDate": formattedEndDate,
-                    inventoryItemId: id,
-                    userId: userId
+                    startDate: formattedStartDate,
+                    endDate: formattedEndDate,
+                    inventoryItemId: Number(id),
+                    userId: userInfo?.sub
                 }),
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP Fehler! Status: ${response.status}`);
+            if (response.ok) {
+                window.open(`/inventory-item/${id}`, '_self')
+            } else {
+                setErrorMessage(`HTTP Fehler! Status: ${response.status}`);
             }
 
             const responseData = await response.json();
@@ -102,9 +118,9 @@ export const LentView: React.FC<InventoryItemProps> = ({ id, photo, name, descri
                 <div className="max-w-[600px] mx-auto">
                     <Card>
                         <CardContent className="mt-4">
-                            <h3 className="text-center mb-4">{name}</h3>
+                            <h3 className="text-center mb-4">{inventoryItem?.name}</h3>
                             <div className="flex justify-center mb-4">
-                                {!! photo && <img src={`data:image/jpeg;base64,${photo}`} alt={description}
+                                {!!inventoryItem?.photoUrl && <img src={inventoryItem.photoUrl} alt={inventoryItem.description}
                                                                             className='h-80 w-full object-cover'/>}
                             </div>
                             <Form {...form}>
@@ -221,4 +237,6 @@ export const LentView: React.FC<InventoryItemProps> = ({ id, photo, name, descri
             </div>
         </div>
     );
-};
+}
+
+export default Lent;
