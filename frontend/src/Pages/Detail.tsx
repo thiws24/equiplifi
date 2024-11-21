@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { InventoryItemProps } from "./interfaces/InventoryItemProps";
-import { DetailView } from "./components/DetailView";
+import { InventoryItemProps } from "../interfaces/InventoryItemProps";
+import { DetailView } from "./DetailView";
 
 function Detail() {
     const [inventoryItem, setInventoryItem] = useState<InventoryItemProps>();
