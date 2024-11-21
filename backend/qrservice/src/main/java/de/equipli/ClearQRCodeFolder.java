@@ -11,7 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 
-//Clear QR-Code-Folder in Prod-Mode each day
+//Clear QR-Code-Folder in Prod-Mode each day at 23:00 Local Time or 00:00 Server Time
 @jakarta.ws.rs.Path("/qr/clear")
 @ApplicationScoped
 public class ClearQRCodeFolder {
@@ -19,7 +19,7 @@ public class ClearQRCodeFolder {
     private static final String PROD_PNG_PATH = "/srv/qrdata/qrCodes/qrCodesPNG";
     private static final String PROD_PDF_PATH = "/srv/qrdata/qrCodes/qrCodesPDF";
 
-    @Scheduled(cron = "0 0 23 * * ?") //
+    @Scheduled(cron = "0 0 23 * * ?") //clearing at 23:00 Local Time or 00:00 Server Time
     @GET
     public void clearQRCodes() throws IOException {
         clearDirectory(Paths.get(PROD_PNG_PATH));
