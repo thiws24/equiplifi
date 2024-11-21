@@ -16,7 +16,8 @@ jobs:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: SonarQube Cloud Scan
         uses: SonarSource/sonarcloud-github-action@master
-        working-directory: frontend
+        with:
+          projectBaseDir: frontend
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: a061b3cfcc9b36d6571ec552a92d8f991bb5e38e
