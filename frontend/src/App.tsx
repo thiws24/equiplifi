@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
-import Detail from "./Pages/Detail"
-import Home from "./Pages/Home"
-import Lent from "./Pages/Lent"
+import Detail from "./pages/Detail"
+import Home from "./pages/Home"
+import Lent from "./pages/Lent"
 
 const App = () => {
   return (
