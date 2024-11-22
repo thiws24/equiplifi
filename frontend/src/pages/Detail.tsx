@@ -35,7 +35,7 @@ function Detail() {
             <CardHeader className="flex justify-self-auto mb-4 mt-4">
                 <CardTitle className="text-customBlue col-span-2 justify-center flex"> {`${inventoryItem?.icon ?? ''}`} Detailansicht </CardTitle>
             </CardHeader>
-            <div>
+            <div className="p-4">
                 <Card className="bg-white text-customBlack p-4 font-semibold">
                     <CardContent>
                         <div>
