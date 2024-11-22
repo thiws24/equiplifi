@@ -32,7 +32,7 @@ function Detail() {
 
     return (
         <div className="max-w-[800px] mx-auto">
-            <CardHeader className="flex justify-self-auto mb-4 mt-4">
+            <CardHeader className="flex justify-self-auto mt-4">
                 <CardTitle className="text-customBlue col-span-2 justify-center flex"> {`${inventoryItem?.icon ?? ''}`} Detailansicht </CardTitle>
             </CardHeader>
             <div className="p-4">
