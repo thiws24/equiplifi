@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useKeycloak } from "../keycloak/KeycloakProvider";
 import { KeyCloakUserInfo } from "../interfaces/KeyCloakUserInfo";
 
-function Lent()  {
+function Lend()  {
     const navigate = useNavigate();
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -63,7 +63,7 @@ function Lent()  {
             newStartDate.setDate(newStartDate.getDate() + 1);
             setStartDate(newStartDate);
         }
-    }, [form]);
+    }, [form.getValues("startDate")]);
 
     const onSubmit = async (values: FormschemaType) => {
         const formattedStartDate = format(values.startDate, "yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -93,15 +93,15 @@ function Lent()  {
             const responseData = await response.json();
             console.log("Ausleihprozess gestartet:", responseData);
         } catch (error) {
-            console.error("Fehler beim Starten des Ausleihprozesses:", error);
             setErrorMessage("Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.")
+            console.error('Error message set:', errorMessage);
         }
     };
 
     return (
         <div className="max-w-[600px] mx-auto">
             {errorMessage && (
-                <div role="alert" className="mt-4">
+                <div id="alert" role="alert" className="mt-4">
                     <div className="bg-red-500 text-white font-bold rounded-t px-4 py-2">
                         Fehlermeldung
                     </div>
@@ -137,13 +137,11 @@ function Lent()  {
                                                     <Popover>
                                                         <PopoverTrigger asChild>
                                                             <FormControl>
-                                                                <Button
-                                                                    variant={"outline"}
-                                                                    className={cn(
-                                                                        "w-[200px] pl-3 text-left font-normal",
+                                                                <Button data-testid="startDateButton" variant={"outline"}
+                                                                    className={cn("w-[210px] pl-3 text-left font-normal",
                                                                         !field.value && "text-muted-foreground"
                                                                     )}
-                                                                    onClick={() => {
+                                                                    onChange={() => {
                                                                         form.reset({
                                                                             startDate: form.getValues("startDate"),
                                                                             endDate: undefined
@@ -153,7 +151,7 @@ function Lent()  {
                                                                     {field.value ? (
                                                                         format(field.value, "PPP")
                                                                     ) : (
-                                                                        <span>Datum auswählen</span>
+                                                                        <span>Startdatum auswählen</span>
                                                                     )}
                                                                     <CalendarIcon
                                                                         className="ml-auto h-4 w-4 opacity-50"/>
@@ -163,6 +161,7 @@ function Lent()  {
                                                         <PopoverContent className="w-auto p-0" align="start">
                                                             <Calendar
                                                                 mode="single"
+                                                                data-testid="CalenderStartButton"
                                                                 selected={field.value}
                                                                 onSelect={(date) => {
                                                                     field.onChange(date);
@@ -172,6 +171,7 @@ function Lent()  {
                                                             />
                                                         </PopoverContent>
                                                     </Popover>
+                                                    <FormMessage/>
                                                 </div>
                                             </FormItem>
                                         )}
@@ -186,17 +186,16 @@ function Lent()  {
                                                     <Popover>
                                                         <PopoverTrigger asChild>
                                                             <FormControl>
-                                                                <Button variant={"outline"}
-                                                                        className={cn(
-                                                                            "w-[200px] pl-3 text-left font-normal",
-                                                                            !field.value && "text-muted-foreground"
-                                                                        )}
-                                                                        disabled={!field.value && !startDate}
+                                                                <Button data-testid="endDateButton" variant={"outline"}
+                                                                    className={cn("w-[210px] pl-3 text-left font-normal",
+                                                                        !field.value && "text-muted-foreground"
+                                                                    )}
+                                                                    disabled={!field.value && !startDate}
                                                                 >
                                                                     {field.value ? (
                                                                         format(field.value, "PPP")
                                                                     ) : (
-                                                                        <span>Datum auswählen</span>
+                                                                        <span>Enddatum auswählen</span>
                                                                     )}
                                                                     <CalendarIcon
                                                                         className="ml-auto h-4 w-4 opacity-50"/>
@@ -238,4 +237,4 @@ function Lent()  {
     );
 }
 
-export default Lent;
+export default Lend;
