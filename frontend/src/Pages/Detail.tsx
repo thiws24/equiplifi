@@ -31,14 +31,14 @@ function Detail() {
     }, [fetchItem]);
 
     return (
-        <Card className="bg-customBeige text-customBlack p-4 font-semibold">
-            <CardHeader className="flex justify-self-auto">
-                <CardTitle className="col-span-2 justify-center flex"> {`${inventoryItem?.icon ?? ''}`} Detailansicht </CardTitle>
+        <div className="max-w-[800px] mx-auto">
+            <CardHeader className="flex justify-self-auto mt-4">
+                <CardTitle className="text-customBlue col-span-2 justify-center flex"> {`${inventoryItem?.icon ?? ''}`} Detailansicht </CardTitle>
             </CardHeader>
-            <div>
-                <CardContent>
-                    <div>
-                        <div className="mt-4 border-t border-customOrange">
+            <div className="p-4">
+                <Card className="bg-white text-customBlack p-4 font-semibold">
+                    <CardContent>
+                        <div>
                             <div className="flex justify-between items-center mt-4">
                                 <Button onClick={openModal} className="w-[100px] bg-customBlue text-customBeige rounded hover:bg-customRed">
                                     QR-Code
@@ -47,7 +47,7 @@ function Detail() {
                                     Ausleihen
                                 </Button>
                             </div>
-                            <div className="mt-4 border-t border-customOrange"></div>
+                            <div className="mt-6 border-t border-customOrange"></div>
                         </div>
                         {isOpen && (
                             <div
@@ -66,20 +66,23 @@ function Detail() {
                             <KeyValueRow label="Artikelnummer"> {id} </KeyValueRow>
                             <KeyValueRow label="Beschreibung"> {inventoryItem?.description} </KeyValueRow>
                             <KeyValueRow label="Foto">
-                                {<img src={inventoryItem?.photoUrl} alt={inventoryItem?.description}
-                                      className='w-full h-full object-cover'/>}
+                                {/*  Auskommentierten Code nach der Bearbeitung aktivieren  */}
+                                {  /*!!inventoryItem?.photoUrl &&*/
+                                    <img src={inventoryItem?.photoUrl} alt={inventoryItem?.description}
+                                      className='w-full h-80 object-cover'/>}
                             </KeyValueRow>
                         </dl>
-                    </div>
-                    <div className="border-t border-customOrange"></div>
-                </CardContent>
-                <CardFooter>
-                    <Button onClick={() => navigate('/')} className="bg-customBlue text-customBeige hover:bg-customRed hover:text-customBeige">
-                        &larr; Zurück
-                    </Button>
-                </CardFooter>
+                        <div className="border-t border-customOrange"></div>
+                    </CardContent>
+                    <CardFooter>
+                        <Button onClick={() => navigate('/')}
+                                className="bg-customBlue text-customBeige hover:bg-customRed hover:text-customBeige">
+                            &larr; Zurück
+                        </Button>
+                    </CardFooter>
+                </Card>
             </div>
-        </Card>
+        </div>
     )
 }
 
