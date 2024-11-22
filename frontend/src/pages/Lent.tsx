@@ -39,8 +39,8 @@ function Lent()  {
 
     useEffect(() => {
         void fetchItem();
-        keycloak?.loadUserInfo().then(val => setUserInfo(val as any), (e) => console.log(e))
-    }, [fetchItem]);
+        keycloak?.loadUserInfo().then(val => setUserInfo(val as any), (e ) => console.log(e))
+    }, [fetchItem, keycloak]);
 
     const FormSchema = z.object({
         startDate: z.date({
@@ -63,10 +63,9 @@ function Lent()  {
             newStartDate.setDate(newStartDate.getDate() + 1);
             setStartDate(newStartDate);
         }
-    }, [form.watch("startDate")]);
+    }, [form]);
 
     const onSubmit = async (values: FormschemaType) => {
-        // Actual POST-Request
         const formattedStartDate = format(values.startDate, "yyyy-MM-dd'T'HH:mm:ss'Z'");
         const formattedEndDate = format(values.endDate, "yyyy-MM-dd'T'HH:mm:ss'Z'");
 
@@ -225,7 +224,7 @@ function Lent()  {
                                         <Button onClick={() => navigate(`/inventory-item/${id}`)} className="flex bg-customBlue text-customBeige hover:bg-customRed hover:text-customBeige ml-8">
                                             &larr; Detailseite
                                         </Button>
-                                        <Button type="submit" className="text-customBeige bg-customBlue mr-8">
+                                        <Button type="submit" className="text-customBeige bg-customBlue mr-8 hover:bg-customRed hover:text-customBeige">
                                             Submit
                                         </Button>
                                     </div>
