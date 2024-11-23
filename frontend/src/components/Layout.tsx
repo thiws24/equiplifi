@@ -17,9 +17,9 @@ export const Layout: React.FC<Props> = ({children}) => {
                 <img src="/equipli-logo.svg" className="w-16 h-auto" alt="equipli logo"/>
                 <header className="ml-2 text-2xl font-semibold text-customBlue flex-grow">equipli</header>
                 <button
-                    className="bg-customBlue text-customBeige px-4 py-2 rounded hover:bg-customRed"
+                    className="text-sm bg-customBlue text-customBeige px-4 py-2 rounded hover:bg-customRed"
                     onClick={() => setShowQrReader(true)}>
-                    Inventar ausleihen
+                    QR Code scannen
                 </button>
             </div>
             {children}

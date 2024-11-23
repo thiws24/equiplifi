@@ -1,5 +1,4 @@
 import React from 'react';
-import {Card, CardContent, CardHeader, CardTitle} from "./ui/card";
 import {AgGridReact} from 'ag-grid-react';
 import '../globals.css';
 import {customTheme} from '../customTheme';
