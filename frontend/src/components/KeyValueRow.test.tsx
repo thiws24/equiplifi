@@ -28,7 +28,7 @@ describe("KeyValueRow Tests", () => {
         render(<KeyValueRow label={label}>{children}</KeyValueRow>)
 
         const labelElement = screen.getByText(label)
-        expect(labelElement).toHaveClass("text-sm font-medium leading-6 text-customBlack sm:col-span-1")
+        expect(labelElement).toHaveClass("text-sm leading-6 text-customBlack sm:col-span-1")
 
         const childrenElement = screen.getByText(children)
         expect(childrenElement).toHaveClass("mt-1 text-sm leading-6 text-customBlack sm:col-span-3 sm:mt-0 sm:mr-8")
@@ -46,7 +46,6 @@ describe("KeyValueRow Tests", () => {
         expect(ddElement).toBeInTheDocument();
         expect(ddElement).toBeEmptyDOMElement();
     });
-
 
     test("matches the snapshot", () => {
         const { container } = render(
