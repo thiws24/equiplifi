@@ -22,6 +22,23 @@ public class ReservationResource {
         return reservationRepository.listAll();
     }
 
+    @GET
+    @Path("/{itemId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getReservationsById(@PathParam("itemId") Long id) {
+        if (id == null || id <= 0) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid ID").build();
+        }
+
+        List<Reservation> reservations = reservationRepository.list("itemId = ?1", id);
+
+        if (reservations == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        return Response.ok(reservations).build();
+    }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional

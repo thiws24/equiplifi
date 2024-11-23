@@ -19,7 +19,7 @@ const QrReader = () => {
         if (result?.data) {
             const id = result.data;
             console.log(id)
-            window.open(`/inventory-item/${id}/reservation`, '_self')
+            window.open(`/inventory-item/${id}`, '_self')
         }
     };
 
