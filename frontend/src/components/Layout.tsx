@@ -27,7 +27,7 @@ export const Layout: React.FC<Props> = ({children}) => {
                 <div className="fixed inset-0 bg-customBlack bg-opacity-50 flex justify-center items-center z-10">
                     <div className="bg-customBeige p-4 rounded-lg shadow-lg relative">
                         <button
-                            className="absolute top-2 right-3.5 text-customRed text-5xl hover:text-customBlack z-20"
+                            className="absolute top-4 right-6 text-customRed text-5xl hover:text-customBlack z-20"
                             onClick={() => setShowQrReader(false)}
                         >
                             &times;

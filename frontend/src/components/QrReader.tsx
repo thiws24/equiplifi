@@ -1,8 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 
-// Styles
-import "./QrStyles.css";
-
 // Qr Scanner
 import QrScanner from "qr-scanner";
 import QrFrame from "../assets/qr-frame.svg";
@@ -69,16 +66,16 @@ const QrReader = () => {
     }, [qrOn]);
 
     return (
-        <div className="qr-reader">
+        <div className="w-full sm:w-[430px] h-screen mx-auto relative">
             {/* QR */}
-            <video ref={videoEl}></video>
-            <div ref={qrBoxEl} className="qr-box">
+            <video ref={videoEl} className='w-full h-full object-cover'></video>
+            <div ref={qrBoxEl} className="w-full left-0">
                 <img
                     src={QrFrame}
                     alt="Qr Frame"
                     width={256}
                     height={256}
-                    className="qr-frame"
+                    className="absolute left-1/2 top-1/2 transform -translate-x-[calc(50%-1px)] -translate-y-1/2 ml-[10px]"
                 />
             </div>
         </div>

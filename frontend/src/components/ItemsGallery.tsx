@@ -8,7 +8,6 @@ import {
   PaginationNext,
   PaginationPrevious
 } from "./ui/pagination";
-import "../globals.css"
 
 interface Props {
   items: InventoryItemProps[]

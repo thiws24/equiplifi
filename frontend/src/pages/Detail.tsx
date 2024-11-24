@@ -1,19 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "../components/ui/card";
 import ReservationTable from "../components/ReservationTable";
-import { rColDefs } from "../components/ReservationColDefs";
 import { InventoryItemProps } from "../interfaces/InventoryItemProps";
 import { ReservationItemProps } from "../interfaces/ReservationItemProps";
 import { Button } from "../components/ui/button";
 import { KeyValueRow } from "../components/KeyValueRow";
+import { ColDef } from "ag-grid-community";
+
+export const rColDefs: ColDef<ReservationItemProps>[] = [
+    {
+        headerName: "Start Datum", field: "startDate", sortable: true, filter: "agSetColumnFilter", flex: 1
+    },
+    {
+        headerName: "End Datum", field: "endDate", sortable: true, filter: "agSetColumnFilter", flex: 1
+    }
+];
 
 function Detail() {
     const [inventoryItem, setInventoryItem] = useState<InventoryItemProps>();
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
-    const openModal = () => setIsOpen(true);
-    const closeModal = () => setIsOpen(false);
+    const openModal = (state: boolean) => setIsOpen(state);
     const { id } = useParams();
     const [reservationItems, setReservationItems] = useState<ReservationItemProps[]>([]);
     const [reservationLoading, setReservationLoading] = React.useState(true);
@@ -62,7 +70,7 @@ function Detail() {
                     <CardContent>
                         <div>
                             <div className="flex justify-between items-center mt-4">
-                                <Button onClick={openModal}
+                                <Button onClick={() => openModal(true)}
                                         className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige">
                                     QR Code zeigen
                                 </Button>
@@ -77,7 +85,7 @@ function Detail() {
                                 className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                                 <div className="bg-customBeige rounded-lg shadow-lg p-6 w-96">
                                     <p className="text-center mb-4">{inventoryItem?.urn}</p>
-                                    <button onClick={closeModal}
+                                    <button onClick={() => openModal(false)}
                                             className="mt-4 px-4 py-2 bg-customBlue text-white rounded hover:bg-customRed flex items-center justify-center">
                                         Zurück
                                     </button>
