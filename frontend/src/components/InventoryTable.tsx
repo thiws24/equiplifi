@@ -1,11 +1,10 @@
 import React from 'react';
-import {AgGridReact} from 'ag-grid-react';
-import '../globals.css';
-import {customTheme} from '../customTheme';
-import {ColDef} from "ag-grid-community";
-import {InventoryItemProps} from "../interfaces/InventoryItemProps";
-import {AG_GRID_LOCALE_DE} from '@ag-grid-community/locale';
-import {useNavigate} from 'react-router-dom';
+import { AgGridReact } from 'ag-grid-react';
+import { customTheme } from '../customTheme';
+import { ColDef } from "ag-grid-community";
+import { InventoryItemProps } from "../interfaces/InventoryItemProps";
+import { AG_GRID_LOCALE_DE } from '@ag-grid-community/locale';
+import { useNavigate } from 'react-router-dom';
 
 interface InventoryCardProps {
     inventoryItems: InventoryItemProps[];
