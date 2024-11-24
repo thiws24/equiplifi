@@ -52,7 +52,7 @@ function Detail() {
     }, [id]);
 
     return (
-        <div className="max-w-[800px] mx-auto">
+        <div className="max-w-[1000px] mx-auto">
             <CardHeader className="flex justify-self-auto mt-4">
                 <CardTitle
                     className="text-3xl text-customOrange col-span-2 justify-center flex"> {`${inventoryItem?.icon ?? ''}`} Detailansicht </CardTitle>
@@ -63,11 +63,11 @@ function Detail() {
                         <div>
                             <div className="flex justify-between items-center mt-4">
                                 <Button onClick={openModal}
-                                        className="w-[110px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige">
+                                        className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige">
                                     QR Code zeigen
                                 </Button>
                                 <Button onClick={() => navigate(`/inventory-item/${id}/reservation`)}
-                                        className="w-[110px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige">
+                                        className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige">
                                     Ausleihen
                                 </Button>
                             </div>
@@ -96,7 +96,7 @@ function Detail() {
                             </KeyValueRow>
 
                         <div>
-                            <h2 className="text-sm font-bold mb-4">Reservierungen</h2>
+                            <h2 className="text-sm font-bold mb-4 mt-6">Reservierungen</h2>
                             <ReservationTable reservationItems={reservationItems} colDefs={rColDefs} loading={reservationLoading}/>
                         </div>
                         </dl>
@@ -104,7 +104,7 @@ function Detail() {
                     </CardContent>
                     <CardFooter>
                         <Button onClick={() => navigate('/')}
-                                className="w-[110px] bg-customBlue text-customBeige rounded hover:bg-customRed">
+                                className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed">
                             &larr; Zurück
                         </Button>
                     </CardFooter>
