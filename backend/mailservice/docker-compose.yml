@@ -8,13 +8,19 @@ services:
     environment:
       - ServerOptions__DisableMessageSanitisation=true
 
-  mailservice:
-    image: ghcr.io/thiws24/mailservice:latest
+#  mailservice:
+#    image: ghcr.io/thiws24/mailservice:latest
+#    ports:
+#      - 8080:8080
+#    environment:
+#      - SMTP_HOST=${SMTP_HOST}
+#      - SMTP_PORT=${SMTP_PORT}
+#      - SMTP_USERNAME=${SMTP_USERNAME}
+#      - SMTP_PASSWORD=${SMTP_PASSWORD}
+
+  keycloak:
+    image: ghcr.io/ainges/keycloak:test1
     ports:
-      - 8080:8080
-    environment:
-      - SMTP_HOST=${SMTP_HOST}
-      - SMTP_PORT=${SMTP_PORT}
-      - SMTP_USERNAME=${SMTP_USERNAME}
-      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - 8081:8080
+
 
