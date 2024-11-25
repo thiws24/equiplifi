@@ -1,10 +1,12 @@
 package de.equipli.routes;
 
-import de.equipli.dto.CollectMailDto;
+import de.equipli.dto.mail.CollectMailCreateDto;
 import de.equipli.GenericResponse;
-import de.equipli.dto.ReturnMailDto;
-import de.equipli.processors.CollectMailProcessor;
-import de.equipli.processors.ReturnMailProcessor;
+import de.equipli.dto.mail.ReturnMailDto;
+import de.equipli.processors.inventoryservice.GetItemToItemIdProcessor;
+import de.equipli.processors.mail.CollectMailProcessor;
+import de.equipli.processors.mail.ReturnMailProcessor;
+import de.equipli.processors.keycloak.GetUserDataFromKeycloakProcessor;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.apache.camel.builder.RouteBuilder;
@@ -35,11 +37,17 @@ public class MailRoute extends RouteBuilder {
     @ConfigProperty(name = "smtp.config.password", defaultValue = "password")
     String password;
 
+    @Inject
+    GetUserDataFromKeycloakProcessor getUserDataFromKeycloakProcessor;
+
+    @Inject
+    GetItemToItemIdProcessor getItemToItemIdProcessor;
+
     @Override
     public void configure() throws Exception {
         rest()
                 .post("sendCollectionMail")
-                .type(CollectMailDto.class)
+                .type(CollectMailCreateDto.class)
                 .to("direct:sendCollectionMail")
 
                 .post("sendReturnMail")
@@ -49,7 +57,11 @@ public class MailRoute extends RouteBuilder {
 
         from("direct:sendCollectionMail")
                 .routeId("sendCollectionMail-Route")
-                .unmarshal().json(CollectMailDto.class)
+                .unmarshal().json(CollectMailCreateDto.class)
+
+                .process(getItemToItemIdProcessor)
+                .process(getUserDataFromKeycloakProcessor)
+                
                 .process(collectMailProcessor)
                 .choice()
                     .when(simple(String.valueOf("dev".equals(activeProfile))))
@@ -59,7 +71,7 @@ public class MailRoute extends RouteBuilder {
                         + "?username={{smtp.config.username}}&password={{smtp.config.password}}")
                 .end()
                 // get to address from mailDTO in Property
-                .log("CollectionMail sent successfully to ${exchangeProperty.to}")
+                .log("CollectionMail sent successfully to ${exchangeProperty.receiverMail}")
                 .process(
                         exchange -> exchange.getMessage().setBody(
                                 new GenericResponse("Collection reminder sent successfully")

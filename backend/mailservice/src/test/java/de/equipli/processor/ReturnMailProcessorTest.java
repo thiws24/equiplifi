@@ -1,9 +1,9 @@
 package de.equipli.processor;
 
 
-import de.equipli.dto.ReturnMailDto;
+import de.equipli.dto.mail.ReturnMailDto;
 
-import de.equipli.processors.ReturnMailProcessor;
+import de.equipli.processors.mail.ReturnMailProcessor;
 import io.quarkus.qute.Template;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;

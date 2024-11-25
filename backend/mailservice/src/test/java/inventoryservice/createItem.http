@@ -1,0 +1,10 @@
+### Create Example Item
+POST http://localhost:8083/inventoryitems
+Content-Type: application/json
+
+{
+  "name": "Volleyball",
+  "photoUrl": "https://example.com/photo.jpg",
+  "icon": "🏐",
+  "urn": "example-urn"
+}
