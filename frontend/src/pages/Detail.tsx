@@ -30,6 +30,7 @@ function Detail() {
     const [reservationItems, setReservationItems] = useState<ReservationItemProps[]>([]);
     const [reservationLoading, setReservationLoading] = React.useState(true);
     const [processesList, setProcessesList] = React.useState<Process[]>([])
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const { token } = useKeycloak()
 
@@ -47,12 +48,39 @@ function Detail() {
 
     const fetchWaitingProcesses = React.useCallback(async () => {
         try {
-            const processes: Process[] = await fetchWaitingProcessesByTaskNameAndItemId("Confirm lending", Number(id), token ?? '');
+            const processes: Process[] = await fetchWaitingProcessesByTaskNameAndItemId("Reservation successful", Number(id), token ?? '');
             setProcessesList(processes)
         } catch (e) {
             console.log(e);
         }
     }, [id]);
+
+    const handleConfirmReservation = async (processId: number) => {
+        try {
+            const response = await fetch(
+                `${process.env.REACT_APP_SPIFF}/api/v1.0/api/v1.0/messages/Lending_confirmation`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        lending: "confirmed"
+                    }),
+                }
+            );
+
+            if (response.ok) {
+                window.open(`/inventory-item/${id}`, '_self')
+            } else {
+                setErrorMessage(`HTTP Fehler! Status: ${response.status}`);
+            }
+        } catch (error) {
+            setErrorMessage("Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.")
+            console.error('Error message set:', errorMessage);
+        }
+    };
 
     async function fetchReservationItems() {
         try {
@@ -75,6 +103,16 @@ function Detail() {
 
     return (
         <div className="max-w-[1000px] mx-auto">
+            {errorMessage && (
+                <div id="alert" role="alert" className="mt-4">
+                    <div className="bg-red-500 text-white font-bold rounded-t px-4 py-2">
+                        Fehlermeldung
+                    </div>
+                    <div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
+                        <p>{errorMessage}</p>
+                    </div>
+                </div>
+            )}
             <CardHeader className="flex justify-self-auto mt-4">
                 <CardTitle
                     className="text-3xl text-customOrange col-span-2 justify-center flex"> {`${inventoryItem?.icon ?? ''} ${inventoryItem?.name}`} </CardTitle>
@@ -108,29 +146,36 @@ function Detail() {
                             </div>
                         )}
 
-                        {/* Processes to confirm */}
-                        {/* TODO */}
                         <div>
-                            {processesList.map(el => <ConfirmReservationCard key={`process-${el.id}`} processId={el.id} data={el.dataObject}/>)}
+                            {processesList.map((el) => (
+                                <ConfirmReservationCard
+                                    key={`process-${el.id}`}
+                                    processId={el.id}
+                                    data={el.dataObject}
+                                    onConfirmReservation={handleConfirmReservation}
+                                />
+                            ))}
                         </div>
+
                         <dl className="divide-y divide-customBeige">
                             <KeyValueRow label="ID"> {id} </KeyValueRow>
                             <KeyValueRow label="Beschreibung"> {inventoryItem?.description} </KeyValueRow>
                             <KeyValueRow label="Foto">
-                                { !!inventoryItem?.photoUrl &&
+                                {!!inventoryItem?.photoUrl &&
                                     <img src={inventoryItem?.photoUrl} alt={inventoryItem?.description}
                                          className='w-full h-80 object-cover'/>}
                             </KeyValueRow>
-                        <div>
-                            <h2 className="text-sm font-bold mb-4 mt-6">Reservierungen</h2>
-                            <ReservationTable reservationItems={reservationItems} colDefs={rColDefs} loading={reservationLoading}/>
-                        </div>
+                            <div>
+                                <h2 className="text-sm font-bold mb-4 mt-6">Reservierungen</h2>
+                                <ReservationTable reservationItems={reservationItems} colDefs={rColDefs}
+                                                  loading={reservationLoading}/>
+                            </div>
                         </dl>
                     </CardContent>
                     <CardFooter>
                         <Button onClick={() => navigate('/')}
                                 className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed">
-                            &larr; Zurück
+                        &larr; Zurück
                         </Button>
                     </CardFooter>
                 </Card>
