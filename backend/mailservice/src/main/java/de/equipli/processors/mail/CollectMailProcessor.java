@@ -1,6 +1,7 @@
 package de.equipli.processors.mail;
 
-import de.equipli.dto.CollectMailCreateDto;
+import de.equipli.dto.inventoryservice.InventoryItemDto;
+import de.equipli.dto.mail.CollectMailCreateDto;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -23,11 +24,12 @@ public class CollectMailProcessor implements Processor {
         // Collect the necessary data from the exchange
         String receiverMail = exchange.getProperty("receiverMail", String.class);
         String nameOfUser = exchange.getProperty("nameOfUser", String.class);
+        InventoryItemDto item = exchange.getProperty("item", InventoryItemDto.class);
 
         // Render the template with Qute
         TemplateInstance templateInstance = collectmail
                 .data("name", nameOfUser)
-                .data("item", collectMailCreateDto.getItemId())
+                .data("item", item.getName() + " " + item.getIcon())
                 .data("collectionDate", collectMailCreateDto.getStartDate())
                 .data("returnDate", collectMailCreateDto.getEndDate());
 

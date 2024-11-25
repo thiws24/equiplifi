@@ -1,7 +1,7 @@
 package de.equipli.processors.mail;
 
 
-import de.equipli.dto.ReturnMailDto;
+import de.equipli.dto.mail.ReturnMailDto;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 import jakarta.enterprise.context.ApplicationScoped;

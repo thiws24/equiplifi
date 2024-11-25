@@ -1,6 +1,6 @@
 package de.equipli.processors.keycloak;
 
-import de.equipli.dto.CollectMailCreateDto;
+import de.equipli.dto.mail.CollectMailCreateDto;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

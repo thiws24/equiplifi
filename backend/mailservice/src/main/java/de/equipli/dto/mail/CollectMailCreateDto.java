@@ -1,4 +1,4 @@
-package de.equipli.dto;
+package de.equipli.dto.mail;
 
 
 public class CollectMailCreateDto {
