@@ -1,19 +1,18 @@
 import * as React from 'react';
-import {ProcessInputProps} from "../interfaces/ProcessInputProps";
+import { ProcessInputProps } from "../interfaces/ProcessInputProps";
 
 
-// TODO: Write the props you for this component
 interface Props {
     processId: number;
+    guid: string
     data?: ProcessInputProps;
-    onConfirmReservation: (processId: number) => Promise<void>;
+    onConfirmReservation: (processId: number, guid: string) => Promise<void>;
 }
 
-export const ConfirmReservationCard: React.FC<Props> = ({processId, data, onConfirmReservation}) => {
+export const ConfirmReservationCard: React.FC<Props> = ({ processId, guid, data, onConfirmReservation }) => {
 
     const handleConfirm = async () => {
-        await onConfirmReservation(processId);
-
+        await onConfirmReservation(processId, guid);
     };
 
     const formatDate = (date: string | undefined): string => {

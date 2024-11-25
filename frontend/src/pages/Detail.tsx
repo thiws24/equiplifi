@@ -8,9 +8,10 @@ import { Button } from "../components/ui/button";
 import { KeyValueRow } from "../components/KeyValueRow";
 import { ColDef } from "ag-grid-community";
 import { fetchWaitingProcessesByTaskNameAndItemId } from "../services/fetchProcesses";
-import { Process } from "../interfaces/Process";
 import { useKeycloak } from "../keycloak/KeycloakProvider";
 import { ConfirmReservationCard } from "../components/ConfirmReservationCard";
+import { TaskProps } from "../interfaces/TaskProps";
+import { fetchOpenTasksByItemId } from "../services/fetchTasks";
 
 export const rColDefs: ColDef<ReservationItemProps>[] = [
     {
@@ -29,7 +30,7 @@ function Detail() {
     const { id } = useParams();
     const [reservationItems, setReservationItems] = useState<ReservationItemProps[]>([]);
     const [reservationLoading, setReservationLoading] = React.useState(true);
-    const [processesList, setProcessesList] = React.useState<Process[]>([])
+    const [tasksList, setTasksList] = React.useState<TaskProps[]>([])
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const { token } = useKeycloak()
@@ -46,21 +47,21 @@ function Detail() {
         }
     }, [id]);
 
-    const fetchWaitingProcesses = React.useCallback(async () => {
+    const fetchOpenTasks = React.useCallback(async () => {
         try {
-            const processes: Process[] = await fetchWaitingProcessesByTaskNameAndItemId("Reservation successful", Number(id), token ?? '');
-            setProcessesList(processes)
+            const tasks: TaskProps[] = await fetchOpenTasksByItemId(Number(id), token ?? '');
+            setTasksList(tasks)
         } catch (e) {
             console.log(e);
         }
     }, [id]);
 
-    const handleConfirmReservation = async (processId: number) => {
+    const handleConfirmReservation = async (processId: number, guid: string) => {
         try {
             const response = await fetch(
-                `${process.env.REACT_APP_SPIFF}/api/v1.0/api/v1.0/messages/Lending_confirmation`,
+                `${process.env.REACT_APP_SPIFF}/api/v1.0/api/v1.0/tasks/${processId}/${guid}`,
                 {
-                    method: "POST",
+                    method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`,
@@ -97,7 +98,7 @@ function Detail() {
 
     React.useEffect(() => {
         void fetchItem();
-        void fetchWaitingProcesses()
+        void fetchOpenTasks()
         void fetchReservationItems();
     }, [fetchItem, id]);
 
@@ -147,10 +148,11 @@ function Detail() {
                         )}
 
                         <div>
-                            {processesList.map((el) => (
+                            {tasksList.map((el) => (
                                 <ConfirmReservationCard
                                     key={`process-${el.id}`}
-                                    processId={el.id}
+                                    processId={el.process_instance_id}
+                                    guid={el.task_guid}
                                     data={el.dataObject}
                                     onConfirmReservation={handleConfirmReservation}
                                 />
