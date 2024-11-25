@@ -70,7 +70,7 @@ function Lend()  {
         const formattedEndDate = format(values.endDate, "yyyy-MM-dd'T'HH:mm:ss'Z'");
 
         try {
-            const response = await fetch(`${process.env.REACT_APP_SPIFF}/api/v1.0/messages/Reservation-request`, {
+            const response = await fetch(`${process.env.REACT_APP_SPIFF}/api/v1.0/messages/Reservation-request-start`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -79,7 +79,7 @@ function Lend()  {
                 body: JSON.stringify({
                     startDate: formattedStartDate,
                     endDate: formattedEndDate,
-                    inventoryItemId: Number(id),
+                    itemId: Number(id),
                     userId: userInfo?.sub
                 }),
             });

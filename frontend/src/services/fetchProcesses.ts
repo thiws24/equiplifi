@@ -83,7 +83,7 @@ export async function fetchWaitingProcessesByTaskNameAndItemId(taskName: string,
 
         if (response.ok) {
             const data = await response.json()
-            let processes: Process[] = data.results.filter((p: Process) => p.task_title === taskName)
+            let processes: Process[] = data.results.filter((p: Process) => p.last_milestone_bpmn_name === taskName)
 
             return await filterWaitingProcessesByItemId(processes, itemId, token);
         }
