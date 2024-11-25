@@ -70,7 +70,7 @@ function Lend()  {
         const formattedEndDate = format(values.endDate, "yyyy-MM-dd'T'HH:mm:ss'Z'");
 
         try {
-            const response = await fetch("https://spiff.equipli.de/api/v1.0/messages/Reservation-request", {
+            const response = await fetch(`${process.env.REACT_APP_SPIFF}/api/v1.0/messages/Reservation-request`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -89,9 +89,6 @@ function Lend()  {
             } else {
                 setErrorMessage(`HTTP Fehler! Status: ${response.status}`);
             }
-
-            const responseData = await response.json();
-            console.log("Ausleihprozess gestartet:", responseData);
         } catch (error) {
             setErrorMessage("Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.")
             console.error('Error message set:', errorMessage);
