@@ -10,34 +10,49 @@
 
 **Request Body:**
 
-```json
-{
-  "receiverMail": "example@gmail.com",
-  "name": "Hans",
-  "item": "Volleyball",
-  "collectionDate": "24.12.2024",
-  "returnDate": "25.01.2025",
-  "pickupLocation": "Hinter Vereinsheim in einer dunklen Ecke"
-}
-```
 
-### 2. Send Return Mail
-
-**Endpoint:** `/sendReturnMail`
-
-**Method:** `POST`
-
-**Request Body:**
 
 ```json
 {
-  "receiverMail": "example@gmail.com",
-  "name": "Hans",
-  "item": "Volleyball",
-  "returnDate": "24.01.2024",
-  "returnLocation": "Hinter Vereinsheim in einer dunklen Ecke"
+  "itemId": "1",
+  "startDate": "2024-11-28",
+  "endDate": "2024-11-30",
+  "userId": "user_1"
 }
 ```
+Sowohl die E-Mail-Adresse des Benutzers, als auch dessen Name wird aus Keycloak ausgelesen und in der Mail verwendet.
+Die itemId wird benutzt, um den Namen des Items mit Hilfe des inventoryservices zu holen.
+
+[//]: # ()
+[//]: # (### 2. Send Return Mail)
+
+[//]: # ()
+[//]: # (**Endpoint:** `/sendReturnMail`)
+
+[//]: # ()
+[//]: # (**Method:** `POST`)
+
+[//]: # ()
+[//]: # (**Request Body:**)
+
+[//]: # ()
+[//]: # (```json)
+
+[//]: # ({)
+
+[//]: # (  "receiverMail": "example@gmail.com",)
+
+[//]: # (  "name": "Hans",)
+
+[//]: # (  "item": "Volleyball",)
+
+[//]: # (  "returnDate": "24.01.2024",)
+
+[//]: # (  "returnLocation": "Hinter Vereinsheim in einer dunklen Ecke")
+
+[//]: # (})
+
+[//]: # (```)
 
 # Quarkus specific Docs
 
