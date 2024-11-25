@@ -13,9 +13,11 @@ export const Layout: React.FC<Props> = ({children}) => {
     if (authenticated) {
         return (
         <div>
-            <div className="bg-white p-2.5 flex items-center shadow-md">
-                <img src="/equipli-logo.svg" className="w-16 h-auto" alt="equipli logo"/>
-                <header className="ml-2 text-2xl font-semibold text-customBlue flex-grow">equipli</header>
+            <div className="bg-white p-2.5 flex items-center justify-between shadow-md">
+                <a href='/' className='flex items-center'>
+                    <img src="/equipli-logo.svg" className="w-16 h-auto" alt="equipli logo"/>
+                    <header className="ml-2 text-2xl font-semibold text-customBlue">equipli</header>
+                </a>
                 <button
                     className="text-sm bg-customBlue text-customBeige px-4 py-2 rounded hover:bg-customRed"
                     onClick={() => setShowQrReader(true)}>

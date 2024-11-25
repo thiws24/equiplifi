@@ -7,6 +7,10 @@ import { ReservationItemProps } from "../interfaces/ReservationItemProps";
 import { Button } from "../components/ui/button";
 import { KeyValueRow } from "../components/KeyValueRow";
 import { ColDef } from "ag-grid-community";
+import { fetchWaitingProcessesByTaskNameAndItemId } from "../services/fetchProcesses";
+import { Process } from "../interfaces/Process";
+import { useKeycloak } from "../keycloak/KeycloakProvider";
+import { ConfirmReservationCard } from "../components/ConfirmReservationCard";
 
 export const rColDefs: ColDef<ReservationItemProps>[] = [
     {
@@ -25,6 +29,9 @@ function Detail() {
     const { id } = useParams();
     const [reservationItems, setReservationItems] = useState<ReservationItemProps[]>([]);
     const [reservationLoading, setReservationLoading] = React.useState(true);
+    const [processesList, setProcessesList] = React.useState<Process[]>([])
+
+    const { token } = useKeycloak()
 
     const fetchItem = React.useCallback(async () => {
         try {
@@ -38,9 +45,14 @@ function Detail() {
         }
     }, [id]);
 
-    React.useEffect(() => {
-        void fetchItem();
-    }, [fetchItem]);
+    const fetchWaitingProcesses = React.useCallback(async () => {
+        try {
+            const processes: Process[] = await fetchWaitingProcessesByTaskNameAndItemId("Confirm lending", Number(id), token ?? '');
+            setProcessesList(processes)
+        } catch (e) {
+            console.log(e);
+        }
+    }, [id]);
 
     async function fetchReservationItems() {
         try {
@@ -56,18 +68,21 @@ function Detail() {
     }
 
     React.useEffect(() => {
+        void fetchItem();
+        void fetchWaitingProcesses()
         void fetchReservationItems();
-    }, [id]);
+    }, [fetchItem, id]);
 
     return (
         <div className="max-w-[1000px] mx-auto">
             <CardHeader className="flex justify-self-auto mt-4">
                 <CardTitle
-                    className="text-3xl text-customOrange col-span-2 justify-center flex"> {`${inventoryItem?.icon ?? ''}`} Detailansicht </CardTitle>
+                    className="text-3xl text-customOrange col-span-2 justify-center flex"> {`${inventoryItem?.icon ?? ''} ${inventoryItem?.name}`} </CardTitle>
             </CardHeader>
             <div className="p-4">
                 <Card className="bg-white text-customBlack p-4 font-semibold">
                     <CardContent>
+                        {/* Button */}
                         <div>
                             <div className="flex justify-between items-center mt-4">
                                 <Button onClick={() => openModal(true)}
@@ -92,23 +107,25 @@ function Detail() {
                                 </div>
                             </div>
                         )}
+
+                        {/* Processes to confirm */}
+                        {/* TODO */}
+                        <div>
+                            {processesList.map(el => <ConfirmReservationCard key={`process-${el.id}`} processId={el.id} data={el.dataObject}/>)}
+                        </div>
                         <dl className="divide-y divide-customBeige">
-                            <KeyValueRow label="Name"> {inventoryItem?.name} </KeyValueRow>
                             <KeyValueRow label="ID"> {id} </KeyValueRow>
                             <KeyValueRow label="Beschreibung"> {inventoryItem?.description} </KeyValueRow>
                             <KeyValueRow label="Foto">
-                                {/*  Auskommentierten Code nach der Bearbeitung aktivieren  */}
-                                {  /*!!inventoryItem?.photoUrl &&*/
+                                { !!inventoryItem?.photoUrl &&
                                     <img src={inventoryItem?.photoUrl} alt={inventoryItem?.description}
                                          className='w-full h-80 object-cover'/>}
                             </KeyValueRow>
-
                         <div>
                             <h2 className="text-sm font-bold mb-4 mt-6">Reservierungen</h2>
                             <ReservationTable reservationItems={reservationItems} colDefs={rColDefs} loading={reservationLoading}/>
                         </div>
                         </dl>
-                        <div></div>
                     </CardContent>
                     <CardFooter>
                         <Button onClick={() => navigate('/')}
