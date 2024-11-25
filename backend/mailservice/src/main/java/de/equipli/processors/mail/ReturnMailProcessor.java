@@ -1,4 +1,4 @@
-package de.equipli.processors;
+package de.equipli.processors.mail;
 
 
 import de.equipli.dto.ReturnMailDto;
