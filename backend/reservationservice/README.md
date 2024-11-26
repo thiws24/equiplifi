@@ -19,18 +19,21 @@ GET  /reservations
 ```json
 [
   {
-    "reservationNumber": 1,
+    "id": 1,
     "itemId": "123",
+    "userId": "user_1",
     "startDate": "2024-11-20",
     "endDate": "2024-11-25",
-    "userId": "user_1"
+    "reservationStatus": "CANCELLED"
   },
   {
-    "reservationNumber": 2,
+    "id": 2,
     "itemId": "124",
+    "userId": "user_2",
     "startDate": "2024-11-21",
     "endDate": "2024-11-22",
-    "userId": "user_2"
+    "reservationStatus": null
+    
   }
 ]
 ```
@@ -50,9 +53,11 @@ POST /reservations
 ```json
 {
   "itemId": "123",
+  "userId": "user_1",
   "startDate": "2024-11-20",
   "endDate": "2024-11-25",
-  "userId": "user_1"
+  "reservationStatus": "CANCELLED"
+  
 }
 ```
 
@@ -63,11 +68,12 @@ POST /reservations
 
 ```json
 {
-  "reservationNumber": 1,
+  "id": 1,
   "itemId": "123",
+  "userId": "user_1",
   "startDate": "2024-11-20",
   "endDate": "2024-11-25",
-  "userId": "user_1"
+  "reservationStatus": "CANCELLED"
 }
 ```
 
@@ -87,7 +93,7 @@ Um den ReservationService mit einer Datenbank zu verbinden, müssen folgende Umg
 
 ---
 
-# reservationservice
+# Quarkus Documentation
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
