@@ -1,10 +1,9 @@
-package de.equipli;
+package de.equipli.inventory;
 
+import de.equipli.inventory.jpa.InventoryItem;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
-
-import java.util.Base64;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
