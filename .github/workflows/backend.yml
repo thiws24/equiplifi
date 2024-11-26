@@ -66,14 +66,6 @@ jobs:
         working-directory: backend/${{ matrix.service }}/
         run: chmod +x ./mvnw
 
-      - name: List all changed files
-        env:
-          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
-        run: |
-          for file in ${ALL_CHANGED_FILES}; do
-            echo "$file was changed"
-          done
-
       - name: Build the Maven artifact
         if: steps.changes.outputs.any_modified == 'true'
         working-directory: backend/${{ matrix.service }}/
