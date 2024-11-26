@@ -38,9 +38,21 @@ public class GetUserDataFromKeycloakProcessor implements Processor {
     @ConfigProperty(name = "quarkus.keycloak.admin-client.grant-type")
     String keycloakGrantType;
 
+
+
     @Override
     public void process(Exchange exchange) throws Exception {
         CollectMailCreateDto collectMailCreateDto = exchange.getIn().getBody(CollectMailCreateDto.class);
+
+        // TODO:
+        logger.info("Configured realm"+ keycloakRealm);
+        logger.info("Configured clientId"+ keycloakClientId);
+        logger.info("Configured clientSecret"+ keycloakClientSecret);
+        logger.info("Configured username"+ keycloakUsername);
+        logger.info("Configured password"+ keycloakPassword);
+        logger.info("Configured grantType"+ keycloakGrantType);
+        logger.info("Configured serverUrl"+ keycloakServerUrl);
+
 
         Keycloak keycloak = Keycloak.getInstance(
                 keycloakServerUrl,       // Server URL
@@ -52,7 +64,7 @@ public class GetUserDataFromKeycloakProcessor implements Processor {
         );
         String id = collectMailCreateDto.getUserId();
         // Get user resource
-        UserResource userResource = keycloak.realm("quarkus")
+        UserResource userResource = keycloak.realm(keycloakRealm)
                 .users()
                 .get(id);
         // Get userdata
