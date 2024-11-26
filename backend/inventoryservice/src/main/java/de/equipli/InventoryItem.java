@@ -1,18 +1,26 @@
 package de.equipli;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 @Entity
 public class InventoryItem extends PanacheEntity {
 
-    public String name;
-    public String description;
-    public String icon;
-    public String urn;
-    public String photoUrl;
+    @Schema(hidden = true)
+    private Long id;
+
     public String itemStatus;
+    public String location;
+
+    @ManyToOne
+    public Category category;
+
+    @Transient
+    public String getUrn() {
+        return "urn:de.equipli:item:" + this.id;
+    }
 
     public Long getId() {
         return id;
@@ -22,44 +30,13 @@ public class InventoryItem extends PanacheEntity {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    @JsonIgnore
+    public Category getCategory() {
+        return category;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public String getUrn() {
-        return urn;
-    }
-
-    public void setUrn(String urn) {
-        this.urn = urn;
-    }
-
-    public String getPhotoUrl() {
-        return photoUrl;
-    }
-
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public String getItemStatus() {
@@ -70,4 +47,11 @@ public class InventoryItem extends PanacheEntity {
         this.itemStatus = itemStatus;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 }
