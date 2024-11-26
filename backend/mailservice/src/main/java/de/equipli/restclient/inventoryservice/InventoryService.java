@@ -10,8 +10,6 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 @RegisterRestClient(configKey = "inventoryservice")
 public interface InventoryService {
 
-
-
     @GET
     @Path("/{id}")
     InventoryItemDto getInventoryItem(@PathParam("id") String id);

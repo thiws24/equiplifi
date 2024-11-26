@@ -1,23 +1,16 @@
 package de.equipli.endpoints;
 
 import de.equipli.dto.inventoryservice.InventoryItemCreateDto;
-import de.equipli.dto.inventoryservice.InventoryItemDto;
 import de.equipli.dto.mail.CollectMailCreateDto;
 import io.quarkus.test.junit.QuarkusTest;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.containers.PostgreSQLContainer;
-
-
-import java.util.List;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 
@@ -39,9 +32,6 @@ public class MailEndpointTest {
     static GenericContainer<?> inventoryService;
     static GenericContainer<?> keycloak;
     static PostgreSQLContainer<?> inventoryServiceDb;
-
-
-
 
     @BeforeEach
     void startContainers() {
@@ -91,9 +81,6 @@ public class MailEndpointTest {
                 .statusCode(201)
                 .assertThat()
                 .body(is("Das InventoryItem wurde erfolgreich erstellt"));
-
-
-
     }
 
     @Test
@@ -105,7 +92,6 @@ public class MailEndpointTest {
         collectMailCreateDto.setStartDate("24.12.2024");
         collectMailCreateDto.setEndDate("24.01.2025");
 
-
         given()
                 .contentType("application/json")
                 .body(collectMailCreateDto)
@@ -114,6 +100,5 @@ public class MailEndpointTest {
                 .statusCode(200)
                 .assertThat()
                 .body(is("{\"result\":\"Collection reminder sent successfully\"}"));
-
     }
 }
