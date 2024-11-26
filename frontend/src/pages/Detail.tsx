@@ -73,7 +73,7 @@ function Detail() {
             );
 
             if (response.ok) {
-                window.open(`/inventory-item/${id}`, '_self')
+                // window.open(`/inventory-item/${id}`, '_self')
             } else {
                 setErrorMessage(`HTTP Fehler! Status: ${response.status}`);
             }
