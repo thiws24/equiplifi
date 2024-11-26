@@ -49,5 +49,4 @@ public class CollectMailCreateDto {
     public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
-
 }

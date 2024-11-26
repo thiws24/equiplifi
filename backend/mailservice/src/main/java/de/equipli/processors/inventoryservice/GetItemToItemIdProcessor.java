@@ -19,10 +19,8 @@ public class GetItemToItemIdProcessor implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
         String itemId = exchange.getIn().getBody(CollectMailCreateDto.class).getItemId();
-
         // Get item from inventory service with http request
         InventoryItemDto item = null;
-
         try {
             item = inventoryService.getInventoryItem(itemId);
         }
@@ -33,6 +31,5 @@ public class GetItemToItemIdProcessor implements Processor {
             throw new RuntimeException("Item 'itemId="+ itemId  +"' not found in inventory service");
         }
         exchange.setProperty("item", item);
-
     }
 }

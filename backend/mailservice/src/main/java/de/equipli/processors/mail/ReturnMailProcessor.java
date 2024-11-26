@@ -18,10 +18,7 @@ public class ReturnMailProcessor implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
         ReturnMailDto returnMailDto = exchange.getIn().getBody(ReturnMailDto.class);
-
         exchange.setProperty("to", returnMailDto.getReceiverMail());
-
-
 
         // Render the template with Qute
         TemplateInstance templateInstance = returnmail
@@ -38,7 +35,5 @@ public class ReturnMailProcessor implements Processor {
         exchange.getIn().setHeader("From", "info@equipli.de");
         exchange.getIn().setHeader("Content-Type", "text/html");
         exchange.getIn().setBody(htmlTemplate);
-
-
     }
 }

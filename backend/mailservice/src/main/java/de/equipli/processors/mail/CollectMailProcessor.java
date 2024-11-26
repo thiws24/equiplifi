@@ -20,7 +20,6 @@ public class CollectMailProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         CollectMailCreateDto collectMailCreateDto = exchange.getIn().getBody(CollectMailCreateDto.class);
 
-
         // Collect the necessary data from the exchange
         String receiverMail = exchange.getProperty("receiverMail", String.class);
         String nameOfUser = exchange.getProperty("nameOfUser", String.class);
@@ -41,8 +40,5 @@ public class CollectMailProcessor implements Processor {
         exchange.getIn().setHeader("From", "info@equipli.de");
         exchange.getIn().setHeader("Content-Type", "text/html");
         exchange.getIn().setBody(htmlTemplate);
-
-
-
     }
 }

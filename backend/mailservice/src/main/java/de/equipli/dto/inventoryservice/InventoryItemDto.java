@@ -7,7 +7,6 @@ public class InventoryItemDto {
     private String icon;
     private String urn;
 
-
     public InventoryItemDto(int id, String name, String photoUrl, String icon, String urn) {
         this.id = id;
         this.name = name;

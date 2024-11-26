@@ -98,6 +98,5 @@ public class MailRoute extends RouteBuilder {
                         )
                 )
                 .marshal().json();
-
     }
 }
