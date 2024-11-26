@@ -12,7 +12,6 @@ import org.apache.camel.Processor;;
 @ApplicationScoped
 public class CollectMailProcessor implements Processor {
 
-
     @Inject
     Template collectmail;
 
