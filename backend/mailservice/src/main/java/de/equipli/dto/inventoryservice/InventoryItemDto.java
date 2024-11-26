@@ -57,4 +57,15 @@ public class InventoryItemDto {
     public void setUrn(String urn) {
         this.urn = urn;
     }
+
+    @Override
+    public String toString(){
+        return "InventoryItemDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", photoUrl='" + photoUrl + '\'' +
+                ", icon='" + icon + '\'' +
+                ", urn='" + urn + '\'' +
+                '}';
+    }
 }

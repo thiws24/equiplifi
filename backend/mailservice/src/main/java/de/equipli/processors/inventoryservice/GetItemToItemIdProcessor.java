@@ -8,9 +8,13 @@ import jakarta.inject.Inject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public class GetItemToItemIdProcessor implements Processor {
+
+    Logger logger = LoggerFactory.getLogger(GetItemToItemIdProcessor.class);
 
     @Inject
     @RestClient
@@ -30,6 +34,8 @@ public class GetItemToItemIdProcessor implements Processor {
         if (item == null) {
             throw new RuntimeException("Item 'itemId="+ itemId  +"' not found in inventory service");
         }
+
+        logger.info("Item 'itemId="+ itemId  +"' found in inventory service", item.toString());
         exchange.setProperty("item", item);
     }
 }
