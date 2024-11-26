@@ -1,4 +1,4 @@
-package de.equipli;
+package de.equipli.inventory;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 

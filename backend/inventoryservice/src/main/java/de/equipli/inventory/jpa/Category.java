@@ -1,25 +1,19 @@
-package de.equipli;
+package de.equipli.inventory.jpa;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.util.List;
 
 @Entity
 public class Category extends PanacheEntity {
 
-    @Schema(hidden = true)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
-
-    public String name;
-    public String description;
-    public String icon;
-    public String photoUrl;
+    private String name;
+    private String description;
+    private String icon;
+    private String photoUrl;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    // JPA Cascades // Letztes Exemplar. dann acuh Category löschen
     public List<InventoryItem> items;
 
     public String getName() {
