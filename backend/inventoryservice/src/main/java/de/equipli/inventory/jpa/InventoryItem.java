@@ -1,21 +1,17 @@
-package de.equipli;
+package de.equipli.inventory.jpa;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 @Entity
 public class InventoryItem extends PanacheEntity {
 
-    @Schema(hidden = true)
-    private Long id;
-
-    public String itemStatus;
-    public String location;
+    private String status;
+    private String location;
 
     @ManyToOne
-    public Category category;
+    private Category category;
 
     @Transient
     public String getUrn() {
@@ -39,12 +35,12 @@ public class InventoryItem extends PanacheEntity {
         this.category = category;
     }
 
-    public String getItemStatus() {
-        return itemStatus;
+    public String getStatus() {
+        return status;
     }
 
-    public void setItemStatus(String itemStatus) {
-        this.itemStatus = itemStatus;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getLocation() {
