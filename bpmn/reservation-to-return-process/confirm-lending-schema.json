@@ -1,0 +1,15 @@
+{
+  "title": "Confirmation",
+  "description": "confirmed or not confirmed",
+  "type": "object",
+  "required": [
+    "lending"
+  ],
+  "properties": {
+    "lending": {
+      "type": "string",
+      "title": "Confirmation",
+      "default": "confirmed"
+    }
+  }
+}
