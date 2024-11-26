@@ -59,7 +59,7 @@ function Detail() {
     const handleConfirmReservation = async (processId: number, guid: string) => {
         try {
             const response = await fetch(
-                `${process.env.REACT_APP_SPIFF}/api/v1.0/api/v1.0/tasks/${processId}/${guid}`,
+                `${process.env.REACT_APP_SPIFF}/api/v1.0/tasks/${processId}/${guid}`,
                 {
                     method: "PUT",
                     headers: {

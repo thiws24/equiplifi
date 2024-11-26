@@ -99,7 +99,7 @@ export async function filterWaitingProcessesByItemId(data: Process[], itemId: nu
     // Fetch Data Object for each process
     await Promise.all(data.map(async (pItem) => {
         const dataRes = await fetchDataObjectFromProcess(pItem.id, token)
-        if (dataRes && dataRes.InventoryItemId === itemId) {
+        if (dataRes && dataRes.itemId === itemId) {
             filteredProcesses.push({
                 ...pItem,
                 dataObject: dataRes
