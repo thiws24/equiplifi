@@ -2,8 +2,10 @@ package de.equipli.processors.keycloak;
 
 import de.equipli.dto.mail.CollectMailCreateDto;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -13,32 +15,46 @@ import org.slf4j.LoggerFactory;
 @ApplicationScoped
 public class GetUserDataFromKeycloakProcessor implements Processor {
 
-
     Logger logger = LoggerFactory.getLogger(GetUserDataFromKeycloakProcessor.class);
 
+    @ConfigProperty(name ="quarkus.keycloak.admin-client.server-url")
+    String keycloakServerUrl;
+
+    @ConfigProperty(name ="quarkus.keycloak.admin-client.realm")
+    String keycloakRealm;
+
+    @ConfigProperty(name ="quarkus.keycloak.admin-client.client-id")
+    String keycloakClientId;
+
+    @ConfigProperty(name ="quarkus.keycloak.admin-client.client-secret")
+    String keycloakClientSecret;
+
+    @ConfigProperty(name ="quarkus.keycloak.admin-client.username")
+    String keycloakUsername;
+
+    @ConfigProperty(name ="quarkus.keycloak.admin-client.password")
+    String keycloakPassword;
+
+    @ConfigProperty(name = "quarkus.keycloak.admin-client.grant-type")
+    String keycloakGrantType;
 
     @Override
     public void process(Exchange exchange) throws Exception {
         CollectMailCreateDto collectMailCreateDto = exchange.getIn().getBody(CollectMailCreateDto.class);
 
         Keycloak keycloak = Keycloak.getInstance(
-                "http://localhost:8081",       // Server URL
-                "quarkus",                    // Realm
-                "admin",                         // Username (null für client_credentials)
-                "admin",                         // Password (null für client_credentials)
-                "quarkus-app",                // Client ID
-                "secret"                      // Client Secret
+                keycloakServerUrl,       // Server URL
+                keycloakRealm,           // Realm
+                keycloakUsername,        // Username (null für client_credentials)
+                keycloakPassword,        // Password (null für client_credentials)
+                keycloakClientId,        // Client ID
+                keycloakClientSecret     // Client Secret
         );
-
-
-
         String id = collectMailCreateDto.getUserId();
-
         // Get user resource
         UserResource userResource = keycloak.realm("quarkus")
                 .users()
                 .get(id);
-
         // Get userdata
         UserRepresentation user = userResource.toRepresentation();
 
@@ -58,8 +74,5 @@ public class GetUserDataFromKeycloakProcessor implements Processor {
             throw new RuntimeException("Name of User is null");
         }
         exchange.setProperty("nameOfUser", nameOfUser);
-
-
-
     }
 }
