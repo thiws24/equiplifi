@@ -61,7 +61,6 @@ public class MailRoute extends RouteBuilder {
 
                 .process(getItemToItemIdProcessor)
                 .process(getUserDataFromKeycloakProcessor)
-                
                 .process(collectMailProcessor)
                 .choice()
                     .when(simple(String.valueOf("dev".equals(activeProfile))))
