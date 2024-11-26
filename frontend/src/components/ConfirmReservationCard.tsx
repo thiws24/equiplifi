@@ -27,7 +27,7 @@ export const ConfirmReservationCard: React.FC<Props> = ({ processId, guid, data,
     return (
         <div className="my-10 text-sm border p-4 rounded shadow-md">
             <p>Prozess-ID: {processId}</p>
-            <p>Artikel-ID: {data?.InventoryItemId}</p>
+            <p>Artikel-ID: {data?.itemId}</p>
             <p>Startddatum: {formatDate(data?.startDate)}</p>
             <p>Enddatum: {formatDate(data?.endDate)}</p>
             <button
