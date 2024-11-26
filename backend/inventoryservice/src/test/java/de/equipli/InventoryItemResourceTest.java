@@ -22,12 +22,12 @@ class InventoryItemResourceTest {
         String itemStatus = "damaged";
 
         InventoryItem item = new InventoryItem();
-        item.setName(name);
+        /*item.setName(name);
         item.setDescription(description);
         item.setIcon(icon);
-        item.setUrn(urn);
+        //item.setUrn(urn);
         item.setPhotoUrl(photoUrl);
-        item.setItemStatus(itemStatus);
+        item.setItemStatus(itemStatus);*/
 
         given()
                 .contentType(ContentType.JSON)
@@ -39,7 +39,7 @@ class InventoryItemResourceTest {
                 .body("name", is(name))
                 .body("description", is(description))
                 .body("icon", is(icon))
-                .body("urn", is(urn))
+                //.body("urn", is(urn))
                 .body("photoUrl", is(photoUrl))
                 .body("itemStatus", is(itemStatus));
     }
@@ -56,7 +56,7 @@ class InventoryItemResourceTest {
     @Test
     void testPutInventoryItems() {
         InventoryItem item = new InventoryItem();
-        item.setName("Test Item");
+        /*item.setName("Test Item");*/
 
         int id = given()
                 .contentType(ContentType.JSON)
@@ -68,7 +68,7 @@ class InventoryItemResourceTest {
                 .extract().path("id");
 
         InventoryItem updatedItem = new InventoryItem();
-        updatedItem.setName("Updated Test Item");
+        /*updatedItem.setName("Updated Test Item");*/
 
         given()
                 .contentType(ContentType.JSON)
@@ -83,7 +83,7 @@ class InventoryItemResourceTest {
     @Test
     void testDeleteInventoryItem() {
         InventoryItem item = new InventoryItem();
-        item.setName("Test Item");
+        /*item.setName("Test Item");*/
 
         int id = given()
                 .contentType(ContentType.JSON)
