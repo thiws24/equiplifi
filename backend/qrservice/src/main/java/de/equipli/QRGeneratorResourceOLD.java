@@ -2,7 +2,10 @@ package de.equipli;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.*;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import net.glxn.qrgen.QRCode;
@@ -21,7 +24,7 @@ import java.io.IOException;
 
 @ApplicationScoped
 @Path("/qr")
-public class QRGeneratorResource {
+public class QRGeneratorResourceOLD {
 
     private final String activeProfile;
     private final String devPngPath;
@@ -30,7 +33,7 @@ public class QRGeneratorResource {
     private final String prodPdfPath;
 
     @Inject
-    public QRGeneratorResource(
+    public QRGeneratorResourceOLD(
             @ConfigProperty(name = "quarkus.profile") String activeProfile,
             @ConfigProperty(name = "qrservice.dev.png.path") String devPngPath,
             @ConfigProperty(name = "qrservice.dev.pdf.path") String devPdfPath,
