@@ -96,7 +96,7 @@ public class QRGeneratorResource {
             g.drawImage(qrImage, qrX, qrY, null);
 
             // write Text
-            g.setFont(new Font("Arial", Font.PLAIN, fontSize)); // Font size depending on image size
+            g.setFont(loadFont(fontSize));
             g.setColor(Color.BLACK);
             int textWidth = g.getFontMetrics().stringWidth(text);
             int textX = (imageSizeInPixels - textWidth) / 2; // center Text
@@ -136,6 +136,17 @@ public class QRGeneratorResource {
         document.save(pdfStream);
         document.close();
         return pdfStream.toByteArray();
+    }
+
+    // Use PublicSans-SemiBold font
+    private Font loadFont(int fontSize) {
+        try {
+            return Font.createFont(Font.TRUETYPE_FONT, new File("src/main/resources/fonts/PublicSans-SemiBold.ttf"))
+                    .deriveFont(Font.PLAIN, fontSize); // Font size depending on image size
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+            return new Font("Arial", Font.PLAIN, fontSize);
+        }
     }
 
 }
