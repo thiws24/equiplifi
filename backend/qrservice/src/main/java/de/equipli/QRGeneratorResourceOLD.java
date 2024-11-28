@@ -23,7 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 @ApplicationScoped
-@Path("/qr")
+@Path("/qrold")
 public class QRGeneratorResourceOLD {
 
     private final String activeProfile;

@@ -1,4 +1,4 @@
-package de.equipli;
+/*package de.equipli;
 
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -40,3 +40,5 @@ public class ClearQRCodeFolder {
         }
     }
 }
+
+ */
