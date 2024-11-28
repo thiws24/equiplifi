@@ -11,6 +11,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -23,6 +24,9 @@ public class QRGeneratorResource {
     // Define 1400 dpi and 62mm label size
     private static final float DPI = 1400;
     private static final float LABEL_SIZE_IN_MM = 62.0f;
+
+    @ConfigProperty(name = "quarkus.fontPath")
+    String fontPath;
 
     @GET
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -141,7 +145,7 @@ public class QRGeneratorResource {
     // Use PublicSans-SemiBold font
     private Font loadFont(int fontSize) {
         try {
-            return Font.createFont(Font.TRUETYPE_FONT, new File("src/main/resources/fonts/PublicSans-SemiBold.ttf"))
+            return Font.createFont(Font.TRUETYPE_FONT, new File(fontPath + "/PublicSans-SemiBold.ttf"))
                     .deriveFont(Font.PLAIN, fontSize); // Font size depending on image size
         } catch (FontFormatException | IOException e) {
             e.printStackTrace();
