@@ -22,7 +22,7 @@ import java.io.*;
 public class QRGeneratorResource {
     // Define 1400 dpi and 62mm label size
     private static final float DPI = 1400;
-    private static final float labelSizeInMM = 62.0f;
+    private static final float LABEL_SIZE_IN_MM = 62.0f;
 
     @GET
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -73,7 +73,7 @@ public class QRGeneratorResource {
 
     private BufferedImage generateQrCodeImage(String urn, String text) throws IOException {
         // Define End-File size in pixels
-        int imageSizeInPixels = (int) (labelSizeInMM / 25.4f * DPI);
+        int imageSizeInPixels = (int) (LABEL_SIZE_IN_MM / 25.4f * DPI);
         // Define QR-Code size in pixels at % of the total image size
         int qrSize = (int)(imageSizeInPixels * 0.9);
         // Define Font-Size
@@ -122,15 +122,16 @@ public class QRGeneratorResource {
     //Create PDF as a byte array
     private byte[] writePdf(BufferedImage image) throws IOException {
         PDDocument document = new PDDocument();
-        float sizeInPoints = labelSizeInMM * 2.835f;
+        float sizeInPoints = LABEL_SIZE_IN_MM * 2.835f;
         PDPage page = new PDPage(new PDRectangle(sizeInPoints, sizeInPoints));
         document.addPage(page);
 
-        PDPageContentStream contentStream = new PDPageContentStream(document, page);
-        PDImageXObject pdImage = LosslessFactory.createFromImage(document, image);
+        // no additional close needed, because of try-with-resources
+        try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+            PDImageXObject pdImage = LosslessFactory.createFromImage(document, image);
+            contentStream.drawImage(pdImage, 0, 0, sizeInPoints, sizeInPoints);
+        }
 
-        contentStream.drawImage(pdImage, 0, 0, sizeInPoints, sizeInPoints);
-        contentStream.close();
         ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();
         document.save(pdfStream);
         document.close();
