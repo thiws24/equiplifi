@@ -20,7 +20,7 @@ import java.io.*;
 @ApplicationScoped
 @Path("/qr")
 public class QRGeneratorResource {
-    // Define 800 dpi and 62mm label size
+    // Define 1400 dpi and 62mm label size
     private static final float DPI = 1400;
     private static final float labelSizeInMM = 62.0f;
 
