@@ -1,7 +1,8 @@
 import React from 'react';
-import {Sidebar, SidebarProvider, SidebarTrigger} from "./ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "./ui/sidebar";
 import { useKeycloak } from "../keycloak/KeycloakProvider";
 import QrReader from "./QrReader";
+import { AppSidebar } from "./app-sidebar";
 
 interface Props {
     children: React.ReactNode;
@@ -20,7 +21,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
             <div className="flex h-screen w-full">
                 {/* AppSidebar */}
                 <div className="h-full z-50">
-                    <Sidebar />
+                    <AppSidebar />
                 </div>
 
                 {/* Main Content */}
