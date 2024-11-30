@@ -135,10 +135,10 @@ function Lend()  {
                                                         <PopoverTrigger asChild>
                                                             <FormControl>
                                                                 <Button data-testid="startDateButton" role="button" variant={"outline"}
-                                                                    className={cn("w-[210px] pl-3 text-left font-normal",
+                                                                        className={cn("w-[210px] pl-3 text-left font-normal",
                                                                         !field.value && "text-muted-foreground"
                                                                     )}
-                                                                    onClick={() => {
+                                                                        onClick={() => {
                                                                         form.reset({
                                                                             startDate: form.getValues("startDate"),
                                                                             endDate: undefined
@@ -184,10 +184,10 @@ function Lend()  {
                                                         <PopoverTrigger asChild>
                                                             <FormControl>
                                                                 <Button data-testid="endDateButton" variant={"outline"}
-                                                                    className={cn("w-[210px] pl-3 text-left font-normal",
+                                                                        className={cn("w-[210px] pl-3 text-left font-normal",
                                                                         !field.value && "text-muted-foreground"
                                                                     )}
-                                                                    disabled={!field.value && !startDate}
+                                                                        disabled={!field.value && !startDate}
                                                                 >
                                                                     {field.value ? (
                                                                         format(field.value, "PPP")
