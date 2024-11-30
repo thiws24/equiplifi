@@ -2,7 +2,7 @@ import React from 'react';
 import {SidebarProvider, SidebarTrigger} from "./ui/sidebar";
 import {useKeycloak} from "../keycloak/KeycloakProvider";
 import QrReader from "./QrReader";
-import {AppSidebar} from "./App-sidebar";
+import {AppSidebar} from "./app-sidebar";
 
 
 interface Props {
