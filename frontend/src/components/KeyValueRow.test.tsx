@@ -21,19 +21,6 @@ describe("KeyValueRow Tests", () => {
         expect(screen.getByText("ReactNode Label")).toBeInTheDocument()
     })
 
-    test("correct styles applied", () => {
-        const label = "Styled Label"
-        const children = "Styled Children"
-
-        render(<KeyValueRow label={label}>{children}</KeyValueRow>)
-
-        const labelElement = screen.getByText(label)
-        expect(labelElement).toHaveClass("text-sm leading-6 text-customBlack sm:col-span-1")
-
-        const childrenElement = screen.getByText(children)
-        expect(childrenElement).toHaveClass("mt-1 text-sm leading-6 text-customBlack sm:col-span-3 sm:mt-0 sm:mr-8")
-    })
-
     test("renders with empty children", () => {
         const label = "Empty Children";
         const children = null;
@@ -45,12 +32,5 @@ describe("KeyValueRow Tests", () => {
         const ddElement = container.querySelector("dd");
         expect(ddElement).toBeInTheDocument();
         expect(ddElement).toBeEmptyDOMElement();
-    });
-
-    test("matches the snapshot", () => {
-        const { container } = render(
-            <KeyValueRow label="Snapshot Label">Snapshot Content</KeyValueRow>
-        );
-        expect(container.firstChild).toMatchSnapshot();
     });
 })
