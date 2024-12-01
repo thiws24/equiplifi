@@ -8,7 +8,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem, SidebarProvider,
 } from "./ui/sidebar"
-import { Sidebar } from "./ui/sidebar"
+import {Sidebar} from "./ui/sidebar"
 import {
     DropdownMenu,
     DropdownMenuTrigger,
@@ -18,16 +18,18 @@ import {
 import React from "react";
 
 // Menu items.
-const items = [
-    {
-        title: "Home",
-        url: "#",
-        icon: Home,
-    },
+const itemsLagerwart = [
     {
         title: "Item erstellen",
         url: "#",
         icon: Inbox,
+    }
+]
+const itemsAllgemein = [
+    {
+        title: "Home",
+        url: "http://localhost:3000",
+        icon: Home,
     }
 ]
 
@@ -36,15 +38,34 @@ export function AppSidebar() {
         (
             <SidebarProvider>
                 <Sidebar>
-                    {/* Hauptinhalt der AppSidebar */}
+                    <SidebarHeader><img src="/equipli-logo.svg"
+                                        className="w-12 h-auto"
+                                        alt="equipli logo"/></SidebarHeader>
                     <SidebarContent>
                         <SidebarGroup>
-                            <SidebarGroupLabel className='text-xl text-customBlack'>Lagerwart</SidebarGroupLabel>
+                            <SidebarGroupLabel className='text-xl text-customBlue'>Allgemein</SidebarGroupLabel>
                             <SidebarGroupContent>
                                 <SidebarMenu>
-                                    {items.map((item) => (
+                                    {itemsAllgemein.map((item) => (
                                         <SidebarMenuItem key={item.title}>
-                                            <SidebarMenuButton asChild className="bg-customOrange text-customBeige">
+                                            <SidebarMenuButton asChild
+                                                               className="bg-customBeige text-customOrange hover:bg-customRed hover:text-customBeige">
+                                                <a href={item.url} className="flex items-center gap-2">
+                                                    {item.icon && <item.icon/>}
+                                                    <span>{item.title}</span>
+                                                </a>
+                                            </SidebarMenuButton>
+                                        </SidebarMenuItem>
+                                    ))}
+                                </SidebarMenu>
+                            </SidebarGroupContent>
+                            <SidebarGroupLabel className='text-xl text-customBlue'>Lagerwart</SidebarGroupLabel>
+                            <SidebarGroupContent>
+                                <SidebarMenu>
+                                    {itemsLagerwart.map((item) => (
+                                        <SidebarMenuItem key={item.title}>
+                                            <SidebarMenuButton asChild
+                                                               className="bg-customBeige text-customOrange hover:bg-customRed hover:text-customBeige">
                                                 <a href={item.url} className="flex items-center gap-2">
                                                     {item.icon && <item.icon/>}
                                                     <span>{item.title}</span>
@@ -57,18 +78,19 @@ export function AppSidebar() {
                         </SidebarGroup>
                     </SidebarContent>
 
-                    {/* Footer der AppSidebar */}
+                    {/* Footer der Sidebar */}
                     <SidebarFooter>
                         <SidebarMenu>
                             <SidebarMenuItem>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <button className="flex items-center gap-2">
-                                            <User2 /> Username
-                                            <ChevronUp className="ml-auto" />
+                                        <button className="flex items-center gap-2 text-customBlack">
+                                            <User2/> Abmelden
+                                            <ChevronUp className="ml-auto"/>
                                         </button>
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent side="top" className="bg-white shadow-lg rounded-md">
+                                    <DropdownMenuContent side="top"
+                                                         className="bg-white shadow-lg rounded-md text-customBlack">
                                         <DropdownMenuItem>
                                             <span>Abmelden</span>
                                         </DropdownMenuItem>

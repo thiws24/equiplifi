@@ -19,7 +19,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
     return (
         <SidebarProvider>
             <div className="flex h-screen w-full">
-                {/* AppSidebar */}
+
                 <div className="h-full z-50">
                     <AppSidebar />
                 </div>
@@ -43,12 +43,12 @@ export const Layout: React.FC<Props> = ({ children }) => {
                         >
                             QR Code scannen
                         </button>
+
                     </div>
 
                     {/* Main Content */}
                     <main className="flex flex-col h-screen overflow-auto">{children}</main>
                 </div>
-
 
                 {/* QR Code Reader Modal */}
                 {showQrReader && (
