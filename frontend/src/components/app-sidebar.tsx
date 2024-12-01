@@ -87,11 +87,13 @@ export function AppSidebar() {
                                     <DropdownMenuTrigger asChild>
                                         <button className="flex items-center gap-2 text-customBlack">
                                             {state === "collapsed" ? (
-                                                <User2 className="h-6 w-6" />
+                                                // Nur Icon anzeigen, wenn Sidebar collapsed ist
+                                                <User2 className="h-6 w-6"/>
                                             ) : (
+                                                // Icon und Text anzeigen, wenn Sidebar expanded ist
                                                 <>
-                                                    <User2 /> Abmelden
-                                                    <ChevronUp className="ml-auto" />
+                                                    <User2/> Abmelden
+                                                    <ChevronUp className="ml-auto"/>
                                                 </>
                                             )}
                                         </button>
