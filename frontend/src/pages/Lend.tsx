@@ -26,7 +26,7 @@ function Lend()  {
 
     const fetchItem = React.useCallback(async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/inventoryitems/${id}`);
+            const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/item/${id}`);
             if (response.ok) {
                 const data = await response.json();
                 setInventoryItem(data);

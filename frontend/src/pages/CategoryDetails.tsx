@@ -22,7 +22,7 @@ export const rColDefs: ColDef<ReservationItemProps>[] = [
     }
 ];
 
-function Detail() {
+function CategoryDetails() {
     const [inventoryItem, setInventoryItem] = useState<InventoryItemProps>();
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
@@ -37,7 +37,7 @@ function Detail() {
 
     const fetchItem = React.useCallback(async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/item/${id}`);
+            const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/category/${id}`);
             if (response.ok) {
                 const data = await response.json();
                 setInventoryItem(data);
@@ -85,7 +85,7 @@ function Detail() {
 
     async function fetchReservationItems() {
         try {
-            const response = await fetch(`${process.env.REACT_APP_II_RESERVATION_HOST}/reservations/${id}`);
+            const response = await fetch(`${process.env.REACT_APP_II_RESERVATION_HOST}/category/${id}/reservation`);
             if (response.ok) {
                 const data = await response.json();
                 setReservationItems(data);
@@ -177,7 +177,7 @@ function Detail() {
                     <CardFooter>
                         <Button onClick={() => navigate('/')}
                                 className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed">
-                        &larr; Zurück
+                            &larr; Zurück
                         </Button>
                     </CardFooter>
                 </Card>
@@ -187,4 +187,4 @@ function Detail() {
     )
 }
 
-export default Detail;
+export default CategoryDetails;

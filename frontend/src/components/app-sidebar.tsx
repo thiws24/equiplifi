@@ -6,7 +6,7 @@ import {
     SidebarGroupLabel, SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
-    SidebarMenuItem, SidebarProvider,
+    SidebarMenuItem, SidebarProvider, useSidebar,
 } from "./ui/sidebar"
 import {Sidebar} from "./ui/sidebar"
 import {
@@ -34,10 +34,11 @@ const itemsAllgemein = [
 ]
 
 export function AppSidebar() {
+    const { state } = useSidebar();
     return (
         (
             <SidebarProvider>
-                <Sidebar>
+                <Sidebar collapsible='icon'>
                     <SidebarHeader><img src="/equipli-logo.svg"
                                         className="w-12 h-auto"
                                         alt="equipli logo"/></SidebarHeader>
@@ -85,12 +86,20 @@ export function AppSidebar() {
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <button className="flex items-center gap-2 text-customBlack">
-                                            <User2/> Abmelden
-                                            <ChevronUp className="ml-auto"/>
+                                            {state === "collapsed" ? (
+                                                <User2 className="h-6 w-6" />
+                                            ) : (
+                                                <>
+                                                    <User2 /> Abmelden
+                                                    <ChevronUp className="ml-auto" />
+                                                </>
+                                            )}
                                         </button>
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent side="top"
-                                                         className="bg-white shadow-lg rounded-md text-customBlack">
+                                    <DropdownMenuContent
+                                        side="top"
+                                        className="bg-white shadow-lg rounded-md text-customBlack"
+                                    >
                                         <DropdownMenuItem>
                                             <span>Abmelden</span>
                                         </DropdownMenuItem>
