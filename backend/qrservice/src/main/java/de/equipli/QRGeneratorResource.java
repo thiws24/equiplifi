@@ -44,7 +44,7 @@ public class QRGeneratorResource {
 
         //Create URN
         try {
-            String urn = "urn:" + name + ":" + id;
+            String urn = "urn:de.equipli:item:" + id;
 
             // Create QR-Code and combine with text
             BufferedImage finalImage = generateQrCodeImage(urn, name);
@@ -54,6 +54,7 @@ public class QRGeneratorResource {
                 byte[] pngData = writePng(finalImage);
                 return Response.ok(pngData)
                         .header("Content-Disposition", "attachment; filename=\"qrcode.png\"")
+                        .header("Cache-Control", "no-cache, no-store, must-revalidate")
                         .build();
             }
             // PDF-Format
@@ -61,6 +62,7 @@ public class QRGeneratorResource {
                 byte[] pdfData = writePdf(finalImage);
                 return Response.ok(pdfData)
                         .header("Content-Disposition", "attachment; filename=\"qrcode.pdf\"")
+                        .header("Cache-Control", "no-cache, no-store, must-revalidate")
                         .build();
             } else {
                 return Response.status(Response.Status.BAD_REQUEST)
