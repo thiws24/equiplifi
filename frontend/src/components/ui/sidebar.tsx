@@ -89,7 +89,6 @@ const SidebarProvider = React.forwardRef<
 
     // Helper to toggle the sidebar.
     const toggleSidebar = React.useCallback(() => {
-        console.log("toggleSidebar called");
         return isMobile
         ? setOpenMobile((open) => !open)
         : setOpen((open) => !open)
@@ -272,7 +271,6 @@ const SidebarTrigger = React.forwardRef<
       size="icon"
       className='text-customBlue hover:bg-customRed hover:text-customBeige'
       onClick={(event) => {
-          console.log("Button clicked");
         onClick?.(event)
         toggleSidebar()
       }}
