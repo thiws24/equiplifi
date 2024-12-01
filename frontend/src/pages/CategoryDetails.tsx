@@ -1,199 +1,190 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "../components/ui/card";
+import ReservationTable from "../components/ReservationTable";
 import { InventoryItemProps } from "../interfaces/InventoryItemProps";
+import { ReservationItemProps } from "../interfaces/ReservationItemProps";
 import { Button } from "../components/ui/button";
 import { KeyValueRow } from "../components/KeyValueRow";
-import { CategoryDetailsProps } from "../interfaces/CategoryDetailsProps";
 import { ColDef } from "ag-grid-community";
-import CategoryDetailsTable from "../components/CategoryDetailsTable";
-import "react-toastify/dist/ReactToastify.css";
-import { toast, ToastContainer } from "react-toastify";
+import { fetchWaitingProcessesByTaskNameAndItemId } from "../services/fetchProcesses";
+import { useKeycloak } from "../keycloak/KeycloakProvider";
+import { ConfirmReservationCard } from "../components/ConfirmReservationCard";
+import { TaskProps } from "../interfaces/TaskProps";
+import { fetchOpenTasksByItemId } from "../services/fetchTasks";
 
-export const categoryColDefs: ColDef<CategoryDetailsProps>[] = [
-    { headerName: "ID", field: "id", sortable: true, filter: "agNumberColumnFilter", flex: 1 },
-    { headerName: "Status", field: "status", sortable: true, filter: "agNumberColumnFilter", flex: 1 },
-    { headerName: "Lagerort", field: "location", sortable: true, filter: "agNumberColumnFilter", flex: 1 },
+export const rColDefs: ColDef<ReservationItemProps>[] = [
+    {
+        headerName: "Start Datum", field: "startDate", sortable: true, filter: "agSetColumnFilter", flex: 1
+    },
+    {
+        headerName: "End Datum", field: "endDate", sortable: true, filter: "agSetColumnFilter", flex: 1
+    }
 ];
 
 function CategoryDetails() {
     const [inventoryItem, setInventoryItem] = useState<InventoryItemProps>();
     const navigate = useNavigate();
+    const [isOpen, setIsOpen] = useState(false);
+    const openModal = (state: boolean) => setIsOpen(state);
     const { id } = useParams();
-    const [categoryDetails, setCategoryDetails] = useState<CategoryDetailsProps[]>([]);
-    const [loading, setLoading] = React.useState(true);
-    const [isEditing, setIsEditing] = useState(false);
-    const [updatedData, setUpdatedData] = useState({ name: "", description: "", icon: "" });
+    const [reservationItems, setReservationItems] = useState<ReservationItemProps[]>([]);
+    const [reservationLoading, setReservationLoading] = React.useState(true);
+    const [tasksList, setTasksList] = React.useState<TaskProps[]>([])
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const fetchItems = React.useCallback(async () => {
+    const { token } = useKeycloak()
+
+    const fetchItem = React.useCallback(async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/categories/${id}`);
+            const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/category/${id}`);
             if (response.ok) {
                 const data = await response.json();
                 setInventoryItem(data);
-                setUpdatedData({ name: data.name, description: data.description, icon: data.icon });
-                setCategoryDetails(data.items || []);
             }
         } catch (e) {
             console.log(e);
-        } finally {
-            setLoading(false);
         }
     }, [id]);
 
-    const handleSave = async () => {
-        if (!inventoryItem) return;
-
-        const updatedCategory = {
-            ...inventoryItem,
-            name: updatedData.name || inventoryItem.name,
-            description: updatedData.description || inventoryItem.description,
-            icon: updatedData.icon || inventoryItem.icon,
-        };
-
+    const fetchOpenTasks = React.useCallback(async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/categories/${id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(updatedCategory),
-            });
+            const tasks: TaskProps[] = await fetchOpenTasksByItemId(Number(id), token ?? '');
+            setTasksList(tasks)
+        } catch (e) {
+            console.log(e);
+        }
+    }, [id]);
+
+    const handleConfirmReservation = async (processId: number, guid: string) => {
+        try {
+            const response = await fetch(
+                `${process.env.REACT_APP_SPIFF}/api/v1.0/tasks/${processId}/${guid}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        lending: "confirmed"
+                    }),
+                }
+            );
 
             if (response.ok) {
-                const updatedCategoryResponse = await response.json();
-                setInventoryItem(updatedCategoryResponse);
-                toast.success("Kategorie erfolgreich aktualisiert!");
-                setIsEditing(false);
-            } else if (response.status === 400) {
-                toast.error("Name der Kategorie existiert bereits.");
+                // window.open(`/inventory-item/${id}`, '_self')
             } else {
-                toast.error("Fehler beim Aktualisieren der Kategorie.");
+                setErrorMessage(`HTTP Fehler! Status: ${response.status}`);
             }
         } catch (error) {
-            console.error("Fehler beim Speichern:", error);
-            toast.error("Fehler beim Aktualisieren der Kategorie.");
+            setErrorMessage("Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.")
+            console.error('Error message set:', errorMessage);
         }
     };
 
+    async function fetchReservationItems() {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_II_RESERVATION_HOST}/category/${id}/reservation`);
+            if (response.ok) {
+                const data = await response.json();
+                setReservationItems(data);
+            }
+        } catch (e) {
+            console.log(e);
+        }
+        setReservationLoading(false);
+    }
+
     React.useEffect(() => {
-        void fetchItems();
-    }, [fetchItems]);
+        void fetchItem();
+        void fetchOpenTasks()
+        void fetchReservationItems();
+    }, [fetchItem, id]);
 
     return (
         <div className="max-w-[1000px] mx-auto">
-            <ToastContainer />
+            {errorMessage && (
+                <div id="alert" role="alert" className="mt-4">
+                    <div className="bg-red-500 text-white font-bold rounded-t px-4 py-2">
+                        Fehlermeldung
+                    </div>
+                    <div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
+                        <p>{errorMessage}</p>
+                    </div>
+                </div>
+            )}
             <CardHeader className="flex justify-self-auto mt-4">
-                <CardTitle className="text-3xl text-customOrange col-span-2 flex flex-col items-center justify-center">
-                    {`${inventoryItem?.icon ?? ""} ${inventoryItem?.name}`}
-                    <span className="text-lg text-customOrange font-semibold items-center mt-2">
-                        Kategorie {`${inventoryItem?.id}`}
-                    </span>
-                </CardTitle>
+                <CardTitle
+                    className="text-3xl text-customOrange col-span-2 justify-center flex"> {`${inventoryItem?.icon ?? ''} ${inventoryItem?.name}`} </CardTitle>
             </CardHeader>
             <div className="p-4">
                 <Card className="bg-white text-customBlack p-4 font-semibold">
                     <CardContent>
-
-                        <div className="flex justify-between mb-4">
-                            <Button
-                                className="bg-customBlue text-customBeige rounded hover:bg-customRed"
-                                onClick={() => setIsEditing(!isEditing)}
-                            >
-                                {isEditing ? "Bearbeitung abbrechen" : "Kategorie bearbeiten"}
-                            </Button>
-                            <Button
-                                className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige"
-                                onClick={() => navigate(`/inventory-item/${id}/reservation`)}
-                            >
-                                Ausleihen
-                            </Button>
-                        </div>
-
-                        {/* Editable Fields */}
-                        <dl className="divide-y divide-customBeige">
-                            <KeyValueRow label="Kategorie ID"> {id} </KeyValueRow>
-                            <KeyValueRow label="Name">
-                                {isEditing ? (
-                                    <input
-                                        type="text"
-                                        value={updatedData.name}
-                                        onChange={(e) => setUpdatedData({ ...updatedData, name: e.target.value })}
-                                        className="border border-gray-300 rounded px-2 py-1 w-full"
-                                    />
-                                ) : (
-                                    inventoryItem?.name
-                                )}
-                            </KeyValueRow>
-                            <KeyValueRow label="Beschreibung">
-                                {isEditing ? (
-                                    <textarea
-                                        value={updatedData.description}
-                                        onChange={(e) =>
-                                            setUpdatedData({ ...updatedData, description: e.target.value })
-                                        }
-                                        className="border border-gray-300 rounded px-2 py-1 w-full"
-                                    />
-                                ) : (
-                                    inventoryItem?.description
-                                )}
-                            </KeyValueRow>
-                            <KeyValueRow label="Icon">
-                                {isEditing ? (
-                                    <input
-                                        type="text"
-                                        value={updatedData.icon}
-                                        onChange={(e) => setUpdatedData({ ...updatedData, icon: e.target.value })}
-                                        className="border border-gray-300 rounded px-2 py-1 w-full text-center"
-                                    />
-                                ) : (
-                                    inventoryItem?.icon
-                                )}
-                            </KeyValueRow>
-                            <KeyValueRow label="Foto">
-                                {!!inventoryItem?.photoUrl && (
-                                    <img
-                                        src={inventoryItem?.photoUrl}
-                                        alt={inventoryItem?.description}
-                                        className="w-full h-80 object-contain"
-                                    />
-                                )}
-                            </KeyValueRow>
-                        </dl>
-
-                        {/* Save Button */}
-                        {isEditing && (
-                            <div className="flex justify-end mt-4">
-                                <Button
-                                    onClick={handleSave}
-                                    className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige"
-                                >
-                                    Speichern
+                        {/* Button */}
+                        <div>
+                            <div className="flex justify-between items-center mt-4">
+                                <Button onClick={() => openModal(true)}
+                                        className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige">
+                                    QR Code zeigen
                                 </Button>
+                                <Button onClick={() => navigate(`/inventory-item/${id}/reservation`)}
+                                        className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige">
+                                    Ausleihen
+                                </Button>
+                            </div>
+                        </div>
+                        {isOpen && (
+                            <div
+                                className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                                <div className="bg-customBeige rounded-lg shadow-lg p-6 w-96">
+                                    <p className="text-center mb-4">{inventoryItem?.urn}</p>
+                                    <button onClick={() => openModal(false)}
+                                            className="mt-4 px-4 py-2 bg-customBlue text-white rounded hover:bg-customRed flex items-center justify-center">
+                                        Zurück
+                                    </button>
+                                </div>
                             </div>
                         )}
 
-                        <div className="mt-6">
-                            <h2 className="text-xl font-bold mb-4">Exemplare </h2>
-                            <CategoryDetailsTable
-                                categoryDetails={categoryDetails}
-                                colDefs={categoryColDefs}
-                                loading={loading}
-                            />
+                        <div>
+                            {tasksList.map((el) => (
+                                <ConfirmReservationCard
+                                    key={`process-${el.id}`}
+                                    processId={el.process_instance_id}
+                                    guid={el.task_guid}
+                                    data={el.dataObject}
+                                    onConfirmReservation={handleConfirmReservation}
+                                />
+                            ))}
                         </div>
+
+                        <dl className="divide-y divide-customBeige">
+                            <KeyValueRow label="ID"> {id} </KeyValueRow>
+                            <KeyValueRow label="Beschreibung"> {inventoryItem?.description} </KeyValueRow>
+                            <KeyValueRow label="Foto">
+                                {!!inventoryItem?.photoUrl &&
+                                    <img src={inventoryItem?.photoUrl} alt={inventoryItem?.description}
+                                         className='w-full h-80 object-cover'/>}
+                            </KeyValueRow>
+                            <div>
+                                <h2 className="text-sm font-bold mb-4 mt-6">Reservierungen</h2>
+                                <ReservationTable reservationItems={reservationItems} colDefs={rColDefs}
+                                                  loading={reservationLoading}/>
+                            </div>
+                        </dl>
                     </CardContent>
                     <CardFooter>
-                        <Button
-                            onClick={() => navigate("/")}
-                            className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed"
-                        >
+                        <Button onClick={() => navigate('/')}
+                                className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed">
                             &larr; Zurück
                         </Button>
                     </CardFooter>
                 </Card>
             </div>
         </div>
-    );
+
+    )
 }
 
 export default CategoryDetails;
