@@ -23,6 +23,8 @@ function Lend()  {
     const { id } = useParams();
     const { keycloak, token } = useKeycloak()
     const [userInfo, setUserInfo] = useState<KeyCloakUserInfo>()
+    const [isStartPopoverOpen, setStartPopoverOpen] = useState(false)
+    const [isEndPopoverOpen, setEndPopoverOpen] = useState(false)
 
     const fetchItem = React.useCallback(async () => {
         try {
@@ -36,11 +38,6 @@ function Lend()  {
         }
 
     }, [id]);
-
-    useEffect(() => {
-        void fetchItem();
-        keycloak?.loadUserInfo().then(val => setUserInfo(val as any), (e ) => console.log(e))
-    }, [fetchItem, keycloak]);
 
     const FormSchema = z.object({
         startDate: z.date({
@@ -58,12 +55,14 @@ function Lend()  {
     type FormschemaType = z.infer<typeof FormSchema>;
 
     useEffect(() => {
+        void fetchItem();
+        keycloak?.loadUserInfo().then(val => setUserInfo(val as any), (e ) => console.log(e))
         if (form.getValues("startDate")) {
             const newStartDate = new Date(form.getValues("startDate"));
             newStartDate.setDate(newStartDate.getDate() + 1);
             setStartDate(newStartDate);
         }
-    }, [form.getValues("startDate")]);
+    }, [fetchItem, keycloak, form.getValues("startDate")]);
 
     const onSubmit = async (values: FormschemaType) => {
         const formattedStartDate = format(values.startDate, "yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -85,9 +84,10 @@ function Lend()  {
             });
 
             if (response.ok) {
+                // toast
                 window.open(`/inventory-item/${id}`, '_self')
             } else {
-                setErrorMessage(`HTTP Fehler! Status: ${response.status}`);
+                setErrorMessage(`Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut`);
             }
         } catch (error) {
             setErrorMessage("Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.")
@@ -131,14 +131,15 @@ function Lend()  {
                                                         Bitte geben Sie ein Ausleih- und Abgabedatum ein.
                                                     </FormDescription>
                                                     <label className="text-sm pb-2 mt-4">Ausleihdatum</label>
-                                                    <Popover>
+                                                    <Popover open={isStartPopoverOpen} onOpenChange={setStartPopoverOpen}>
                                                         <PopoverTrigger asChild>
                                                             <FormControl>
                                                                 <Button data-testid="startDateButton" role="button" variant={"outline"}
                                                                         className={cn("w-[210px] pl-3 text-left font-normal",
                                                                         !field.value && "text-muted-foreground"
                                                                     )}
-                                                                        onClick={() => {
+                                                                    onClick={() => {
+                                                                        setStartPopoverOpen(true)
                                                                         form.reset({
                                                                             startDate: form.getValues("startDate"),
                                                                             endDate: undefined
@@ -146,7 +147,7 @@ function Lend()  {
                                                                     }}
                                                                 >
                                                                     {field.value ? (
-                                                                        format(field.value, "PPP")
+                                                                        format(field.value, "dd. MMM yyyy")
                                                                     ) : (
                                                                         <span>Startdatum auswählen</span>
                                                                     )}
@@ -161,9 +162,19 @@ function Lend()  {
                                                                 data-testid="CalenderStartButton"
                                                                 selected={field.value}
                                                                 onSelect={(date) => {
-                                                                    field.onChange(date);
+                                                                    field.onChange(date)
+                                                                    setStartPopoverOpen(false)
                                                                 }}
                                                                 disabled={(date) => date < new Date()}
+                                                                defaultMonth={
+                                                                    field.value
+                                                                        ? field.value
+                                                                        : (() => {
+                                                                            const tomorrow = new Date()
+                                                                            tomorrow.setDate(tomorrow.getDate() + 1)
+                                                                            return tomorrow
+                                                                        })()
+                                                                }
                                                                 initialFocus
                                                             />
                                                         </PopoverContent>
@@ -180,17 +191,18 @@ function Lend()  {
                                             <FormItem className="flex flex-col">
                                                 <div className="flex flex-col sm:justify-center ml-8 mr-8">
                                                     <label className="text-sm pb-2">Abgabedatum</label>
-                                                    <Popover>
+                                                    <Popover open={isEndPopoverOpen} onOpenChange={setEndPopoverOpen}>
                                                         <PopoverTrigger asChild>
                                                             <FormControl>
                                                                 <Button data-testid="endDateButton" variant={"outline"}
                                                                         className={cn("w-[210px] pl-3 text-left font-normal",
                                                                         !field.value && "text-muted-foreground"
                                                                     )}
-                                                                        disabled={!field.value && !startDate}
+                                                                    onClick={() => setEndPopoverOpen(true)}
+                                                                    disabled={!field.value && !startDate}
                                                                 >
                                                                     {field.value ? (
-                                                                        format(field.value, "PPP")
+                                                                        format(field.value, "dd. MMM yyyy")
                                                                     ) : (
                                                                         <span>Enddatum auswählen</span>
                                                                     )}
@@ -203,9 +215,21 @@ function Lend()  {
                                                             <Calendar
                                                                 mode="single"
                                                                 selected={field.value}
-                                                                onSelect={field.onChange}
+                                                                onSelect={(date) => {
+                                                                    field.onChange(date)
+                                                                    setEndPopoverOpen(false)
+                                                                }}
                                                                 disabled={(date) =>
                                                                     startDate ? date < startDate : true
+                                                                }
+                                                                defaultMonth={
+                                                                    startDate
+                                                                        ? startDate
+                                                                        : (() => {
+                                                                            const tomorrow = new Date()
+                                                                            tomorrow.setDate(tomorrow.getDate() + 1)
+                                                                            return tomorrow
+                                                                        })()
                                                                 }
                                                                 initialFocus
                                                             />
@@ -220,7 +244,12 @@ function Lend()  {
                                         <Button onClick={() => navigate(`/inventory-item/${id}`)} className="flex bg-customBlue text-customBeige hover:bg-customRed hover:text-customBeige ml-8">
                                             &larr; Detailseite
                                         </Button>
-                                        <Button type="submit" className="text-customBeige bg-customBlue mr-8 hover:bg-customRed hover:text-customBeige">
+                                        <Button type="submit"
+                                                disabled={
+                                                    undefined == form.getValues("startDate") ||
+                                                    undefined == form.getValues("endDate")
+                                                }
+                                                className="text-customBeige bg-customBlue mr-8 hover:bg-customRed hover:text-customBeige">
                                             Submit
                                         </Button>
                                     </div>
