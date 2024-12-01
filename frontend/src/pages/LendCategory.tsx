@@ -1,42 +1,47 @@
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormMessage } from "../components/ui/form";
-import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover";
-import { Button } from "../components/ui/button";
-import { cn } from "../lib/utils";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "../components/ui/calendar";
-import React, { useEffect, useState } from "react";
-import { InventoryItemProps } from "../interfaces/InventoryItemProps";
-import { useNavigate, useParams } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useKeycloak } from "../keycloak/KeycloakProvider";
-import { KeyCloakUserInfo } from "../interfaces/KeyCloakUserInfo";
+import {Card, CardContent, CardHeader, CardTitle} from "../components/ui/card"
+import {Form, FormControl, FormDescription, FormField, FormItem, FormMessage} from "../components/ui/form"
+import {Popover, PopoverContent, PopoverTrigger} from "../components/ui/popover"
+import {Button} from "../components/ui/button"
+import {cn} from "../lib/utils"
+import {format} from "date-fns"
+import {CalendarIcon} from "lucide-react"
+import {Calendar} from "../components/ui/calendar"
+import React, {useEffect, useState} from "react"
+import {InventoryItemProps} from "../interfaces/InventoryItemProps"
+import {useNavigate, useParams} from "react-router-dom"
+import {useForm} from "react-hook-form"
+import {z} from "zod"
+import {zodResolver} from "@hookform/resolvers/zod"
+import {useKeycloak} from "../keycloak/KeycloakProvider"
+import {KeyCloakUserInfo} from "../interfaces/KeyCloakUserInfo"
+import {Input} from "../components/ui/input"
 
-function Lend()  {
-    const navigate = useNavigate();
-    const [startDate, setStartDate] = useState<Date | null>(null);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [inventoryItem, setInventoryItem] = useState<InventoryItemProps>();
-    const { id } = useParams();
-    const { keycloak, token } = useKeycloak()
+function LendCategory() {
+    const navigate = useNavigate()
+    const [categoryItemsCount, setCategoryItemsCount] = useState<number>(1)
+    const [startDate, setStartDate] = useState<Date | null>(null)
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const [inventoryItem, setInventoryItem] = useState<InventoryItemProps>()
+    const {id} = useParams()
+    const {keycloak, token} = useKeycloak()
     const [userInfo, setUserInfo] = useState<KeyCloakUserInfo>()
     const [isStartPopoverOpen, setStartPopoverOpen] = useState(false)
     const [isEndPopoverOpen, setEndPopoverOpen] = useState(false)
 
     const fetchItem = React.useCallback(async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/item/${id}`);
+            const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/categories/${id}`);
             if (response.ok) {
-                const data = await response.json();
-                setInventoryItem(data);
+                const data = await response.json()
+                setInventoryItem(data)
+
+                // Hier toast wenn categoryitemscount = 0
+                // Hier muss noch nach dem richtigen Status abgefragt werden
+                setCategoryItemsCount(data.items.filter((item: any) => item.status === '').length)
             }
         } catch (e) {
             console.log(e);
         }
-
     }, [id]);
 
     const FormSchema = z.object({
@@ -46,17 +51,15 @@ function Lend()  {
         endDate: z.date({
             required_error: "Enddatum erforderlich",
         }),
-    });
+        quantity: z.number({}).min(1, 'Anzahl muss größer als Null sein').max(categoryItemsCount, `Es sind maximal ${categoryItemsCount} Exemplare verfügbar`)
+    })
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
     });
-
-    type FormschemaType = z.infer<typeof FormSchema>;
-
     useEffect(() => {
-        void fetchItem();
-        keycloak?.loadUserInfo().then(val => setUserInfo(val as any), (e ) => console.log(e))
+        void fetchItem()
+        keycloak?.loadUserInfo().then(val => setUserInfo(val as any), (e) => console.log(e))
         if (form.getValues("startDate")) {
             const newStartDate = new Date(form.getValues("startDate"));
             newStartDate.setDate(newStartDate.getDate() + 1);
@@ -64,17 +67,23 @@ function Lend()  {
         }
     }, [fetchItem, keycloak, form.getValues("startDate")]);
 
+    type FormschemaType = z.infer<typeof FormSchema>;
+
     const onSubmit = async (values: FormschemaType) => {
         const formattedStartDate = format(values.startDate, "yyyy-MM-dd'T'HH:mm:ss'Z'");
         const formattedEndDate = format(values.endDate, "yyyy-MM-dd'T'HH:mm:ss'Z'");
 
         try {
+
+            // die URL muss noch angepasst werden
             const response = await fetch(`${process.env.REACT_APP_SPIFF}/api/v1.0/messages/Reservation-request-start`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
+
+                // Hier muss noch ein Array an items übergeben werden
                 body: JSON.stringify({
                     startDate: formattedStartDate,
                     endDate: formattedEndDate,
@@ -85,7 +94,6 @@ function Lend()  {
 
             if (response.ok) {
                 // toast
-                window.open(`/inventory-item/${id}`, '_self')
             } else {
                 setErrorMessage(`Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut`);
             }
@@ -116,8 +124,9 @@ function Lend()  {
                         <CardContent className="mt-4">
                             <h3 className="text-center mb-4">{inventoryItem?.name}</h3>
                             <div className="flex justify-center mb-4">
-                                {!!inventoryItem?.photoUrl && <img src={inventoryItem.photoUrl} alt={inventoryItem.description}
-                                                                            className='h-80 w-full object-cover'/>}
+                                {!!inventoryItem?.photoUrl &&
+                                    <img src={inventoryItem.photoUrl} alt={inventoryItem.description}
+                                         className='h-80 w-full object-cover'/>}
                             </div>
                             <Form {...form}>
                                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -128,23 +137,24 @@ function Lend()  {
                                             <FormItem className="flex flex-col">
                                                 <div className="flex flex-col sm:justify-center ml-8 mr-8">
                                                     <FormDescription className="mt-4 mb-4">
-                                                        Bitte geben Sie ein Ausleih- und Abgabedatum ein.
+                                                        Bitte geben Sie die Anzahl, ein Ausleih- und Abgabedatum ein.
                                                     </FormDescription>
                                                     <label className="text-sm pb-2 mt-4">Ausleihdatum</label>
                                                     <Popover open={isStartPopoverOpen} onOpenChange={setStartPopoverOpen}>
                                                         <PopoverTrigger asChild>
                                                             <FormControl>
-                                                                <Button data-testid="startDateButton" role="button" variant={"outline"}
+                                                                <Button data-testid="startDateButton" role="button"
+                                                                        variant={"outline"}
                                                                         className={cn("w-[210px] pl-3 text-left font-normal",
-                                                                        !field.value && "text-muted-foreground"
-                                                                    )}
-                                                                    onClick={() => {
-                                                                        setStartPopoverOpen(true)
-                                                                        form.reset({
-                                                                            startDate: form.getValues("startDate"),
-                                                                            endDate: undefined
-                                                                        })
-                                                                    }}
+                                                                            !field.value && "text-muted-foreground"
+                                                                        )}
+                                                                        onClick={() => {
+                                                                            setStartPopoverOpen(true)
+                                                                            form.reset({
+                                                                                startDate: form.getValues("startDate"),
+                                                                                quantity: form.getValues("quantity")
+                                                                            })
+                                                                        }}
                                                                 >
                                                                     {field.value ? (
                                                                         format(field.value, "dd. MMM yyyy")
@@ -196,10 +206,10 @@ function Lend()  {
                                                             <FormControl>
                                                                 <Button data-testid="endDateButton" variant={"outline"}
                                                                         className={cn("w-[210px] pl-3 text-left font-normal",
-                                                                        !field.value && "text-muted-foreground"
-                                                                    )}
-                                                                    onClick={() => setEndPopoverOpen(true)}
-                                                                    disabled={!field.value && !startDate}
+                                                                            !field.value && "text-muted-foreground"
+                                                                        )}
+                                                                        onClick={() => setEndPopoverOpen(true)}
+                                                                        disabled={!field.value && !startDate}
                                                                 >
                                                                     {field.value ? (
                                                                         format(field.value, "dd. MMM yyyy")
@@ -232,6 +242,10 @@ function Lend()  {
                                                                         })()
                                                                 }
                                                                 initialFocus
+                                                                className="relative color-black custom-calendar"
+                                                                classNames={{
+                                                                    day_selected: "color-customOrange text-black"
+                                                                }}
                                                             />
                                                         </PopoverContent>
                                                     </Popover>
@@ -240,14 +254,39 @@ function Lend()  {
                                             </FormItem>
                                         )}
                                     />
+                                    <FormField
+                                        control={form.control}
+                                        name="quantity"
+                                        render={({field}) => (
+                                            <FormItem className="flex flex-col">
+                                                <div className="flex flex-col sm:justify-center ml-8 mr-8">
+                                                    <label className="text-sm pb-2">Anzahl</label>
+                                                    <FormControl className="text-left font-sans w-[80px] pl-3">
+                                                        <Input
+                                                            type="number"
+                                                            {...field}
+                                                            defaultValue={1}
+                                                            max={categoryItemsCount ?? 1}
+                                                            min={1}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </div>
+                                            </FormItem>
+                                        )}
+                                    />
                                     <div className="flex justify-between items-center mt-4">
-                                        <Button onClick={() => navigate(`/inventory-item/${id}`)} className="flex bg-customBlue text-customBeige hover:bg-customRed hover:text-customBeige ml-8">
+                                        <Button onClick={() => navigate(`/category/${id}`)}
+                                                className="flex bg-customBlue text-customBeige hover:bg-customRed hover:text-customBeige ml-8">
                                             &larr; Detailseite
                                         </Button>
                                         <Button type="submit"
                                                 disabled={
                                                     undefined == form.getValues("startDate") ||
-                                                    undefined == form.getValues("endDate")
+                                                    undefined == form.getValues("endDate") ||
+                                                    0 == form.getValues("quantity") ||
+                                                    0 == categoryItemsCount ||
+                                                    categoryItemsCount < form.getValues("quantity")
                                                 }
                                                 className="text-customBeige bg-customBlue mr-8 hover:bg-customRed hover:text-customBeige">
                                             Submit
@@ -263,4 +302,4 @@ function Lend()  {
     );
 }
 
-export default Lend;
+export default LendCategory;
