@@ -56,4 +56,36 @@ public class ReservationResource {
         reservationRepository.persist(reservation);
         return Response.status(Response.Status.CREATED).entity(reservation).build();
     }
+
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Reservation updateReservation(@PathParam("id") Long id, Reservation reservation){
+        Reservation existingReservation = reservationRepository.findById(id);
+
+        if (existingReservation == null) {
+            throw new WebApplicationException("Reservation with id '" + id + "' not found", 404);
+        }
+
+        if (reservation.getStartDate() != null) {
+            existingReservation.setStartDate(reservation.getStartDate());
+        }
+        if (reservation.getEndDate() != null) {
+            existingReservation.setEndDate(reservation.getEndDate());
+        }
+        if (reservation.getItemId() != null) {
+            existingReservation.setItemId(reservation.getItemId());
+        }
+        if (reservation.getUserId() != null) {
+            existingReservation.setUserId(reservation.getUserId());
+        }
+        if (reservation.getReservationStatus() != null) {
+            existingReservation.setReservationStatus(reservation.getReservationStatus());
+        }
+        reservationRepository.persist(existingReservation);
+        return reservation;
+    }
+
 }
