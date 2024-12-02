@@ -76,6 +76,42 @@ POST /reservations
   "reservationStatus": "CANCELLED"
 }
 ```
+### Reservierung aktualisieren
+
+Aktualisiert eine bestehende Reservierung anhand seiner ID.
+
+```http
+PUT /reservations/{id}
+```
+
+#### Request Body
+
+```json
+{
+  "itemId": "123",
+  "userId": "user_1",
+  "startDate": "2024-11-20",
+  "endDate": "2024-11-25",
+  "reservationStatus": "CANCELLED"
+
+}
+```
+
+#### Response
+
+    Status 200 (OK): Reservierung erfolgreich aktualisiert.
+    Status 404 (Not Found): Reservierung nicht gefunden.
+
+```json
+{
+  "id": 1,
+  "itemId": "123",
+  "userId": "user_1",
+  "startDate": "2024-11-20",
+  "endDate": "2024-11-25",
+  "reservationStatus": "CANCELLED"
+}
+```
 
 ---
 
