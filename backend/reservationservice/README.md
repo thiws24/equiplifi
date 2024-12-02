@@ -76,6 +76,9 @@ POST /reservations
   "reservationStatus": "CANCELLED"
 }
 ```
+
+---
+
 ### Reservierung aktualisieren
 
 Aktualisiert eine bestehende Reservierung anhand seiner ID.

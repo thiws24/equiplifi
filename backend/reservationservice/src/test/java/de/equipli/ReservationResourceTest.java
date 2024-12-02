@@ -120,7 +120,7 @@ class ReservationResourceTest {
                 .extract().path("id");
 
         Reservation updatedItem = new Reservation();
-        updatedItem.setReservationStatus("Cancelled");
+        updatedItem.setReservationStatus("CANCELLED");
 
         given()
                 .contentType(ContentType.JSON)
@@ -129,6 +129,6 @@ class ReservationResourceTest {
                 .put("/reservations/" + id)
                 .then()
                 .statusCode(200)
-                .body("reservationStatus", is("Cancelled"));
+                .body("reservationStatus", is("CANCELLED"));
     }
 }
