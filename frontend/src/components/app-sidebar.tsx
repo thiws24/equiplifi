@@ -1,4 +1,4 @@
-import { ChevronUp, Home, Inbox, User2} from "lucide-react"
+import {ChevronUp, Home, Inbox, User2} from "lucide-react"
 import {
     SidebarContent, SidebarFooter,
     SidebarGroup,
@@ -20,26 +20,26 @@ import React from "react";
 // Menu items.
 const itemsLagerwart = [
     {
-        title: "Item erstellen",
+        title: "Neues Inventar erfassen",
         url: "#",
         icon: Inbox,
     }
 ]
 const itemsAllgemein = [
     {
-        title: "Home",
+        title: "Startseite",
         url: "http://localhost:3000",
         icon: Home,
     }
 ]
 
 export function AppSidebar() {
-    const { state } = useSidebar();
+    const {state} = useSidebar();
     return (
         (
             <Sidebar collapsible='icon'>
                 <SidebarHeader>
-                    <img src="/equipli-logo.svg" className="w-12 h-auto" alt="equipli logo" />
+                    <img src="/equipli-logo.svg" className="w-12 h-auto" alt="equipli logo"/>
                 </SidebarHeader>
                 <SidebarContent>
                     <SidebarGroup>
@@ -59,6 +59,8 @@ export function AppSidebar() {
                                 ))}
                             </SidebarMenu>
                         </SidebarGroupContent>
+                    </SidebarGroup>
+                    <SidebarGroup>
                         <SidebarGroupLabel className='text-xl text-customBlue'>Lagerwart</SidebarGroupLabel>
                         <SidebarGroupContent>
                             <SidebarMenu>
@@ -86,12 +88,10 @@ export function AppSidebar() {
                                 <DropdownMenuTrigger asChild>
                                     <button className="flex items-center gap-2 text-customBlack">
                                         {state === "collapsed" ? (
-                                            // Nur Icon anzeigen, wenn Sidebar collapsed ist
                                             <User2 className="h-6 w-6"/>
                                         ) : (
-                                            // Icon und Text anzeigen, wenn Sidebar expanded ist
                                             <>
-                                                <User2/> Abmelden
+                                                <User2/> USERNAME
                                                 <ChevronUp className="ml-auto"/>
                                             </>
                                         )}
