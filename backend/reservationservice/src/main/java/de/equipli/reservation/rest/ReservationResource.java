@@ -1,5 +1,7 @@
-package de.equipli;
+package de.equipli.reservation.rest;
 
+import de.equipli.reservation.jpa.ReservationRepository;
+import de.equipli.reservation.jpa.Reservation;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
