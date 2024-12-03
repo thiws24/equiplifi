@@ -1,5 +1,6 @@
-package de.equipli;
+package de.equipli.reservation;
 
+import de.equipli.reservation.jpa.Reservation;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
