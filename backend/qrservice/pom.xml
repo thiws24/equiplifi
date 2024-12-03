@@ -8,7 +8,7 @@
 		<groupId>de.equipli</groupId>
 		<artifactId>equipli-parent</artifactId>
 		<version>1.0.0</version>
-		<relativePath>../backend/pom.xml</relativePath> <!-- Pfad zum Parent POM -->
+		<relativePath>../pom.xml</relativePath> <!-- Pfad zum Parent POM -->
 	</parent>
 
 	<properties>
