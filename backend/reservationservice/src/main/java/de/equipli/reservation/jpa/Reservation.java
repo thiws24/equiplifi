@@ -1,4 +1,4 @@
-package de.equipli;
+package de.equipli.reservation.jpa;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
@@ -12,7 +12,7 @@ public class Reservation extends PanacheEntity {
     public Long userId;
     public LocalDate startDate;
     public LocalDate endDate;
-    public String reservationStatus;
+    public String status;
 
     public Long getId() {
         return id;
@@ -54,12 +54,12 @@ public class Reservation extends PanacheEntity {
         this.endDate = endDate;
     }
 
-    public String getReservationStatus() {
-        return reservationStatus;
+    public String getStatus() {
+        return status;
     }
 
-    public void setReservationStatus(String reservationStatus) {
-        this.reservationStatus = reservationStatus;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 }
