@@ -1,4 +1,4 @@
-name: Build and run sonarcloud analysis on backend services
+name: Sonarcloud analysis on backend services
 
 on:
   push:
@@ -8,6 +8,8 @@ on:
     branches:
       - main
   pull_request:
+    branches:
+      - main
     types: [ opened, reopened, synchronize ]
 
   workflow_dispatch:
