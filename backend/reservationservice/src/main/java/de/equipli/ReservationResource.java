@@ -49,14 +49,12 @@ public class ReservationResource {
         Period periodBetweenDates = Period.between(startDate, endDate);
 
         if (periodBetweenDates.isNegative()) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("End-Datum muss nach Start-Datum liegen!")
+            return Response.status(Response.Status.BAD_REQUEST).entity("End-Datum muss nach Start-Datum liegen!")
                     .build();
         }
 
         if (startDate.isBefore(LocalDate.now())) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Start-Datum liegt in der Vergangenheit")
+            return Response.status(Response.Status.BAD_REQUEST).entity("Start-Datum liegt in der Vergangenheit")
                     .build();
         }
 
@@ -65,8 +63,7 @@ public class ReservationResource {
         for (Reservation r : reservations) {
             if (!endDate.isBefore(r.getStartDate()) && !startDate.isAfter(r.getEndDate())) {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("Das Item ist in diesem Zeitraum nicht verfügbar")
-                        .build();
+                        .entity("Das Item ist in diesem Zeitraum nicht verfügbar").build();
             }
         }
 
@@ -80,7 +77,7 @@ public class ReservationResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public Reservation updateReservation(@PathParam("id") Long id, Reservation reservation){
+    public Reservation updateReservation(@PathParam("id") Long id, Reservation reservation) {
         Reservation existingReservation = reservationRepository.findById(id);
 
         if (existingReservation == null) {

@@ -30,8 +30,7 @@ public class QRGeneratorResource {
     private final String prodPdfPath;
 
     @Inject
-    public QRGeneratorResource(
-            @ConfigProperty(name = "quarkus.profile") String activeProfile,
+    public QRGeneratorResource(@ConfigProperty(name = "quarkus.profile") String activeProfile,
             @ConfigProperty(name = "qrservice.dev.png.path") String devPngPath,
             @ConfigProperty(name = "qrservice.dev.pdf.path") String devPdfPath,
             @ConfigProperty(name = "qrservice.prod.png.path") String prodPngPath,
@@ -48,7 +47,7 @@ public class QRGeneratorResource {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response generateQR(QRInput qrInput) throws IOException {
 
-        //Generate QR-Code
+        // Generate QR-Code
         createDirectoryIfNotExists(devPngPath);
         createDirectoryIfNotExists(devPdfPath);
         createDirectoryIfNotExists(prodPngPath);
@@ -63,7 +62,7 @@ public class QRGeneratorResource {
 
         QRCode.from(qrInput.getUrn()).to(ImageType.PNG).writeTo(new FileOutputStream(qrCodePngFilePath));
 
-        //Creating PDF document object
+        // Creating PDF document object
         // Define page dimensions in centimeters
         double widthInMM = 64;
         double heightInMM = 64;
@@ -82,11 +81,11 @@ public class QRGeneratorResource {
             contentStream.drawImage(pdimage, 0, 0, widthInPoints, heightInPoints);
         }
 
-        //Saving the document
+        // Saving the document
         File qrFile = new File(qrCodePdfFilePath);
         document.save(qrFile);
 
-        //Closing the document
+        // Closing the document
         document.close();
 
         FileInputStream fileInputStream = new FileInputStream(qrFile);

@@ -11,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-
 //Clear QR-Code-Folder in Prod-Mode each day at 23:00 Local Time or 00:00 Server Time
 @jakarta.ws.rs.Path("/qr/clear")
 @ApplicationScoped
@@ -23,7 +22,7 @@ public class ClearQRCodeFolder {
     @ConfigProperty(name = "qrservice.prod.pdf.path")
     String prodPdfPath;
 
-    @Scheduled(cron = "0 0 23 * * ?") //clearing at 23:00 Local Time or 00:00 Server Time
+    @Scheduled(cron = "0 0 23 * * ?") // clearing at 23:00 Local Time or 00:00 Server Time
     @GET
     public void clearQRCodes() throws IOException {
         clearDirectory(Paths.get(prodPngPath));
