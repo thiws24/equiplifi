@@ -5,16 +5,46 @@ import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.equalTo;
 
 @QuarkusTest
 class QRGeneratorResourceTest {
+
     @Test
-    void testHelloEndpoint() {
+    void testGenerateQR_PNG() {
         given()
-          .when().get("/hello")
-          .then()
-             .statusCode(200)
-             .body(is("Hello RESTEasy"));
+                .queryParam("name", "TestName")
+                .queryParam("id", "12345")
+                .header("Output-Format", "PNG")
+                .when().get("/qr")
+                .then()
+                .statusCode(200)
+                .header("Content-Disposition", equalTo("attachment; filename=\"qrcode.png\""))
+                .header("Cache-Control", equalTo("public, max-age=300"))
+                .contentType("application/octet-stream");
     }
 
+    @Test
+    void testGenerateQR_PDF() {
+        given()
+                .queryParam("name", "TestName")
+                .queryParam("id", "12345")
+                .header("Output-Format", "PDF")
+                .when().get("/qr")
+                .then()
+                .statusCode(200)
+                .header("Content-Disposition", equalTo("attachment; filename=\"qrcode.pdf\""))
+                .header("Cache-Control", equalTo("public, max-age=300"))
+                .contentType("application/octet-stream");
+    }
+
+    @Test
+    void testGenerateQR_MissingParameters() {
+        given()
+                .queryParam("name", "TestName")
+                .when().get("/qr")
+                .then()
+                .statusCode(400)
+                .body(is("Es fehlen benötigte Parameter: Name, ID, oder Output-Format"));
+    }
 }
