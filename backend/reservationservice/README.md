@@ -20,19 +20,19 @@ GET  /reservations
 [
   {
     "id": 1,
-    "itemId": "123",
-    "userId": "user_1",
+    "itemId": 2,
+    "userId": 3,
     "startDate": "2024-11-20",
     "endDate": "2024-11-25",
-    "reservationStatus": "CANCELLED"
+    "status": "CANCELLED"
   },
   {
     "id": 2,
-    "itemId": "124",
-    "userId": "user_2",
+    "itemId": 3,
+    "userId": 1,
     "startDate": "2024-11-21",
     "endDate": "2024-11-22",
-    "reservationStatus": null
+    "status": null
     
   }
 ]
@@ -52,11 +52,11 @@ POST /reservations
 
 ```json
 {
-  "itemId": "123",
-  "userId": "user_1",
+  "itemId": 1,
+  "userId": 2,
   "startDate": "2024-11-20",
   "endDate": "2024-11-25",
-  "reservationStatus": "CANCELLED"
+  "status": "CANCELLED"
   
 }
 ```
@@ -69,11 +69,11 @@ POST /reservations
 ```json
 {
   "id": 1,
-  "itemId": "123",
-  "userId": "user_1",
+  "itemId": 2,
+  "userId": 3,
   "startDate": "2024-11-20",
   "endDate": "2024-11-25",
-  "reservationStatus": "CANCELLED"
+  "status": "CANCELLED"
 }
 ```
 
@@ -129,6 +129,7 @@ Um den ReservationService mit einer Datenbank zu verbinden, müssen folgende Umg
 | QUARKUS_DATASOURCE_JDBC_URL  | JDBC-URL der Datenbank         |    
 | QUARKUS_DATASOURCE_USERNAME  | Benutzername für die Datenbank |      
 | QUARKUS_DATASOURCE_PASSWORD  | Passwort für die Datenbank     |
+| QUARKUS_REST-CLIENT_INVENTORY-API | URL des InventoryService       |
 
 ---
 
