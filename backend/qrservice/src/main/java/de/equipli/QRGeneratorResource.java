@@ -30,40 +30,50 @@ public class QRGeneratorResource {
 
     @GET
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response generateQR(@QueryParam("name") String name, @QueryParam("id") String id,
-            @HeaderParam("Output-Format") String outputFormat) {
+    public Response generateQR(
+            @QueryParam("name") String name,
+            @QueryParam("id") String id,
+            @HeaderParam("Output-Format") String outputFormat)
+    {
 
         if (name == null || id == null || outputFormat == null) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Es fehlen benötigte Parameter: Name, ID, oder Output-Format").build();
+                    .entity("Es fehlen benötigte Parameter: Name, ID, oder Output-Format")
+                    .build();
         }
 
-        // Create URN
+        //Create URN
         try {
             String urn = "urn:de.equipli:item:" + id;
 
             // Create QR-Code and combine with text
             BufferedImage finalImage = generateQrCodeImage(urn, name);
 
-            // PNG-Format
+            //PNG-Format
             if ("PNG".equalsIgnoreCase(outputFormat)) {
                 byte[] pngData = writePng(finalImage);
-                return Response.ok(pngData).header("Content-Disposition", "attachment; filename=\"qrcode.png\"")
-                        .header("Cache-Control", "public, max-age=300").build();
+                return Response.ok(pngData)
+                        .header("Content-Disposition", "attachment; filename=\"qrcode.png\"")
+                        .header("Cache-Control", "public, max-age=300")
+                        .build();
             }
             // PDF-Format
             else if ("PDF".equalsIgnoreCase(outputFormat)) {
                 byte[] pdfData = writePdf(finalImage);
-                return Response.ok(pdfData).header("Content-Disposition", "attachment; filename=\"qrcode.pdf\"")
-                        .header("Cache-Control", "public, max-age=300").build();
+                return Response.ok(pdfData)
+                        .header("Content-Disposition", "attachment; filename=\"qrcode.pdf\"")
+                        .header("Cache-Control", "public, max-age=300")
+                        .build();
             } else {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("Unpassendes Output-Format. Verwende PNG oder PDF.").build();
+                        .entity("Unpassendes Output-Format. Verwende PNG oder PDF.")
+                        .build();
             }
         } catch (Exception e) {
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Während der QR-Code-Generierung ist ein Fehler aufgetreten.").build();
+                    .entity("Während der QR-Code-Generierung ist ein Fehler aufgetreten.")
+                    .build();
         }
     }
 
@@ -71,7 +81,7 @@ public class QRGeneratorResource {
         // Define End-File size in pixels
         int imageSizeInPixels = (int) (LABEL_SIZE_IN_MM / 25.4f * DPI);
         // Define QR-Code size in pixels at % of the total image size
-        int qrSize = (int) (imageSizeInPixels * 0.9);
+        int qrSize = (int)(imageSizeInPixels * 0.9);
         // Define Font-Size
         int fontSize = imageSizeInPixels / 10;
 
@@ -79,8 +89,7 @@ public class QRGeneratorResource {
             ByteArrayOutputStream qrStream = QRCode.from(urn).withSize(qrSize, qrSize).stream();
             BufferedImage qrImage = ImageIO.read(new ByteArrayInputStream(qrStream.toByteArray()));
 
-            BufferedImage combinedImage = new BufferedImage(imageSizeInPixels, imageSizeInPixels,
-                    BufferedImage.TYPE_INT_RGB);
+            BufferedImage combinedImage = new BufferedImage(imageSizeInPixels, imageSizeInPixels, BufferedImage.TYPE_INT_RGB);
             Graphics2D g = combinedImage.createGraphics();
 
             // set the background
@@ -97,8 +106,7 @@ public class QRGeneratorResource {
             g.setColor(Color.BLACK);
             int textWidth = g.getFontMetrics().stringWidth(text);
             int textX = (imageSizeInPixels - textWidth) / 2; // center Text
-            if (textWidth > imageSizeInPixels) { // Text to long for Label --> do not center it to see Text from
-                                                 // beginning
+            if (textWidth>imageSizeInPixels){ // Text to long for Label --> do not center it to see Text from beginning
                 textX = 0;
             }
             g.drawString(text, textX, qrSize);
@@ -110,14 +118,14 @@ public class QRGeneratorResource {
         }
     }
 
-    // Create PNG as a byte array
+    //Create PNG as a byte array
     private byte[] writePng(BufferedImage image) throws IOException {
         ByteArrayOutputStream pngStream = new ByteArrayOutputStream();
         javax.imageio.ImageIO.write(image, "png", pngStream);
         return pngStream.toByteArray();
     }
 
-    // Create PDF as a byte array
+    //Create PDF as a byte array
     private byte[] writePdf(BufferedImage image) throws IOException {
         PDDocument document = new PDDocument();
         float sizeInPoints = LABEL_SIZE_IN_MM * 2.835f;
