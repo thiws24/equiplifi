@@ -2,7 +2,10 @@ name: backend
 
 on:
   push:
-    branches: [ "main" ]
+    paths:
+      - backend/**
+    branches:
+      - main
 
   workflow_dispatch:
 
@@ -60,32 +63,6 @@ jobs:
       #    for file in ${{ steps.changes.outputs.all_changed_and_modified_files }}; do
       #      echo "$file was changed"
       #    done
-
-      - name: Cache SonarQube packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-
-      - name: SonarQube Scan
-        #if: steps.changes.outputs.any_modified == 'true'
-        working-directory: backend/${{ matrix.service }}/
-        env:
-          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          #SONAR_TOKEN: ${{ secrets[matrix.sonartoken_var] }}
-          SONAR_TOKEN: c0ae78ef1790778307581c0c9001f30569edfd18
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dproject.settings=backend/${{ matrix.service }}/sonar-project.properties
-        #run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=thiws24_equipli
-
-      #- name: SonarQube Quality Gate Check
-       # run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
 
       - name: Set execute permission for mvnw
         if: steps.changes.outputs.any_modified == 'true'
