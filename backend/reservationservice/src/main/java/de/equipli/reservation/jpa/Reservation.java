@@ -18,10 +18,6 @@ public class Reservation extends PanacheEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getItemId() {
         return itemId;
     }
