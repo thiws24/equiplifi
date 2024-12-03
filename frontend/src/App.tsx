@@ -11,7 +11,7 @@ const App = () => {
       <div className='bg-customBeige'>
           <Routes>
               <Route path="/" element={<Home/>}/>
-              <Route path="/:id/create" element={<Home/>}/>
+              {/*<Route path="/create" element={<PLACEHOLDER/>}/>*/}
 
               <Route path="/item/:id" element={<Detail/>}/>
               <Route path="/category/:id" element={<CategoryDetails/>}/>
