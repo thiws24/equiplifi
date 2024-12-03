@@ -76,7 +76,7 @@ jobs:
 
       - name: SonarQube Scan
         #if: steps.changes.outputs.any_modified == 'true'
-        #working-directory: backend/${{ matrix.service }}/
+        working-directory: backend/${{ matrix.service }}/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           #SONAR_TOKEN: ${{ secrets[matrix.sonartoken_var] }}
