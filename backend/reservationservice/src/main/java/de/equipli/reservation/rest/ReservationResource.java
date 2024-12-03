@@ -7,9 +7,12 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.List;
 
 @Path("/reservations")
@@ -20,54 +23,48 @@ public class ReservationResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Get all reservations", description = "Returns a list of all reservations.")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Reservations found", content = @Content(mediaType = "application/json"))
+    })
     public List<Reservation> getReservations() {
         return reservationRepository.listAll();
-    }
-
-    @GET
-    @Path("/{itemId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getReservationsById(@PathParam("itemId") Long id) {
-        if (id == null || id <= 0) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid ID").build();
-        }
-
-        List<Reservation> reservations = reservationRepository.list("itemId = ?1", id);
-
-        if (reservations == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
-        return Response.ok(reservations).build();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
+    @Operation(summary = "Add a reservation", description = "Adds a new reservation.")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "201", description = "Reservation created", content = @Content(mediaType = "application/json")),
+            @APIResponse(responseCode = "400", description = "Start date must be before end date", content = @Content(mediaType = "text/plain")),
+            @APIResponse(responseCode = "400", description = "Start date must be in the future", content = @Content(mediaType = "text/plain")),
+            @APIResponse(responseCode = "400", description = "Item is already reserved for this time slot", content = @Content(mediaType = "text/plain")),
+            @APIResponse(responseCode = "400", description = "Required fields are missing", content = @Content(mediaType = "text/plain"))
+    })
     public Response addReservation(Reservation reservation) {
+        if (reservation.getItemId() == null || reservation.getUserId() == null || reservation.getStartDate() == null || reservation.getEndDate() == null) {
+            throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity("Required fields are missing: itemId, userId, startDate, endDate").build());
+        }
+
         LocalDate startDate = reservation.getStartDate();
         LocalDate endDate = reservation.getEndDate();
 
-        Period periodBetweenDates = Period.between(startDate, endDate);
-
-        if (periodBetweenDates.isNegative()) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("End-Datum muss nach Start-Datum liegen!")
-                    .build();
+        if (startDate.isAfter(endDate)) {
+            throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity("Start date must be before end date").build());
         }
 
         if (startDate.isBefore(LocalDate.now())) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Start-Datum liegt in der Vergangenheit")
-                    .build();
+            throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity("Start date must be in the future").build());
         }
 
-        List<Reservation> reservations = Reservation.list("itemId", reservation.getItemId());
-
+        List<Reservation> reservations = reservationRepository.findByItemId(reservation.getItemId());
         for (Reservation r : reservations) {
-            if (!endDate.isBefore(r.getStartDate()) && !startDate.isAfter(r.getEndDate())) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("Das Item ist in diesem Zeitraum nicht verfügbar").build();
+            if (startDate.isBefore(r.getEndDate()) && endDate.isAfter(r.getStartDate())) {
+                throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity("Item is already reserved for this time slot").build());
             }
         }
+
         reservationRepository.persist(reservation);
         return Response.status(Response.Status.CREATED).entity(reservation).build();
     }
@@ -75,32 +72,53 @@ public class ReservationResource {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public Reservation updateReservation(@PathParam("id") Long id, Reservation reservation) {
+    @Operation(summary = "Update a reservation", description = "Updates an existing reservation.")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Reservation updated", content = @Content(mediaType = "application/json")),
+            @APIResponse(responseCode = "404", description = "Reservation not found", content = @Content(mediaType = "text/plain")),
+            @APIResponse(responseCode = "400", description = "Start date must be before end date", content = @Content(mediaType = "text/plain")),
+            @APIResponse(responseCode = "400", description = "Start date must be in the future", content = @Content(mediaType = "text/plain")),
+            @APIResponse(responseCode = "400", description = "Item is already reserved for this time slot", content = @Content(mediaType = "text/plain")),
+            @APIResponse(responseCode = "400", description = "Required fields are missing", content = @Content(mediaType = "text/plain"))
+    })
+    public Response updateReservation(@PathParam("id") Long id, Reservation reservation) {
+        if(reservation.getItemId() == null || reservation.getUserId() == null || reservation.getStartDate() == null || reservation.getEndDate() == null) {
+            throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity("Required fields are missing: itemId, userId, startDate, endDate").build());
+        }
+
         Reservation existingReservation = reservationRepository.findById(id);
 
         if (existingReservation == null) {
-            throw new WebApplicationException("Reservation with id '" + id + "' not found", 404);
+            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Reservation not found").build());
         }
 
-        if (reservation.getStartDate() != null) {
-            existingReservation.setStartDate(reservation.getStartDate());
+        LocalDate startDate = reservation.getStartDate();
+        LocalDate endDate = reservation.getEndDate();
+
+        if (startDate.isAfter(endDate)) {
+            throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity("Start date must be before end date").build());
         }
-        if (reservation.getEndDate() != null) {
-            existingReservation.setEndDate(reservation.getEndDate());
+
+        if (startDate.isBefore(LocalDate.now())) {
+            throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity("Start date must be in the future").build());
         }
-        if (reservation.getItemId() != null) {
-            existingReservation.setItemId(reservation.getItemId());
+
+        List<Reservation> reservations = reservationRepository.findByItemId(reservation.getItemId());
+        for (Reservation r : reservations) {
+            if (startDate.isBefore(r.getEndDate()) && endDate.isAfter(r.getStartDate()) && !r.getId().equals(id)) {
+                throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity("Item is already reserved for this time slot").build());
+            }
         }
-        if (reservation.getUserId() != null) {
-            existingReservation.setUserId(reservation.getUserId());
-        }
-        if (reservation.getReservationStatus() != null) {
-            existingReservation.setReservationStatus(reservation.getReservationStatus());
-        }
+
+        existingReservation.setItemId(reservation.getItemId());
+        existingReservation.setUserId(reservation.getUserId());
+        existingReservation.setStartDate(reservation.getStartDate());
+        existingReservation.setEndDate(reservation.getEndDate());
+        existingReservation.setStatus(reservation.getStatus());
+
         reservationRepository.persist(existingReservation);
-        return reservation;
+        return Response.ok(existingReservation).build();
     }
 
 }
