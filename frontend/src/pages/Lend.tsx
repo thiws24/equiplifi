@@ -14,6 +14,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useKeycloak } from "../keycloak/KeycloakProvider";
 import { KeyCloakUserInfo } from "../interfaces/KeyCloakUserInfo";
+import {useToast} from "../hooks/use-toast";
+import {Toaster} from "../components/ui/toaster";
 
 function Lend()  {
     const navigate = useNavigate();
@@ -25,6 +27,7 @@ function Lend()  {
     const [userInfo, setUserInfo] = useState<KeyCloakUserInfo>()
     const [isStartPopoverOpen, setStartPopoverOpen] = useState(false)
     const [isEndPopoverOpen, setEndPopoverOpen] = useState(false)
+    const { toast } = useToast()
 
     const fetchItem = React.useCallback(async () => {
         try {
@@ -84,19 +87,43 @@ function Lend()  {
             });
 
             if (response.ok) {
-                // toast
-                window.open(`/inventory-item/${id}`, '_self')
+                toast({
+                    title: "Reservierung erfolgreich",
+                    description: `Du hast ${inventoryItem?.name ?? "diesen Gegenstand"} erfolgreich reserviert.`,
+                })
             } else {
-                setErrorMessage(`Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut`);
+                alert(response)
+                switch (response.status) {
+                    case 400:
+                        setErrorMessage(`${inventoryItem?.name} ist zu diesem Zeitraum nicht verfügbar.`);
+                        break;
+                    case 401:
+                        setErrorMessage("Du hast nicht die benötigten Rechte um diesen Gegenstand auszuleihen.");
+                        break;
+                    case 403:
+                        setErrorMessage("Zugriff verweigert.");
+                        break;
+                    case 404:
+                        setErrorMessage("Ressource nicht gefunden. Kontaktieren Sie den Administrator");
+                        break;
+                    case 500:
+                        setErrorMessage("Serverfehler: Ein Problem auf dem Server ist aufgetreten. Bitte versuchen Sie es später erneut.");
+                        break;
+                    default:
+                        setErrorMessage("Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut.");
+                        break;
+                }
             }
         } catch (error) {
-            setErrorMessage("Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.")
+            setErrorMessage("Beim senden der Ausleihanfrage ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es später erneut.")
             console.error('Error message set:', errorMessage);
         }
     };
 
     return (
+
         <div className="max-w-[600px] mx-auto">
+            <Toaster />
             {errorMessage && (
                 <div id="alert" role="alert" className="mt-4">
                     <div className="bg-red-500 text-white font-bold rounded-t px-4 py-2">
