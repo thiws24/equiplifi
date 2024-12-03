@@ -1,1 +1,4 @@
--- TODO: reservationStatus -> status
+CREATE SEQUENCE IF NOT EXISTS InventoryItem_SEQ START WITH 1 INCREMENT BY 50;
+
+ALTER TABLE Reservation
+    RENAME COLUMN reservationStatus TO status;
