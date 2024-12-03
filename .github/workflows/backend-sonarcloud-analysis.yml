@@ -1,0 +1,53 @@
+name: Build and run sonarcloud analysis on backend services
+
+on:
+  push:
+    paths:
+      - backend/**
+      - .github/workflows/backend-sonarcloud-analysis.yml
+    branches:
+      - main
+  pull_request:
+    paths:
+      - backend/**
+      - .github/workflows/backend-sonarcloud-analysis.yml
+    types: [ opened, reopened, synchronize ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        service: [ inventoryservice, qrservice, reservationservice ]
+
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache Maven packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: SonarQube Scan
+        working-directory: backend/${{ matrix.service }}/
+        env:
+          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #SONAR_TOKEN: ${{ secrets[matrix.sonartoken_var] }}
+          SONAR_TOKEN: c0ae78ef1790778307581c0c9001f30569edfd18
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dproject.settings=backend/${{ matrix.service }}/sonar-project.properties
