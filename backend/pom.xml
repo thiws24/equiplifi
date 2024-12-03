@@ -8,6 +8,12 @@
     <version>1.0.0</version>
     <packaging>pom</packaging>
 
+    <modules>
+        <module>inventoryservice</module>
+        <module>qrservice</module>
+        <module>reservationservice</module>
+    </modules>
+
     <build>
         <plugins>
             <plugin>
