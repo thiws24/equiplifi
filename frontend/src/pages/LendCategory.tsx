@@ -29,7 +29,7 @@ function LendCategory() {
     const [userInfo, setUserInfo] = useState<KeyCloakUserInfo>()
     const [isStartPopoverOpen, setStartPopoverOpen] = useState(false)
     const [isEndPopoverOpen, setEndPopoverOpen] = useState(false)
-    const { toast } = useToast()
+    const {toast} = useToast()
 
     const fetchItem = React.useCallback(async () => {
         try {
@@ -119,9 +119,10 @@ function LendCategory() {
                     description: `Du hast ${form.getValues("quantity")} ${inventoryItem?.name ?? "diesen Gegenstand"} erfolgreich reserviert.`,
                 })
             } else {
+                const data = await response.json()
                 switch (response.status) {
                     case 400:
-                        setErrorMessage(`${inventoryItem?.name} ist zu diesem Zeitraum nicht verfügbar.`);
+                        setErrorMessage(`${data.message}   ${inventoryItem?.name} ist zu diesem Zeitraum nicht verfügbar.`);
                         break;
                     case 401:
                         setErrorMessage("Du hast nicht die benötigten Rechte um diesen Gegenstand auszuleihen.");

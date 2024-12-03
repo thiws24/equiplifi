@@ -36,6 +36,7 @@ function Lend()  {
                 const data = await response.json();
                 setInventoryItem(data);
             }
+            console.log('ITEM:', response.status)
         } catch (e) {
             console.log(e);
         }
@@ -92,10 +93,11 @@ function Lend()  {
                     description: `Du hast ${inventoryItem?.name ?? "diesen Gegenstand"} erfolgreich reserviert.`,
                 })
             } else {
-                alert(response)
+                const data = await response.json()
+                console.log(data)
                 switch (response.status) {
                     case 400:
-                        setErrorMessage(`${inventoryItem?.name} ist zu diesem Zeitraum nicht verfügbar.`);
+                        setErrorMessage(`${data.message}   ${inventoryItem?.name} ist zu diesem Zeitraum nicht verfügbar.`);
                         break;
                     case 401:
                         setErrorMessage("Du hast nicht die benötigten Rechte um diesen Gegenstand auszuleihen.");
