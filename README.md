@@ -7,6 +7,10 @@
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=de.equipli%3Ainventoryservice&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=de.equipli%3Ainventoryservice)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=de.equipli%3Aqrservice&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=de.equipli%3Aqrservice)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=de.equipli%3Areservationservice&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=de.equipli%3Areservationservice)
+
 <p align="center">
     <a href="https://app.equipli.de">Demo ansehen</a>
     ·
@@ -22,7 +26,3 @@
 
 ## 🔗 Links
 [![equipli.de](https://img.shields.io/badge/equipli.de-f27428?style=for-the-badge&logo=ko-fi&logoColor=fff)](https://equipli.de/)
-
-
-
-# inv
