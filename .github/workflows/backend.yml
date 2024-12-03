@@ -78,7 +78,7 @@ jobs:
         #if: steps.changes.outputs.any_modified == 'true'
         working-directory: backend/${{ matrix.service }}/
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           #SONAR_TOKEN: ${{ secrets[matrix.sonartoken_var] }}
           SONAR_TOKEN: c0ae78ef1790778307581c0c9001f30569edfd18
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dproject.settings=backend/${{ matrix.service }}/sonar-project.properties

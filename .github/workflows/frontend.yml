@@ -29,8 +29,9 @@ jobs:
       - name: SonarQube Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
+          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
+          SONAR_TOKEN: c0ae78ef1790778307581c0c9001f30569edfd18
         with:
           projectBaseDir: frontend
 
