@@ -87,11 +87,6 @@ jobs:
       #- name: SonarQube Quality Gate Check
        # run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
 
-      #- uses: sonarsource/sonarqube-quality-gate-action@master
-       # timeout-minutes: 5
-        #env:
-         # SONAR_TOKEN: ${{ secrets[matrix.sonartoken_var] }}
-
       - name: Set execute permission for mvnw
         if: steps.changes.outputs.any_modified == 'true'
         working-directory: backend/${{ matrix.service }}/
