@@ -75,7 +75,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: SonarQube Scan
-        if: steps.changes.outputs.any_modified == 'true'
+        #if: steps.changes.outputs.any_modified == 'true'
         working-directory: backend/${{ matrix.service }}/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
