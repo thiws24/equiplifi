@@ -22,8 +22,6 @@ public class CategoryResource {
         this.inventoryRepository = inventoryRepository;
     }
 
-    // Category CRUD operations
-
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
@@ -32,7 +30,7 @@ public class CategoryResource {
             throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST).entity("Category name cannot be null or empty").build());
         }
 
-        if(categoryRepository.find("name", category.getName()).firstResult() != null) {
+        if (categoryRepository.find("name", category.getName()).firstResult() != null) {
             throw new WebApplicationException(Response.status(Response.Status.CONFLICT).entity("Category with name " + category.getName() + " already exists").build());
         }
 
@@ -45,7 +43,9 @@ public class CategoryResource {
             }
         }
 
-        return Response.status(Response.Status.CREATED).entity(category).build();
+        return Response.status(Response.Status.CREATED).entity(category)
+                .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                .build();
     }
 
     @GET
@@ -55,12 +55,14 @@ public class CategoryResource {
 
     @GET
     @Path("/{id}")
-    public Category getCategory(Long id) {
+    public Response getCategory(Long id) {
         Category category = categoryRepository.findById(id);
-        if(category == null) {
+        if (category == null) {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).entity("Category " + id + " not found").build());
         }
-        return category;
+        return Response.ok(category)
+                .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                .build();
     }
 
     @PUT
@@ -69,7 +71,7 @@ public class CategoryResource {
     @Transactional
     public Response updateCategory(@PathParam("id") Long id, Category category) {
         Category existingCategory = categoryRepository.findById(id);
-        if(existingCategory == null) {
+        if (existingCategory == null) {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).entity("Category " + id + " not found").build());
         }
 
@@ -80,7 +82,9 @@ public class CategoryResource {
 
         categoryRepository.persist(existingCategory);
 
-        return Response.ok(existingCategory).build();
+        return Response.ok(existingCategory)
+                .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                .build();
     }
 
     @DELETE
@@ -88,7 +92,7 @@ public class CategoryResource {
     @Transactional
     public Response deleteCategory(@PathParam("id") Long id) {
         Category category = categoryRepository.findById(id);
-        if(category == null) {
+        if (category == null) {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).entity("Category " + id + " not found").build());
         }
 
@@ -96,11 +100,9 @@ public class CategoryResource {
 
         //TODO: Was passiert mit den Items?
 
-        return Response.noContent().build();
+        return Response.noContent()
+                .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                .build();
     }
-
-    // InventoryItem CRUD operations
-
-
 
 }
