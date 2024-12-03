@@ -19,8 +19,8 @@ public class InventoryItemResource {
     @Transactional
     public Response addInventoryItem(InventoryItem item) {
         if (item.getName() == null || item.getName().isEmpty()) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Inventory item name cannot be null or empty").build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Inventory item name cannot be null or empty")
+                    .build();
         }
 
         inventoryItemRepository.persist(item);
@@ -38,7 +38,7 @@ public class InventoryItemResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getInventoryItem(@PathParam("id") Long id) {
         InventoryItem item = inventoryItemRepository.findById(id);
-        
+
         if (item == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -56,7 +56,7 @@ public class InventoryItemResource {
         if (existingItem == null) {
             throw new WebApplicationException("Inventory item with id '" + id + "' not found", 404);
         }
-        //ToDO: Es kann aktuell nicht auf "null" gesetzt werden
+        // ToDO: Es kann aktuell nicht auf "null" gesetzt werden
         if (item.getName() != null) {
             existingItem.setName(item.getName());
         }
