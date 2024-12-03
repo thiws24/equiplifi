@@ -1,5 +1,5 @@
+name: frontend
 
-name: Build
 on:
   push:
     branches:
@@ -7,17 +7,48 @@ on:
   workflow_dispatch:
 
 jobs:
-  sonarcloud:
-    name: SonarQube Cloud
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: SonarQube Cloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
+          SONAR_HOST_URL: https://sonar.equipli.de
         with:
           projectBaseDir: frontend
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: a061b3cfcc9b36d6571ec552a92d8f991bb5e38e
+
+      # If you wish to fail your job when the Quality Gate is red, uncomment the
+      # following lines. This would typically be used to fail a deployment.
+      #- uses: sonarsource/sonarqube-quality-gate-action@master
+       # timeout-minutes: 5
+        #env:
+         # SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: frontend/
+          build-args: |
+            INVENTORY_HOST=https://inventory.equipli.de
+            RESERVATION_HOST=https://reservation.equipli.de
+            KEYCLOAK_HOST=https://id.equipli.de
+            SPIFF_HOST=https://spiff.equipli.de
+          push: true
+          tags: ghcr.io/thiws24/frontend:latest
