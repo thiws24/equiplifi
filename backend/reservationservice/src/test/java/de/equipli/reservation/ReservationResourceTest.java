@@ -105,11 +105,11 @@ class ReservationResourceTest {
     }
 
     @Test
-    void testPutReservations() {
+    void testUpdateReservations() {
         Reservation reservation = new Reservation();
         reservation.setStartDate(LocalDate.now().plusDays(10));
         reservation.setEndDate(LocalDate.now().plusDays(15));
-        reservation.setReservationStatus("");
+        reservation.setStatus("");
 
         int id = given()
                 .contentType(ContentType.JSON)
@@ -121,7 +121,7 @@ class ReservationResourceTest {
                 .extract().path("id");
 
         Reservation updatedItem = new Reservation();
-        updatedItem.setReservationStatus("CANCELLED");
+        updatedItem.setStatus("CANCELLED");
 
         given()
                 .contentType(ContentType.JSON)
@@ -130,6 +130,6 @@ class ReservationResourceTest {
                 .put("/reservations/" + id)
                 .then()
                 .statusCode(200)
-                .body("reservationStatus", is("CANCELLED"));
+                .body("status", is("CANCELLED"));
     }
 }
