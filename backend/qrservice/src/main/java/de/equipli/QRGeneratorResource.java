@@ -54,7 +54,7 @@ public class QRGeneratorResource {
                 byte[] pngData = writePng(finalImage);
                 return Response.ok(pngData)
                         .header("Content-Disposition", "attachment; filename=\"qrcode.png\"")
-                        .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                        .header("Cache-Control", "public, max-age=300")
                         .build();
             }
             // PDF-Format
@@ -62,7 +62,7 @@ public class QRGeneratorResource {
                 byte[] pdfData = writePdf(finalImage);
                 return Response.ok(pdfData)
                         .header("Content-Disposition", "attachment; filename=\"qrcode.pdf\"")
-                        .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                        .header("Cache-Control", "public, max-age=300")
                         .build();
             } else {
                 return Response.status(Response.Status.BAD_REQUEST)
