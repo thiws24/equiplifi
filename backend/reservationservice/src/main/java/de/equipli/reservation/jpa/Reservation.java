@@ -2,6 +2,8 @@ package de.equipli.reservation.jpa;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 import java.time.LocalDate;
 
@@ -12,7 +14,9 @@ public class Reservation extends PanacheEntity {
     public Long userId;
     public LocalDate startDate;
     public LocalDate endDate;
-    public String status;
+
+    @Enumerated(EnumType.STRING)
+    public ReservationStatus status;
 
     public Long getId() {
         return id;
@@ -50,11 +54,11 @@ public class Reservation extends PanacheEntity {
         this.endDate = endDate;
     }
 
-    public String getStatus() {
+    public ReservationStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(ReservationStatus status) {
         this.status = status;
     }
 
