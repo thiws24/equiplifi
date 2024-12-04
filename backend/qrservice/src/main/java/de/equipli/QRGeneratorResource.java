@@ -1,111 +1,150 @@
 package de.equipli;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import net.glxn.qrgen.QRCode;
-import net.glxn.qrgen.image.ImageType;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
 
 @ApplicationScoped
 @Path("/qr")
 public class QRGeneratorResource {
+    // Define 1400 dpi and 62mm label size
+    private static final float DPI = 1400;
+    private static final float LABEL_SIZE_IN_MM = 62.0f;
 
-    private final String activeProfile;
-    private final String devPngPath;
-    private final String devPdfPath;
-    private final String prodPngPath;
-    private final String prodPdfPath;
+    @ConfigProperty(name = "quarkus.fontPath")
+    String fontPath;
 
-    @Inject
-    public QRGeneratorResource(
-            @ConfigProperty(name = "quarkus.profile") String activeProfile,
-            @ConfigProperty(name = "qrservice.dev.png.path") String devPngPath,
-            @ConfigProperty(name = "qrservice.dev.pdf.path") String devPdfPath,
-            @ConfigProperty(name = "qrservice.prod.png.path") String prodPngPath,
-            @ConfigProperty(name = "qrservice.prod.pdf.path") String prodPdfPath) {
-        this.activeProfile = activeProfile;
-        this.devPngPath = devPngPath;
-        this.devPdfPath = devPdfPath;
-        this.prodPngPath = prodPngPath;
-        this.prodPdfPath = prodPdfPath;
+    @GET
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response generateQR(@QueryParam("name") String name, @QueryParam("id") String id,
+            @HeaderParam("Output-Format") String outputFormat) {
+
+        if (name == null || id == null || outputFormat == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Es fehlen benötigte Parameter: Name, ID, oder Output-Format").build();
+        }
+
+        // Create URN
+        try {
+            String urn = "urn:de.equipli:item:" + id;
+
+            // Create QR-Code and combine with text
+            BufferedImage finalImage = generateQrCodeImage(urn, name);
+
+            // PNG-Format
+            if ("PNG".equalsIgnoreCase(outputFormat)) {
+                byte[] pngData = writePng(finalImage);
+                return Response.ok(pngData).header("Content-Disposition", "attachment; filename=\"qrcode.png\"")
+                        .header("Cache-Control", "public, max-age=300").build();
+            }
+            // PDF-Format
+            else if ("PDF".equalsIgnoreCase(outputFormat)) {
+                byte[] pdfData = writePdf(finalImage);
+                return Response.ok(pdfData).header("Content-Disposition", "attachment; filename=\"qrcode.pdf\"")
+                        .header("Cache-Control", "public, max-age=300").build();
+            } else {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("Unpassendes Output-Format. Verwende PNG oder PDF.").build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Während der QR-Code-Generierung ist ein Fehler aufgetreten.").build();
+        }
     }
 
-    @Consumes(MediaType.APPLICATION_JSON)
-    @POST
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response generateQR(QRInput qrInput) throws IOException {
+    private BufferedImage generateQrCodeImage(String urn, String text) throws IOException {
+        // Define End-File size in pixels
+        int imageSizeInPixels = (int) (LABEL_SIZE_IN_MM / 25.4f * DPI);
+        // Define QR-Code size in pixels at % of the total image size
+        int qrSize = (int) (imageSizeInPixels * 0.9);
+        // Define Font-Size
+        int fontSize = imageSizeInPixels / 10;
 
-        //Generate QR-Code
-        createDirectoryIfNotExists(devPngPath);
-        createDirectoryIfNotExists(devPdfPath);
-        createDirectoryIfNotExists(prodPngPath);
-        createDirectoryIfNotExists(prodPdfPath);
+        try {
+            ByteArrayOutputStream qrStream = QRCode.from(urn).withSize(qrSize, qrSize).stream();
+            BufferedImage qrImage = ImageIO.read(new ByteArrayInputStream(qrStream.toByteArray()));
 
-        String basePngPath = isProdProfile() ? prodPngPath : devPngPath;
-        String basePdfPath = isProdProfile() ? prodPdfPath : devPdfPath;
+            BufferedImage combinedImage = new BufferedImage(imageSizeInPixels, imageSizeInPixels,
+                    BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = combinedImage.createGraphics();
 
-        String urn = qrInput.getUrn();
-        String qrCodePngFilePath = basePngPath + "/qr_" + urn + ".png";
-        String qrCodePdfFilePath = basePdfPath + "/qr_" + urn + ".pdf";
+            // set the background
+            g.setColor(Color.WHITE);
+            g.fillRect(0, 0, imageSizeInPixels, imageSizeInPixels);
 
-        QRCode.from(qrInput.getUrn()).to(ImageType.PNG).writeTo(new FileOutputStream(qrCodePngFilePath));
+            // draw QR-Code
+            int qrX = (imageSizeInPixels - qrSize) / 2; // center QR-Code
+            int qrY = 0; // QR-Code on top
+            g.drawImage(qrImage, qrX, qrY, null);
 
-        //Creating PDF document object
-        // Define page dimensions in centimeters
-        double widthInMM = 64;
-        double heightInMM = 64;
-        float widthInPoints = (float) (widthInMM / 25.4 * 72);
-        float heightInPoints = (float) (heightInMM / 25.4 * 72);
+            // write Text
+            g.setFont(loadFont(fontSize));
+            g.setColor(Color.BLACK);
+            int textWidth = g.getFontMetrics().stringWidth(text);
+            int textX = (imageSizeInPixels - textWidth) / 2; // center Text
+            if (textWidth > imageSizeInPixels) { // Text to long for Label --> do not center it to see Text from
+                                                 // beginning
+                textX = 0;
+            }
+            g.drawString(text, textX, qrSize);
+            g.dispose();
+            return combinedImage;
 
-        // Create a new PDPage with custom dimensions
-        PDPage page = new PDPage(new PDRectangle(widthInPoints, heightInPoints));
+        } catch (IOException e) {
+            throw new IOException("Fehler beim Generieren des QR-Codes", e);
+        }
+    }
 
-        // Add the custom page to the document
+    // Create PNG as a byte array
+    private byte[] writePng(BufferedImage image) throws IOException {
+        ByteArrayOutputStream pngStream = new ByteArrayOutputStream();
+        javax.imageio.ImageIO.write(image, "png", pngStream);
+        return pngStream.toByteArray();
+    }
+
+    // Create PDF as a byte array
+    private byte[] writePdf(BufferedImage image) throws IOException {
         PDDocument document = new PDDocument();
+        float sizeInPoints = LABEL_SIZE_IN_MM * 2.835f;
+        PDPage page = new PDPage(new PDRectangle(sizeInPoints, sizeInPoints));
         document.addPage(page);
 
-        PDImageXObject pdimage = PDImageXObject.createFromFile(qrCodePngFilePath, document);
-        try (PDPageContentStream contentStream = new PDPageContentStream(document, document.getPage(0))) {
-            contentStream.drawImage(pdimage, 0, 0, widthInPoints, heightInPoints);
+        // no additional close needed, because of try-with-resources
+        try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+            PDImageXObject pdImage = LosslessFactory.createFromImage(document, image);
+            contentStream.drawImage(pdImage, 0, 0, sizeInPoints, sizeInPoints);
         }
 
-        //Saving the document
-        File qrFile = new File(qrCodePdfFilePath);
-        document.save(qrFile);
-
-        //Closing the document
+        ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();
+        document.save(pdfStream);
         document.close();
-
-        FileInputStream fileInputStream = new FileInputStream(qrFile);
-
-        return Response.ok().entity(fileInputStream).build();
-
+        return pdfStream.toByteArray();
     }
 
-    private boolean isProdProfile() {
-        return "prod".equals(activeProfile);
-    }
-
-    private void createDirectoryIfNotExists(String path) throws IOException {
-        File dir = new File(path);
-        if (!dir.exists()) {
-            boolean dirCreated = dir.mkdirs();
-            if (!dirCreated) {
-                throw new IOException("Failed to create directory: " + dir.getAbsolutePath());
-            }
+    // Use PublicSans-SemiBold font
+    private Font loadFont(int fontSize) {
+        try {
+            return Font.createFont(Font.TRUETYPE_FONT, new File(fontPath + "/PublicSans-SemiBold.ttf"))
+                    .deriveFont(Font.PLAIN, fontSize); // Font size depending on image size
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+            return new Font("Arial", Font.PLAIN, fontSize);
         }
     }
+
 }

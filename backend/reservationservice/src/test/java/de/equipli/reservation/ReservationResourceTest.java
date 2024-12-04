@@ -103,4 +103,33 @@ class ReservationResourceTest {
                 .then()
                 .statusCode(200);
     }
+
+    @Test
+    void testPutReservations() {
+        Reservation reservation = new Reservation();
+        reservation.setStartDate(LocalDate.now().plusDays(10));
+        reservation.setEndDate(LocalDate.now().plusDays(15));
+        reservation.setReservationStatus("");
+
+        int id = given()
+                .contentType(ContentType.JSON)
+                .body(reservation)
+                .when()
+                .post("/reservations")
+                .then()
+                .statusCode(201)
+                .extract().path("id");
+
+        Reservation updatedItem = new Reservation();
+        updatedItem.setReservationStatus("CANCELLED");
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(updatedItem)
+                .when()
+                .put("/reservations/" + id)
+                .then()
+                .statusCode(200)
+                .body("reservationStatus", is("CANCELLED"));
+    }
 }

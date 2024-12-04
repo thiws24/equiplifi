@@ -1,6 +1,8 @@
-import { Routes, Route } from 'react-router-dom';
-import Detail from "./Detail";
-import Home from "./Home";
+import { Routes, Route } from 'react-router-dom'
+import Detail from "./pages/Detail"
+import Lend from "./pages/Lend"
+import React from "react";
+import Home from "./pages/Home";
 
 const App = () => {
   return (
@@ -8,6 +10,7 @@ const App = () => {
           <Routes>
               <Route path="/" element={<Home/>}/>
               <Route path="/inventory-item/:id" element={<Detail/>}/>
+              <Route path="/inventory-item/:id/reservation" element={<Lend/>}/>
           </Routes>
       </div>
   );

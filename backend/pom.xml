@@ -1,0 +1,41 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>de.equipli</groupId>
+    <artifactId>equipli-parent</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>inventoryservice</module>
+        <module>qrservice</module>
+        <module>reservationservice</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+                <version>2.24.1</version>
+                <configuration>
+                    <directories>
+                        <directory>inventoryservice/src/main/java</directory>
+                        <directory>qrservice/src/main/java</directory>
+                        <directory>reservationservice/src/main/java</directory>
+                    </directories>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>validate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

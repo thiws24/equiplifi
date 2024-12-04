@@ -9,7 +9,7 @@ const colDefs: ColDef<InventoryItemProps, any>[] = [
     { field: "id" },
     { field: "name" },
     { field: "icon" },
-    { field: "photo" },
+    { field: "photoUrl" },
     { field: "urn" }
 ]
 

@@ -79,6 +79,45 @@ POST /reservations
 
 ---
 
+### Reservierung aktualisieren
+
+Aktualisiert eine bestehende Reservierung anhand seiner ID.
+
+```http
+PUT /reservations/{id}
+```
+
+#### Request Body
+
+```json
+{
+  "itemId": "123",
+  "userId": "user_1",
+  "startDate": "2024-11-20",
+  "endDate": "2024-11-25",
+  "reservationStatus": "CANCELLED"
+
+}
+```
+
+#### Response
+
+    Status 200 (OK): Reservierung erfolgreich aktualisiert.
+    Status 404 (Not Found): Reservierung nicht gefunden.
+
+```json
+{
+  "id": 1,
+  "itemId": "123",
+  "userId": "user_1",
+  "startDate": "2024-11-20",
+  "endDate": "2024-11-25",
+  "reservationStatus": "CANCELLED"
+}
+```
+
+---
+
 # Deployment
 
 ## Umgebungsvariablen
@@ -150,15 +189,10 @@ If you want to learn more about building native executables, please consult <htt
 
 ## Related Guides
 
-- REST ([guide](https://quarkus.io/guides/rest)): A Jakarta REST implementation utilizing build time processing and
-  Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on
-  it.
-- SmallRye OpenAPI ([guide](https://quarkus.io/guides/openapi-swaggerui)): Document your REST APIs with OpenAPI - comes
-  with Swagger UI
-- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus
-  REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
-- Hibernate ORM with Panache ([guide](https://quarkus.io/guides/hibernate-orm-panache)): Simplify your persistence code
-  for Hibernate ORM via the active record or the repository pattern
+- REST ([guide](https://quarkus.io/guides/rest)): A Jakarta REST implementation utilizing build time processing and Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it.
+- SmallRye OpenAPI ([guide](https://quarkus.io/guides/openapi-swaggerui)): Document your REST APIs with OpenAPI - comes with Swagger UI
+- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
+- Hibernate ORM with Panache ([guide](https://quarkus.io/guides/hibernate-orm-panache)): Simplify your persistence code for Hibernate ORM via the active record or the repository pattern
 - JDBC Driver - PostgreSQL ([guide](https://quarkus.io/guides/datasource)): Connect to the PostgreSQL database via JDBC
 
 ## Provided Code
