@@ -2,6 +2,7 @@ package de.equipli.inventory;
 
 import de.equipli.inventory.jpa.Category;
 import de.equipli.inventory.jpa.InventoryItem;
+import de.equipli.inventory.rest.dto.CreateCategoryRequest;
 import de.equipli.inventory.rest.dto.UpdateCategoryRequest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
@@ -53,15 +54,15 @@ class InventoryItemResourceTest {
 
     @Test
     void testUpdateCategory() {
-        Category category = new Category();
-        category.setName("Test Category");
-        category.setDescription("This is a test category");
-        category.setIcon("icon");
-        category.setPhotoUrl("https://www.example.com/photo.jpg");
+        CreateCategoryRequest request = new CreateCategoryRequest();
+        request.setName("Test Category Update");
+        request.setDescription("This is a test category");
+        request.setIcon("icon");
+        request.setPhotoUrl("https://www.example.com/photo.jpg");
 
         int id = given()
                 .contentType(ContentType.JSON)
-                .body(category)
+                .body(request)
                 .when()
                 .post("/categories")
                 .then()
@@ -70,7 +71,7 @@ class InventoryItemResourceTest {
 
         UpdateCategoryRequest updatedCategory = new UpdateCategoryRequest();
 
-        updatedCategory.setName("Updated Category");
+        updatedCategory.setName("Updated Test Category Update");
         updatedCategory.setDescription("Updated Description");
         updatedCategory.setIcon("updated-icon");
         updatedCategory.setPhotoUrl("https://www.example.com/updated-photo.jpg");
@@ -82,13 +83,13 @@ class InventoryItemResourceTest {
                 .put("/categories/" + id)
                 .then()
                 .statusCode(200)
-                .body("name", is("Updated Category"));
+                .body("name", is("Updated Test Category Update"));
     }
 
     @Test
     void testDeleteCategory() {
         Category category = new Category();
-        category.setName("Test Category");
+        category.setName("Test Category Delete");
 
         List<InventoryItem> items = new ArrayList<>();
         items.add(new InventoryItem());
@@ -138,7 +139,7 @@ class InventoryItemResourceTest {
     @Test
     void testAddInventoryItem() {
         Category category = new Category();
-        category.setName("Test Category");
+        category.setName("Test Category Add Item");
 
         int categoryId = given()
                 .contentType(ContentType.JSON)
@@ -172,7 +173,7 @@ class InventoryItemResourceTest {
     @Test
     void testGetInventoryItems() {
         Category category = new Category();
-        category.setName("Test Category");
+        category.setName("Test Category Get Items");
 
         int categoryId = given()
                 .contentType(ContentType.JSON)
@@ -204,7 +205,7 @@ class InventoryItemResourceTest {
     @Test
     void testUpdateInventoryItem() {
         Category category = new Category();
-        category.setName("Test Category");
+        category.setName("Test Category Update Item");
 
         int categoryId = given()
                 .contentType(ContentType.JSON)
@@ -242,7 +243,7 @@ class InventoryItemResourceTest {
     @Test
     void testDeleteInventoryItem() {
         Category category = new Category();
-        category.setName("Test Category");
+        category.setName("Test Category Delete Item");
 
         int categoryId = given()
                 .contentType(ContentType.JSON)
