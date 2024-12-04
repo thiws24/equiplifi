@@ -13,7 +13,7 @@ jobs:
   build:
     strategy:
       matrix:
-        service: [ inventoryservice ]
+        service: [ inventoryservice, qrservice, reservationservice ]
         include:
           - service: inventoryservice
             webhook_var: PORTAINER_INVENTORYSERVICE_WEBHOOK_URL
