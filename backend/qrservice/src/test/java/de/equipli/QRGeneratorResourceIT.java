@@ -1,4 +1,4 @@
-/*package de.equipli;
+package de.equipli;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 
@@ -6,4 +6,3 @@ import io.quarkus.test.junit.QuarkusIntegrationTest;
 class QRGeneratorResourceIT extends QRGeneratorResourceTest {
     // Execute the same tests but in packaged mode.
 }
-*/
