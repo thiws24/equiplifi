@@ -1,4 +1,3 @@
-/*
 package de.equipli;
 
 
@@ -111,5 +110,3 @@ class InventoryItemResourceTest {
                 .statusCode(404);
     }
 }
-
- */
