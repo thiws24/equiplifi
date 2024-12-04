@@ -56,4 +56,9 @@ public class Category extends PanacheEntity {
         this.items = items;
     }
 
+    public void addItem(InventoryItem item) {
+        items.add(item);
+        item.setCategory(this);
+    }
+
 }
