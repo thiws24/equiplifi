@@ -19,7 +19,8 @@ class ReservationResourceTest {
         Reservation reservation = new Reservation();
         reservation.setStartDate(LocalDate.now().plusDays(10));
         reservation.setEndDate(LocalDate.now().plusDays(15));
-        reservation.setItemId(1L);
+        reservation.setItemId(3L);
+        reservation.setUserId(1L);
 
         given()
                 .contentType(ContentType.JSON)
@@ -39,6 +40,7 @@ class ReservationResourceTest {
         reservation.setStartDate(LocalDate.now().plusDays(5));
         reservation.setEndDate(LocalDate.now().plusDays(1));
         reservation.setItemId(1L);
+        reservation.setUserId(1L);
 
         given()
                 .contentType(ContentType.JSON)
@@ -55,6 +57,7 @@ class ReservationResourceTest {
         reservation.setStartDate(LocalDate.now().minusDays(1));
         reservation.setEndDate(LocalDate.now().plusDays(5));
         reservation.setItemId(1L);
+        reservation.setUserId(1L);
 
         given()
                 .contentType(ContentType.JSON)
@@ -69,9 +72,10 @@ class ReservationResourceTest {
     void testAddReservationWithOverlap() {
         // Erst eine bestehende Reservierung hinzufügen
         Reservation existingReservation = new Reservation();
-        existingReservation.setStartDate(LocalDate.now().plusDays(1));
-        existingReservation.setEndDate(LocalDate.now().plusDays(5));
+        existingReservation.setStartDate(LocalDate.now().plusDays(20));
+        existingReservation.setEndDate(LocalDate.now().plusDays(25));
         existingReservation.setItemId(1L);
+        existingReservation.setUserId(1L);
 
         given()
                 .contentType(ContentType.JSON)
@@ -83,9 +87,10 @@ class ReservationResourceTest {
 
         // Überlappende Reservierung hinzufügen
         Reservation newReservation = new Reservation();
-        newReservation.setStartDate(LocalDate.now().plusDays(3));
-        newReservation.setEndDate(LocalDate.now().plusDays(7));
+        newReservation.setStartDate(LocalDate.now().plusDays(23));
+        newReservation.setEndDate(LocalDate.now().plusDays(27));
         newReservation.setItemId(1L);
+        newReservation.setUserId(1L);
 
         given()
                 .contentType(ContentType.JSON)
@@ -110,7 +115,7 @@ class ReservationResourceTest {
         Reservation reservation = new Reservation();
         reservation.setStartDate(LocalDate.now().plusDays(10));
         reservation.setEndDate(LocalDate.now().plusDays(15));
-        reservation.setStatus(ReservationStatus.ACTIVE);
+        reservation.setStatus(null);
         reservation.setItemId(1L);
         reservation.setUserId(1L);
 
