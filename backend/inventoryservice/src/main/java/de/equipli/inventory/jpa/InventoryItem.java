@@ -8,7 +8,8 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 @Entity
 public class InventoryItem extends PanacheEntity {
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private ItemStatus status;
     private String location;
 
     @ManyToOne
@@ -38,11 +39,11 @@ public class InventoryItem extends PanacheEntity {
         this.category = category;
     }
 
-    public String getStatus() {
+    public ItemStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(ItemStatus status) {
         this.status = status;
     }
 
