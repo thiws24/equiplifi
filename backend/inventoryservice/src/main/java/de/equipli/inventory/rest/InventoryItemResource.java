@@ -37,14 +37,16 @@ public class InventoryItemResource {
     })
     public Response createInventoryItem(@PathParam("categoryId") Long categoryId, InventoryItem item) {
         Category category = categoryRepository.findById(categoryId);
-        if(category == null) {
+        if (category == null) {
             throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Category " + categoryId + " not found").build());
         }
 
         item.setCategory(category);
         inventoryRepository.persist(item);
 
-        return Response.status(Response.Status.CREATED).entity(item).build();
+        return Response.status(Response.Status.CREATED).entity(item)
+                .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                .build();
     }
 
     @GET
@@ -55,11 +57,13 @@ public class InventoryItemResource {
     })
     public Response getInventoryItems(@PathParam("categoryId") Long categoryId) {
         Category category = categoryRepository.findById(categoryId);
-        if(category == null) {
+        if (category == null) {
             throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Category " + categoryId + " not found").build());
         }
 
-        return Response.ok(category.getItems()).build();
+        return Response.ok(category.getItems())
+                .header("Cache-Control", "max-age=300")
+                .build();
     }
 
     @GET
@@ -72,16 +76,18 @@ public class InventoryItemResource {
     })
     public Response getInventoryItem(@PathParam("categoryId") Long categoryId, @PathParam("id") Long itemId) {
         Category category = categoryRepository.findById(categoryId);
-        if(category == null) {
+        if (category == null) {
             throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Category " + categoryId + " not found").build());
         }
 
         InventoryItem item = inventoryRepository.findById(itemId);
-        if(item == null) {
+        if (item == null) {
             throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Item " + itemId + " not found").build());
         }
 
-        return Response.ok(item).build();
+        return Response.ok(item)
+                .header("Cache-Control", "max-age=300")
+                .build();
     }
 
     @PUT
@@ -95,13 +101,13 @@ public class InventoryItemResource {
             @APIResponse(responseCode = "404", description = "Item not found", content = @Content(mediaType = "application/json"))
     })
     public Response updateInventoryItem(@PathParam("categoryId") Long categoryId, @PathParam("id") Long itemId, InventoryItem item) {
-        if(categoryRepository.findById(categoryId) == null) {
-            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).entity("Category " + categoryId + " not found").build());
+        if (categoryRepository.findById(categoryId) == null) {
+            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Category " + categoryId + " not found").build());
         }
 
         InventoryItem existingItem = inventoryRepository.findById(itemId);
-        if(existingItem == null) {
-            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).entity("Item " + itemId + " not found").build());
+        if (existingItem == null) {
+            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Item " + itemId + " not found").build());
         }
 
         existingItem.setStatus(item.getStatus());
@@ -109,7 +115,9 @@ public class InventoryItemResource {
 
         inventoryRepository.persist(existingItem);
 
-        return Response.ok(existingItem).build();
+        return Response.ok(existingItem)
+                .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                .build();
     }
 
     @DELETE
@@ -123,18 +131,20 @@ public class InventoryItemResource {
     })
     public Response deleteInventoryItem(@PathParam("categoryId") Long categoryId, @PathParam("id") Long itemId) {
         Category category = categoryRepository.findById(categoryId);
-        if(category == null) {
-            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).entity("Category " + categoryId + " not found").build());
+        if (category == null) {
+            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Category " + categoryId + " not found").build());
         }
 
         InventoryItem item = inventoryRepository.findById(itemId);
-        if(item == null) {
-            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).entity("Item " + itemId + " not found").build());
+        if (item == null) {
+            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Item " + itemId + " not found").build());
         }
 
         inventoryRepository.delete(item);
 
-        return Response.noContent().build();
+        return Response.noContent()
+                .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                .build();
     }
 
 }
