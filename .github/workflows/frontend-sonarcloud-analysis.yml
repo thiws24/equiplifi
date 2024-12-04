@@ -1,0 +1,31 @@
+name:  Sonarcloud analysis on frontend services
+
+on:
+  push:
+    paths:
+      - frontend/**
+      - .github/workflows/frontend-sonarcloud-analysis.yml
+    branches:
+      - main
+  pull_request:
+    #paths:
+    #  - frontend/**
+    #  - .github/workflows/frontend-sonarcloud-analysis.yml
+    branches:
+      - main
+    #types: [ opened, reopened, synchronize ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          #SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_EQUIPLI }}
+        with:
+          projectBaseDir: frontend
