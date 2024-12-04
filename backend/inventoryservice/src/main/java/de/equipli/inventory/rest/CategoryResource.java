@@ -59,7 +59,11 @@ public class CategoryResource {
             for (int i = 0; i < request.getItemCount(); i++) {
                 InventoryItem item = new InventoryItem();
                 item.setStatus(ItemStatus.OK);
-                item.setLocation(request.getItemLocation());
+
+                if(request.getItemLocation() != null) {
+                    item.setLocation(request.getItemLocation());
+                }
+
                 category.addItem(item);
                 inventoryRepository.persist(item);
             }
