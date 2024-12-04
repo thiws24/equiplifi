@@ -1,6 +1,7 @@
 package de.equipli.reservation;
 
 import de.equipli.reservation.jpa.Reservation;
+import de.equipli.reservation.jpa.ReservationStatus;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
@@ -109,7 +110,9 @@ class ReservationResourceTest {
         Reservation reservation = new Reservation();
         reservation.setStartDate(LocalDate.now().plusDays(10));
         reservation.setEndDate(LocalDate.now().plusDays(15));
-        reservation.setStatus("");
+        reservation.setStatus(ReservationStatus.ACTIVE);
+        reservation.setItemId(1L);
+        reservation.setUserId(1L);
 
         int id = given()
                 .contentType(ContentType.JSON)
@@ -121,7 +124,11 @@ class ReservationResourceTest {
                 .extract().path("id");
 
         Reservation updatedItem = new Reservation();
-        updatedItem.setStatus("CANCELLED");
+        updatedItem.setStartDate(LocalDate.now().plusDays(10));
+        updatedItem.setEndDate(LocalDate.now().plusDays(15));
+        updatedItem.setItemId(1L);
+        updatedItem.setUserId(1L);
+        updatedItem.setStatus(ReservationStatus.CANCELLED);
 
         given()
                 .contentType(ContentType.JSON)
