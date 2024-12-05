@@ -30,7 +30,7 @@ public class UnavailabilityResource {
     InventoryService inventoryService;
 
     @GET
-    @Path("/item/{itemId}")
+    @Path("/items/{itemId}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Get reservation time slots by item", description = "Returns a list of time slots that are unavailable for the given item.")
     @APIResponses(value = {
@@ -56,7 +56,7 @@ public class UnavailabilityResource {
     }
 
     @GET
-    @Path("/category/{categoryId}")
+    @Path("/categories/{categoryId}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Get reservation time slots by category", description = "Returns a list of time slots that are unavailable for the given category.")
     @APIResponses(value = {
