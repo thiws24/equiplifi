@@ -1,6 +1,6 @@
-import { ReservationItemProps } from "./ReservationItemProps";
+import { ReservationItemProps } from "./ReservationItemProps"
 
-export interface ProcessInputProps extends ReservationItemProps{
-    userId: string
-    itemId: number
+export interface ProcessInputProps extends ReservationItemProps {
+  userId: string
+  itemId: number
 }

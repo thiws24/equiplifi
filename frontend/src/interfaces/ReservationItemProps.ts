@@ -1,4 +1,4 @@
 export interface ReservationItemProps {
-    startDate: string
-    endDate: string
+  startDate: string
+  endDate: string
 }
