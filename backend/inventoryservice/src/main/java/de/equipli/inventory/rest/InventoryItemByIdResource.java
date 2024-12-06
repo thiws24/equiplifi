@@ -1,7 +1,9 @@
 package de.equipli.inventory.rest;
 
+import de.equipli.inventory.jpa.Category;
 import de.equipli.inventory.jpa.InventoryItem;
 import de.equipli.inventory.jpa.InventoryRepository;
+import de.equipli.inventory.rest.dto.InventoryItemWithCategoryDTO;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotFoundException;
@@ -28,14 +30,38 @@ public class InventoryItemByIdResource {
     @Path("/{id}")
     @Operation(summary = "Get an inventory item by ID", description = "Returns an inventory item by its ID.")
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Inventory item returned successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InventoryItem.class))),
+            @APIResponse(responseCode = "200", description = "Inventory item returned successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InventoryItemWithCategoryDTO.class))),
             @APIResponse(responseCode = "404", description = "Item not found", content = @Content(mediaType = "application/json"))
     })
     public Response getInventoryItemById(@PathParam("id") Long itemId) {
-        InventoryItem item = inventoryRepository.findById(itemId);
-        if (item == null) {
-            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Item " + itemId + " not found").build());
+        try {
+            Category category = inventoryRepository.findCategoryByItemId(itemId);
+            if (category == null) {
+                throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("No category found for item " + itemId).build());
+            }
+
+            InventoryItem item = inventoryRepository.findById(itemId);
+
+            if (item == null) {
+                throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Item " + itemId + " not found").build());
+            }
+
+            InventoryItemWithCategoryDTO itemWithCategory = new InventoryItemWithCategoryDTO();
+            itemWithCategory.setId(item.getId());
+            itemWithCategory.setCategoryId(category.getId());
+
+            itemWithCategory.setName(category.getName());
+            itemWithCategory.setIcon(category.getIcon());
+            itemWithCategory.setDescription(category.getDescription());
+            itemWithCategory.setPhotoUrl(category.getPhotoUrl());
+
+            itemWithCategory.setStatus(item.getStatus());
+            itemWithCategory.setLocation(item.getLocation());
+
+            return Response.ok(itemWithCategory).build();
+        } catch (NotFoundException e) {
+            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Item or category not found").build());
         }
-        return Response.ok(item).build();
+
     }
 }
