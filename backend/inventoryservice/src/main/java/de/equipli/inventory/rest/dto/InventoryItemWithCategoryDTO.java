@@ -1,20 +1,35 @@
 package de.equipli.inventory.rest.dto;
 
+import de.equipli.inventory.jpa.ItemStatus;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
-public class CreateCategoryRequest {
+public class InventoryItemWithCategoryDTO {
 
+    @Schema(defaultValue = "1")
+    private Long id;
+    @Schema(defaultValue = "1")
+    private Long categoryId;
     private String name;
     private String description;
     private String icon;
     private String photoUrl;
+    private ItemStatus status;
+    private String location;
 
-    @Schema(defaultValue = "5")
-    private Long itemCount;
+    public Long getId() {
+        return id;
+    }
 
-    private String itemLocation;
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public CreateCategoryRequest() {
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getName() {
@@ -49,20 +64,20 @@ public class CreateCategoryRequest {
         this.photoUrl = photoUrl;
     }
 
-    public Long getItemCount() {
-        return itemCount;
+    public ItemStatus getStatus() {
+        return status;
     }
 
-    public void setItemCount(Long itemCount) {
-        this.itemCount = itemCount;
+    public void setStatus(ItemStatus status) {
+        this.status = status;
     }
 
-    public String getItemLocation() {
-        return itemLocation;
+    public String getLocation() {
+        return location;
     }
 
-    public void setItemLocation(String itemLocation) {
-        this.itemLocation = itemLocation;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
 }
