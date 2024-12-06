@@ -11,7 +11,7 @@ import java.time.LocalDate;
 public class Reservation extends PanacheEntity {
 
     public Long itemId;
-    public Long userId;
+    public String userId;
     public LocalDate startDate;
     public LocalDate endDate;
 
@@ -30,11 +30,11 @@ public class Reservation extends PanacheEntity {
         this.itemId = itemId;
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

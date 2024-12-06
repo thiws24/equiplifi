@@ -1,0 +1,2 @@
+ALTER TABLE Reservation
+    ALTER COLUMN userId TYPE VARCHAR(255);
