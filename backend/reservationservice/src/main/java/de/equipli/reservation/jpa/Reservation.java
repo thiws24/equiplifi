@@ -4,12 +4,14 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.time.LocalDate;
 
 @Entity
 public class Reservation extends PanacheEntity {
 
+    @Schema(defaultValue = "1")
     public Long itemId;
     public String userId;
     public LocalDate startDate;
