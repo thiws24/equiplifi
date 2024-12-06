@@ -14,13 +14,14 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Path("/unavailability")
-public class UnavailabilityResource {
+@Path("/availability")
+public class AvailabilityResource {
 
     @Inject
     ReservationRepository reservationRepository;
@@ -30,7 +31,7 @@ public class UnavailabilityResource {
     InventoryService inventoryService;
 
     @GET
-    @Path("/items/{itemId}")
+    @Path("/reservations/items/{itemId}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Get reservation time slots by item", description = "Returns a list of time slots that are unavailable for the given item.")
     @APIResponses(value = {
@@ -51,12 +52,12 @@ public class UnavailabilityResource {
                 .toList();
         return Map.of(
                 "itemId", itemId,
-                "unavailability", unavailability
+                "reservations", unavailability
         );
     }
 
     @GET
-    @Path("/categories/{categoryId}")
+    @Path("/reservations/categories/{categoryId}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Get reservation time slots by category", description = "Returns a list of time slots that are unavailable for the given category.")
     @APIResponses(value = {
@@ -80,12 +81,46 @@ public class UnavailabilityResource {
                                 .toList();
                         return Map.of(
                                 "itemId", itemId,
-                                "unavailability", unavailabilityForItem
+                                "reservations", unavailabilityForItem
                         );
                     })
                     .collect(Collectors.toList());
 
             return Response.ok(unavailability).build();
+        } catch (Exception e) {
+            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Category " + categoryId + " not found").build());
+        }
+    }
+
+    @GET
+    @Path("/categories/{categoryId}/items")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Get available items by category and date range", description = "Returns a list of available items for the given category and date range.")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Available items found", content = @Content(mediaType = "application/json")),
+            @APIResponse(responseCode = "404", description = "Category not found", content = @Content(mediaType = "application/json"))
+    })
+    public Response getAvailableItemsByCategoryAndDateRange(@PathParam("categoryId") Long categoryId,
+                                                            @QueryParam("startDate") String startDate,
+                                                            @QueryParam("endDate") String endDate) {
+        try {
+            List<InventoryItem> items = inventoryService.getInventoryItems(categoryId);
+
+            List<Long> itemIds = items.stream()
+                    .map(InventoryItem::id)
+                    .toList();
+
+            List<Long> unavailableItemIds = itemIds.stream()
+                    .filter(itemId -> reservationRepository.findByItemId(itemId).stream()
+                            .anyMatch(reservation ->
+                                    (LocalDate.parse(startDate).isBefore(reservation.getEndDate()) && LocalDate.parse(endDate).isAfter(reservation.getStartDate()))))
+                    .toList();
+
+            List<InventoryItem> availableItems = items.stream()
+                    .filter(item -> !unavailableItemIds.contains(item.id()))
+                    .toList();
+
+            return Response.ok(availableItems).build();
         } catch (Exception e) {
             throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Category " + categoryId + " not found").build());
         }
