@@ -4,6 +4,7 @@ import de.equipli.inventory.jpa.Category;
 import de.equipli.inventory.jpa.CategoryRepository;
 import de.equipli.inventory.jpa.InventoryItem;
 import de.equipli.inventory.jpa.InventoryRepository;
+import de.equipli.inventory.rest.dto.CreateInventoryItemRequest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
@@ -32,7 +33,7 @@ public class InventoryItemResource {
     @Transactional
     @Operation(summary = "Create a new InventoryItem", description = "Creates a new InventoryItem and persists it to the database.")
     @APIResponses(value = {
-            @APIResponse(responseCode = "201", description = "Inventory item created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InventoryItem.class))),
+            @APIResponse(responseCode = "201", description = "Inventory item created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateInventoryItemRequest.class))),
             @APIResponse(responseCode = "404", description = "Category not found", content = @Content(mediaType = "application/json"))
     })
     public Response createInventoryItem(@PathParam("categoryId") Long categoryId, InventoryItem item) {
@@ -96,7 +97,7 @@ public class InventoryItemResource {
     @Transactional
     @Operation(summary = "Update an InventoryItem by ID", description = "Updates an InventoryItem by its ID.")
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Inventory item updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InventoryItem.class))),
+            @APIResponse(responseCode = "200", description = "Inventory item updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateInventoryItemRequest.class))),
             @APIResponse(responseCode = "404", description = "Category not found", content = @Content(mediaType = "application/json")),
             @APIResponse(responseCode = "404", description = "Item not found", content = @Content(mediaType = "application/json"))
     })
@@ -129,12 +130,7 @@ public class InventoryItemResource {
             @APIResponse(responseCode = "404", description = "Category not found", content = @Content(mediaType = "application/json")),
             @APIResponse(responseCode = "404", description = "Item not found", content = @Content(mediaType = "application/json"))
     })
-    public Response deleteInventoryItem(@PathParam("categoryId") Long categoryId, @PathParam("id") Long itemId) {
-        Category category = categoryRepository.findById(categoryId);
-        if (category == null) {
-            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Category " + categoryId + " not found").build());
-        }
-
+    public Response deleteInventoryItem(@PathParam("id") Long itemId) {
         InventoryItem item = inventoryRepository.findById(itemId);
         if (item == null) {
             throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Item " + itemId + " not found").build());

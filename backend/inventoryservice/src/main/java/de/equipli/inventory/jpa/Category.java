@@ -16,6 +16,10 @@ public class Category extends PanacheEntity {
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<InventoryItem> items;
 
+    public Long getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }

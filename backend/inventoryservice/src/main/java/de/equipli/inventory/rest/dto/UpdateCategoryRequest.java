@@ -7,9 +7,6 @@ public class UpdateCategoryRequest {
     private String icon;
     private String photoUrl;
 
-    public UpdateCategoryRequest() {
-    }
-
     public String getName() {
         return name;
     }
