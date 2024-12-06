@@ -20,7 +20,7 @@ class ReservationResourceTest {
         reservation.setStartDate(LocalDate.now().plusDays(10));
         reservation.setEndDate(LocalDate.now().plusDays(15));
         reservation.setItemId(3L);
-        reservation.setUserId(1L);
+        reservation.setUserId("user1");
 
         given()
                 .contentType(ContentType.JSON)
@@ -40,7 +40,7 @@ class ReservationResourceTest {
         reservation.setStartDate(LocalDate.now().plusDays(5));
         reservation.setEndDate(LocalDate.now().plusDays(1));
         reservation.setItemId(1L);
-        reservation.setUserId(1L);
+        reservation.setUserId("user1");
 
         given()
                 .contentType(ContentType.JSON)
@@ -57,7 +57,7 @@ class ReservationResourceTest {
         reservation.setStartDate(LocalDate.now().minusDays(1));
         reservation.setEndDate(LocalDate.now().plusDays(5));
         reservation.setItemId(1L);
-        reservation.setUserId(1L);
+        reservation.setUserId("user1");
 
         given()
                 .contentType(ContentType.JSON)
@@ -75,7 +75,7 @@ class ReservationResourceTest {
         existingReservation.setStartDate(LocalDate.now().plusDays(20));
         existingReservation.setEndDate(LocalDate.now().plusDays(25));
         existingReservation.setItemId(1L);
-        existingReservation.setUserId(1L);
+        existingReservation.setUserId("user1");
 
         given()
                 .contentType(ContentType.JSON)
@@ -90,7 +90,7 @@ class ReservationResourceTest {
         newReservation.setStartDate(LocalDate.now().plusDays(23));
         newReservation.setEndDate(LocalDate.now().plusDays(27));
         newReservation.setItemId(1L);
-        newReservation.setUserId(1L);
+        newReservation.setUserId("user1");
 
         given()
                 .contentType(ContentType.JSON)
@@ -117,7 +117,7 @@ class ReservationResourceTest {
         reservation.setEndDate(LocalDate.now().plusDays(15));
         reservation.setStatus(null);
         reservation.setItemId(1L);
-        reservation.setUserId(1L);
+        reservation.setUserId("user1");
 
         int id = given()
                 .contentType(ContentType.JSON)
@@ -132,7 +132,7 @@ class ReservationResourceTest {
         updatedItem.setStartDate(LocalDate.now().plusDays(10));
         updatedItem.setEndDate(LocalDate.now().plusDays(15));
         updatedItem.setItemId(1L);
-        updatedItem.setUserId(1L);
+        updatedItem.setUserId("user1");
         updatedItem.setStatus(ReservationStatus.CANCELLED);
 
         given()
