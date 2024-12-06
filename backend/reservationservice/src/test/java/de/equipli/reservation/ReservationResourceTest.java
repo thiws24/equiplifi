@@ -176,7 +176,7 @@ private ReservationRepository reservationRepository;
     }
 
     @Test
-    public void testGetReservationTimeSlotsByItem() {
+    void testGetReservationTimeSlotsByItem() {
         Long itemId = 1L;
         Reservation reservation = new Reservation();
         reservation.setStartDate(LocalDate.now().plusDays(1));
@@ -193,7 +193,7 @@ private ReservationRepository reservationRepository;
     }
 
     @Test
-    public void testGetReservationTimeSlotsByCategory() {
+    void testGetReservationTimeSlotsByCategory() {
         Long categoryId = 1L;
         InventoryItem item1 = new InventoryItem(1L, "AVAILABLE", "Location 1");
         InventoryItem item2 = new InventoryItem(2L, "AVAILABLE", "Location 2");
