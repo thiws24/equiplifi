@@ -18,17 +18,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Path("/availability")
 public class AvailabilityResource {
 
-    @Inject
-    ReservationRepository reservationRepository;
+    private final ReservationRepository reservationRepository;
+    private final InventoryService inventoryService;
 
     @Inject
-    @RestClient
-    InventoryService inventoryService;
+    public AvailabilityResource(ReservationRepository reservationRepository, @RestClient InventoryService inventoryService) {
+        this.reservationRepository = reservationRepository;
+        this.inventoryService = inventoryService;
+    }
 
     @GET
     @Path("/reservations/items/{itemId}")
@@ -41,7 +42,7 @@ public class AvailabilityResource {
     public Map<String, Object> getReservationTimeSlotsByItem(@PathParam("itemId") Long itemId) {
         List<Reservation> reservations = reservationRepository.findByItemId(itemId);
 
-        if(reservations.isEmpty()) {
+        if (reservations.isEmpty()) {
             throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("No reservations found for item " + itemId).build());
         }
 
@@ -84,7 +85,7 @@ public class AvailabilityResource {
                                 "reservations", unavailabilityForItem
                         );
                     })
-                    .collect(Collectors.toList());
+                    .toList();
 
             return Response.ok(unavailability).build();
         } catch (Exception e) {
