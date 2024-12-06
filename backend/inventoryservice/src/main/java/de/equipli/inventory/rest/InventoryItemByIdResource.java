@@ -1,6 +1,7 @@
 package de.equipli.inventory.rest;
 
 import de.equipli.inventory.jpa.Category;
+import de.equipli.inventory.jpa.CategoryRepository;
 import de.equipli.inventory.jpa.InventoryItem;
 import de.equipli.inventory.jpa.InventoryRepository;
 import de.equipli.inventory.rest.dto.InventoryItemWithCategoryDTO;
@@ -20,10 +21,12 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 public class InventoryItemByIdResource {
 
     private final InventoryRepository inventoryRepository;
+    private final CategoryRepository categoryRepository;
 
     @Inject
-    public InventoryItemByIdResource(InventoryRepository inventoryRepository) {
+    public InventoryItemByIdResource(InventoryRepository inventoryRepository, CategoryRepository categoryRepository) {
         this.inventoryRepository = inventoryRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @GET
@@ -34,34 +37,30 @@ public class InventoryItemByIdResource {
             @APIResponse(responseCode = "404", description = "Item not found", content = @Content(mediaType = "application/json"))
     })
     public Response getInventoryItemById(@PathParam("id") Long itemId) {
-        try {
-            Category category = inventoryRepository.findCategoryByItemId(itemId);
-            if (category == null) {
-                throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("No category found for item " + itemId).build());
-            }
-
-            InventoryItem item = inventoryRepository.findById(itemId);
-
-            if (item == null) {
-                throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Item " + itemId + " not found").build());
-            }
-
-            InventoryItemWithCategoryDTO itemWithCategory = new InventoryItemWithCategoryDTO();
-            itemWithCategory.setId(item.getId());
-            itemWithCategory.setCategoryId(category.getId());
-
-            itemWithCategory.setName(category.getName());
-            itemWithCategory.setIcon(category.getIcon());
-            itemWithCategory.setDescription(category.getDescription());
-            itemWithCategory.setPhotoUrl(category.getPhotoUrl());
-
-            itemWithCategory.setStatus(item.getStatus());
-            itemWithCategory.setLocation(item.getLocation());
-
-            return Response.ok(itemWithCategory).build();
-        } catch (NotFoundException e) {
-            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Item or category not found").build());
+        InventoryItem item = inventoryRepository.findById(itemId);
+        if (item == null) {
+            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Item " + itemId + " not found").build());
         }
+
+        Category category = categoryRepository.findByItemId(itemId);
+        if (category == null) {
+            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("No category found for item " + itemId).build());
+        }
+
+        InventoryItemWithCategoryDTO itemWithCategory = new InventoryItemWithCategoryDTO();
+        itemWithCategory.setId(item.getId());
+        itemWithCategory.setCategoryId(category.getId());
+
+        itemWithCategory.setName(category.getName());
+        itemWithCategory.setIcon(category.getIcon());
+        itemWithCategory.setDescription(category.getDescription());
+        itemWithCategory.setPhotoUrl(category.getPhotoUrl());
+
+        itemWithCategory.setStatus(item.getStatus());
+        itemWithCategory.setLocation(item.getLocation());
+
+        return Response.ok(itemWithCategory).build();
+
 
     }
 }
