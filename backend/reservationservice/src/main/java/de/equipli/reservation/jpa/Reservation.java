@@ -12,13 +12,13 @@ import java.time.LocalDate;
 public class Reservation extends PanacheEntity {
 
     @Schema(defaultValue = "1")
-    public Long itemId;
-    public String userId;
-    public LocalDate startDate;
-    public LocalDate endDate;
+    private Long itemId;
+    private String userId;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     @Enumerated(EnumType.STRING)
-    public ReservationStatus status;
+    private ReservationStatus status;
 
     public Long getId() {
         return id;

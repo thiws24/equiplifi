@@ -18,8 +18,12 @@ import java.util.List;
 @Path("/reservations")
 public class ReservationResource {
 
+    private final ReservationRepository reservationRepository;
+
     @Inject
-    ReservationRepository reservationRepository;
+    public ReservationResource(ReservationRepository reservationRepository) {
+        this.reservationRepository = reservationRepository;
+    }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
