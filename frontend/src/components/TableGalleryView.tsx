@@ -8,36 +8,36 @@ import { ItemsGallery } from "./ItemsGallery"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
 
 interface Props {
-  data: InventoryItemProps[]
-  colDefs: ColDef<InventoryItemProps, any>[]
-  loading: boolean
+    data: InventoryItemProps[]
+    colDefs: ColDef<InventoryItemProps, any>[]
+    loading: boolean
 }
 
 export const TableGalleryView: React.FC<Props> = ({
-  data,
-  colDefs,
-  loading
+    data,
+    colDefs,
+    loading
 }) => {
-  return (
-    <Tabs defaultValue="table-view" className="w-full">
-      <TabsList className="grid grid-cols-2 justify-end w-[200px] ml-auto mb-4">
-        <TabsTrigger value="table-view" className="tabs-trigger">
-          <FontAwesomeIcon icon={faTable} />
-        </TabsTrigger>
-        <TabsTrigger value="gallery-view" className="tabs-trigger">
-          <FontAwesomeIcon icon={faTableCells} />
-        </TabsTrigger>
-      </TabsList>
-      <TabsContent value="table-view">
-        <InventoryTable
-          inventoryItems={data}
-          colDefs={colDefs}
-          loading={loading}
-        />
-      </TabsContent>
-      <TabsContent value="gallery-view">
-        <ItemsGallery items={data} />
-      </TabsContent>
-    </Tabs>
-  )
+    return (
+        <Tabs defaultValue="table-view" className="w-full">
+            <TabsList className="grid grid-cols-2 justify-end w-[200px] ml-auto mb-4">
+                <TabsTrigger value="table-view" className="tabs-trigger">
+                    <FontAwesomeIcon icon={faTable} />
+                </TabsTrigger>
+                <TabsTrigger value="gallery-view" className="tabs-trigger">
+                    <FontAwesomeIcon icon={faTableCells} />
+                </TabsTrigger>
+            </TabsList>
+            <TabsContent value="table-view">
+                <InventoryTable
+                    inventoryItems={data}
+                    colDefs={colDefs}
+                    loading={loading}
+                />
+            </TabsContent>
+            <TabsContent value="gallery-view">
+                <ItemsGallery items={data} />
+            </TabsContent>
+        </Tabs>
+    )
 }

@@ -7,31 +7,31 @@ import { ReservationItemProps } from "../interfaces/ReservationItemProps"
 import { ColDef } from "ag-grid-community"
 
 interface ReservationCardProps {
-  reservationItems: ReservationItemProps[]
-  colDefs: ColDef<ReservationItemProps>[]
-  loading: boolean
+    reservationItems: ReservationItemProps[]
+    colDefs: ColDef<ReservationItemProps>[]
+    loading: boolean
 }
 
 const ReservationTable: React.FC<ReservationCardProps> = ({
-  reservationItems,
-  colDefs,
-  loading
+    reservationItems,
+    colDefs,
+    loading
 }) => {
-  const navigate = useNavigate()
-  return (
-    <div className="h-[550px]">
-      <AgGridReact
-        rowData={reservationItems}
-        columnDefs={colDefs}
-        pagination={true}
-        paginationPageSize={10}
-        paginationPageSizeSelector={[10, 25, 50]}
-        loading={loading}
-        localeText={AG_GRID_LOCALE_DE}
-        theme={customTheme}
-      />
-    </div>
-  )
+    const navigate = useNavigate()
+    return (
+        <div className="h-[550px]">
+            <AgGridReact
+                rowData={reservationItems}
+                columnDefs={colDefs}
+                pagination={true}
+                paginationPageSize={10}
+                paginationPageSizeSelector={[10, 25, 50]}
+                loading={loading}
+                localeText={AG_GRID_LOCALE_DE}
+                theme={customTheme}
+            />
+        </div>
+    )
 }
 
 export default ReservationTable

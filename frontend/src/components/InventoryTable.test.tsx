@@ -4,6 +4,7 @@ import InventoryTable from "./InventoryTable"
 import { InventoryItemProps } from "../interfaces/InventoryItemProps"
 import { ColDef } from "ag-grid-community"
 import { BrowserRouter } from "react-router-dom"
+import { test, describe, expect } from 'vitest'
 
 const colDefs: ColDef<InventoryItemProps, any>[] = [
   { field: "id" },

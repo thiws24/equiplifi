@@ -4,7 +4,7 @@ updates:
     directory: "/backend/"
     schedule:
       interval: "daily"
-  - package-ecosystem: "maven"
+  - package-ecosystem: "npm"
     directory: "/frontend/" 
     schedule:
       interval: "daily"

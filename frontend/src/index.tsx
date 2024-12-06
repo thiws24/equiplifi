@@ -9,15 +9,15 @@ import { KeycloakProvider } from "./keycloak/KeycloakProvider"
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
 root.render(
-  <React.StrictMode>
-    <KeycloakProvider>
-      <BrowserRouter>
-        <Layout>
-          <App />
-        </Layout>
-      </BrowserRouter>
-    </KeycloakProvider>
-  </React.StrictMode>
+    <React.StrictMode>
+        <KeycloakProvider>
+            <BrowserRouter>
+                <Layout>
+                    <App />
+                </Layout>
+            </BrowserRouter>
+        </KeycloakProvider>
+    </React.StrictMode>
 )
 
 // If you want to start measuring performance in your app, pass a function
