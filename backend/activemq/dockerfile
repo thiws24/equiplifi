@@ -1,0 +1,13 @@
+# Verwende das offizielle ActiveMQ Classic-Image
+FROM apache/activemq-classic:5.18.6
+
+# Umgebungsvariablen für Benutzer und Passwort
+ENV ACTIVEMQ_USER=admin
+ENV ACTIVEMQ_PASSWORD=admin
+
+# Kopiere das Startskript
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Setze den Einstiegspunkt
+ENTRYPOINT ["/entrypoint.sh"]
