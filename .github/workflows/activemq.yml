@@ -1,7 +1,9 @@
 name: activemq
 
 on:
-  workflow_dispatch:  # Dies ermöglicht den manuellen Trigger
+  push:
+    branches:
+      - 47-notification-per-email-als-erinnerung
 
 jobs:
   build:
