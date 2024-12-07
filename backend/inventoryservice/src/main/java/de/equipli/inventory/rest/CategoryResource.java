@@ -118,7 +118,8 @@ public class CategoryResource {
             throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Category " + id + " not found").build());
         }
 
-        if (categoryRepository.find("name", request.getName()).firstResult() != null) {
+        Category existingCategoryWithName = categoryRepository.find("name", request.getName()).firstResult();
+        if (existingCategoryWithName != null && !existingCategoryWithName.getId().equals(id)) {
             throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity("Category with name " + request.getName() + " already exists").build());
         }
 
