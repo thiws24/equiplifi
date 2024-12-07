@@ -5,4 +5,7 @@ export interface InventoryItemProps {
     description?: string
     icon: string
     urn: string
+    location: string
+    status: string
+    categoryId: number
 }

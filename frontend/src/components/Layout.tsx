@@ -4,6 +4,7 @@ import {useKeycloak} from "../keycloak/KeycloakProvider";
 import QrReader from "./QrReader";
 import {AppSidebar} from "./App-sidebar";
 
+
 interface Props {
     children: React.ReactNode;
 }
@@ -15,7 +16,7 @@ export const Layout: React.FC<Props> = ({children}) => {
         return <div/>;
     }
     return (
-        <SidebarProvider>
+        <SidebarProvider defaultOpen={false}>
             <div className="flex h-screen w-full">
                 <div className="h-full z-50">
                     <AppSidebar />

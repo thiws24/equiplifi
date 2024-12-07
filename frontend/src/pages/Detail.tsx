@@ -32,12 +32,44 @@ function Detail() {
     const [reservationLoading, setReservationLoading] = React.useState(true);
     const [tasksList, setTasksList] = React.useState<TaskProps[]>([])
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [loading, setLoading] = React.useState(true);
 
     const { token } = useKeycloak()
 
+    const handleFetchQRCode = async () => {
+        setLoading(true);
+        try {
+            // API-URL mit Query-Params
+            const response = await fetch(
+                `https://qr.equipli.de/qr?name=${inventoryItem?.name}&id=$${id}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Accept": "application/pdf",
+                    },
+                }
+            );
+
+            if (response.ok) {
+                // PDF als Blob erhalten
+                const blob = await response.blob();
+                const pdfUrl = URL.createObjectURL(blob);
+
+                // PDF in neuem Tab öffnen
+                window.open(pdfUrl, "_blank");
+            } else {
+                console.error("Fehler beim Abrufen des QR-Codes:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Ein Fehler ist aufgetreten:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const fetchItem = React.useCallback(async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/item/${id}`);
+            const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/items/${id}`);
             if (response.ok) {
                 const data = await response.json();
                 setInventoryItem(data);
@@ -85,7 +117,7 @@ function Detail() {
 
     async function fetchReservationItems() {
         try {
-            const response = await fetch(`${process.env.REACT_APP_II_RESERVATION_HOST}/reservations/${id}`);
+            const response = await fetch(`${process.env.REACT_APP_II_RESERVATION_HOST}/reservations`);
             if (response.ok) {
                 const data = await response.json();
                 setReservationItems(data);
@@ -167,15 +199,19 @@ function Detail() {
                                     <img src={inventoryItem?.photoUrl} alt={inventoryItem?.description}
                                          className='w-full h-80 object-cover'/>}
                             </KeyValueRow>
+                            <KeyValueRow label="Lagerort"> {inventoryItem?.location} </KeyValueRow>
+                            <KeyValueRow label="Status"> {inventoryItem?.status} </KeyValueRow>
+                            {/*
                             <div>
                                 <h2 className="text-sm font-bold mb-4 mt-6">Reservierungen</h2>
                                 <ReservationTable reservationItems={reservationItems} colDefs={rColDefs}
                                                   loading={reservationLoading}/>
                             </div>
+                            */}
                         </dl>
                     </CardContent>
                     <CardFooter>
-                        <Button onClick={() => navigate('/')}
+                        <Button onClick={() => navigate(-1)}
                                 className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed">
                         &larr; Zurück
                         </Button>
