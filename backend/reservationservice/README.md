@@ -1,8 +1,58 @@
 # ReservationService API
 
-Ermöglicht das Erstellen und Abrufen von Reservierungen für Items.
+Die ReservationService API ermöglicht die Verwaltung von Reservierungen und Verfügbarkeiten. Benutzer können verfügbare Items abrufen, Reservierungen erstellen, aktualisieren und Zeitfenster für Reservierungen prüfen.
 
 ---
+
+## Endpoints
+
+### Verfügbarkeit
+
+#### Verfügbare Artikel nach Kategorie und Datumsbereich abrufen
+
+Gibt eine Liste von verfügbaren Artikeln für die angegebene Kategorie und den Datumsbereich zurück.
+
+```http
+GET /availability/categories/{categoryId}/items?startDate={startDate}&endDate={endDate}
+```
+
+#### Response
+
+    Status 200 (OK): Gibt eine Liste von verfügbaren Artikeln zurück.
+    Status 404 (Not Found): Kategorie nicht gefunden.
+
+---
+
+#### Reservierungszeitfenster nach Kategorie abrufen
+
+Gibt eine Liste von Items und deren Zeitfenstern zurück, in denen sie bereits reserviert sind.
+
+```http
+GET /availability/reservations/categories/{categoryId}
+```
+
+#### Response
+
+    Status 200 (OK): Gibt eine Liste von Items und deren Zeitfenstern zurück.
+    Status 404 (Not Found): Kategorie nicht gefunden.
+
+---
+
+#### Reservierungszeitfenster nach Artikel abrufen
+
+Gibt eine Liste von Zeitfenstern zurück, in denen ein bestimmtes Item bereits reserviert ist.
+
+```http
+GET /availability/reservations/items/{itemId}
+```
+
+#### Response
+
+    Status 200 (OK): Gibt eine Liste von Zeitfenstern zurück.
+    Status 404 (Not Found): Item nicht gefunden.
+
+---
+
 
 ### Alle Reservierungen abrufen
 
@@ -20,20 +70,19 @@ GET  /reservations
 [
   {
     "id": 1,
-    "itemId": 2,
-    "userId": 3,
-    "startDate": "2024-11-20",
-    "endDate": "2024-11-25",
+    "itemId": 1,
+    "startDate": "2022-03-10",
+    "endDate": "2022-03-11",
+    "userId": "user123",
     "status": "CANCELLED"
   },
   {
     "id": 2,
-    "itemId": 3,
-    "userId": 1,
-    "startDate": "2024-11-21",
-    "endDate": "2024-11-22",
-    "status": null
-    
+    "itemId": 2,
+    "startDate": "2022-03-10",
+    "endDate": "2022-03-11",
+    "userId": "user123",
+    "status": "CANCELLED"
   }
 ]
 ```
@@ -53,26 +102,25 @@ POST /reservations
 ```json
 {
   "itemId": 1,
-  "userId": 2,
-  "startDate": "2024-11-20",
-  "endDate": "2024-11-25",
+  "startDate": "2022-03-10",
+  "endDate": "2022-03-11",
+  "userId": "user123",
   "status": "CANCELLED"
-  
 }
 ```
 
 #### Response
 
     Status 201 (Created): Reservierung wurde erfolgreich erstellt.
-    Status 400 (Bad Request): Fehlerhafte Anfrage.
+    Status 400 (Bad Request): Erforderliche Felder fehlen oder sind ungültig.
 
 ```json
 {
   "id": 1,
-  "itemId": 2,
-  "userId": 3,
-  "startDate": "2024-11-20",
-  "endDate": "2024-11-25",
+  "itemId": 1,
+  "startDate": "2022-03-10",
+  "endDate": "2022-03-11",
+  "userId": "user123",
   "status": "CANCELLED"
 }
 ```
@@ -91,12 +139,11 @@ PUT /reservations/{id}
 
 ```json
 {
-  "itemId": "123",
-  "userId": "user_1",
-  "startDate": "2024-11-20",
-  "endDate": "2024-11-25",
-  "reservationStatus": "CANCELLED"
-
+    "itemId": 1,
+    "startDate": "2022-03-10",
+    "endDate": "2022-03-11",
+    "userId": "user123",
+    "status": "CANCELLED"
 }
 ```
 
@@ -104,15 +151,16 @@ PUT /reservations/{id}
 
     Status 200 (OK): Reservierung erfolgreich aktualisiert.
     Status 404 (Not Found): Reservierung nicht gefunden.
+    Status 400 (Bad Request): Erforderliche Felder fehlen oder sind ungültig.
 
 ```json
 {
   "id": 1,
-  "itemId": "123",
-  "userId": "user_1",
-  "startDate": "2024-11-20",
-  "endDate": "2024-11-25",
-  "reservationStatus": "CANCELLED"
+  "itemId": 1,
+  "startDate": "2022-03-10",
+  "endDate": "2022-03-11",
+  "userId": "user123",
+  "status": "CANCELLED"
 }
 ```
 
