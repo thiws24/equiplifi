@@ -1,6 +1,13 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Layout } from './Layout';
 import '@testing-library/jest-dom';
+import {useIsMobile} from "../hooks/use-mobile";
+
+jest.mock("../hooks/use-mobile", () => {
+    return {
+        useIsMobile: () => true,
+    };
+});
 
 // Mock der QrReader-Komponente
 jest.mock('./QrReader', () => () => <div>QrReader Mock</div>);

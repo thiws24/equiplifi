@@ -20,21 +20,30 @@ describe("InventoryTable Tests", () => {
       name: "Magischer Schlüssel",
       icon: "🗝️",
       photoUrl: "",
-      urn: "QR-Code 001"
+      urn: "QR-Code 001",
+      location: "Lager 1",
+      status: "OK",
+      categoryId: 1
     },
     {
       id: 2,
       name: "Heiltrank",
       icon: "🧪",
       photoUrl: "",
-      urn: "QR-Code 002"
+      urn: "QR-Code 002",
+      location: "Lager 1",
+      status: "OK",
+      categoryId: 2
     },
     {
       id: 3,
       name: "Drachenfeuer",
       icon: "🔥",
       photoUrl: "",
-      urn: "QR-Code 003"
+      urn: "QR-Code 003",
+      location: "Lager 1",
+      status: "OK",
+      categoryId: 3
     },
   ]
   test('renders data correctly', () => {

@@ -13,12 +13,22 @@ const QrReader = () => {
 
     // Success
     const onScanSuccess = (result: QrScanner.ScanResult) => {
-        if (result?.data) {
-            const id = result.data;
-            console.log(id)
-            window.open(`/inventory-item/${id}`, '_self')
+        const urn = result.data;
+        console.log(`Scanned URN: ${urn}`);
+
+
+        if (urn.startsWith("urn:de.equipli:item:")) {
+
+            const id = urn.split(":").pop();
+            console.log(`Extracted ID: ${id}`);
+
+            window.open(`/item/${id}`, '_self');
+        } else {
+            console.error("Ungültige URN. Das Format muss 'urn:de.equipli:item:<id>' sein.");
         }
-    };
+    }
+
+
 
     // Fail
     const onScanFail = (err: string | Error) => {

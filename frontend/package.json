@@ -58,12 +58,6 @@
     "lint": "eslint \"**/*.{js,jsx}\" --ignore-pattern node_modules/",
     "format": "prettier --write \"**/*.{js,jsx}\""
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "browserslist": {
     "production": [
       ">0.2%",

@@ -31,7 +31,7 @@ function Home() {
 
     async function fetchInventoryItems() {
         try {
-            const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/inventoryitems`)
+            const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/categories`)
             if (response.ok) {
                 const data = await response.json();
                 setInventoryItems(data);

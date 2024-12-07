@@ -5,31 +5,32 @@ import { ColDef } from "ag-grid-community";
 import { InventoryItemProps } from "../interfaces/InventoryItemProps";
 import { AG_GRID_LOCALE_DE } from '@ag-grid-community/locale';
 import { useNavigate } from 'react-router-dom';
+import {CategoryDetailsProps} from "../interfaces/CategoryDetailsProps";
 
-interface InventoryCardProps {
-    inventoryItems: InventoryItemProps[];
-    colDefs: ColDef<InventoryItemProps, any>[];
+interface CategoryDetailsTableProps {
+    categoryDetails: CategoryDetailsProps[];
+    colDefs: ColDef<CategoryDetailsProps, any>[];
     loading: boolean;
 }
 
-const InventoryTable: React.FC<InventoryCardProps> = ({inventoryItems, colDefs, loading}) => {
+const CategoryDetailsTable: React.FC<CategoryDetailsTableProps> = ({ categoryDetails, colDefs, loading }) => {
     const navigate = useNavigate()
     return (
         <div className='h-[550px]'>
             <AgGridReact
-                rowData={inventoryItems}
+                rowData={categoryDetails}
                 columnDefs={colDefs}
                 pagination={true}
                 paginationPageSize={10}
                 paginationPageSizeSelector={[10, 25, 50]}
                 loading={loading}
-                onRowClicked={(e) => navigate(`/category/${e?.data?.id}`)}
                 localeText={AG_GRID_LOCALE_DE}
+                onRowClicked={(e) => navigate(`/item/${e?.data?.id}`)}
                 theme={customTheme}
             />
         </div>
     );
 }
 
-export default InventoryTable;
+export default CategoryDetailsTable;
 

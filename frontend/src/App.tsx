@@ -4,6 +4,7 @@ import Lend from "./pages/Lend"
 import LendCategory from "./pages/LendCategory"
 import React from "react";
 import Home from "./pages/Home";
+import CategoryDetails from "./pages/CategoryDetails";
 
 const App = () => {
   return (
@@ -12,7 +13,7 @@ const App = () => {
               <Route path="/" element={<Home/>}/>
 
               <Route path="/item/:id" element={<Detail/>}/>
-              {/*<Route path="/category/:id" element={<DetailCategory/>}/>*/}
+              <Route path="/category/:id" element={<CategoryDetails/>}/>
 
               <Route path="/item/:id/reservation" element={<Lend/>}/>
               <Route path="/category/:id/reservation" element={<LendCategory/>}/>
