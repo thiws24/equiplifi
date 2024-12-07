@@ -71,6 +71,7 @@ GET  /reservations
   {
     "id": 1,
     "itemId": 1,
+    "categoryId": 1,
     "startDate": "2022-03-10",
     "endDate": "2022-03-11",
     "userId": "user123",
@@ -79,6 +80,7 @@ GET  /reservations
   {
     "id": 2,
     "itemId": 2,
+    "categoryId": 1,
     "startDate": "2022-03-10",
     "endDate": "2022-03-11",
     "userId": "user123",
@@ -102,6 +104,7 @@ POST /reservations
 ```json
 {
   "itemId": 1,
+  "categoryId": 1,
   "startDate": "2022-03-10",
   "endDate": "2022-03-11",
   "userId": "user123",
@@ -118,6 +121,7 @@ POST /reservations
 {
   "id": 1,
   "itemId": 1,
+  "categoryId": 1,
   "startDate": "2022-03-10",
   "endDate": "2022-03-11",
   "userId": "user123",
@@ -140,6 +144,7 @@ PUT /reservations/{id}
 ```json
 {
     "itemId": 1,
+    "categoryId": 1,
     "startDate": "2022-03-10",
     "endDate": "2022-03-11",
     "userId": "user123",
@@ -157,6 +162,7 @@ PUT /reservations/{id}
 {
   "id": 1,
   "itemId": 1,
+  "categoryId": 1,
   "startDate": "2022-03-10",
   "endDate": "2022-03-11",
   "userId": "user123",
