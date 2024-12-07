@@ -13,6 +13,8 @@ public class Reservation extends PanacheEntity {
 
     @Schema(defaultValue = "1")
     private Long itemId;
+    @Schema(defaultValue = "1")
+    private Long categoryId;
     private String userId;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -30,6 +32,14 @@ public class Reservation extends PanacheEntity {
 
     public void setItemId(Long itemId) {
         this.itemId = itemId;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getUserId() {
