@@ -1,8 +1,7 @@
 package de.equipli.processors.keycloak;
 
-import de.equipli.dto.mail.CollectMailCreateDto;
+import de.equipli.dto.mail.MailCreateDto;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -42,17 +41,7 @@ public class GetUserDataFromKeycloakProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        CollectMailCreateDto collectMailCreateDto = exchange.getIn().getBody(CollectMailCreateDto.class);
-
-        // TODO:
-        logger.info("Configured realm"+ keycloakRealm);
-        logger.info("Configured clientId"+ keycloakClientId);
-        logger.info("Configured clientSecret"+ keycloakClientSecret);
-        logger.info("Configured username"+ keycloakUsername);
-        logger.info("Configured password"+ keycloakPassword);
-        logger.info("Configured grantType"+ keycloakGrantType);
-        logger.info("Configured serverUrl"+ keycloakServerUrl);
-
+        MailCreateDto mailCreateDto = exchange.getIn().getBody(MailCreateDto.class);
 
         Keycloak keycloak = Keycloak.getInstance(
                 keycloakServerUrl,       // Server URL
@@ -62,7 +51,7 @@ public class GetUserDataFromKeycloakProcessor implements Processor {
                 keycloakClientId,        // Client ID
                 keycloakClientSecret     // Client Secret
         );
-        String id = collectMailCreateDto.getUserId();
+        String id = mailCreateDto.getUserId();
         // Get user resource
         UserResource userResource = keycloak.realm(keycloakRealm)
                 .users()

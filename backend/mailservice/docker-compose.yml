@@ -1,4 +1,4 @@
-
+### This docker-compose file is for local dev environment only ###
 services:
   smtp4dev:
     image: rnwood/smtp4dev:3.5.0
@@ -8,15 +8,27 @@ services:
     environment:
       - ServerOptions__DisableMessageSanitisation=true
 
-#  mailservice:
-#    image: ghcr.io/thiws24/mailservice:latest
-#    ports:
-#      - 8080:8080
-#    environment:
-#      - SMTP_HOST=${SMTP_HOST}
-#      - SMTP_PORT=${SMTP_PORT}
-#      - SMTP_USERNAME=${SMTP_USERNAME}
-#      - SMTP_PASSWORD=${SMTP_PASSWORD}
+  mailservice:
+    image: ghcr.io/thiws24/mailservice:dev
+    environment:
+      - SMTP_HOST=localhost
+      - SMTP_PORT=2525
+      - SMTP_USERNAME="test"
+      - SMTP_PASSWORD="test"
+
+      - KEYCLOAK_URL=http://keycloak:8080
+      - KEYCLOAK_REALM=quarkus
+      - KEYCLOAK_CLIENT_ID=app-service
+      - KEYCLOAK_CLIENT_SECRET=secret
+      - KEYCLOAK_CLIENT_USERNAME=admin
+      - KEYCLOAK_CLIENT_PASSWORD=admin
+      - KEYCLOAK_CLIENT_GRANT_TYPE=password
+
+      - INVENTORY_SERVICE_URL=http://inventoryservice:8080
+
+      - OIDC_AUTH_SERVER_URL=http://keycloak:8080
+    ports:
+      - "8080:8080"
 
   keycloak:
     image: ghcr.io/ainges/keycloak:test2
@@ -42,5 +54,18 @@ services:
     depends_on:
       - inventoryservice_db
     restart: unless-stopped
+
+  activemq:
+    image: ghcr.io/thiws24/equipli/activemq:latest
+    container_name: activemq-mailservice
+    ports:
+      - "61616:61616" # Port für JMS
+      - "8161:8161"   # Port für die Admin-Oberfläche
+    environment:
+      - user=admin
+      - password=admin123
+
+
+
 
 

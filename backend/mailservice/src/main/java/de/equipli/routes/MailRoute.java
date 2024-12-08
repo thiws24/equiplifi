@@ -1,22 +1,24 @@
 package de.equipli.routes;
 
-import de.equipli.dto.mail.CollectMailCreateDto;
-import de.equipli.GenericResponse;
-import de.equipli.dto.mail.ReturnMailDto;
+import de.equipli.dto.mail.MailCreateDto;
 import de.equipli.processors.inventoryservice.GetItemToItemIdProcessor;
-import de.equipli.processors.mail.CollectMailProcessor;
+import de.equipli.processors.mail.MailProcessor;
 import de.equipli.processors.mail.ReturnMailProcessor;
 import de.equipli.processors.keycloak.GetUserDataFromKeycloakProcessor;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 @ApplicationScoped
 public class MailRoute extends RouteBuilder {
 
     @Inject
-    CollectMailProcessor collectMailProcessor;
+    MailProcessor mailProcessor;
 
     @Inject
     ReturnMailProcessor returnMailProcessor;
@@ -43,59 +45,66 @@ public class MailRoute extends RouteBuilder {
     @Inject
     GetItemToItemIdProcessor getItemToItemIdProcessor;
 
+    Logger logger = LoggerFactory.getLogger(MailRoute.class);
+
     @Override
     public void configure() throws Exception {
-        rest()
-                .post("sendCollectionMail")
-                .type(CollectMailCreateDto.class)
-                .to("direct:sendCollectionMail")
+
+        // REST
+/*        rest()
+                .post("send-reservation-confirmation")
+                .type(MailCreateDto.class)
+                .to("direct:sendReservationConfirmation")
 
                 .post("sendReturnMail")
                 .type(ReturnMailDto.class)
-                .to("direct:sendReturnMail");
+                .to("direct:sendReturnMail");*/
 
+        // QUEUE
 
-        from("direct:sendCollectionMail")
-                .routeId("sendCollectionMail-Route")
-                .unmarshal().json(CollectMailCreateDto.class)
+        from("timer:trigger?period=10000")  // Alle 1000 ms wird diese Route ausgelöst
+                .routeId("test")
+                        .setBody().constant("Hello World")
+                        .log("Hello World")
+        .to("activemq:queue:test-queue");
 
-                .process(getItemToItemIdProcessor)
-                .process(getUserDataFromKeycloakProcessor)
-                .process(collectMailProcessor)
-                .choice()
-                    .when(simple(String.valueOf("dev".equals(activeProfile))))
-                        .to("smtp://{{smtp.config.host}}:{{smtp.config.port}}")
-                    .otherwise()
-                        .to("smtps://{{smtp.config.host}}:{{smtp.config.port}}"
-                        + "?username={{smtp.config.username}}&password={{smtp.config.password}}")
+        from("activemq:queue:send-reservation-confirmation-queue")
+                .routeId("sendReservationConfirmation-Route")
+                .unmarshal().json(List.class, MailCreateDto.class)
+                .process(exchange ->
+                {
+                    List<MailCreateDto> mailCreateDtos = exchange.getIn().getBody(List.class);
+                    logger.info("Received " + mailCreateDtos.size() + " Objects to send");
+                })
+                .split().body()
+                    .to("direct:getItemToItemId")
+                    //.to("direct:getUserDataFromKeycloak")
                 .end()
-                // get to address from mailDTO in Property
-                .log("CollectionMail sent successfully to ${exchangeProperty.receiverMail}")
-                .process(
-                        exchange -> exchange.getMessage().setBody(
-                                new GenericResponse("Collection reminder sent successfully")
-                        )
-                )
-                .marshal().json();
+                .to("activemq:queue:test-queue");
 
-        from("direct:sendReturnMail")
-                .routeId("sendReturnMail-Route")
-                .unmarshal().json(ReturnMailDto.class)
-                .process(returnMailProcessor)
 
-                .choice()
-                    .when(simple(String.valueOf("dev".equals(activeProfile))))
-                        .to("smtp://{{smtp.config.host}}:{{smtp.config.port}}")
-                    .otherwise()
-                        .to("smtps://{{smtp.config.host}}:{{smtp.config.port}}"
-                        + "?username={{smtp.config.username}}&password={{smtp.config.password}}")
-                    .end()
-                .log("ReturnMail sent successfully to ${exchangeProperty.to}")
+        from("direct:getItemToItemId")
+                .routeId("getItemToItemId-Route")
+                .unmarshal().json(MailCreateDto.class)
+                .log("Split Message :${body}")
                 .process(
-                        exchange -> exchange.getIn().setBody(
-                                new GenericResponse("Return reminder sent successfully")
-                        )
+                        exchange -> {
+                            Object object = exchange.getMessage().getBody();
+                            MailCreateDto mailCreateDto = exchange.getMessage().getBody(MailCreateDto.class);
+                            MailCreateDto mailCreateDto1 = (MailCreateDto) object;
+                            logger.info("Object : " + object);
+                        }
                 )
-                .marshal().json();
+
+                //.process(getItemToItemIdProcessor)
+                .end();
+
+/*        from("direct:getUserDataFromKeycloak")
+                .routeId("getUserDataFromKeycloak-Route")
+
+                .process(getUserDataFromKeycloakProcessor)
+                .end();*/
+
+
     }
 }

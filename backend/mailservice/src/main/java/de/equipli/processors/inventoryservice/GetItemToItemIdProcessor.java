@@ -1,7 +1,7 @@
 package de.equipli.processors.inventoryservice;
 
 import de.equipli.dto.inventoryservice.InventoryItemDto;
-import de.equipli.dto.mail.CollectMailCreateDto;
+import de.equipli.dto.mail.MailCreateDto;
 import de.equipli.restclient.inventoryservice.InventoryService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -22,7 +22,10 @@ public class GetItemToItemIdProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String itemId = exchange.getIn().getBody(CollectMailCreateDto.class).getItemId();
+        MailCreateDto mailCreateDto = exchange.getMessage().getBody(MailCreateDto.class);
+
+        logger.debug("Get item from inventory service");
+        String itemId = exchange.getMessage().getBody(MailCreateDto.class).getItemId();
         // Get item from inventory service with http request
         InventoryItemDto item = null;
         try {

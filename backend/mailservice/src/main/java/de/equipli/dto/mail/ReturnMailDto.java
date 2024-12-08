@@ -1,5 +1,6 @@
 package de.equipli.dto.mail;
 
+@Deprecated
 public class ReturnMailDto {
     private String receiverMail;
     private String name;

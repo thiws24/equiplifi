@@ -1,4 +1,4 @@
-### Create Example Item
+### Create Example Item 1
 POST http://localhost:8083/inventoryitems
 Content-Type: application/json
 
@@ -7,4 +7,15 @@ Content-Type: application/json
   "photoUrl": "https://example.com/photo.jpg",
   "icon": "🏐",
   "urn": "example-urn"
+}
+
+### Create Example Item 2
+POST http://localhost:8083/inventoryitems
+Content-Type: application/json
+
+{
+  "name": "Basketball",
+  "photoUrl": "https://example.com/basketball.jpg",
+  "icon": "🏀",
+  "urn": "example-urn-basketball"
 }
