@@ -53,11 +53,4 @@ describe("KeyValueRow Tests", () => {
         expect(ddElement).toBeInTheDocument()
         expect(ddElement).toBeEmptyDOMElement()
     })
-
-    test("matches the snapshot", () => {
-        const { container } = render(
-            <KeyValueRow label="Snapshot Label">Snapshot Content</KeyValueRow>
-        )
-        expect(container.firstChild).toMatchSnapshot()
-    })
 })

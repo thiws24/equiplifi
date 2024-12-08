@@ -4,7 +4,11 @@ import "@testing-library/jest-dom"
 import { test, describe, expect, vi } from 'vitest'
 
 // Mock der QrReader-Komponente
-vi.mock("./QrReader", () => <div>QrReader Mock</div>)
+vi.mock('./QrReader', () => {
+    return {
+        default: vi.fn(() => <div>QrReader Mock</div>), // Mock the default export
+    };
+});
 
 vi.mock("../keycloak/KeycloakProvider", () => ({
     useKeycloak: () => ({
