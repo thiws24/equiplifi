@@ -1,295 +1,349 @@
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormMessage } from "../components/ui/form";
-import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover";
-import { Button } from "../components/ui/button";
-import { cn } from "../lib/utils";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "../components/ui/calendar";
-import React, { useEffect, useState } from "react";
-import { InventoryItemProps } from "../interfaces/InventoryItemProps";
-import { useNavigate, useParams } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useKeycloak } from "../keycloak/KeycloakProvider";
-import { KeyCloakUserInfo } from "../interfaces/KeyCloakUserInfo";
-import {useToast} from "../hooks/use-toast";
-import {Toaster} from "../components/ui/toaster";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
+import { Form, FormField } from "../components/ui/form"
+import { Button } from "../components/ui/button"
+import { format } from "date-fns"
+import React, { useEffect, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useKeycloak } from "../keycloak/KeycloakProvider"
+import { KeyCloakUserInfo } from "../interfaces/KeyCloakUserInfo"
+import { useToast } from "../hooks/use-toast"
+import { Toaster } from "../components/ui/toaster"
+import { ItemProps } from "../interfaces/ItemProps"
+import DatePickerField from "../components/DatePickerField"
+import { ToastWithCountdown } from "../components/ToastWithCountdown"
 
-function Lend()  {
-    const navigate = useNavigate();
-    const [startDate, setStartDate] = useState<Date | null>(null);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [inventoryItem, setInventoryItem] = useState<InventoryItemProps>();
-    const { id } = useParams();
-    const { keycloak, token } = useKeycloak()
+function Lend() {
+    const navigate = useNavigate()
+    const [startDate, setStartDate] = useState<Date | null>(null)
+    const [itemExists, setItemExists] = useState(false)
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const [item, setItem] = useState<ItemProps>()
     const [userInfo, setUserInfo] = useState<KeyCloakUserInfo>()
     const [isStartPopoverOpen, setStartPopoverOpen] = useState(false)
     const [isEndPopoverOpen, setEndPopoverOpen] = useState(false)
+    const [unavailableDates, setUnavailableDates] = useState<Date[][]>([])
     const { toast } = useToast()
+    const { id } = useParams()
+    const { keycloak, token } = useKeycloak()
 
     const fetchItem = React.useCallback(async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/item/${id}`);
+            const response = await fetch(
+                `${process.env.REACT_APP_II_SERVICE_HOST}/items/${id}`
+            )
             if (response.ok) {
-                const data = await response.json();
-                setInventoryItem(data);
+                setItemExists(true)
+                const data = await response.json()
+                setItem(data)
+            } else {
+                ToastWithCountdown(
+                    "Fehlermeldung",
+                    "Dieser Gegenstand existiert nicht. Bei Fragen melden Sie sich bei ihrem Administrator",
+                    // TODO: Hier später zu reservations-page navigieren
+                    () => navigate(`/`),
+                    "destructive",
+                    10000,
+                    "#ffffff"
+                )
             }
-            console.log('ITEM:', response.status)
         } catch (e) {
-            console.log(e);
+            setErrorMessage("Es ist etwas schiefgelaufen. Versuchen Sie es später erneut.")
+            console.log(e)
         }
-
-    }, [id]);
+    }, [id])
 
     const FormSchema = z.object({
         startDate: z.date({
-            required_error: "Startdatum erforderlich",
+            required_error: "Startdatum erforderlich"
         }),
         endDate: z.date({
-            required_error: "Enddatum erforderlich",
-        }),
-    });
+            required_error: "Enddatum erforderlich"
+        })
+    })
 
     const form = useForm<z.infer<typeof FormSchema>>({
-        resolver: zodResolver(FormSchema),
-    });
+        resolver: zodResolver(FormSchema)
+    })
 
-    type FormschemaType = z.infer<typeof FormSchema>;
+    type FormschemaType = z.infer<typeof FormSchema>
+
+    const fetchAvailability = React.useCallback(async () => {
+        try {
+            let dateArray: Date[][] = []
+            const response = await fetch(`${process.env.REACT_APP_II_RESERVATION_HOST}/availability/reservations/items/${id}`)
+            if (response.ok) {
+                const data = await response.json()
+                const getDaysArray = function(start: string | Date, end: string | Date) {
+                    const arr = []
+                    for (const dt = new Date(start); dt <= new Date(end); dt.setDate(dt.getDate() + 1)) {
+                        arr.push(new Date(dt))
+                    }
+                    return arr
+                }
+
+                data.reservations.forEach((reservation: { startDate: Date; endDate: Date }) => {
+                    let day = getDaysArray(reservation.startDate, reservation.endDate)
+                    dateArray.push(day)
+                })
+
+                setUnavailableDates(dateArray)
+            }
+        } catch (e) {
+            console.log(e)
+            setErrorMessage("Die Verfügbarkeiten konnten nicht geladen werden")
+        }
+    }, [id])
+
+    const isDateUnavailable = (date: Date) => {
+        return unavailableDates.some(dateArray =>
+            dateArray.some(unavailableDate =>
+                unavailableDate.toDateString() === date.toDateString()
+            )
+        )
+    }
 
     useEffect(() => {
-        void fetchItem();
-        keycloak?.loadUserInfo().then(val => setUserInfo(val as any), (e ) => console.log(e))
+        keycloak?.loadUserInfo().then(
+            (val) => setUserInfo(val as any),
+            (e) => console.log(e)
+        )
         if (form.getValues("startDate")) {
-            const newStartDate = new Date(form.getValues("startDate"));
-            newStartDate.setDate(newStartDate.getDate() + 1);
-            setStartDate(newStartDate);
+            const newStartDate = new Date(form.getValues("startDate"))
+            newStartDate.setDate(newStartDate.getDate() + 1)
+            setStartDate(newStartDate)
         }
-    }, [fetchItem, keycloak, form.getValues("startDate")]);
+        if (errorMessage) {
+            toast({
+                variant: "destructive",
+                title: "Fehlermeldung",
+                description: errorMessage,
+                duration: Infinity
+            })
+        }
+        void fetchItem()
+        void fetchAvailability()
+    }, [fetchItem, keycloak, errorMessage, form.getValues("startDate")])
 
     const onSubmit = async (values: FormschemaType) => {
-        const formattedStartDate = format(values.startDate, "yyyy-MM-dd'T'HH:mm:ss'Z'");
-        const formattedEndDate = format(values.endDate, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+        const formattedStartDate = format(
+            values.startDate,
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
+        )
+        const formattedEndDate = format(
+            values.endDate,
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
+        )
 
         try {
-            const response = await fetch(`${process.env.REACT_APP_SPIFF}/api/v1.0/messages/Reservation-request-start`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    startDate: formattedStartDate,
-                    endDate: formattedEndDate,
-                    itemId: Number(id),
-                    userId: userInfo?.sub
-                }),
-            });
-
+            const response = await fetch(
+                `${process.env.REACT_APP_SPIFF}/api/v1.0/messages/Reservation-request-start`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify([{
+                        startDate: formattedStartDate,
+                        endDate: formattedEndDate,
+                        itemId: Number(id),
+                        userId: userInfo?.sub
+                    }])
+                }
+            )
             if (response.ok) {
-                toast({
-                    title: "Reservierung erfolgreich",
-                    description: `Du hast ${inventoryItem?.name ?? "diesen Gegenstand"} erfolgreich reserviert.`,
-                })
+                ToastWithCountdown(
+                    "Reservierung erfolgreich",
+                    `Sie werden auf ihre Reservierungsseite weitergeleitet`,
+                    // TODO: Hier später zu reservations-page navigieren
+                    () => navigate(`/`),
+                    "default",
+                    5000,
+                    // TODO: Ändern zu accent von CustomTheme
+                    "#F27428"
+                )
             } else {
                 const data = await response.json()
-                console.log(data)
-                switch (response.status) {
+                switch (data.status) {
                     case 400:
-                        setErrorMessage(`${data.message}   ${inventoryItem?.name} ist zu diesem Zeitraum nicht verfügbar.`);
-                        break;
+                        setErrorMessage(`${item?.name} mit der ID: ${item?.id} ist zu diesem Zeitraum nicht verfügbar.`)
+                        break
                     case 401:
-                        setErrorMessage("Du hast nicht die benötigten Rechte um diesen Gegenstand auszuleihen.");
-                        break;
+                        setErrorMessage("Du hast nicht die benötigten Rechte um diesen Gegenstand auszuleihen.")
+                        break
                     case 403:
-                        setErrorMessage("Zugriff verweigert.");
-                        break;
+                        setErrorMessage("Zugriff verweigert.")
+                        break
                     case 404:
-                        setErrorMessage("Ressource nicht gefunden. Kontaktieren Sie den Administrator");
-                        break;
+                        setErrorMessage("Ressource nicht gefunden. Kontaktieren Sie den Administrator")
+                        break
                     case 500:
-                        setErrorMessage("Serverfehler: Ein Problem auf dem Server ist aufgetreten. Bitte versuchen Sie es später erneut.");
-                        break;
+                        setErrorMessage("Serverfehler: Ein Problem auf dem Server ist aufgetreten. Bitte versuchen Sie es später erneut.")
+                        break
                     default:
-                        setErrorMessage("Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut.");
-                        break;
+                        if (data.message.includes("Item is already reserved for this time slot.")) {
+                            setErrorMessage(`${item?.name} mit der ID ${item?.id} ist innerhalb des Zeitraums schon reserviert. Bitte wählen Sie ein anderes Datum.`)
+                        } else {
+                            setErrorMessage("Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut.")
+                        }
+                        break
                 }
             }
         } catch (error) {
-            setErrorMessage("Beim senden der Ausleihanfrage ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es später erneut.")
-            console.error('Error message set:', errorMessage);
+            setErrorMessage("Beim senden der Ausleihanfrage ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es später erneut." + error)
         }
-    };
+    }
 
     return (
-
-        <div className="max-w-[600px] mx-auto">
+        <div>
             <Toaster />
-            {errorMessage && (
-                <div id="alert" role="alert" className="mt-4">
-                    <div className="bg-red-500 text-white font-bold rounded-t px-4 py-2">
-                        Fehlermeldung
-                    </div>
-                    <div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
-                        <p>{errorMessage}</p>
+            {itemExists && (
+                <div className="max-w-[600px] mx-auto">
+                    <div className="p-4">
+                        <CardHeader className="flex items-center text-customBlue">
+                            <CardTitle className="mb-4">Ausleihformular</CardTitle>
+                        </CardHeader>
+                        <div className="max-w-[600px] mx-auto">
+                            <Card>
+                                <CardContent className="mt-4">
+                                    <h3 className="text-center mb-4">
+                                        {item?.name}
+                                    </h3>
+                                    <div className="flex justify-center mb-4">
+                                        {!!item?.photoUrl && (
+                                            <img
+                                                src={item.photoUrl}
+                                                alt={item.description}
+                                                className="h-52 w-full object-contain"
+                                            />
+                                        )}
+                                    </div>
+                                    <Form {...form}>
+                                        <form
+                                            onSubmit={form.handleSubmit(onSubmit)}
+                                            className="space-y-8"
+                                        >
+                                            <div className="text-sm text-gray-500 flex justify-center text-center">
+                                                Bitte geben Sie die Anzahl, ein Ausleih-
+                                                und Abgabedatum ein.
+                                            </div>
+                                            <div className="flex flex-wrap justify-evenly gap-y-8">
+                                                <FormField
+                                                    control={form.control}
+                                                    name="startDate"
+                                                    render={({ field }) => (
+                                                        <DatePickerField
+                                                            label="Ausleihdatum"
+                                                            field={field}
+                                                            popoverOpen={isStartPopoverOpen}
+                                                            setPopoverOpen={
+                                                                setStartPopoverOpen
+                                                            }
+                                                            disabled={(date) =>
+                                                                date < new Date() || isDateUnavailable(date)
+                                                            }
+                                                            defaultMonth={
+                                                                field.value ||
+                                                                (() => {
+                                                                    const tomorrow =
+                                                                        new Date()
+                                                                    tomorrow.setDate(
+                                                                        tomorrow.getDate() +
+                                                                        1
+                                                                    )
+                                                                    return tomorrow
+                                                                })()
+                                                            }
+                                                            onClick={() => {
+                                                                form.reset({
+                                                                    startDate:
+                                                                        form.getValues(
+                                                                            "startDate"
+                                                                        ),
+                                                                    endDate: undefined
+                                                                })
+                                                            }}
+                                                        />
+                                                    )}
+                                                />
+                                                <FormField
+                                                    control={form.control}
+                                                    name="endDate"
+                                                    render={({ field }) => (
+                                                        <DatePickerField
+                                                            label="Abgabedatum"
+                                                            field={field}
+                                                            popoverOpen={isEndPopoverOpen}
+                                                            setPopoverOpen={
+                                                                setEndPopoverOpen
+                                                            }
+                                                            disabled={(date) =>
+                                                                startDate
+                                                                    ? date < startDate || isDateUnavailable(date)
+                                                                    : isDateUnavailable(date)
+                                                            }
+                                                            defaultMonth={
+                                                                form.getValues("endDate") ||
+                                                                startDate ||
+                                                                (() => {
+                                                                    const tomorrow =
+                                                                        new Date()
+                                                                    tomorrow.setDate(
+                                                                        tomorrow.getDate() +
+                                                                        1
+                                                                    )
+                                                                    return tomorrow
+                                                                })()
+                                                            }
+                                                            required={!!startDate}
+                                                            isDisabled={!startDate}
+                                                        />
+                                                    )}
+                                                />
+                                            </div>
+                                            <div className="flex justify-between items-center mt-4">
+                                                <Button
+                                                    onClick={() =>
+                                                        navigate(`/item/${id}`)
+                                                    }
+                                                    className="flex bg-customBlue text-customBeige hover:bg-customRed hover:text-customBeige ml-8"
+                                                >
+                                                    &larr; Zurück
+                                                </Button>
+                                                <Button
+                                                    type="submit"
+                                                    disabled={
+                                                        undefined ==
+                                                        form.getValues(
+                                                            "startDate"
+                                                        ) ||
+                                                        undefined ==
+                                                        form.getValues("endDate")
+                                                    }
+                                                    className="text-customBeige bg-customBlue mr-8 hover:bg-customRed hover:text-customBeige"
+                                                >
+                                                    Submit
+                                                </Button>
+                                            </div>
+                                        </form>
+                                    </Form>
+                                    <div
+                                        onClick={() => navigate(`/category/${item?.categoryId}/reservation`)}
+                                        className="cursor-pointer text-customBlue hover:text-customOrange mt-4 flex justify-center"
+                                    >
+                                        Hier mehr ausleihen
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
                     </div>
                 </div>
             )}
-            <div className="p-4">
-                <CardHeader className="flex items-center text-customBlue">
-                    <CardTitle className="mb-4">Ausleihformular</CardTitle>
-                </CardHeader>
-                <div className="max-w-[600px] mx-auto">
-                    <Card>
-                        <CardContent className="mt-4">
-                            <h3 className="text-center mb-4">{inventoryItem?.name}</h3>
-                            <div className="flex justify-center mb-4">
-                                {!!inventoryItem?.photoUrl && <img src={inventoryItem.photoUrl} alt={inventoryItem.description}
-                                                                            className='h-80 w-full object-cover'/>}
-                            </div>
-                            <Form {...form}>
-                                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                                    <FormField
-                                        control={form.control}
-                                        name="startDate"
-                                        render={({field}) => (
-                                            <FormItem className="flex flex-col">
-                                                <div className="flex flex-col sm:justify-center ml-8 mr-8">
-                                                    <FormDescription className="mt-4 mb-4">
-                                                        Bitte geben Sie ein Ausleih- und Abgabedatum ein.
-                                                    </FormDescription>
-                                                    <label className="text-sm pb-2 mt-4">Ausleihdatum</label>
-                                                    <Popover open={isStartPopoverOpen} onOpenChange={setStartPopoverOpen}>
-                                                        <PopoverTrigger asChild>
-                                                            <FormControl>
-                                                                <Button data-testid="startDateButton" role="button" variant={"outline"}
-                                                                        className={cn("w-[210px] pl-3 text-left font-normal",
-                                                                        !field.value && "text-muted-foreground"
-                                                                    )}
-                                                                    onClick={() => {
-                                                                        setStartPopoverOpen(true)
-                                                                        form.reset({
-                                                                            startDate: form.getValues("startDate"),
-                                                                            endDate: undefined
-                                                                        })
-                                                                    }}
-                                                                >
-                                                                    {field.value ? (
-                                                                        format(field.value, "dd. MMM yyyy")
-                                                                    ) : (
-                                                                        <span>Startdatum auswählen</span>
-                                                                    )}
-                                                                    <CalendarIcon
-                                                                        className="ml-auto h-4 w-4 opacity-50"/>
-                                                                </Button>
-                                                            </FormControl>
-                                                        </PopoverTrigger>
-                                                        <PopoverContent className="w-auto p-0" align="start">
-                                                            <Calendar
-                                                                mode="single"
-                                                                data-testid="CalenderStartButton"
-                                                                selected={field.value}
-                                                                onSelect={(date) => {
-                                                                    field.onChange(date)
-                                                                    setStartPopoverOpen(false)
-                                                                }}
-                                                                disabled={(date) => date < new Date()}
-                                                                defaultMonth={
-                                                                    field.value
-                                                                        ? field.value
-                                                                        : (() => {
-                                                                            const tomorrow = new Date()
-                                                                            tomorrow.setDate(tomorrow.getDate() + 1)
-                                                                            return tomorrow
-                                                                        })()
-                                                                }
-                                                                initialFocus
-                                                            />
-                                                        </PopoverContent>
-                                                    </Popover>
-                                                    <FormMessage/>
-                                                </div>
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="endDate"
-                                        render={({field}) => (
-                                            <FormItem className="flex flex-col">
-                                                <div className="flex flex-col sm:justify-center ml-8 mr-8">
-                                                    <label className="text-sm pb-2">Abgabedatum</label>
-                                                    <Popover open={isEndPopoverOpen} onOpenChange={setEndPopoverOpen}>
-                                                        <PopoverTrigger asChild>
-                                                            <FormControl>
-                                                                <Button data-testid="endDateButton" variant={"outline"}
-                                                                        className={cn("w-[210px] pl-3 text-left font-normal",
-                                                                        !field.value && "text-muted-foreground"
-                                                                    )}
-                                                                    onClick={() => setEndPopoverOpen(true)}
-                                                                    disabled={!field.value && !startDate}
-                                                                >
-                                                                    {field.value ? (
-                                                                        format(field.value, "dd. MMM yyyy")
-                                                                    ) : (
-                                                                        <span>Enddatum auswählen</span>
-                                                                    )}
-                                                                    <CalendarIcon
-                                                                        className="ml-auto h-4 w-4 opacity-50"/>
-                                                                </Button>
-                                                            </FormControl>
-                                                        </PopoverTrigger>
-                                                        <PopoverContent className="w-auto p-0" align="start">
-                                                            <Calendar
-                                                                mode="single"
-                                                                selected={field.value}
-                                                                onSelect={(date) => {
-                                                                    field.onChange(date)
-                                                                    setEndPopoverOpen(false)
-                                                                }}
-                                                                disabled={(date) =>
-                                                                    startDate ? date < startDate : true
-                                                                }
-                                                                defaultMonth={
-                                                                    startDate
-                                                                        ? startDate
-                                                                        : (() => {
-                                                                            const tomorrow = new Date()
-                                                                            tomorrow.setDate(tomorrow.getDate() + 1)
-                                                                            return tomorrow
-                                                                        })()
-                                                                }
-                                                                initialFocus
-                                                            />
-                                                        </PopoverContent>
-                                                    </Popover>
-                                                    <FormMessage/>
-                                                </div>
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <div className="flex justify-between items-center mt-4">
-                                        <Button onClick={() => navigate(`/inventory-item/${id}`)} className="flex bg-customBlue text-customBeige hover:bg-customRed hover:text-customBeige ml-8">
-                                            &larr; Detailseite
-                                        </Button>
-                                        <Button type="submit"
-                                                disabled={
-                                                    undefined == form.getValues("startDate") ||
-                                                    undefined == form.getValues("endDate")
-                                                }
-                                                className="text-customBeige bg-customBlue mr-8 hover:bg-customRed hover:text-customBeige">
-                                            Submit
-                                        </Button>
-                                    </div>
-                                </form>
-                            </Form>
-                        </CardContent>
-                    </Card>
-                </div>
-            </div>
         </div>
-    );
+    )
 }
 
-export default Lend;
+export default Lend
