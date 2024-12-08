@@ -78,8 +78,13 @@ public class MailRoute extends RouteBuilder {
 
                 .end()
                 .process(mailProcessor)
-                .marshal().json()
-                .to("activemq:queue:test-queue2");
+                .choice()
+                .when(simple(String.valueOf("dev".equals(activeProfile))))
+                    .to("smtp://{{smtp.config.host}}:{{smtp.config.port}}")
+                .otherwise()
+                    .to("smtps://{{smtp.config.host}}:{{smtp.config.port}}"
+                        + "?username={{smtp.config.username}}&password={{smtp.config.password}}")
+                .end();
 
 
         from("direct:getItemToItemId")
@@ -117,6 +122,7 @@ public class MailRoute extends RouteBuilder {
                     mailDto.setInventoryItemDto(item);
                     mailDto.setStartDate(exchange.getMessage().getBody(MailCreateDto.class).getStartDate());
                     mailDto.setEndDate(exchange.getMessage().getBody(MailCreateDto.class).getEndDate());
+                    mailDto.setReservationId(exchange.getMessage().getBody(MailCreateDto.class).getReservationId());
 
 
                     exchange.getMessage().setBody(mailDto);
