@@ -10,12 +10,11 @@ export default defineConfig({
   },
   test: {
     globals: true,
-    environment: 'jsdom',
+    environment: 'happy-dom',
     setupFiles: './src/setupTests.ts',
-    reporters: ['verbose'],
     coverage: {
       reporter: ['text', 'json', 'html'],
-      include: ['src/**/*']
+      include: ['src/components/*', 'src/keycloak/*', 'src/pages/*']
     }
   }
 })

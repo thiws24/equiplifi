@@ -8,6 +8,9 @@ import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
 
+const a = z.instanceof(File)
+
+
 const CategoryCreationSchema = z.object({
     name: z.string().min(1),
     icon: z.string().optional(),
@@ -90,6 +93,7 @@ function CategoryCreation() {
     }
 
     // @ts-ignore
+    // @ts-ignore
     return (
         <Card className="w-11/12 sm:w-4/5 mx-auto my-5 md:my-10 lg:my-20">
             <CardHeader>
@@ -158,7 +162,7 @@ function CategoryCreation() {
                                             <Input
                                                 type="file"
                                                 accept="image/png, image/jpeg"
-                                                value={value?.filename}
+                                                value={(value as any)?.filename}
                                                 onChange={(event) => {
                                                     if (event.target.files) onChange(event.target.files[0]);
                                                 }}
