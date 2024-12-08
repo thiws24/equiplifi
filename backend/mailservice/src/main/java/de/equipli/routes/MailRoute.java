@@ -5,20 +5,15 @@ import de.equipli.dto.inventoryservice.InventoryItemDto;
 import de.equipli.dto.mail.MailCreateDto;
 import de.equipli.dto.mail.MailDto;
 import de.equipli.dto.user.UserDto;
-import de.equipli.processors.MapToCreateMailDtoProcessor;
 import de.equipli.processors.inventoryservice.GetItemToItemIdProcessor;
-import de.equipli.processors.mail.MailProcessor;
 import de.equipli.processors.keycloak.GetUserDataFromKeycloakProcessor;
+import de.equipli.processors.mail.MailProcessor;
 import de.equipli.processors.mail.ValidationProcessor;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 @ApplicationScoped
 public class MailRoute extends RouteBuilder {
@@ -32,7 +27,7 @@ public class MailRoute extends RouteBuilder {
 
     @ConfigProperty(name = "smtp.config.host", defaultValue = "localhost")
     String smtpHost;
-    
+
     @ConfigProperty(name = "smtp.config.port", defaultValue = "2525")
     String smtpPort;
 
@@ -46,47 +41,59 @@ public class MailRoute extends RouteBuilder {
     ValidationProcessor validationProcessor;
 
     @Inject
-    MapToCreateMailDtoProcessor mapToCreateMailDtoProcessor;
-
-    @Inject
     GetUserDataFromKeycloakProcessor getUserDataFromKeycloakProcessor;
 
     @Inject
     GetItemToItemIdProcessor getItemToItemIdProcessor;
 
-    Logger logger = LoggerFactory.getLogger(MailRoute.class);
 
     @Override
     public void configure() throws Exception {
 
         JacksonDataFormat mailDtoFormat = new JacksonDataFormat(MailCreateDto[].class);
 
-        from("activemq:queue:send-reservation-confirmation-queue")
-                .routeId("sendReservationConfirmation-Route")
-                .log("Raw body: ${body}")
-                .unmarshal(mailDtoFormat)
-                .log("Unmarshalled body: ${body}")
 
+// Reservation Confirmation Route
+        from("activemq:queue:send-reservation-confirmation")
+                .routeId("sendReservationConfirmation-Route")
+                .unmarshal(mailDtoFormat)
+                .setProperty("mailTemplate", simple("reservation-confirmation-mail.html"))
+                .to("direct:sendMail");
+
+// storekeeper-confirmation Route
+        from("activemq:queue:storekeeper-confirmation")
+                .routeId("sendStorekeeperConfirmation-Route")
+                .unmarshal(mailDtoFormat)
+                .setProperty("mailTemplate", simple("storekeeper-confirmation-mail.html"))
+                .to("direct:sendMail");
+
+// cancellation-confirmation Route
+        from("activemq:queue:cancellation-confirmation")
+                .routeId("sendCancellationConfirmation-Route")
+                .unmarshal(mailDtoFormat)
+                .setProperty("mailTemplate", simple("cancellation-confirmation-mail.html"))
+                .to("direct:sendMail");
+
+// Main E-Mail Route
+        from("direct:sendMail")
                 // Validate Input
                 .process(validationProcessor)
-
                 .split(body(), new ArrayListAggregationStrategy())
-                    //.process(mapToCreateMailDtoProcessor)
                     .to("direct:getItemToItemId")
                     .to("direct:getUserDataFromKeycloak")
                     .to("direct:aggregateMailInformation")
-
                 .end()
                 .process(mailProcessor)
                 .choice()
                 .when(simple(String.valueOf("dev".equals(activeProfile))))
-                    .to("smtp://{{smtp.config.host}}:{{smtp.config.port}}")
+                .to("smtp://{{smtp.config.host}}:{{smtp.config.port}}")
                 .otherwise()
-                    .to("smtps://{{smtp.config.host}}:{{smtp.config.port}}"
-                        + "?username={{smtp.config.username}}&password={{smtp.config.password}}")
+                .to("smtps://{{smtp.config.host}}:{{smtp.config.port}}"
+                    + "?username={{smtp.config.username}}&password={{smtp.config.password}}")
                 .end();
 
 
+// Helper Routes
         from("direct:getItemToItemId")
                 .routeId("getItemToItemId-Route")
                 .log("getItemToItemId Message :${body}")
@@ -103,8 +110,6 @@ public class MailRoute extends RouteBuilder {
                 .routeId("aggregateMailInformation-Route")
                 .process(exchange ->
                 {
-
-                    Object obj =  exchange.getAllProperties();
 
                     String receiverMail = exchange.getProperty("receiverMail", String.class);
                     String firstName = exchange.getProperty("firstName", String.class);
@@ -123,7 +128,6 @@ public class MailRoute extends RouteBuilder {
                     mailDto.setStartDate(exchange.getMessage().getBody(MailCreateDto.class).getStartDate());
                     mailDto.setEndDate(exchange.getMessage().getBody(MailCreateDto.class).getEndDate());
                     mailDto.setReservationId(exchange.getMessage().getBody(MailCreateDto.class).getReservationId());
-
 
                     exchange.getMessage().setBody(mailDto);
 
