@@ -10,6 +10,7 @@ import jakarta.inject.Inject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @ApplicationScoped
@@ -23,23 +24,21 @@ public class MailProcessor implements Processor {
 
         List<MailDto> mailDtoList = exchange.getMessage().getBody(List.class);
 
-        MailCreateDto mailCreateDto = exchange.getIn().getBody(MailCreateDto.class);
 
-        // Collect the necessary data from the exchange
-        String receiverMail = exchange.getProperty("receiverMail", String.class);
-        String nameOfUser = exchange.getProperty("nameOfUser", String.class);
-        InventoryItemDto item = exchange.getProperty("item", InventoryItemDto.class);
+        // The First one is also the only one as checked in ValidationProcessor
+        String receiverMail = mailDtoList.getFirst().getUser().getEmail();
+        String nameOfUser = mailDtoList.getFirst().getUser().getFirstName() + " " + mailDtoList.getFirst().getUser().getLastName();
+
 
         // Render the template with Qute
         TemplateInstance templateInstance = mail
                 .data("name", nameOfUser)
-                .data("item", item.getName() + " " + item.getIcon())
-                .data("collectionDate", mailCreateDto.getStartDate())
-                .data("returnDate", mailCreateDto.getEndDate());
+                .data("mailDtoList", mailDtoList);
 
         String htmlTemplate = templateInstance.render();
 
         // create mail
+        //TODO: Make Subject dynamic
         exchange.getIn().setHeader("Subject", "Abholerinnerung | Equipli");
         exchange.getIn().setHeader("To", receiverMail);
         exchange.getIn().setHeader("From", "info@equipli.de");

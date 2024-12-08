@@ -8,15 +8,18 @@ public class MailDto {
     private InventoryItemDto inventoryItemDto;
     private String startDate;
     private String endDate;
+    private String reservationId;
 
     public MailDto() {
     }
 
-    public MailDto(UserDto user, InventoryItemDto inventoryItemDto, String startDate, String endDate) {
+
+    public MailDto(UserDto user, InventoryItemDto inventoryItemDto, String startDate, String endDate, String reservationId) {
         this.user = user;
         this.inventoryItemDto = inventoryItemDto;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.reservationId = reservationId;
     }
 
     public UserDto getUser() {
@@ -49,5 +52,13 @@ public class MailDto {
 
     public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+
+    public String getReservationId() {
+        return reservationId;
+    }
+
+    public void setReservationId(String reservationId) {
+        this.reservationId = reservationId;
     }
 }
