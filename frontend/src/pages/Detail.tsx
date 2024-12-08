@@ -7,9 +7,11 @@ import { KeyValueRow } from "../components/KeyValueRow";
 import { useKeycloak } from "../keycloak/KeycloakProvider";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import pdfjsLib from "pdfjs-dist";
 
 function Detail() {
     const [inventoryItem, setInventoryItem] = useState<InventoryItemProps>();
+    const [qrCode, setQrCode] = useState<string | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [updatedData, setUpdatedData] = useState<{ location: string; status: string }>({ location: "", status: "" });
     const navigate = useNavigate();
@@ -29,10 +31,37 @@ function Detail() {
         }
     }, [id]);
 
+    const fetchQrCode = React.useCallback(async () => {
+        try {
+            const response = await fetch(
+                `${process.env.REACT_APP_II_QR_HOST}/qr?name=${inventoryItem?.name}&id=${id}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Output-Format": "PDF",
+                    },
+                }
+            );
+            if (response.ok) {
+                const blob = await response.blob();
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setQrCode(reader.result as string); // Base64-String des QR-Codes
+
+                };
+                reader.readAsDataURL(blob); // Umwandlung des Blobs in Base64
+            } else {
+                console.error("Fehler beim Abrufen des QR-Codes. Status:", response.status);
+            }
+        } catch (e) {
+            console.log("... Fehler beim Abrufen des QR-Codes:", e);
+        }
+    }, [id, inventoryItem?.name]);
+
+
     const handleSave = async () => {
         if (!inventoryItem) return;
 
-        // Wenn ein Feld leer bleibt, wird der aktuelle Wert beibehalten.
         const changes = {
             location: updatedData.location || inventoryItem.location,
             status: updatedData.status || inventoryItem.status,
@@ -74,6 +103,12 @@ function Detail() {
     React.useEffect(() => {
         void fetchItem();
     }, [fetchItem]);
+
+    React.useEffect(() => {
+        if (inventoryItem) {
+            void fetchQrCode();
+        }
+    }, [inventoryItem, fetchQrCode]);
 
     return (
         <div className="max-w-[1000px] mx-auto">
@@ -139,11 +174,17 @@ function Detail() {
                                     inventoryItem?.status
                                 )}
                             </KeyValueRow>
-                            {/* Auskommentierte Tabelle */}
-                            {/* <div>
-                                <h2 className="text-sm font-bold mb-4 mt-6">Reservierungen</h2>
-                                <ReservationTable reservationItems={reservationItems} colDefs={rColDefs} loading={reservationLoading} />
-                            </div> */}
+                            <KeyValueRow label="QR Code">
+                                {qrCode ? (
+                                    <img
+                                        src={qrCode}
+                                        alt="QR Code"
+                                        className="w-40 h-40 object-contain"
+                                    />
+                                ) : (
+                                    "Laden..."
+                                )}
+                            </KeyValueRow>
                         </dl>
 
                         {isEditing && (
@@ -159,7 +200,7 @@ function Detail() {
                     </CardContent>
                     <CardFooter>
                         <Button
-                            onClick={() => navigate(-1)}
+                            onClick={() => navigate(`/category/${inventoryItem?.categoryId}`)}
                             className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed"
                         >
                             &larr; Zurück
