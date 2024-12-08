@@ -6,7 +6,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
-@Path("/inventoryitems")
+@Path("/items")
 @RegisterRestClient(configKey = "inventoryservice")
 public interface InventoryService {
     @GET
