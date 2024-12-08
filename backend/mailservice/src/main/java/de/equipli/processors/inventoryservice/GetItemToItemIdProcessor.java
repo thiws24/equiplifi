@@ -40,5 +40,7 @@ public class GetItemToItemIdProcessor implements Processor {
 
         logger.info("Item 'itemId="+ itemId  +"' found in inventory service", item.toString());
         exchange.setProperty("item", item);
+
+        Object obj =  exchange.getAllProperties();
     }
 }
