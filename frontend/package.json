@@ -36,6 +36,7 @@
     "formik": "^2.4.6",
     "keycloak-js": "^25.0.6",
     "lucide-react": "^0.453.0",
+    "pdfjs-dist": "^4.9.155",
     "qr-scanner": "^1.4.2",
     "react": "^18.3.1",
     "react-datepicker": "^4.8.0",
