@@ -1,13 +1,19 @@
 package de.equipli.routes;
 
+import de.equipli.aggregator.ArrayListAggregationStrategy;
+import de.equipli.dto.inventoryservice.InventoryItemDto;
 import de.equipli.dto.mail.MailCreateDto;
+import de.equipli.dto.mail.MailDto;
+import de.equipli.dto.user.UserDto;
+import de.equipli.processors.MapToCreateMailDtoProcessor;
 import de.equipli.processors.inventoryservice.GetItemToItemIdProcessor;
 import de.equipli.processors.mail.MailProcessor;
-import de.equipli.processors.mail.ReturnMailProcessor;
 import de.equipli.processors.keycloak.GetUserDataFromKeycloakProcessor;
+import de.equipli.processors.mail.ValidationProcessor;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +25,6 @@ public class MailRoute extends RouteBuilder {
 
     @Inject
     MailProcessor mailProcessor;
-
-    @Inject
-    ReturnMailProcessor returnMailProcessor;
 
     @Inject
     @ConfigProperty(name = "quarkus.profile")
@@ -40,6 +43,12 @@ public class MailRoute extends RouteBuilder {
     String password;
 
     @Inject
+    ValidationProcessor validationProcessor;
+
+    @Inject
+    MapToCreateMailDtoProcessor mapToCreateMailDtoProcessor;
+
+    @Inject
     GetUserDataFromKeycloakProcessor getUserDataFromKeycloakProcessor;
 
     @Inject
@@ -50,60 +59,70 @@ public class MailRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
-        // REST
-/*        rest()
-                .post("send-reservation-confirmation")
-                .type(MailCreateDto.class)
-                .to("direct:sendReservationConfirmation")
-
-                .post("sendReturnMail")
-                .type(ReturnMailDto.class)
-                .to("direct:sendReturnMail");*/
-
-        // QUEUE
-
-        from("timer:trigger?period=10000")  // Alle 1000 ms wird diese Route ausgelöst
-                .routeId("test")
-                        .setBody().constant("Hello World")
-                        .log("Hello World")
-        .to("activemq:queue:test-queue");
+        JacksonDataFormat mailDtoFormat = new JacksonDataFormat(MailCreateDto[].class);
 
         from("activemq:queue:send-reservation-confirmation-queue")
                 .routeId("sendReservationConfirmation-Route")
-                .unmarshal().json(List.class, MailCreateDto.class)
-                .process(exchange ->
-                {
-                    List<MailCreateDto> mailCreateDtos = exchange.getIn().getBody(List.class);
-                    logger.info("Received " + mailCreateDtos.size() + " Objects to send");
-                })
-                .split().body()
+                .log("Raw body: ${body}")
+                .unmarshal(mailDtoFormat)
+                .log("Unmarshalled body: ${body}")
+
+                // Validate Input
+                .process(validationProcessor)
+
+                .split(body(), new ArrayListAggregationStrategy())
+                    //.process(mapToCreateMailDtoProcessor)
                     .to("direct:getItemToItemId")
-                    //.to("direct:getUserDataFromKeycloak")
+                    .to("direct:getUserDataFromKeycloak")
+                    .to("direct:aggregateMailInformation")
+
                 .end()
-                .to("activemq:queue:test-queue");
+                .process(mailProcessor)
+                .marshal().json()
+                .to("activemq:queue:test-queue2");
 
 
         from("direct:getItemToItemId")
                 .routeId("getItemToItemId-Route")
-                .unmarshal().json(MailCreateDto.class)
-                .log("Split Message :${body}")
-                .process(
-                        exchange -> {
-                            Object object = exchange.getMessage().getBody();
-                            MailCreateDto mailCreateDto = exchange.getMessage().getBody(MailCreateDto.class);
-                            MailCreateDto mailCreateDto1 = (MailCreateDto) object;
-                            logger.info("Object : " + object);
-                        }
-                )
-
-                //.process(getItemToItemIdProcessor)
+                .log("getItemToItemId Message :${body}")
+                .process(getItemToItemIdProcessor)
                 .end();
 
-/*        from("direct:getUserDataFromKeycloak")
+        from("direct:getUserDataFromKeycloak")
                 .routeId("getUserDataFromKeycloak-Route")
-
+                .log("getUserDataFromKeycloak Message :${body}")
                 .process(getUserDataFromKeycloakProcessor)
-                .end();*/
+                .end();
+
+        from("direct:aggregateMailInformation")
+                .routeId("aggregateMailInformation-Route")
+                .process(exchange ->
+                {
+
+                    Object obj =  exchange.getAllProperties();
+
+                    String receiverMail = exchange.getProperty("receiverMail", String.class);
+                    String firstName = exchange.getProperty("firstName", String.class);
+                    String lastName = exchange.getProperty("lastName", String.class);
+
+                    InventoryItemDto item = exchange.getProperty("item", InventoryItemDto.class);
+
+                    UserDto user = new UserDto();
+                    user.setEmail(receiverMail);
+                    user.setFirstName(firstName);
+                    user.setLastName(lastName);
+
+                    MailDto mailDto = new MailDto();
+                    mailDto.setUser(user);
+                    mailDto.setInventoryItemDto(item);
+                    mailDto.setStartDate(exchange.getMessage().getBody(MailCreateDto.class).getStartDate());
+                    mailDto.setEndDate(exchange.getMessage().getBody(MailCreateDto.class).getEndDate());
+
+
+                    exchange.getMessage().setBody(mailDto);
+
+                })
+                .end();
 
 
     }

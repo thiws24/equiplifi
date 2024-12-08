@@ -67,13 +67,17 @@ public class GetUserDataFromKeycloakProcessor implements Processor {
         logger.info("E-Mail from Keycloak: " + user.getEmail());
         exchange.setProperty("receiverMail", user.getEmail());
 
-        String nameOfUser = user.getFirstName() + " " + user.getLastName();
-        logger.info("Name of User: " + nameOfUser);
+        String firstName = user.getFirstName();
+        String lastName = user.getLastName();
+        logger.info("Name of User: " + firstName + " " + lastName);
 
         if (user.getFirstName() == null || user.getLastName() == null) {
             logger.error("Name of User is null");
             throw new RuntimeException("Name of User is null");
         }
-        exchange.setProperty("nameOfUser", nameOfUser);
+        exchange.setProperty("firstName", firstName);
+        exchange.setProperty("lastName", lastName);
+
+        Object obj =  exchange.getAllProperties();
     }
 }
