@@ -1,7 +1,7 @@
 package de.equipli.endpoints;
 
 import de.equipli.dto.inventoryservice.InventoryItemCreateDto;
-import de.equipli.dto.mail.CollectMailCreateDto;
+import de.equipli.dto.mail.MailCreateDto;
 import io.quarkus.test.junit.QuarkusTest;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,15 +86,15 @@ public class MailEndpointTest {
     @Test
     void testSendCollectionMailEndPoint() {
 
-        CollectMailCreateDto collectMailCreateDto = new CollectMailCreateDto();
-        collectMailCreateDto.setUserId("df8e4444-4e04-4fd7-a9cd-8f938ea749c2"); //Id of Alice in Keycloak
-        collectMailCreateDto.setItemId("1");
-        collectMailCreateDto.setStartDate("24.12.2024");
-        collectMailCreateDto.setEndDate("24.01.2025");
+        MailCreateDto mailCreateDto = new MailCreateDto();
+        mailCreateDto.setUserId("df8e4444-4e04-4fd7-a9cd-8f938ea749c2"); //Id of Alice in Keycloak
+        mailCreateDto.setItemId("1");
+        mailCreateDto.setStartDate("24.12.2024");
+        mailCreateDto.setEndDate("24.01.2025");
 
         given()
                 .contentType("application/json")
-                .body(collectMailCreateDto)
+                .body(mailCreateDto)
                 .when().post("/sendCollectionMail")
                 .then()
                 .statusCode(200)

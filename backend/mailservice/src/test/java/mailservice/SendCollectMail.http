@@ -2,7 +2,7 @@ POST http://localhost:8080/sendCollectionMail
 Content-Type: application/json
 
 {
-  "itemId": "1",
+  "itemId": "51",
   "startDate": "2024-11-28",
   "endDate": "2024-11-30",
   "userId": "26d7ee63-43f1-4deb-9d2f-41e297c9953a"
