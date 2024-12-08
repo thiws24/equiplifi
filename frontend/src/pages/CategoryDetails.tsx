@@ -84,8 +84,11 @@ function CategoryDetails() {
         <div className="max-w-[1000px] mx-auto">
             <ToastContainer />
             <CardHeader className="flex justify-self-auto mt-4">
-                <CardTitle className="text-3xl text-customOrange col-span-2 justify-center flex">
-                    {`${inventoryItem?.icon ?? ''} ${inventoryItem?.name}`}
+                <CardTitle className="text-3xl text-customOrange col-span-2 flex flex-col items-center justify-center">
+                    {`${inventoryItem?.icon ?? ""} ${inventoryItem?.name}`}
+                    <span className="text-lg text-customOrange font-semibold items-center mt-2">
+                        Kategorie {`${inventoryItem?.id}`}
+                    </span>
                 </CardTitle>
             </CardHeader>
             <div className="p-4">

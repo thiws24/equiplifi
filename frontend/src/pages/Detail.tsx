@@ -1,35 +1,35 @@
-import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "../components/ui/card";
-import { InventoryItemProps } from "../interfaces/InventoryItemProps";
-import { Button } from "../components/ui/button";
-import { KeyValueRow } from "../components/KeyValueRow";
-import { useKeycloak } from "../keycloak/KeycloakProvider";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import pdfjsLib from "pdfjs-dist";
+import React, { useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "../components/ui/card"
+import { InventoryItemProps } from "../interfaces/InventoryItemProps"
+import { Button } from "../components/ui/button"
+import { KeyValueRow } from "../components/KeyValueRow"
+import { useKeycloak } from "../keycloak/KeycloakProvider"
+import { toast, ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+import pdfjsLib from "pdfjs-dist"
 
 function Detail() {
-    const [inventoryItem, setInventoryItem] = useState<InventoryItemProps>();
-    const [qrCode, setQrCode] = useState<string | null>(null);
-    const [isEditing, setIsEditing] = useState(false);
-    const [updatedData, setUpdatedData] = useState<{ location: string; status: string }>({ location: "", status: "" });
-    const navigate = useNavigate();
-    const { id } = useParams();
-    const { token } = useKeycloak();
+    const [inventoryItem, setInventoryItem] = useState<InventoryItemProps>()
+    const [qrCode, setQrCode] = useState<string | null>(null)
+    const [isEditing, setIsEditing] = useState(false)
+    const [updatedData, setUpdatedData] = useState<{ location: string; status: string }>({ location: "", status: "" })
+    const navigate = useNavigate()
+    const { id } = useParams()
+    const { token } = useKeycloak()
 
     const fetchItem = React.useCallback(async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/items/${id}`);
+            const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/items/${id}`)
             if (response.ok) {
-                const data = await response.json();
-                setInventoryItem(data);
-                setUpdatedData({ location: data.location || "", status: data.status || "" }); // Set initial values
+                const data = await response.json()
+                setInventoryItem(data)
+                setUpdatedData({ location: data.location || "", status: data.status || "" }) // Set initial values
             }
         } catch (e) {
-            console.log(e);
+            console.log(e)
         }
-    }, [id]);
+    }, [id])
 
     const fetchQrCode = React.useCallback(async () => {
         try {
@@ -38,34 +38,34 @@ function Detail() {
                 {
                     method: "GET",
                     headers: {
-                        "Output-Format": "PDF",
-                    },
+                        "Output-Format": "PNG"
+                    }
                 }
-            );
+            )
             if (response.ok) {
-                const blob = await response.blob();
-                const reader = new FileReader();
+                const blob = await response.blob()
+                const reader = new FileReader()
                 reader.onloadend = () => {
-                    setQrCode(reader.result as string); // Base64-String des QR-Codes
+                    setQrCode(reader.result as string)
 
-                };
-                reader.readAsDataURL(blob); // Umwandlung des Blobs in Base64
+                }
+                reader.readAsDataURL(blob)
             } else {
-                console.error("Fehler beim Abrufen des QR-Codes. Status:", response.status);
+                console.error("Fehler beim Abrufen des QR-Codes. Status:", response.status)
             }
         } catch (e) {
-            console.log("... Fehler beim Abrufen des QR-Codes:", e);
+            console.log("... Fehler beim Abrufen des QR-Codes:", e)
         }
-    }, [id, inventoryItem?.name]);
+    }, [id, inventoryItem?.name])
 
 
     const handleSave = async () => {
-        if (!inventoryItem) return;
+        if (!inventoryItem) return
 
         const changes = {
             location: updatedData.location || inventoryItem.location,
-            status: updatedData.status || inventoryItem.status,
-        };
+            status: updatedData.status || inventoryItem.status
+        }
 
         try {
             const response = await fetch(
@@ -74,49 +74,51 @@ function Detail() {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${token}`
                     },
-                    body: JSON.stringify(changes),
+                    body: JSON.stringify(changes)
                 }
-            );
+            )
 
             if (response.ok) {
-                const updatedItem = await response.json();
-                setInventoryItem(updatedItem); // Update local state with new data
-                toast.success("Item erfolgreich aktualisiert!");
+                const updatedItem = await response.json()
+                setInventoryItem(updatedItem) // Update local state with new data
+                toast.success("Item erfolgreich aktualisiert!")
 
                 // Refresh the page to fetch updated data
                 setTimeout(() => {
-                    window.location.reload();
-                }, 500); // Small delay for toast to be shown
+                    window.location.reload()
+                }, 500) // Small delay for toast to be shown
             } else if (response.status === 404) {
-                toast.error("Item nicht gefunden.");
+                toast.error("Item nicht gefunden.")
             } else {
-                toast.error("Fehler beim Aktualisieren des Items.");
+                toast.error("Fehler beim Aktualisieren des Items.")
             }
         } catch (error) {
-            console.error("Fehler beim Speichern:", error);
-            toast.error("Fehler beim Aktualisieren des Items.");
+            console.error("Fehler beim Speichern:", error)
+            toast.error("Fehler beim Aktualisieren des Items.")
         }
-    };
+    }
 
     React.useEffect(() => {
-        void fetchItem();
-    }, [fetchItem]);
+        void fetchItem()
+    }, [fetchItem])
 
     React.useEffect(() => {
         if (inventoryItem) {
-            void fetchQrCode();
+            void fetchQrCode()
         }
-    }, [inventoryItem, fetchQrCode]);
+    }, [inventoryItem, fetchQrCode])
 
     return (
         <div className="max-w-[1000px] mx-auto">
             <ToastContainer />
             <CardHeader className="flex justify-self-auto mt-4">
-                <CardTitle
-                    className="text-3xl text-customOrange col-span-2 justify-center flex">
+                <CardTitle className="text-3xl text-customOrange col-span-2 flex flex-col items-center justify-center">
                     {`${inventoryItem?.icon ?? ""} ${inventoryItem?.name}`}
+                    <span className="text-lg text-customOrange font-semibold items-center mt-2">
+                        Item {`${inventoryItem?.id ?? ""}`}
+                    </span>
                 </CardTitle>
             </CardHeader>
             <div className="p-4">
@@ -209,7 +211,7 @@ function Detail() {
                 </Card>
             </div>
         </div>
-    );
+    )
 }
 
-export default Detail;
+export default Detail
