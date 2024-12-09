@@ -8,7 +8,6 @@ import {
 import { BrowserRouter } from "react-router-dom"
 import Lend from "./Lend"
 import React from "react"
-import { test, describe, expect, vi } from "vitest"
 
 describe("Lend Tests", () => {
     test("renders the Lend form", () => {
@@ -33,7 +32,7 @@ describe("Lend Tests", () => {
             urn: "QR-Code 001"
         }
 
-        window.fetch = vi.fn().mockImplementation(() =>
+        window.fetch = jest.fn().mockImplementation(() =>
             Promise.resolve({
                 ok: true,
                 json: () => Promise.resolve(mockItem)
@@ -76,12 +75,14 @@ describe("Lend Tests", () => {
     test("submits the form and redirects to inventory item page", async () => {
         const mockItem = { id: 1, name: "Magischer Schlüssel", photoUrl: "" }
 
-        window.fetch = vi.fn().mockImplementation(() =>
-            Promise.resolve({
-                ok: true,
-                json: () => Promise.resolve(mockItem)
-            })
-        )
+        window.fetch = jest
+            .fn()
+            .mockImplementation(() =>
+                Promise.resolve({
+                    ok: true,
+                    json: () => Promise.resolve(mockItem)
+                })
+            )
 
         render(
             <BrowserRouter>

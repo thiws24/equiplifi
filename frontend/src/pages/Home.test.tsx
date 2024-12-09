@@ -2,7 +2,6 @@ import React from "react"
 import { render, waitFor } from "@testing-library/react"
 import Home from "./Home"
 import { BrowserRouter } from "react-router-dom"
-import { test, describe, expect, vi } from "vitest"
 
 const mockData = [
     {
@@ -28,20 +27,18 @@ const mockData = [
     }
 ]
 
-// Mock fetch
-vi.stubGlobal(
-    "fetch",
-    vi.fn().mockResolvedValue({
-        json: vi.fn().mockResolvedValue(mockData)
-    })
-)
-
-const f = { v7_startTransition: true, v7_relativeSplatPath: true }
+function mockFetch() {
+    return jest
+        .fn()
+        .mockImplementation(() =>
+            Promise.resolve({ ok: true, json: () => mockData })
+        )
+}
 
 describe("Home Tests", () => {
     test("renders the AG Grid table", async () => {
         const { container } = render(
-            <BrowserRouter future={f}>
+            <BrowserRouter>
                 <Home />
             </BrowserRouter>
         )
@@ -50,8 +47,9 @@ describe("Home Tests", () => {
         })
     })
     test("renders 3 elements in the table body", async () => {
+        window.fetch = mockFetch()
         const { container } = render(
-            <BrowserRouter future={f}>
+            <BrowserRouter>
                 <Home />
             </BrowserRouter>
         )

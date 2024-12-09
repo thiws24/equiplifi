@@ -6,7 +6,7 @@ export async function fetchDataObjectFromProcess(
 ): Promise<ProcessInputProps | undefined> {
     try {
         const response = await fetch(
-            `${import.meta.env.VITE_SPIFF}/api/v1.0/process-data/default/equipli-processes:inventory-management-processes:reservation-to-return-process/reservationrequest/${processId}`,
+            `${process.env.REACT_APP_SPIFF}/api/v1.0/process-data/default/equipli-processes:inventory-management-processes:reservation-to-return-process/reservationrequest/${processId}`,
             {
                 headers: {
                     "Content-Type": "application/json",

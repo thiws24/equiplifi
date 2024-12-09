@@ -87,6 +87,7 @@ function Lend() {
                 data.reservations.forEach((reservation: { startDate: Date; endDate: Date }) => {
                     let day = getDaysArray(reservation.startDate, reservation.endDate)
                     dateArray.push(day)
+                    alert("Test  " + reservation.startDate)
                 })
 
                 setUnavailableDates(dateArray)
@@ -122,6 +123,7 @@ function Lend() {
                 description: errorMessage,
                 duration: Infinity
             })
+            setErrorMessage("")
         }
         void fetchItem()
         void fetchAvailability()
@@ -162,7 +164,6 @@ function Lend() {
                     () => navigate(`/`),
                     "default",
                     5000,
-                    // TODO: Ändern zu accent von CustomTheme
                     "#F27428"
                 )
             } else {

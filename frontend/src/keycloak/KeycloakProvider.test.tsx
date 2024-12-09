@@ -1,7 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react"
 import React from "react"
 import { KeycloakProvider, useKeycloak } from "./KeycloakProvider"
-import { test, describe, expect } from "vitest"
 
 const TestComponent = () => {
     const { keycloak, authenticated } = useKeycloak()
@@ -18,7 +17,7 @@ const TestComponent = () => {
 }
 
 describe("KeycloakProvider", () => {
-    test("should provide keycloak context to children components", async () => {
+    it("should provide keycloak context to children components", async () => {
         render(
             <KeycloakProvider>
                 <TestComponent />

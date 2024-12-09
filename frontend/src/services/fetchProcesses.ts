@@ -56,7 +56,7 @@ export async function fetchWaitingProcessesByTaskNameAndItemId(
 ): Promise<Process[]> {
     try {
         const response = await fetch(
-            `${import.meta.env.VITE_SPIFF}/api/v1.0/process-instances`,
+            `${process.env.REACT_APP_SPIFF}/api/v1.0/process-instances`,
             {
                 method: "POST",
                 headers: {

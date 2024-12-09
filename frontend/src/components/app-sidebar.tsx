@@ -1,114 +1,135 @@
-import {ChevronUp, Home, Inbox, User2} from "lucide-react"
+import { ChevronUp, Home, Inbox, User2 } from "lucide-react"
 import {
-    SidebarContent, SidebarFooter,
+    SidebarContent,
+    SidebarFooter,
     SidebarGroup,
     SidebarGroupContent,
-    SidebarGroupLabel, SidebarHeader,
+    SidebarGroupLabel,
+    SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
-    SidebarMenuItem, SidebarProvider, useSidebar,
+    SidebarMenuItem,
+    SidebarProvider,
+    useSidebar
 } from "./ui/sidebar"
-import {Sidebar} from "./ui/sidebar"
+import { Sidebar } from "./ui/sidebar"
 import {
     DropdownMenu,
     DropdownMenuTrigger,
     DropdownMenuContent,
-    DropdownMenuItem,
-} from "./ui/dropdown-menu";
-import React from "react";
+    DropdownMenuItem
+} from "./ui/dropdown-menu"
+import React from "react"
 
 // Menu items.
 const itemsLagerwart = [
     {
         title: "Neues Inventar erfassen",
         url: "#",
-        icon: Inbox,
+        icon: Inbox
     }
 ]
 const itemsAllgemein = [
     {
         title: "Startseite",
         url: "http://localhost:3000",
-        icon: Home,
+        icon: Home
     }
 ]
 
 export function AppSidebar() {
-    const {state} = useSidebar();
+    const { state } = useSidebar()
     return (
-        (
-            <Sidebar collapsible='icon'>
-                <SidebarHeader>
-                    <img src="/equipli-logo.svg" className="w-12 h-auto" alt="equipli logo"/>
-                </SidebarHeader>
-                <SidebarContent>
-                    <SidebarGroup>
-                        <SidebarGroupLabel className='text-xl text-customBlue'>Allgemein</SidebarGroupLabel>
-                        <SidebarGroupContent>
-                            <SidebarMenu>
-                                {itemsAllgemein.map((item) => (
-                                    <SidebarMenuItem key={item.title}>
-                                        <SidebarMenuButton asChild
-                                                           className="bg-customBeige text-customOrange hover:bg-customRed hover:text-customBeige">
-                                            <a href={item.url} className="flex items-center gap-2">
-                                                {item.icon && <item.icon/>}
-                                                <span>{item.title}</span>
-                                            </a>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                ))}
-                            </SidebarMenu>
-                        </SidebarGroupContent>
-                    </SidebarGroup>
-                    <SidebarGroup>
-                        <SidebarGroupLabel className='text-xl text-customBlue'>Lagerwart</SidebarGroupLabel>
-                        <SidebarGroupContent>
-                            <SidebarMenu>
-                                {itemsLagerwart.map((item) => (
-                                    <SidebarMenuItem key={item.title}>
-                                        <SidebarMenuButton asChild
-                                                           className="bg-customBeige text-customOrange hover:bg-customRed hover:text-customBeige">
-                                            <a href={item.url} className="flex items-center gap-2">
-                                                {item.icon && <item.icon/>}
-                                                <span>{item.title}</span>
-                                            </a>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                ))}
-                            </SidebarMenu>
-                        </SidebarGroupContent>
-                    </SidebarGroup>
-                </SidebarContent>
+        <Sidebar collapsible="icon">
+            <SidebarHeader>
+                <img
+                    src="/equipli-logo.svg"
+                    className="w-12 h-auto"
+                    alt="equipli logo"
+                />
+            </SidebarHeader>
+            <SidebarContent>
+                <SidebarGroup>
+                    <SidebarGroupLabel className="text-xl text-customBlue">
+                        Allgemein
+                    </SidebarGroupLabel>
+                    <SidebarGroupContent>
+                        <SidebarMenu>
+                            {itemsAllgemein.map((item) => (
+                                <SidebarMenuItem key={item.title}>
+                                    <SidebarMenuButton
+                                        asChild
+                                        className="bg-customBeige text-customOrange hover:bg-customRed hover:text-customBeige"
+                                    >
+                                        <a
+                                            href={item.url}
+                                            className="flex items-center gap-2"
+                                        >
+                                            {item.icon && <item.icon />}
+                                            <span>{item.title}</span>
+                                        </a>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            ))}
+                        </SidebarMenu>
+                    </SidebarGroupContent>
+                </SidebarGroup>
+                <SidebarGroup>
+                    <SidebarGroupLabel className="text-xl text-customBlue">
+                        Lagerwart
+                    </SidebarGroupLabel>
+                    <SidebarGroupContent>
+                        <SidebarMenu>
+                            {itemsLagerwart.map((item) => (
+                                <SidebarMenuItem key={item.title}>
+                                    <SidebarMenuButton
+                                        asChild
+                                        className="bg-customBeige text-customOrange hover:bg-customRed hover:text-customBeige"
+                                    >
+                                        <a
+                                            href={item.url}
+                                            className="flex items-center gap-2"
+                                        >
+                                            {item.icon && <item.icon />}
+                                            <span>{item.title}</span>
+                                        </a>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            ))}
+                        </SidebarMenu>
+                    </SidebarGroupContent>
+                </SidebarGroup>
+            </SidebarContent>
 
-                {/* Footer der Sidebar */}
-                <SidebarFooter>
-                    <SidebarMenu>
-                        <SidebarMenuItem>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <button className="flex items-center gap-2 text-customBlack">
-                                        {state === "collapsed" ? (
-                                            <User2 className="h-6 w-6"/>
-                                        ) : (
-                                            <>
-                                                <User2/> USERNAME
-                                                <ChevronUp className="ml-auto"/>
-                                            </>
-                                        )}
-                                    </button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent
-                                    side="top"
-                                    className="bg-white shadow-lg rounded-md text-customBlack"
-                                >
-                                    <DropdownMenuItem>
-                                        <span>Abmelden</span>
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </SidebarMenuItem>
-                    </SidebarMenu>
-                </SidebarFooter>
-            </Sidebar>
-        ));
+            {/* Footer der Sidebar */}
+            <SidebarFooter>
+                <SidebarMenu>
+                    <SidebarMenuItem>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button className="flex items-center gap-2 text-customBlack">
+                                    {state === "collapsed" ? (
+                                        <User2 className="h-6 w-6" />
+                                    ) : (
+                                        <>
+                                            <User2 /> USERNAME
+                                            <ChevronUp className="ml-auto" />
+                                        </>
+                                    )}
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                                side="top"
+                                className="bg-white shadow-lg rounded-md text-customBlack"
+                            >
+                                <DropdownMenuItem>
+                                    <span>Abmelden</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </SidebarMenuItem>
+                </SidebarMenu>
+            </SidebarFooter>
+        </Sidebar>
+    )
 }

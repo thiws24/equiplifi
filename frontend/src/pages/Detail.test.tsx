@@ -2,9 +2,8 @@ import React from "react"
 import { render, screen, fireEvent, waitFor } from "@testing-library/react"
 import { MemoryRouter, Route, Routes } from "react-router-dom"
 import Detail from "./Detail"
-import { test, describe, expect, vi, beforeEach, afterEach } from "vitest"
 
-vi.mock("../components/ui/button", () => ({
+jest.mock("../components/ui/button", () => ({
     Button: ({ onClick, children, ...props }: any) => (
         <button onClick={onClick} {...props}>
             {children}
@@ -12,7 +11,7 @@ vi.mock("../components/ui/button", () => ({
     )
 }))
 
-vi.mock("../components/KeyValueRow", () => ({
+jest.mock("../components/KeyValueRow", () => ({
     KeyValueRow: ({
         label,
         children
@@ -43,8 +42,8 @@ describe("Detail Component", () => {
     ]
 
     beforeEach(() => {
-        global.fetch = vi.fn((url) => {
-            if (url.includes("/items/")) {
+        global.fetch = jest.fn((url) => {
+            if (url.includes("/inventoryitems/")) {
                 return Promise.resolve({
                     ok: true,
                     json: () => Promise.resolve(mockItem)
@@ -56,11 +55,11 @@ describe("Detail Component", () => {
                 })
             }
             return Promise.reject(new Error("Unknown API endpoint"))
-        }) as any
+        }) as jest.Mock
     })
 
     afterEach(() => {
-        vi.clearAllMocks()
+        jest.clearAllMocks()
     })
 
     test("renders item data correctly", async () => {
