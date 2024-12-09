@@ -23,10 +23,10 @@ import DatePickerField from "../components/DatePickerField"
 import { ToastWithCountdown } from "../components/ToastWithCountdown"
 
 function LendCategory() {
+    const [categoryItemsCount, setCategoryItemsCount] = useState<number>(1)
     const [startDate, setStartDate] = useState<Date | null>(null)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [categoryItem, setCategoryItem] = useState<CategoryProps>()
-    const [userInfo, setUserInfo] = useState<KeyCloakUserInfo>()
     const [isStartPopoverOpen, setStartPopoverOpen] = useState(false)
     const [isEndPopoverOpen, setEndPopoverOpen] = useState(false)
     const [itemId, setItemId] = useState<[number] | []>([])
@@ -35,12 +35,12 @@ function LendCategory() {
     const navigate = useNavigate()
     const { toast } = useToast()
     const { id } = useParams()
-    const { keycloak, token } = useKeycloak()
+    const { userInfo, token } = useKeycloak()
 
     const fetchCategory = React.useCallback(async () => {
         try {
             const response = await fetch(
-                `${process.env.REACT_APP_II_SERVICE_HOST}/categories/${id}`
+                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories/${id}`
             )
             if (response.ok) {
                 setCategoryExists(true)
@@ -58,22 +58,22 @@ function LendCategory() {
                 )
             }
         } catch (e) {
-            setErrorMessage("Es ist etwas schiefgelaufen. Versuchen Sie es später erneut.")
+            setErrorMessage(
+                "Es ist etwas schiefgelaufen. Versuchen Sie es später erneut."
+            )
             console.log(e)
         }
     }, [id])
 
-
-        const FormSchema = z.object({
-            quantity: z.number({})
-                .min(1, "Anzahl muss größer als Null sein"),
-            startDate: z.date({
-                required_error: "Startdatum erforderlich"
-            }),
-            endDate: z.date({
-                required_error: "Enddatum erforderlich"
-            })
+    const FormSchema = z.object({
+        quantity: z.number({}).min(1, "Anzahl muss größer als Null sein"),
+        startDate: z.date({
+            required_error: "Startdatum erforderlich"
+        }),
+        endDate: z.date({
+            required_error: "Enddatum erforderlich"
         })
+    })
 
     type FormschemaType = z.infer<typeof FormSchema>
 
@@ -86,15 +86,24 @@ function LendCategory() {
 
     const fetchAvailability = React.useCallback(async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_II_RESERVATION_HOST}/availability/reservations/categories/${id}`)
+            const response = await fetch(
+                `${import.meta.env.VITE_RESERVATION_HOST}/availability/reservations/categories/${id}`
+            )
             if (response.ok) {
                 const data = await response.json()
                 const quantity = form.getValues("quantity")
                 let dateDisableArray: Date[] = []
 
-                const getDaysArray = function (start: string | Date, end: string | Date) {
+                const getDaysArray = function (
+                    start: string | Date,
+                    end: string | Date
+                ) {
                     const arr = []
-                    for (const dt = new Date(start); dt <= new Date(end); dt.setDate(dt.getDate() + 1)) {
+                    for (
+                        const dt = new Date(start);
+                        dt <= new Date(end);
+                        dt.setDate(dt.getDate() + 1)
+                    ) {
                         arr.push(new Date(dt))
                     }
                     return arr
@@ -103,41 +112,50 @@ function LendCategory() {
                 const reservationData: { [key: number]: Date[] } = {}
                 let allDays: Date[] = []
 
-                data.forEach((item: { reservations: { startDate: string; endDate: string }[]; itemId: number }) => {
-                    item.reservations.forEach((reservation) => {
-                        let day = getDaysArray(reservation.startDate, reservation.endDate);
-                        day.forEach((d) => {
-                            if (!reservationData[item.itemId]) {
-                                reservationData[item.itemId] = []
-                            }
-                            allDays.push(d)
-                            reservationData[item.itemId].push(d)
+                data.forEach(
+                    (item: {
+                        reservations: { startDate: string; endDate: string }[]
+                        itemId: number
+                    }) => {
+                        item.reservations.forEach((reservation) => {
+                            let day = getDaysArray(
+                                reservation.startDate,
+                                reservation.endDate
+                            )
+                            day.forEach((d) => {
+                                if (!reservationData[item.itemId]) {
+                                    reservationData[item.itemId] = []
+                                }
+                                allDays.push(d)
+                                reservationData[item.itemId].push(d)
+                            })
                         })
-                    })
-                })
+                    }
+                )
 
-                allDays.forEach(dayAll => {
+                /*allDays.forEach((dayAll) => {
                     let count: number = 0
                     if (categoryItem?.items?.length) {
                         categoryItem.items.forEach((id: number) => {
                             reservationData[id].forEach((day: Date) => {
-                                if (day.toDateString() === dayAll.toDateString()) {
+                                if (
+                                    day.toDateString() === dayAll.toDateString()
+                                ) {
                                     alert("Test")
                                     count += 1
                                 }
                             })
                         })
 
-                        if (quantity > (categoryItem.items.length - count)) {
+                        if (quantity > categoryItem.items.length - count) {
                             dateDisableArray.push(dayAll)
                         }
                     }
-                })
+                })*/
 
                 setUnavailableDates(dateDisableArray)
 
                 setItemId([])
-
             }
         } catch (e) {
             console.log(e)
@@ -214,10 +232,9 @@ function LendCategory() {
     //     }
     // }, [id])
 
-
     const isDateUnavailable = (date: Date) => {
-        return unavailableDates.some(dateArray =>
-            dateArray.toDateString() === date.toDateString()
+        return unavailableDates.some(
+            (dateArray) => dateArray.toDateString() === date.toDateString()
         )
     }
 
@@ -227,10 +244,6 @@ function LendCategory() {
             newStartDate.setDate(newStartDate.getDate() + 1)
             setStartDate(newStartDate)
         }
-        keycloak?.loadUserInfo().then(
-            (val) => setUserInfo(val as any),
-            (e) => console.log(e)
-        )
         if (errorMessage) {
             toast({
                 variant: "destructive",
@@ -241,7 +254,7 @@ function LendCategory() {
         }
         setErrorMessage("")
         void fetchCategory()
-    }, [fetchCategory, keycloak, errorMessage, form.getValues("startDate")])
+    }, [fetchCategory, errorMessage, form.getValues("startDate")])
 
     const onSubmit = async (values: FormschemaType) => {
         const formattedStartDate = format(
@@ -269,7 +282,7 @@ function LendCategory() {
 
         try {
             const response = await fetch(
-                `${process.env.REACT_APP_SPIFF}/api/v1.0/messages/Reservation-request-start`,
+                `${import.meta.env.VITE_SPIFF}/api/v1.0/messages/Reservation-request-start`,
                 {
                     method: "POST",
                     headers: {
@@ -296,32 +309,49 @@ function LendCategory() {
                 switch (data.status) {
                     // TODO: Fehlermeldung für zu viele Gegenstände ausgewählt (Toast mit bitte weniger auswählen) und dann noch wenn submitted wird
                     case 400:
-                        setErrorMessage(`${categoryItem?.name} ist zu diesem Zeitraum nicht verfügbar.`)
+                        setErrorMessage(
+                            `${categoryItem?.name} ist zu diesem Zeitraum nicht verfügbar.`
+                        )
                         break
                     case 401:
-                        setErrorMessage("Du hast nicht die benötigten Rechte um diesen Gegenstand auszuleihen.")
+                        setErrorMessage(
+                            "Du hast nicht die benötigten Rechte um diesen Gegenstand auszuleihen."
+                        )
                         break
                     case 403:
                         setErrorMessage("Zugriff verweigert.")
                         break
                     case 404:
-                        setErrorMessage("Ressource nicht gefunden. Kontaktieren Sie den Administrator")
+                        setErrorMessage(
+                            "Ressource nicht gefunden. Kontaktieren Sie den Administrator"
+                        )
                         break
                     case 500:
-                        setErrorMessage("Serverfehler: Ein Problem auf dem Server ist aufgetreten. Bitte versuchen Sie es später erneut.")
+                        setErrorMessage(
+                            "Serverfehler: Ein Problem auf dem Server ist aufgetreten. Bitte versuchen Sie es später erneut."
+                        )
                         break
                     default:
-                        if (data.message.includes("Item is already reserved for this time slot.")) {
+                        if (
+                            data.message.includes(
+                                "Item is already reserved for this time slot."
+                            )
+                        ) {
                             setErrorMessage(`${categoryItem?.name} ist in diesem Zeitpunkt keine ${form.getValues("quantity")}  
                             mal verfügbar. Bitte wählen Sie ein anderes Datum oder ändern Sie die Anzahl an Gegenständen.`)
                         } else {
-                            setErrorMessage("Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut.")
+                            setErrorMessage(
+                                "Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut."
+                            )
                         }
                         break
                 }
             }
         } catch (error) {
-            setErrorMessage("Beim senden der Ausleihanfrage ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es später erneut.")
+            setErrorMessage(
+                "Beim senden der Ausleihanfrage ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es später erneut."
+            )
+            console.error("Error message set:", errorMessage)
         }
     }
 
@@ -332,7 +362,9 @@ function LendCategory() {
                 <div className="max-w-[600px] mx-auto">
                     <div className="p-4">
                         <CardHeader className="flex items-center text-customBlue">
-                            <CardTitle className="mb-4">Ausleihformular</CardTitle>
+                            <CardTitle className="mb-4">
+                                Ausleihformular
+                            </CardTitle>
                         </CardHeader>
                         <div className="max-w-[600px] mx-auto">
                             <Card>
@@ -351,11 +383,14 @@ function LendCategory() {
                                     </div>
                                     <Form {...form}>
                                         <form
-                                            onSubmit={form.handleSubmit(onSubmit)}
+                                            onSubmit={form.handleSubmit(
+                                                onSubmit
+                                            )}
                                             className="space-y-8"
                                         >
                                             <div className="text-sm text-gray-500 flex justify-center text-center">
-                                                Bitte geben Sie zuerst die Anzahl ein.
+                                                Bitte geben Sie zuerst die
+                                                Anzahl ein.
                                             </div>
                                             <div className="flex flex-wrap justify-evenly">
                                                 <FormField
@@ -367,17 +402,26 @@ function LendCategory() {
                                                                 <label className="text-sm pb-2">
                                                                     Anzahl
                                                                 </label>
-                                                                <FormControl
-                                                                    className="text-left font-sans w-[80px] pl-3">
+                                                                <FormControl className="text-left font-sans w-[80px] pl-3">
                                                                     <Input
                                                                         type="number"
                                                                         {...field}
-                                                                        onChange={(e) => {
-                                                                            field.onChange(e.target.valueAsNumber)
+                                                                        onChange={(
+                                                                            e
+                                                                        ) => {
+                                                                            field.onChange(
+                                                                                e
+                                                                                    .target
+                                                                                    .valueAsNumber
+                                                                            )
                                                                             void fetchAvailability()
                                                                         }}
                                                                         min={1}
-                                                                        max={categoryItem?.items.length}
+                                                                        max={
+                                                                            categoryItem
+                                                                                ?.items
+                                                                                .length
+                                                                        }
                                                                     />
                                                                 </FormControl>
                                                                 <FormMessage />
@@ -398,12 +442,18 @@ function LendCategory() {
                                                         <DatePickerField
                                                             label="Ausleihdatum"
                                                             field={field}
-                                                            popoverOpen={isStartPopoverOpen}
+                                                            popoverOpen={
+                                                                isStartPopoverOpen
+                                                            }
                                                             setPopoverOpen={
                                                                 setStartPopoverOpen
                                                             }
                                                             disabled={(date) =>
-                                                                date < new Date() || isDateUnavailable(date)
+                                                                date <
+                                                                    new Date() ||
+                                                                isDateUnavailable(
+                                                                    date
+                                                                )
                                                             }
                                                             defaultMonth={
                                                                 field.value ||
@@ -412,7 +462,7 @@ function LendCategory() {
                                                                         new Date()
                                                                     tomorrow.setDate(
                                                                         tomorrow.getDate() +
-                                                                        1
+                                                                            1
                                                                     )
                                                                     return tomorrow
                                                                 })()
@@ -423,7 +473,8 @@ function LendCategory() {
                                                                         form.getValues(
                                                                             "startDate"
                                                                         ),
-                                                                    endDate: undefined,
+                                                                    endDate:
+                                                                        undefined,
                                                                     quantity:
                                                                         form.getValues(
                                                                             "quantity"
@@ -440,30 +491,44 @@ function LendCategory() {
                                                         <DatePickerField
                                                             label="Abgabedatum"
                                                             field={field}
-                                                            popoverOpen={isEndPopoverOpen}
+                                                            popoverOpen={
+                                                                isEndPopoverOpen
+                                                            }
                                                             setPopoverOpen={
                                                                 setEndPopoverOpen
                                                             }
                                                             disabled={(date) =>
                                                                 startDate
-                                                                    ? date < startDate || isDateUnavailable(date)
-                                                                    : isDateUnavailable(date)
+                                                                    ? date <
+                                                                          startDate ||
+                                                                      isDateUnavailable(
+                                                                          date
+                                                                      )
+                                                                    : isDateUnavailable(
+                                                                          date
+                                                                      )
                                                             }
                                                             defaultMonth={
-                                                                form.getValues("endDate") ||
+                                                                form.getValues(
+                                                                    "endDate"
+                                                                ) ||
                                                                 startDate ||
                                                                 (() => {
                                                                     const tomorrow =
                                                                         new Date()
                                                                     tomorrow.setDate(
                                                                         tomorrow.getDate() +
-                                                                        1
+                                                                            1
                                                                     )
                                                                     return tomorrow
                                                                 })()
                                                             }
-                                                            required={!!startDate}
-                                                            isDisabled={!startDate}
+                                                            required={
+                                                                !!startDate
+                                                            }
+                                                            isDisabled={
+                                                                !startDate
+                                                            }
                                                         />
                                                     )}
                                                 />
@@ -471,7 +536,9 @@ function LendCategory() {
                                             <div className="flex justify-between items-center mt-4">
                                                 <Button
                                                     onClick={() =>
-                                                        navigate(`/category/${id}`)
+                                                        navigate(
+                                                            `/category/${id}`
+                                                        )
                                                     }
                                                     className="flex bg-customBlue text-customBeige hover:bg-customRed hover:text-customBeige ml-8"
                                                 >
@@ -481,17 +548,23 @@ function LendCategory() {
                                                     type="submit"
                                                     disabled={
                                                         undefined ==
-                                                        form.getValues(
-                                                            "startDate"
-                                                        ) ||
+                                                            form.getValues(
+                                                                "startDate"
+                                                            ) ||
                                                         undefined ==
-                                                        form.getValues("endDate") ||
+                                                            form.getValues(
+                                                                "endDate"
+                                                            ) ||
                                                         0 ==
+                                                            form.getValues(
+                                                                "quantity"
+                                                            ) ||
                                                         form.getValues(
-                                                            "quantity"
-                                                        ) ||
-                                                        form.getValues("endDate") <
-                                                        form.getValues("startDate")
+                                                            "endDate"
+                                                        ) <
+                                                            form.getValues(
+                                                                "startDate"
+                                                            )
                                                         // TODO: Hier noch wenn anzahl > gesamtmenge
                                                     }
                                                     className="text-customBeige bg-customBlue mr-8 hover:bg-customRed hover:text-customBeige"

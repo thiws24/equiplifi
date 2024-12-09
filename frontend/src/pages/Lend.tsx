@@ -32,7 +32,7 @@ function Lend() {
     const fetchItem = React.useCallback(async () => {
         try {
             const response = await fetch(
-                `${process.env.REACT_APP_II_SERVICE_HOST}/items/${id}`
+                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/items/${id}`
             )
             if (response.ok) {
                 setItemExists(true)
@@ -50,7 +50,9 @@ function Lend() {
                 )
             }
         } catch (e) {
-            setErrorMessage("Es ist etwas schiefgelaufen. Versuchen Sie es später erneut.")
+            setErrorMessage(
+                "Es ist etwas schiefgelaufen. Versuchen Sie es später erneut."
+            )
             console.log(e)
         }
     }, [id])
@@ -73,22 +75,36 @@ function Lend() {
     const fetchAvailability = React.useCallback(async () => {
         try {
             let dateArray: Date[][] = []
-            const response = await fetch(`${process.env.REACT_APP_II_RESERVATION_HOST}/availability/reservations/items/${id}`)
+            const response = await fetch(
+                `${import.meta.env.VITE_RESERVATION_HOST}/availability/reservations/items/${id}`
+            )
             if (response.ok) {
                 const data = await response.json()
-                const getDaysArray = function(start: string | Date, end: string | Date) {
+                const getDaysArray = function (
+                    start: string | Date,
+                    end: string | Date
+                ) {
                     const arr = []
-                    for (const dt = new Date(start); dt <= new Date(end); dt.setDate(dt.getDate() + 1)) {
+                    for (
+                        const dt = new Date(start);
+                        dt <= new Date(end);
+                        dt.setDate(dt.getDate() + 1)
+                    ) {
                         arr.push(new Date(dt))
                     }
                     return arr
                 }
 
-                data.reservations.forEach((reservation: { startDate: Date; endDate: Date }) => {
-                    let day = getDaysArray(reservation.startDate, reservation.endDate)
-                    dateArray.push(day)
-                    alert("Test  " + reservation.startDate)
-                })
+                data.reservations.forEach(
+                    (reservation: { startDate: Date; endDate: Date }) => {
+                        let day = getDaysArray(
+                            reservation.startDate,
+                            reservation.endDate
+                        )
+                        dateArray.push(day)
+                        alert("Test  " + reservation.startDate)
+                    }
+                )
 
                 setUnavailableDates(dateArray)
             }
@@ -99,9 +115,10 @@ function Lend() {
     }, [id])
 
     const isDateUnavailable = (date: Date) => {
-        return unavailableDates.some(dateArray =>
-            dateArray.some(unavailableDate =>
-                unavailableDate.toDateString() === date.toDateString()
+        return unavailableDates.some((dateArray) =>
+            dateArray.some(
+                (unavailableDate) =>
+                    unavailableDate.toDateString() === date.toDateString()
             )
         )
     }
@@ -141,19 +158,21 @@ function Lend() {
 
         try {
             const response = await fetch(
-                `${process.env.REACT_APP_SPIFF}/api/v1.0/messages/Reservation-request-start`,
+                `${import.meta.env.VITE_SPIFF}/api/v1.0/messages/Reservation-request-start`,
                 {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`
                     },
-                    body: JSON.stringify([{
-                        startDate: formattedStartDate,
-                        endDate: formattedEndDate,
-                        itemId: Number(id),
-                        userId: userInfo?.sub
-                    }])
+                    body: JSON.stringify([
+                        {
+                            startDate: formattedStartDate,
+                            endDate: formattedEndDate,
+                            itemId: Number(id),
+                            userId: userInfo?.sub
+                        }
+                    ])
                 }
             )
             if (response.ok) {
@@ -170,31 +189,50 @@ function Lend() {
                 const data = await response.json()
                 switch (data.status) {
                     case 400:
-                        setErrorMessage(`${item?.name} mit der ID: ${item?.id} ist zu diesem Zeitraum nicht verfügbar.`)
+                        setErrorMessage(
+                            `${item?.name} mit der ID: ${item?.id} ist zu diesem Zeitraum nicht verfügbar.`
+                        )
                         break
                     case 401:
-                        setErrorMessage("Du hast nicht die benötigten Rechte um diesen Gegenstand auszuleihen.")
+                        setErrorMessage(
+                            "Du hast nicht die benötigten Rechte um diesen Gegenstand auszuleihen."
+                        )
                         break
                     case 403:
                         setErrorMessage("Zugriff verweigert.")
                         break
                     case 404:
-                        setErrorMessage("Ressource nicht gefunden. Kontaktieren Sie den Administrator")
+                        setErrorMessage(
+                            "Ressource nicht gefunden. Kontaktieren Sie den Administrator"
+                        )
                         break
                     case 500:
-                        setErrorMessage("Serverfehler: Ein Problem auf dem Server ist aufgetreten. Bitte versuchen Sie es später erneut.")
+                        setErrorMessage(
+                            "Serverfehler: Ein Problem auf dem Server ist aufgetreten. Bitte versuchen Sie es später erneut."
+                        )
                         break
                     default:
-                        if (data.message.includes("Item is already reserved for this time slot.")) {
-                            setErrorMessage(`${item?.name} mit der ID ${item?.id} ist innerhalb des Zeitraums schon reserviert. Bitte wählen Sie ein anderes Datum.`)
+                        if (
+                            data.message.includes(
+                                "Item is already reserved for this time slot."
+                            )
+                        ) {
+                            setErrorMessage(
+                                `${item?.name} mit der ID ${item?.id} ist innerhalb des Zeitraums schon reserviert. Bitte wählen Sie ein anderes Datum.`
+                            )
                         } else {
-                            setErrorMessage("Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut.")
+                            setErrorMessage(
+                                "Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut."
+                            )
                         }
                         break
                 }
             }
         } catch (error) {
-            setErrorMessage("Beim senden der Ausleihanfrage ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es später erneut." + error)
+            setErrorMessage(
+                "Beim senden der Ausleihanfrage ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es später erneut." +
+                    error
+            )
         }
     }
 
@@ -205,7 +243,9 @@ function Lend() {
                 <div className="max-w-[600px] mx-auto">
                     <div className="p-4">
                         <CardHeader className="flex items-center text-customBlue">
-                            <CardTitle className="mb-4">Ausleihformular</CardTitle>
+                            <CardTitle className="mb-4">
+                                Ausleihformular
+                            </CardTitle>
                         </CardHeader>
                         <div className="max-w-[600px] mx-auto">
                             <Card>
@@ -224,12 +264,14 @@ function Lend() {
                                     </div>
                                     <Form {...form}>
                                         <form
-                                            onSubmit={form.handleSubmit(onSubmit)}
+                                            onSubmit={form.handleSubmit(
+                                                onSubmit
+                                            )}
                                             className="space-y-8"
                                         >
                                             <div className="text-sm text-gray-500 flex justify-center text-center">
-                                                Bitte geben Sie die Anzahl, ein Ausleih-
-                                                und Abgabedatum ein.
+                                                Bitte geben Sie die Anzahl, ein
+                                                Ausleih- und Abgabedatum ein.
                                             </div>
                                             <div className="flex flex-wrap justify-evenly gap-y-8">
                                                 <FormField
@@ -239,12 +281,18 @@ function Lend() {
                                                         <DatePickerField
                                                             label="Ausleihdatum"
                                                             field={field}
-                                                            popoverOpen={isStartPopoverOpen}
+                                                            popoverOpen={
+                                                                isStartPopoverOpen
+                                                            }
                                                             setPopoverOpen={
                                                                 setStartPopoverOpen
                                                             }
                                                             disabled={(date) =>
-                                                                date < new Date() || isDateUnavailable(date)
+                                                                date <
+                                                                    new Date() ||
+                                                                isDateUnavailable(
+                                                                    date
+                                                                )
                                                             }
                                                             defaultMonth={
                                                                 field.value ||
@@ -253,7 +301,7 @@ function Lend() {
                                                                         new Date()
                                                                     tomorrow.setDate(
                                                                         tomorrow.getDate() +
-                                                                        1
+                                                                            1
                                                                     )
                                                                     return tomorrow
                                                                 })()
@@ -264,7 +312,8 @@ function Lend() {
                                                                         form.getValues(
                                                                             "startDate"
                                                                         ),
-                                                                    endDate: undefined
+                                                                    endDate:
+                                                                        undefined
                                                                 })
                                                             }}
                                                         />
@@ -277,30 +326,44 @@ function Lend() {
                                                         <DatePickerField
                                                             label="Abgabedatum"
                                                             field={field}
-                                                            popoverOpen={isEndPopoverOpen}
+                                                            popoverOpen={
+                                                                isEndPopoverOpen
+                                                            }
                                                             setPopoverOpen={
                                                                 setEndPopoverOpen
                                                             }
                                                             disabled={(date) =>
                                                                 startDate
-                                                                    ? date < startDate || isDateUnavailable(date)
-                                                                    : isDateUnavailable(date)
+                                                                    ? date <
+                                                                          startDate ||
+                                                                      isDateUnavailable(
+                                                                          date
+                                                                      )
+                                                                    : isDateUnavailable(
+                                                                          date
+                                                                      )
                                                             }
                                                             defaultMonth={
-                                                                form.getValues("endDate") ||
+                                                                form.getValues(
+                                                                    "endDate"
+                                                                ) ||
                                                                 startDate ||
                                                                 (() => {
                                                                     const tomorrow =
                                                                         new Date()
                                                                     tomorrow.setDate(
                                                                         tomorrow.getDate() +
-                                                                        1
+                                                                            1
                                                                     )
                                                                     return tomorrow
                                                                 })()
                                                             }
-                                                            required={!!startDate}
-                                                            isDisabled={!startDate}
+                                                            required={
+                                                                !!startDate
+                                                            }
+                                                            isDisabled={
+                                                                !startDate
+                                                            }
                                                         />
                                                     )}
                                                 />
@@ -318,11 +381,13 @@ function Lend() {
                                                     type="submit"
                                                     disabled={
                                                         undefined ==
-                                                        form.getValues(
-                                                            "startDate"
-                                                        ) ||
+                                                            form.getValues(
+                                                                "startDate"
+                                                            ) ||
                                                         undefined ==
-                                                        form.getValues("endDate")
+                                                            form.getValues(
+                                                                "endDate"
+                                                            )
                                                     }
                                                     className="text-customBeige bg-customBlue mr-8 hover:bg-customRed hover:text-customBeige"
                                                 >
@@ -332,7 +397,11 @@ function Lend() {
                                         </form>
                                     </Form>
                                     <div
-                                        onClick={() => navigate(`/category/${item?.categoryId}/reservation`)}
+                                        onClick={() =>
+                                            navigate(
+                                                `/category/${item?.categoryId}/reservation`
+                                            )
+                                        }
                                         className="cursor-pointer text-customBlue hover:text-customOrange mt-4 flex justify-center"
                                     >
                                         Hier mehr ausleihen
