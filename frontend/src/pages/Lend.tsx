@@ -32,7 +32,7 @@ function Lend() {
     const fetchItem = React.useCallback(async () => {
         try {
             const response = await fetch(
-                `${process.env.VITE_II_SERVICE_HOST}/items/${id}`
+                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/items/${id}`
             )
             if (response.ok) {
                 setItemExists(true)
@@ -76,7 +76,7 @@ function Lend() {
         try {
             let dateArray: Date[][] = []
             const response = await fetch(
-                `${process.env.VITE_II_RESERVATION_HOST}/availability/reservations/items/${id}`
+                `${import.meta.env.VITE_RESERVATION_HOST}/availability/reservations/items/${id}`
             )
             if (response.ok) {
                 const data = await response.json()
@@ -158,7 +158,7 @@ function Lend() {
 
         try {
             const response = await fetch(
-                `${process.env.VITE_SPIFF}/api/v1.0/messages/Reservation-request-start`,
+                `${import.meta.env.VITE_SPIFF}/api/v1.0/messages/Reservation-request-start`,
                 {
                     method: "POST",
                     headers: {

@@ -118,7 +118,7 @@ describe("CategoryCreation Component", () => {
         // Check that fetch for image upload was called
         await waitFor(() =>
             expect(fetch).toHaveBeenCalledWith(
-                `${import.meta.env.VITE_II_SERVICE_HOST}/picture`,
+                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/picture`,
                 expect.objectContaining({
                     method: "POST",
                     body: expect.any(FormData)
@@ -129,7 +129,7 @@ describe("CategoryCreation Component", () => {
         // Check that fetch for category creation was called
         await waitFor(() =>
             expect(fetch).toHaveBeenCalledWith(
-                `${import.meta.env.VITE_II_SERVICE_HOST}/categories`,
+                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories`,
                 expect.objectContaining({
                     method: "POST",
                     body: expect.stringContaining("mock-image-url")

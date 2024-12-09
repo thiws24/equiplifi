@@ -23,12 +23,10 @@ import DatePickerField from "../components/DatePickerField"
 import { ToastWithCountdown } from "../components/ToastWithCountdown"
 
 function LendCategory() {
-    const navigate = useNavigate()
     const [categoryItemsCount, setCategoryItemsCount] = useState<number>(1)
     const [startDate, setStartDate] = useState<Date | null>(null)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [categoryItem, setCategoryItem] = useState<CategoryProps>()
-    const [userInfo, setUserInfo] = useState<KeyCloakUserInfo>()
     const [isStartPopoverOpen, setStartPopoverOpen] = useState(false)
     const [isEndPopoverOpen, setEndPopoverOpen] = useState(false)
     const [itemId, setItemId] = useState<[number] | []>([])
@@ -37,12 +35,12 @@ function LendCategory() {
     const navigate = useNavigate()
     const { toast } = useToast()
     const { id } = useParams()
-    const { keycloak, token } = useKeycloak()
+    const { userInfo, token } = useKeycloak()
 
     const fetchCategory = React.useCallback(async () => {
         try {
             const response = await fetch(
-                `${process.env.VITE_II_SERVICE_HOST}/categories/${id}`
+                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories/${id}`
             )
             if (response.ok) {
                 setCategoryExists(true)
@@ -89,7 +87,7 @@ function LendCategory() {
     const fetchAvailability = React.useCallback(async () => {
         try {
             const response = await fetch(
-                `${process.env.VITE_II_RESERVATION_HOST}/availability/reservations/categories/${id}`
+                `${import.meta.env.VITE_RESERVATION_HOST}/availability/reservations/categories/${id}`
             )
             if (response.ok) {
                 const data = await response.json()
@@ -135,7 +133,7 @@ function LendCategory() {
                     }
                 )
 
-                allDays.forEach((dayAll) => {
+                /*allDays.forEach((dayAll) => {
                     let count: number = 0
                     if (categoryItem?.items?.length) {
                         categoryItem.items.forEach((id: number) => {
@@ -153,7 +151,7 @@ function LendCategory() {
                             dateDisableArray.push(dayAll)
                         }
                     }
-                })
+                })*/
 
                 setUnavailableDates(dateDisableArray)
 
@@ -241,20 +239,11 @@ function LendCategory() {
     }
 
     useEffect(() => {
-        void fetchItem()
-        keycloak?.loadUserInfo().then(
-            (val) => setUserInfo(val as any),
-            (e) => console.log(e)
-        )
         if (form.getValues("startDate")) {
             const newStartDate = new Date(form.getValues("startDate"))
             newStartDate.setDate(newStartDate.getDate() + 1)
             setStartDate(newStartDate)
         }
-        keycloak?.loadUserInfo().then(
-            (val) => setUserInfo(val as any),
-            (e) => console.log(e)
-        )
         if (errorMessage) {
             toast({
                 variant: "destructive",
@@ -265,7 +254,7 @@ function LendCategory() {
         }
         setErrorMessage("")
         void fetchCategory()
-    }, [fetchCategory, keycloak, errorMessage, form.getValues("startDate")])
+    }, [fetchCategory, errorMessage, form.getValues("startDate")])
 
     const onSubmit = async (values: FormschemaType) => {
         const formattedStartDate = format(
@@ -293,7 +282,7 @@ function LendCategory() {
 
         try {
             const response = await fetch(
-                `${process.env.VITE_SPIFF}/api/v1.0/messages/Reservation-request-start`,
+                `${import.meta.env.VITE_SPIFF}/api/v1.0/messages/Reservation-request-start`,
                 {
                     method: "POST",
                     headers: {

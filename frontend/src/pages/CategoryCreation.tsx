@@ -65,7 +65,7 @@ function CategoryCreation() {
                 const formData = new FormData()
                 formData.append("file", image)
                 const createRes = await fetch(
-                    `${import.meta.env.VITE_II_SERVICE_HOST}/picture`,
+                    `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/picture`,
                     {
                         method: "POST",
                         body: formData
@@ -82,7 +82,7 @@ function CategoryCreation() {
 
         try {
             const createRes = await fetch(
-                `${import.meta.env.VITE_II_SERVICE_HOST}/categories`,
+                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories`,
                 {
                     headers: {
                         "Content-Type": "application/json"

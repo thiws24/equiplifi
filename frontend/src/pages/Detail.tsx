@@ -26,10 +26,10 @@ function Detail() {
     const { id } = useParams()
     const { token } = useKeycloak()
 
-    const fetchItem = React.useCallback(async () => {
+    const fetchItem = async () => {
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_II_SERVICE_HOST}/items/${id}`
+                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/items/${id}`
             )
             if (response.ok) {
                 const data = await response.json()
@@ -37,17 +37,20 @@ function Detail() {
                 setUpdatedData({
                     location: data.location || "",
                     status: data.status || ""
-                }) // Set initial values
+                })
+
+                // Fetch QR Code
+                if (data) await fetchQrCode()
             }
         } catch (e) {
             console.log(e)
         }
-    }, [id])
+    }
 
-    const fetchQrCode = React.useCallback(async () => {
+    const fetchQrCode = async () => {
         try {
             const response = await fetch(
-                `${process.env.VITE_QR_HOST}/qr?name=${inventoryItem?.name}&id=${id}`,
+                `${import.meta.env.VITE_QR_HOST}/qr?name=${inventoryItem?.name}&id=${id}`,
                 {
                     method: "GET",
                     headers: {
@@ -71,7 +74,7 @@ function Detail() {
         } catch (e) {
             console.log("... Fehler beim Abrufen des QR-Codes:", e)
         }
-    }, [id, inventoryItem?.name])
+    }
 
     const handleSave = async () => {
         if (!inventoryItem) return
@@ -83,7 +86,7 @@ function Detail() {
 
         try {
             const response = await fetch(
-                `${process.env.VITE_SERVICE_HOST}/categories/${inventoryItem.categoryId}/items/${id}`,
+                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories/${inventoryItem.categoryId}/items/${id}`,
                 {
                     method: "PUT",
                     headers: {
@@ -116,13 +119,7 @@ function Detail() {
 
     React.useEffect(() => {
         void fetchItem()
-    }, [fetchItem])
-
-    React.useEffect(() => {
-        if (inventoryItem) {
-            void fetchQrCode()
-        }
-    }, [inventoryItem, fetchQrCode])
+    }, [id])
 
     return (
         <div className="max-w-[1000px] mx-auto">

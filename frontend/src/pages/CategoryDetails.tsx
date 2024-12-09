@@ -58,7 +58,7 @@ function CategoryDetails() {
     const fetchItems = React.useCallback(async () => {
         try {
             const response = await fetch(
-                `${process.env.VITE_II_SERVICE_HOST}/categories/${id}`
+                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories/${id}`
             )
             if (response.ok) {
                 const data = await response.json()
@@ -89,7 +89,7 @@ function CategoryDetails() {
 
         try {
             const response = await fetch(
-                `${process.env.VITE_II_SERVICE_HOST}/categories/${id}`,
+                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories/${id}`,
                 {
                     method: "PUT",
                     headers: {
