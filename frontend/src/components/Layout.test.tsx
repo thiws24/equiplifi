@@ -3,6 +3,13 @@ import { Layout } from "./Layout"
 import "@testing-library/jest-dom"
 import { test, describe, expect, vi } from "vitest"
 
+vi.mock("../hooks/use-mobile", () => {
+    return {
+        useIsMobile: () => true,
+    };
+})
+
+
 // Mock der QrReader-Komponente
 vi.mock("./QrReader", () => {
     return {

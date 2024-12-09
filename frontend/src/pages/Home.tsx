@@ -54,9 +54,7 @@ function Home() {
 
     async function fetchInventoryItems() {
         try {
-            const response = await fetch(
-                `${import.meta.env.VITE_II_SERVICE_HOST}/inventoryitems`
-            )
+            const response = await fetch(`${process.env.VITE_II_SERVICE_HOST}/categories`)
             if (response.ok) {
                 const data = await response.json()
                 setInventoryItems(data)
