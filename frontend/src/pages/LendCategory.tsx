@@ -11,7 +11,7 @@ import { format } from "date-fns"
 import React, { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
+import { date, z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
 import { KeyCloakUserInfo } from "../interfaces/KeyCloakUserInfo"
@@ -31,7 +31,7 @@ function LendCategory() {
     const [isEndPopoverOpen, setEndPopoverOpen] = useState(false)
     const [itemId, setItemId] = useState<[number] | []>([])
     const [categoryExists, setCategoryExists] = useState(false)
-    const [unavailableDates, setUnavailableDates] = useState<Date[][]>([])
+    const [unavailableDates, setUnavailableDates] = useState<Date[]>([])
     const navigate = useNavigate()
     const { toast } = useToast()
     const { id } = useParams()
@@ -63,15 +63,19 @@ function LendCategory() {
         }
     }, [id])
 
-    const FormSchema = z.object({
-        quantity: z.number({}).min(1, "Anzahl muss größer als Null sein"),
-        startDate: z.date({
-            required_error: "Startdatum erforderlich"
-        }),
-        endDate: z.date({
-            required_error: "Enddatum erforderlich"
+
+        const FormSchema = z.object({
+            quantity: z.number({})
+                .min(1, "Anzahl muss größer als Null sein"),
+            startDate: z.date({
+                required_error: "Startdatum erforderlich"
+            }),
+            endDate: z.date({
+                required_error: "Enddatum erforderlich"
+            })
         })
-    })
+
+    type FormschemaType = z.infer<typeof FormSchema>
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -80,23 +84,15 @@ function LendCategory() {
         }
     })
 
-    type FormschemaType = z.infer<typeof FormSchema>
-
-    async function fetchAvailability() {
+    const fetchAvailability = React.useCallback(async () => {
         try {
-            let dateArray: Date[][] = []
-            // This array contains all Arrays itemId Arrays. These contain the dates when the specific item is unavailable.
-            let array_of_ItemDayArray: [[Date]]
-            let availableItemsArray: [number]
-            const response = await fetch(
-                `${process.env.REACT_APP_II_RESERVATION_HOST}/availability/reservations/categories/${id}`
-            )
+            const response = await fetch(`${process.env.REACT_APP_II_RESERVATION_HOST}/availability/reservations/categories/${id}`)
             if (response.ok) {
                 const data = await response.json()
                 const quantity = form.getValues("quantity")
+                let dateDisableArray: Date[] = []
 
-                // TODO: create an array for each item_id (In an Array of Arrays
-                const getDaysArray = function(start: string | Date, end: string | Date) {
+                const getDaysArray = function (start: string | Date, end: string | Date) {
                     const arr = []
                     for (const dt = new Date(start); dt <= new Date(end); dt.setDate(dt.getDate() + 1)) {
                         arr.push(new Date(dt))
@@ -104,36 +100,124 @@ function LendCategory() {
                     return arr
                 }
 
-                // bis dato dürften die reservations aller items durchgegangen werden und wenn 1
-                // Item an einem Datum reserviert ist wird gesperrt
-                data.reservations.forEach((reservation: { startDate: Date; endDate: Date }) => {
-                    let day = getDaysArray(reservation.startDate, reservation.endDate)
-                    // Hier noch für die Anzahl berechnen und wenn max anzahl unter quantity dann pushen
+                const reservationData: { [key: number]: Date[] } = {}
+                let allDays: Date[] = []
 
-                    dateArray.push(day)
+                data.forEach((item: { reservations: { startDate: string; endDate: string }[]; itemId: number }) => {
+                    item.reservations.forEach((reservation) => {
+                        let day = getDaysArray(reservation.startDate, reservation.endDate);
+                        day.forEach((d) => {
+                            if (!reservationData[item.itemId]) {
+                                reservationData[item.itemId] = []
+                            }
+                            allDays.push(d)
+                            reservationData[item.itemId].push(d)
+                        })
+                    })
                 })
 
-                // Hier die items die available sind in itemsArray pushen
-                // => umgekehrte Logik wie oben
-                // Macht aber nur sinn, wenn man zuerst das Start- und Enddatum festlegen muss
+                allDays.forEach(dayAll => {
+                    let count: number = 0
+                    if (categoryItem?.items?.length) {
+                        categoryItem.items.forEach((id: number) => {
+                            reservationData[id].forEach((day: Date) => {
+                                if (day.toDateString() === dayAll.toDateString()) {
+                                    alert("Test")
+                                    count += 1
+                                }
+                            })
+                        })
 
-                // hier die belegten Daten pushen (dateArray)
-                setUnavailableDates([]) // Diese dann noch in ein isDateUnavailable function
+                        if (quantity > (categoryItem.items.length - count)) {
+                            dateDisableArray.push(dayAll)
+                        }
+                    }
+                })
 
-                // availableItemsArray pushen
+                setUnavailableDates(dateDisableArray)
+
                 setItemId([])
+
             }
-            return dateArray
         } catch (e) {
             console.log(e)
+            setErrorMessage("Die Verfügbarkeiten konnten nicht geladen werden")
         }
-    }
+    }, [id])
+
+    // const fetchAvailability = React.useCallback(async () => {
+    //     try {
+    //         const response = await fetch(`${process.env.REACT_APP_II_RESERVATION_HOST}/availability/reservations/categories/${id}`)
+    //
+    //         if (response.ok) {
+    //             const data = await response.json()
+    //             const quantity = form.getValues("quantity")
+    //             let dateDisableArray: Date[] = []
+    //
+    //             const getDaysArray = function (start: string | Date, end: string | Date) {
+    //                 const arr = []
+    //                 for (const dt = new Date(start); dt <= new Date(end); dt.setDate(dt.getDate() + 1)) {
+    //                     arr.push(new Date(dt))
+    //                 }
+    //                 return arr
+    //             }
+    //
+    //             const reservationData: { [key: number]: Date[] } = {}
+    //             let allDays: Date[] = []
+    //
+    //             alert("KCSAMOKA")
+    //
+    //             data.forEach((reservation: { startDate: Date; endDate: Date }) => {
+    //                 let day = getDaysArray(reservation.startDate, reservation.endDate)
+    //                 alert(reservation.startDate + "   -   " + itemId)
+    //             })
+    //
+    //
+    //             data.forEach((reservation: { startDate: Date; endDate: Date }, itemId: number) => {
+    //                 if (!reservationData[itemId]) reservationData[itemId] = []
+    //
+    //                 let days = getDaysArray(reservation.startDate, reservation.endDate)
+    //                 reservationData[itemId].push(...days)
+    //                 allDays.push(...days)
+    //             });
+    //
+    //             allDays.forEach(dayAll => {
+    //                 let count: number = 0
+    //                 if (categoryItem?.items?.length) {
+    //                     categoryItem.items.forEach((id: any) => {
+    //                         alert("Test2")
+    //                         reservationData[id].forEach((day: Date) => {
+    //                             if (day.toDateString() === dayAll.toDateString()) {
+    //                                 alert("Test")
+    //                                 count += 1
+    //                             }
+    //                         })
+    //                     })
+    //
+    //                     if (quantity > (categoryItem.items.length - count)) {
+    //                         dateDisableArray.push(dayAll)
+    //                     }
+    //                 }
+    //             })
+    //
+    //             alert("Quantity: " + quantity + "----- Max Item: " + categoryItem?.items?.length + "----- Array: " + allDays)
+    //
+    //
+    //             // Setze die deaktivierten Daten (für die Anzeige)
+    //             setUnavailableDates(dateDisableArray)
+    //
+    //             // Hier kannst du die verfügbaren Items auflisten, wenn notwendig
+    //
+    //         }
+    //     } catch (e) {
+    //         console.error(e)
+    //     }
+    // }, [id])
+
 
     const isDateUnavailable = (date: Date) => {
         return unavailableDates.some(dateArray =>
-            dateArray.some(unavailableDate =>
-                unavailableDate.toDateString() === date.toDateString()
-            )
+            dateArray.toDateString() === date.toDateString()
         )
     }
 
@@ -155,6 +239,7 @@ function LendCategory() {
                 duration: Infinity
             })
         }
+        setErrorMessage("")
         void fetchCategory()
     }, [fetchCategory, keycloak, errorMessage, form.getValues("startDate")])
 
@@ -289,17 +374,10 @@ function LendCategory() {
                                                                         {...field}
                                                                         onChange={(e) => {
                                                                             field.onChange(e.target.valueAsNumber)
-                                                                            form.reset({
-                                                                                startDate: undefined,
-                                                                                endDate: undefined,
-                                                                                quantity:
-                                                                                    form.getValues(
-                                                                                        "quantity"
-                                                                                    )
-                                                                            })
                                                                             void fetchAvailability()
                                                                         }}
                                                                         min={1}
+                                                                        max={categoryItem?.items.length}
                                                                     />
                                                                 </FormControl>
                                                                 <FormMessage />

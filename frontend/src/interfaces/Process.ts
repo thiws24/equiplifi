@@ -1,4 +1,4 @@
-import { ProcessInputProps } from "./ProcessInputProps";
+import { ProcessInputProps } from "./ProcessInputProps"
 
 export interface Process {
     id: number

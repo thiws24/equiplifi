@@ -1,28 +1,31 @@
-import * as React from 'react';
-import { ProcessInputProps } from "../interfaces/ProcessInputProps";
-
+import * as React from "react"
+import { ProcessInputProps } from "../interfaces/ProcessInputProps"
 
 interface Props {
-    processId: number;
+    processId: number
     guid: string
-    data?: ProcessInputProps;
-    onConfirmReservation: (processId: number, guid: string) => Promise<void>;
+    data?: ProcessInputProps
+    onConfirmReservation: (processId: number, guid: string) => Promise<void>
 }
 
-export const ConfirmReservationCard: React.FC<Props> = ({ processId, guid, data, onConfirmReservation }) => {
-
+export const ConfirmReservationCard: React.FC<Props> = ({
+    processId,
+    guid,
+    data,
+    onConfirmReservation
+}) => {
     const handleConfirm = async () => {
-        await onConfirmReservation(processId, guid);
-    };
+        await onConfirmReservation(processId, guid)
+    }
 
     const formatDate = (date: string | undefined): string => {
-        if (!date) return '';
-        const parsedDate = new Date(date);
-        const day = String(parsedDate.getDate()).padStart(2, '0');
-        const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
-        const year = parsedDate.getFullYear();
-        return `${day}.${month}.${year}`;
-    };
+        if (!date) return ""
+        const parsedDate = new Date(date)
+        const day = String(parsedDate.getDate()).padStart(2, "0")
+        const month = String(parsedDate.getMonth() + 1).padStart(2, "0")
+        const year = parsedDate.getFullYear()
+        return `${day}.${month}.${year}`
+    }
 
     return (
         <div className="my-10 text-sm border p-4 rounded shadow-md">
@@ -37,5 +40,5 @@ export const ConfirmReservationCard: React.FC<Props> = ({ processId, guid, data,
                 Reservierung Bestätigen
             </button>
         </div>
-    );
-};
+    )
+}
