@@ -148,7 +148,7 @@ function Detail() {
                                     <img
                                         src={inventoryItem?.photoUrl}
                                         alt={inventoryItem?.description}
-                                        className="w-full h-80 object-cover"
+                                        className="w-full h-80 object-contain"
                                     />
                                 )}
                             </KeyValueRow>
@@ -166,12 +166,18 @@ function Detail() {
                             </KeyValueRow>
                             <KeyValueRow label="Status">
                                 {isEditing ? (
-                                    <input
-                                        type="text"
+                                    <select
                                         value={updatedData.status}
                                         onChange={(e) => setUpdatedData({ ...updatedData, status: e.target.value })}
                                         className="border border-gray-300 rounded px-2 py-1 w-full"
-                                    />
+                                    >
+                                        <option value="OK">OK</option>
+                                        <option value="LENT">LENT</option>
+                                        <option value="BROKEN">BROKEN</option>
+                                        <option value="IN_MAINTENANCE">IN_MAINTENANCE</option>
+                                        <option value="MAINTENANCE_REQUIRED">MAINTENANCE_REQUIRED</option>
+                                        <option value="LOST">LOST</option>
+                                    </select>
                                 ) : (
                                     inventoryItem?.status
                                 )}

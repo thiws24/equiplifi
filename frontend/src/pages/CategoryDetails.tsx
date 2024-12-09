@@ -155,7 +155,7 @@ function CategoryDetails() {
                                     <img
                                         src={inventoryItem?.photoUrl}
                                         alt={inventoryItem?.description}
-                                        className="w-full h-80 object-cover"
+                                        className="w-full h-80 object-contain"
                                     />
                                 )}
                             </KeyValueRow>
