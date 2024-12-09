@@ -2,7 +2,7 @@ import React from "react"
 import { render, waitFor } from "@testing-library/react"
 import Home from "./Home"
 import { BrowserRouter } from "react-router-dom"
-import { test, describe, expect, vi } from 'vitest'
+import { test, describe, expect, vi } from "vitest"
 
 const mockData = [
     {
@@ -28,12 +28,13 @@ const mockData = [
     }
 ]
 
-
-
 // Mock fetch
-vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-    json: vi.fn().mockResolvedValue(mockData)
-}));
+vi.stubGlobal(
+    "fetch",
+    vi.fn().mockResolvedValue({
+        json: vi.fn().mockResolvedValue(mockData)
+    })
+)
 
 const f = { v7_startTransition: true, v7_relativeSplatPath: true }
 

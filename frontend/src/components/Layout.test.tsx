@@ -1,14 +1,14 @@
 import { render, screen, fireEvent } from "@testing-library/react"
 import { Layout } from "./Layout"
 import "@testing-library/jest-dom"
-import { test, describe, expect, vi } from 'vitest'
+import { test, describe, expect, vi } from "vitest"
 
 // Mock der QrReader-Komponente
-vi.mock('./QrReader', () => {
+vi.mock("./QrReader", () => {
     return {
-        default: vi.fn(() => <div>QrReader Mock</div>), // Mock the default export
-    };
-});
+        default: vi.fn(() => <div>QrReader Mock</div>) // Mock the default export
+    }
+})
 
 vi.mock("../keycloak/KeycloakProvider", () => ({
     useKeycloak: () => ({

@@ -5,7 +5,7 @@ import { vi, beforeEach, it, describe, expect } from "vitest"
 
 // Mocking useKeycloak hook
 vi.mock("../keycloak/KeycloakProvider", () => ({
-    useKeycloak: vi.fn(),
+    useKeycloak: vi.fn()
 }))
 
 // Mocking fetch calls
@@ -17,7 +17,7 @@ describe("CategoryCreation Component", () => {
         // @ts-ignore
         useKeycloak.mockReturnValue({
             userInfo: { groups: ["Inventory-Manager"] },
-            token: "mock-token",
+            token: "mock-token"
         })
 
         // Reset mock implementations before each test
@@ -45,8 +45,12 @@ describe("CategoryCreation Component", () => {
         expect(submitButton).toBeDisabled()
 
         // Fill in the form
-        fireEvent.change(screen.getByLabelText(/Name\*/i), { target: { value: "New Category" } })
-        fireEvent.change(screen.getByLabelText(/Anzahl Items\*/i), { target: { value: "5" } })
+        fireEvent.change(screen.getByLabelText(/Name\*/i), {
+            target: { value: "New Category" }
+        })
+        fireEvent.change(screen.getByLabelText(/Anzahl Items\*/i), {
+            target: { value: "5" }
+        })
 
         // After filling in required fields, button should be enabled
         expect(submitButton).toBeEnabled()
@@ -59,11 +63,15 @@ describe("CategoryCreation Component", () => {
         // @ts-ignore
         global.fetch.mockResolvedValueOnce({
             ok: true,
-            json: async () => ({ id: "123" }),
+            json: async () => ({ id: "123" })
         })
 
-        fireEvent.change(screen.getByLabelText(/Name\*/i), { target: { value: "New Category" } })
-        fireEvent.change(screen.getByLabelText(/Anzahl Items\*/i), { target: { value: "5" } })
+        fireEvent.change(screen.getByLabelText(/Name\*/i), {
+            target: { value: "New Category" }
+        })
+        fireEvent.change(screen.getByLabelText(/Anzahl Items\*/i), {
+            target: { value: "5" }
+        })
 
         fireEvent.click(screen.getByRole("button", { name: /Erstellen/i }))
 
@@ -71,7 +79,9 @@ describe("CategoryCreation Component", () => {
         await waitFor(() => expect(fetch).toHaveBeenCalled())
 
         // Ensure that window.open was called with the correct URL
-        await waitFor(() => expect(window.open).toHaveBeenCalledWith("/category/123", "_self"))
+        await waitFor(() =>
+            expect(window.open).toHaveBeenCalledWith("/category/123", "_self")
+        )
     })
 
     it("should handle successful form submission with image", async () => {
@@ -81,14 +91,14 @@ describe("CategoryCreation Component", () => {
         // @ts-ignore
         global.fetch.mockResolvedValueOnce({
             ok: true,
-            json: async () => "mock-image-url",
+            json: async () => "mock-image-url"
         })
 
         // Mock fetch for category creation
         // @ts-ignore
         global.fetch.mockResolvedValueOnce({
             ok: true,
-            json: async () => ({ id: "123" }),
+            json: async () => ({ id: "123" })
         })
 
         // Mock file input change event
@@ -96,31 +106,41 @@ describe("CategoryCreation Component", () => {
         const fileInput = screen.getByLabelText(/Bild/i) as HTMLInputElement
         fireEvent.change(fileInput, { target: { files: [file] } })
 
-        fireEvent.change(screen.getByLabelText(/Name\*/i), { target: { value: "New Category" } })
-        fireEvent.change(screen.getByLabelText(/Anzahl Items\*/i), { target: { value: "5" } })
+        fireEvent.change(screen.getByLabelText(/Name\*/i), {
+            target: { value: "New Category" }
+        })
+        fireEvent.change(screen.getByLabelText(/Anzahl Items\*/i), {
+            target: { value: "5" }
+        })
 
         fireEvent.click(screen.getByRole("button", { name: /Erstellen/i }))
 
         // Check that fetch for image upload was called
-        await waitFor(() => expect(fetch).toHaveBeenCalledWith(
-            `${import.meta.env.VITE_II_SERVICE_HOST}/picture`,
-            expect.objectContaining({
-                method: "POST",
-                body: expect.any(FormData),
-            })
-        ))
+        await waitFor(() =>
+            expect(fetch).toHaveBeenCalledWith(
+                `${import.meta.env.VITE_II_SERVICE_HOST}/picture`,
+                expect.objectContaining({
+                    method: "POST",
+                    body: expect.any(FormData)
+                })
+            )
+        )
 
         // Check that fetch for category creation was called
-        await waitFor(() => expect(fetch).toHaveBeenCalledWith(
-            `${import.meta.env.VITE_II_SERVICE_HOST}/categories`,
-            expect.objectContaining({
-                method: "POST",
-                body: expect.stringContaining("mock-image-url"),
-            })
-        ))
+        await waitFor(() =>
+            expect(fetch).toHaveBeenCalledWith(
+                `${import.meta.env.VITE_II_SERVICE_HOST}/categories`,
+                expect.objectContaining({
+                    method: "POST",
+                    body: expect.stringContaining("mock-image-url")
+                })
+            )
+        )
 
         // Ensure that window.open was called with the correct URL
-        await waitFor(() => expect(window.open).toHaveBeenCalledWith("/category/123", "_self"))
+        await waitFor(() =>
+            expect(window.open).toHaveBeenCalledWith("/category/123", "_self")
+        )
     })
 
     it("should redirect if the user is not an Inventory-Manager", () => {
@@ -128,7 +148,7 @@ describe("CategoryCreation Component", () => {
         // @ts-ignore
         useKeycloak.mockReturnValue({
             userInfo: { groups: [] },
-            token: "mock-token",
+            token: "mock-token"
         })
 
         render(<CategoryCreation />)

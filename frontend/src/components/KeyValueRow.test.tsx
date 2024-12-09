@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react"
 import { KeyValueRow } from "./KeyValueRow"
-import { test, describe, expect } from 'vitest'
+import { test, describe, expect } from "vitest"
 
 describe("KeyValueRow Tests", () => {
     test("correct rendering", () => {

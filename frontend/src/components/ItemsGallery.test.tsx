@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react"
 import { ItemsGallery } from "./ItemsGallery"
-import { test, describe, expect } from 'vitest'
+import { test, describe, expect } from "vitest"
 
 describe("ItemsGallery", () => {
     test("shows total of pages 1 for empty array", () => {
