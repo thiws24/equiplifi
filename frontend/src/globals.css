@@ -76,33 +76,52 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-customBeige text-customBlack;
-    font-family: 'Public Sans', sans-serif;
-  }
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-customBeige text-customBlack;
+        font-family: 'Public Sans', sans-serif;
+    }
 }
 
 #items-gallery {
-  font-family: 'Public Sans', sans-serif;
-  color: #0e0e0e;
+    font-family: 'Public Sans', sans-serif;
+    color: #0e0e0e;
 }
+
 .pagination-content {
-  color: #0e0e0e;
-  font-size: 20px;
+    color: #0e0e0e;
+    font-size: 20px;
 }
 
 .tabs-trigger svg {
-  color: #f2e9d7 !important;
+    color: #f2e9d7 !important;
 }
 
 .item-card-title {
-  font-family: 'Public Sans', sans-serif;
-}
-.item-card-description {
-  color: #0E0E0E;
-  font-family: 'Public Sans', sans-serif;
+    font-family: 'Public Sans', sans-serif;
 }
 
+.item-card-description {
+    color: #0E0E0E;
+    font-family: 'Public Sans', sans-serif;
+}
+
+@keyframes progress {
+    from {
+        width: 0%;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+.progress-bar {
+    width: 100%; /* Zielbreite */
+    animation: progress var(--duration, 5s) linear; /* Fallback-Dauer */
+    background-color: var(--progress-color, #5588c7); /* Farbe mit Fallback */
+    border-radius: 2px; /* Abgerundete Ecken */
+    height: 100%; /* Volle Höhe */
+}

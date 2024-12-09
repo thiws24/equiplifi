@@ -1,6 +1,12 @@
 import React, { useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "../components/ui/card"
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+    CardFooter
+} from "../components/ui/card"
 import { InventoryItemProps } from "../interfaces/InventoryItemProps"
 import { Button } from "../components/ui/button"
 import { KeyValueRow } from "../components/KeyValueRow"
@@ -12,7 +18,10 @@ function Detail() {
     const [inventoryItem, setInventoryItem] = useState<InventoryItemProps>()
     const [qrCode, setQrCode] = useState<string | null>(null)
     const [isEditing, setIsEditing] = useState(false)
-    const [updatedData, setUpdatedData] = useState<{ location: string; status: string }>({ location: "", status: "" })
+    const [updatedData, setUpdatedData] = useState<{
+        location: string
+        status: string
+    }>({ location: "", status: "" })
     const navigate = useNavigate()
     const { id } = useParams()
     const { token } = useKeycloak()
@@ -25,7 +34,10 @@ function Detail() {
             if (response.ok) {
                 const data = await response.json()
                 setInventoryItem(data)
-                setUpdatedData({ location: data.location || "", status: data.status || "" }) // Set initial values
+                setUpdatedData({
+                    location: data.location || "",
+                    status: data.status || ""
+                }) // Set initial values
             }
         } catch (e) {
             console.log(e)
@@ -48,17 +60,18 @@ function Detail() {
                 const reader = new FileReader()
                 reader.onloadend = () => {
                     setQrCode(reader.result as string)
-
                 }
                 reader.readAsDataURL(blob)
             } else {
-                console.error("Fehler beim Abrufen des QR-Codes. Status:", response.status)
+                console.error(
+                    "Fehler beim Abrufen des QR-Codes. Status:",
+                    response.status
+                )
             }
         } catch (e) {
             console.log("... Fehler beim Abrufen des QR-Codes:", e)
         }
     }, [id, inventoryItem?.name])
-
 
     const handleSave = async () => {
         if (!inventoryItem) return
@@ -130,10 +143,16 @@ function Detail() {
                                 onClick={() => setIsEditing(!isEditing)}
                                 className="bg-customBlue text-customBeige rounded hover:bg-customRed"
                             >
-                                {isEditing ? "Bearbeitung abbrechen" : "Item bearbeiten"}
+                                {isEditing
+                                    ? "Bearbeitung abbrechen"
+                                    : "Item bearbeiten"}
                             </Button>
                             <Button
-                                onClick={() => navigate(`/inventory-item/${id}/reservation`)}
+                                onClick={() =>
+                                    navigate(
+                                        `/inventory-item/${id}/reservation`
+                                    )
+                                }
                                 className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige"
                             >
                                 Ausleihen
@@ -141,9 +160,18 @@ function Detail() {
                         </div>
 
                         <dl className="divide-y divide-customBeige">
-                            <KeyValueRow label="Kategorie ID"> {inventoryItem?.categoryId} </KeyValueRow>
-                            <KeyValueRow label="Item ID"> {inventoryItem?.id} </KeyValueRow>
-                            <KeyValueRow label="Beschreibung"> {inventoryItem?.description} </KeyValueRow>
+                            <KeyValueRow label="Kategorie ID">
+                                {" "}
+                                {inventoryItem?.categoryId}{" "}
+                            </KeyValueRow>
+                            <KeyValueRow label="Item ID">
+                                {" "}
+                                {inventoryItem?.id}{" "}
+                            </KeyValueRow>
+                            <KeyValueRow label="Beschreibung">
+                                {" "}
+                                {inventoryItem?.description}{" "}
+                            </KeyValueRow>
                             <KeyValueRow label="Foto">
                                 {!!inventoryItem?.photoUrl && (
                                     <img
@@ -158,7 +186,12 @@ function Detail() {
                                     <input
                                         type="text"
                                         value={updatedData.location}
-                                        onChange={(e) => setUpdatedData({ ...updatedData, location: e.target.value })}
+                                        onChange={(e) =>
+                                            setUpdatedData({
+                                                ...updatedData,
+                                                location: e.target.value
+                                            })
+                                        }
                                         className="border border-gray-300 rounded px-2 py-1 w-full"
                                     />
                                 ) : (
@@ -169,14 +202,23 @@ function Detail() {
                                 {isEditing ? (
                                     <select
                                         value={updatedData.status}
-                                        onChange={(e) => setUpdatedData({ ...updatedData, status: e.target.value })}
+                                        onChange={(e) =>
+                                            setUpdatedData({
+                                                ...updatedData,
+                                                status: e.target.value
+                                            })
+                                        }
                                         className="border border-gray-300 rounded px-2 py-1 w-full"
                                     >
                                         <option value="OK">OK</option>
                                         <option value="LENT">LENT</option>
                                         <option value="BROKEN">BROKEN</option>
-                                        <option value="IN_MAINTENANCE">IN_MAINTENANCE</option>
-                                        <option value="MAINTENANCE_REQUIRED">MAINTENANCE_REQUIRED</option>
+                                        <option value="IN_MAINTENANCE">
+                                            IN_MAINTENANCE
+                                        </option>
+                                        <option value="MAINTENANCE_REQUIRED">
+                                            MAINTENANCE_REQUIRED
+                                        </option>
                                         <option value="LOST">LOST</option>
                                     </select>
                                 ) : (
@@ -209,7 +251,11 @@ function Detail() {
                     </CardContent>
                     <CardFooter>
                         <Button
-                            onClick={() => navigate(`/category/${inventoryItem?.categoryId}`)}
+                            onClick={() =>
+                                navigate(
+                                    `/category/${inventoryItem?.categoryId}`
+                                )
+                            }
                             className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed"
                         >
                             &larr; Zurück

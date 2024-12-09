@@ -5,10 +5,9 @@ import { test, describe, expect, vi } from "vitest"
 
 vi.mock("../hooks/use-mobile", () => {
     return {
-        useIsMobile: () => true,
-    };
+        useIsMobile: () => true
+    }
 })
-
 
 // Mock der QrReader-Komponente
 vi.mock("./QrReader", () => {

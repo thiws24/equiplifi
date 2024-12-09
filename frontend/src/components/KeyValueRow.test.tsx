@@ -23,15 +23,17 @@ describe("KeyValueRow Tests", () => {
     })
 
     test("renders with empty children", () => {
-        const label = "Empty Children";
-        const children = null;
-        const { container } = render(<KeyValueRow label={label}>{children}</KeyValueRow>);
+        const label = "Empty Children"
+        const children = null
+        const { container } = render(
+            <KeyValueRow label={label}>{children}</KeyValueRow>
+        )
 
-        expect(screen.getByText("Empty Children")).toBeInTheDocument();
+        expect(screen.getByText("Empty Children")).toBeInTheDocument()
 
         // Überprüfen, ob das `dd`-Element existiert, aber keinen Inhalt hat
-        const ddElement = container.querySelector("dd");
-        expect(ddElement).toBeInTheDocument();
-        expect(ddElement).toBeEmptyDOMElement();
-    });
+        const ddElement = container.querySelector("dd")
+        expect(ddElement).toBeInTheDocument()
+        expect(ddElement).toBeEmptyDOMElement()
+    })
 })

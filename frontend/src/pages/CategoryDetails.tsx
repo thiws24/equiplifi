@@ -1,84 +1,123 @@
-import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "../components/ui/card";
-import { InventoryItemProps } from "../interfaces/InventoryItemProps";
-import { Button } from "../components/ui/button";
-import { KeyValueRow } from "../components/KeyValueRow";
-import { CategoryDetailsProps } from "../interfaces/CategoryDetailsProps";
-import { ColDef } from "ag-grid-community";
-import CategoryDetailsTable from "../components/CategoryDetailsTable";
-import "react-toastify/dist/ReactToastify.css";
-import { toast, ToastContainer } from "react-toastify";
+import React, { useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+    CardFooter
+} from "../components/ui/card"
+import { InventoryItemProps } from "../interfaces/InventoryItemProps"
+import { Button } from "../components/ui/button"
+import { KeyValueRow } from "../components/KeyValueRow"
+import { CategoryDetailsProps } from "../interfaces/CategoryDetailsProps"
+import { ColDef } from "ag-grid-community"
+import CategoryDetailsTable from "../components/CategoryDetailsTable"
+import "react-toastify/dist/ReactToastify.css"
+import { toast, ToastContainer } from "react-toastify"
 
 export const categoryColDefs: ColDef<CategoryDetailsProps>[] = [
-    { headerName: "ID", field: "id", sortable: true, filter: "agNumberColumnFilter", flex: 1 },
-    { headerName: "Status", field: "status", sortable: true, filter: "agNumberColumnFilter", flex: 1 },
-    { headerName: "Lagerort", field: "location", sortable: true, filter: "agNumberColumnFilter", flex: 1 },
-];
+    {
+        headerName: "ID",
+        field: "id",
+        sortable: true,
+        filter: "agNumberColumnFilter",
+        flex: 1
+    },
+    {
+        headerName: "Status",
+        field: "status",
+        sortable: true,
+        filter: "agNumberColumnFilter",
+        flex: 1
+    },
+    {
+        headerName: "Lagerort",
+        field: "location",
+        sortable: true,
+        filter: "agNumberColumnFilter",
+        flex: 1
+    }
+]
 
 function CategoryDetails() {
-    const [inventoryItem, setInventoryItem] = useState<InventoryItemProps>();
-    const navigate = useNavigate();
-    const { id } = useParams();
-    const [categoryDetails, setCategoryDetails] = useState<CategoryDetailsProps[]>([]);
-    const [loading, setLoading] = React.useState(true);
-    const [isEditing, setIsEditing] = useState(false);
-    const [updatedData, setUpdatedData] = useState({ name: "", description: "", icon: "" });
+    const [inventoryItem, setInventoryItem] = useState<InventoryItemProps>()
+    const navigate = useNavigate()
+    const { id } = useParams()
+    const [categoryDetails, setCategoryDetails] = useState<
+        CategoryDetailsProps[]
+    >([])
+    const [loading, setLoading] = React.useState(true)
+    const [isEditing, setIsEditing] = useState(false)
+    const [updatedData, setUpdatedData] = useState({
+        name: "",
+        description: "",
+        icon: ""
+    })
 
     const fetchItems = React.useCallback(async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/categories/${id}`);
+            const response = await fetch(
+                `${process.env.VITE_II_SERVICE_HOST}/categories/${id}`
+            )
             if (response.ok) {
-                const data = await response.json();
-                setInventoryItem(data);
-                setUpdatedData({ name: data.name, description: data.description, icon: data.icon });
-                setCategoryDetails(data.items || []);
+                const data = await response.json()
+                setInventoryItem(data)
+                setUpdatedData({
+                    name: data.name,
+                    description: data.description,
+                    icon: data.icon
+                })
+                setCategoryDetails(data.items || [])
             }
         } catch (e) {
-            console.log(e);
+            console.log(e)
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
-    }, [id]);
+    }, [id])
 
     const handleSave = async () => {
-        if (!inventoryItem) return;
+        if (!inventoryItem) return
 
         const updatedCategory = {
             ...inventoryItem,
             name: updatedData.name || inventoryItem.name,
             description: updatedData.description || inventoryItem.description,
-            icon: updatedData.icon || inventoryItem.icon,
-        };
+            icon: updatedData.icon || inventoryItem.icon
+        }
 
         try {
-            const response = await fetch(`${process.env.REACT_APP_II_SERVICE_HOST}/categories/${id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(updatedCategory),
-            });
+            const response = await fetch(
+                `${process.env.VITE_II_SERVICE_HOST}/categories/${id}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(updatedCategory)
+                }
+            )
 
             if (response.ok) {
-                const updatedCategoryResponse = await response.json();
-                setInventoryItem(updatedCategoryResponse);
-                toast.success("Kategorie erfolgreich aktualisiert!");
-                setIsEditing(false);
+                const updatedCategoryResponse = await response.json()
+                setInventoryItem(updatedCategoryResponse)
+                toast.success("Kategorie erfolgreich aktualisiert!")
+                setIsEditing(false)
             } else if (response.status === 400) {
-                toast.error("Name der Kategorie existiert bereits.");
+                toast.error("Name der Kategorie existiert bereits.")
             } else {
-                toast.error("Fehler beim Aktualisieren der Kategorie.");
+                toast.error("Fehler beim Aktualisieren der Kategorie.")
             }
         } catch (error) {
-            console.error("Fehler beim Speichern:", error);
-            toast.error("Fehler beim Aktualisieren der Kategorie.");
+            console.error("Fehler beim Speichern:", error)
+            toast.error("Fehler beim Aktualisieren der Kategorie.")
         }
-    };
+    }
 
     React.useEffect(() => {
-        void fetchItems();
-    }, [fetchItems]);
+        void fetchItems()
+    }, [fetchItems])
 
     return (
         <div className="max-w-[1000px] mx-auto">
@@ -94,17 +133,22 @@ function CategoryDetails() {
             <div className="p-4">
                 <Card className="bg-white text-customBlack p-4 font-semibold">
                     <CardContent>
-
                         <div className="flex justify-between mb-4">
                             <Button
                                 className="bg-customBlue text-customBeige rounded hover:bg-customRed"
                                 onClick={() => setIsEditing(!isEditing)}
                             >
-                                {isEditing ? "Bearbeitung abbrechen" : "Kategorie bearbeiten"}
+                                {isEditing
+                                    ? "Bearbeitung abbrechen"
+                                    : "Kategorie bearbeiten"}
                             </Button>
                             <Button
                                 className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige"
-                                onClick={() => navigate(`/inventory-item/${id}/reservation`)}
+                                onClick={() =>
+                                    navigate(
+                                        `/inventory-item/${id}/reservation`
+                                    )
+                                }
                             >
                                 Ausleihen
                             </Button>
@@ -112,13 +156,21 @@ function CategoryDetails() {
 
                         {/* Editable Fields */}
                         <dl className="divide-y divide-customBeige">
-                            <KeyValueRow label="Kategorie ID"> {id} </KeyValueRow>
+                            <KeyValueRow label="Kategorie ID">
+                                {" "}
+                                {id}{" "}
+                            </KeyValueRow>
                             <KeyValueRow label="Name">
                                 {isEditing ? (
                                     <input
                                         type="text"
                                         value={updatedData.name}
-                                        onChange={(e) => setUpdatedData({ ...updatedData, name: e.target.value })}
+                                        onChange={(e) =>
+                                            setUpdatedData({
+                                                ...updatedData,
+                                                name: e.target.value
+                                            })
+                                        }
                                         className="border border-gray-300 rounded px-2 py-1 w-full"
                                     />
                                 ) : (
@@ -130,7 +182,10 @@ function CategoryDetails() {
                                     <textarea
                                         value={updatedData.description}
                                         onChange={(e) =>
-                                            setUpdatedData({ ...updatedData, description: e.target.value })
+                                            setUpdatedData({
+                                                ...updatedData,
+                                                description: e.target.value
+                                            })
                                         }
                                         className="border border-gray-300 rounded px-2 py-1 w-full"
                                     />
@@ -143,7 +198,12 @@ function CategoryDetails() {
                                     <input
                                         type="text"
                                         value={updatedData.icon}
-                                        onChange={(e) => setUpdatedData({ ...updatedData, icon: e.target.value })}
+                                        onChange={(e) =>
+                                            setUpdatedData({
+                                                ...updatedData,
+                                                icon: e.target.value
+                                            })
+                                        }
                                         className="border border-gray-300 rounded px-2 py-1 w-full text-center"
                                     />
                                 ) : (
@@ -174,7 +234,9 @@ function CategoryDetails() {
                         )}
 
                         <div className="mt-6">
-                            <h2 className="text-xl font-bold mb-4">Exemplare </h2>
+                            <h2 className="text-xl font-bold mb-4">
+                                Exemplare{" "}
+                            </h2>
                             <CategoryDetailsTable
                                 categoryDetails={categoryDetails}
                                 colDefs={categoryColDefs}
@@ -193,7 +255,7 @@ function CategoryDetails() {
                 </Card>
             </div>
         </div>
-    );
+    )
 }
 
-export default CategoryDetails;
+export default CategoryDetails

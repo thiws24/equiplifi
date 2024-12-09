@@ -15,41 +15,51 @@ const colDefs: ColDef<InventoryItemProps, any>[] = [
 ]
 
 describe("InventoryTable Tests", () => {
-  const rowData = [
-    {
-      id: 1,
-      name: "Magischer Schlüssel",
-      icon: "🗝️",
-      photoUrl: "",
-      urn: "QR-Code 001",
-      location: "Lager 1",
-      status: "OK",
-      categoryId: 1
-    },
-    {
-      id: 2,
-      name: "Heiltrank",
-      icon: "🧪",
-      photoUrl: "",
-      urn: "QR-Code 002",
-      location: "Lager 1",
-      status: "OK",
-      categoryId: 2
-    },
-    {
-      id: 3,
-      name: "Drachenfeuer",
-      icon: "🔥",
-      photoUrl: "",
-      urn: "QR-Code 003",
-      location: "Lager 1",
-      status: "OK",
-      categoryId: 3
-    },
-  ]
-  test('renders data correctly', () => {
-    const { container } = render(<BrowserRouter><InventoryTable colDefs={colDefs} inventoryItems={rowData} loading={false} /></BrowserRouter>);
-    const elements = container?.querySelector('.ag-body')?.querySelectorAll('[role="row"]')
+    const rowData = [
+        {
+            id: 1,
+            name: "Magischer Schlüssel",
+            icon: "🗝️",
+            photoUrl: "",
+            urn: "QR-Code 001",
+            location: "Lager 1",
+            status: "OK",
+            categoryId: 1
+        },
+        {
+            id: 2,
+            name: "Heiltrank",
+            icon: "🧪",
+            photoUrl: "",
+            urn: "QR-Code 002",
+            location: "Lager 1",
+            status: "OK",
+            categoryId: 2
+        },
+        {
+            id: 3,
+            name: "Drachenfeuer",
+            icon: "🔥",
+            photoUrl: "",
+            urn: "QR-Code 003",
+            location: "Lager 1",
+            status: "OK",
+            categoryId: 3
+        }
+    ]
+    test("renders data correctly", () => {
+        const { container } = render(
+            <BrowserRouter>
+                <InventoryTable
+                    colDefs={colDefs}
+                    inventoryItems={rowData}
+                    loading={false}
+                />
+            </BrowserRouter>
+        )
+        const elements = container
+            ?.querySelector(".ag-body")
+            ?.querySelectorAll('[role="row"]')
 
         expect(elements?.length).toBe(3)
 
