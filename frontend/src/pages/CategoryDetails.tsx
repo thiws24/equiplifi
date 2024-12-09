@@ -146,7 +146,7 @@ function CategoryDetails() {
                                 className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige"
                                 onClick={() =>
                                     navigate(
-                                        `/inventory-item/${id}/reservation`
+                                        `/category/${id}/reservation`
                                     )
                                 }
                             >
