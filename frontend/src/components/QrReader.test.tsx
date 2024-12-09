@@ -4,7 +4,7 @@ import { BrowserRouter } from "react-router-dom" // Für Router-Kontext
 import QrReader from "./QrReader"
 import "@testing-library/jest-dom"
 import QrScanner from "qr-scanner"
-import { test, describe, expect, vi } from 'vitest'
+import { test, describe, expect, vi } from "vitest"
 
 vi.mock("qr-scanner")
 

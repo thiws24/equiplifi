@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react"
 import { ItemCard } from "./ItemCard"
-import { test, describe, expect } from 'vitest'
+import { test, describe, expect } from "vitest"
 
 describe("ItemCard", () => {
     test("renders correct link", () => {

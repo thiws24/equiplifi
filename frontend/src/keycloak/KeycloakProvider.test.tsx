@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react"
 import React from "react"
 import { KeycloakProvider, useKeycloak } from "./KeycloakProvider"
-import { test, describe, expect } from 'vitest'
+import { test, describe, expect } from "vitest"
 
 const TestComponent = () => {
     const { keycloak, authenticated } = useKeycloak()

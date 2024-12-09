@@ -2,7 +2,7 @@ import React from "react"
 import { render, screen, fireEvent, waitFor } from "@testing-library/react"
 import { MemoryRouter, Route, Routes } from "react-router-dom"
 import Detail from "./Detail"
-import { test, describe, expect, vi, beforeEach, afterEach } from 'vitest'
+import { test, describe, expect, vi, beforeEach, afterEach } from "vitest"
 
 vi.mock("../components/ui/button", () => ({
     Button: ({ onClick, children, ...props }: any) => (
