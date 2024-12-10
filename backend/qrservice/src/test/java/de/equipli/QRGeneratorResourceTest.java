@@ -15,13 +15,13 @@ class QRGeneratorResourceTest {
         given()
                 .queryParam("name", "TestName")
                 .queryParam("id", "12345")
-                .header("Output-Format", "PNG")
+                .header("Accept", "image/png")
                 .when().get("/qr")
                 .then()
                 .statusCode(200)
                 .header("Content-Disposition", equalTo("attachment; filename=\"qrcode.png\""))
                 .header("Cache-Control", equalTo("public, max-age=300"))
-                .contentType("application/octet-stream");
+                .contentType("image/png");
     }
 
     @Test
@@ -29,13 +29,13 @@ class QRGeneratorResourceTest {
         given()
                 .queryParam("name", "TestName")
                 .queryParam("id", "12345")
-                .header("Output-Format", "PDF")
+                .header("Accept", "application/pdf")
                 .when().get("/qr")
                 .then()
                 .statusCode(200)
                 .header("Content-Disposition", equalTo("attachment; filename=\"qrcode.pdf\""))
                 .header("Cache-Control", equalTo("public, max-age=300"))
-                .contentType("application/octet-stream");
+                .contentType("application/pdf");
     }
 
     @Test
@@ -45,6 +45,6 @@ class QRGeneratorResourceTest {
                 .when().get("/qr")
                 .then()
                 .statusCode(400)
-                .body(is("Es fehlen benötigte Parameter: Name, ID, oder Output-Format"));
+                .body(is("Es fehlen benötigte Parameter: Name, ID, oder Accept-Header"));
     }
 }
