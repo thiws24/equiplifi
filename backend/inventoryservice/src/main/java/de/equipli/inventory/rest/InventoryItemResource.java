@@ -7,6 +7,7 @@ import de.equipli.inventory.jpa.InventoryRepository;
 import io.minio.GetObjectArgs;
 import io.minio.GetObjectResponse;
 import io.minio.MinioClient;
+import io.minio.errors.ErrorResponseException;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
@@ -70,21 +71,28 @@ public class InventoryItemResource {
                 .build();
     }
 
-
     @GET
     @Produces("image/png")
     @Path("/{id}")
-    public Response getInventoryItemImage(@PathParam("categoryId") Long categoryId, @PathParam("id") Long itemId)
-    {
-        GetObjectArgs args = GetObjectArgs.builder().object(itemId.toString()).build();
-        try
-        {
+    public Response getInventoryItemImage(@PathParam("categoryId") Long categoryId, @PathParam("id") Long itemId) {
+        try {
+            GetObjectArgs args = GetObjectArgs.builder()
+                    .bucket("category-pictures")
+                    .object(itemId.toString())
+                    .build();
             GetObjectResponse object = minioClient.getObject(args);
-            return Response.ok(object.readAllBytes()).build();
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException(e);
+
+            return Response.ok(object.readAllBytes())
+                    .type("image/png")
+                    .build();
+        } catch (io.minio.errors.MinioException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Error retrieving image: " + e.getMessage())
+                    .build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getMessage())
+                    .build();
         }
     }
 
