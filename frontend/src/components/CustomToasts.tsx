@@ -1,7 +1,7 @@
-import React from "react";
-import { toast } from "react-toastify";
-import { FaExclamationCircle, FaCheckCircle } from "react-icons/fa";
-import "react-toastify/dist/ReactToastify.css";
+import React from "react"
+import { toast } from "react-toastify"
+import { FaExclamationCircle, FaCheckCircle } from "react-icons/fa"
+import "react-toastify/dist/ReactToastify.css"
 
 type ToastProps = {
     message: string
@@ -17,30 +17,34 @@ export const CustomToasts = {
             </div>,
             {
                 className: "custom-toast",
+                pauseOnFocusLoss: false,
+                position: "top-center",
                 progressStyle: {
-                    backgroundColor: "#F27428",
+                    backgroundColor: "#F27428"
                 },
                 icon: false,
-                onClose: onClose || undefined,
+                onClose: onClose || undefined
             }
-        );
+        )
     },
     error: ({ message, onClose }: ToastProps) => {
         toast.error(
             <div style={{ display: "flex", alignItems: "center" }}>
-                <FaExclamationCircle color="red" size={60} style={{ marginRight: "10px" }} />
+                <FaExclamationCircle color="red" size={48} style={{ marginRight: "10px" }} />
                 <span>{message}</span>
             </div>,
             {
                 className: "custom-toast",
+                pauseOnFocusLoss: false,
+                position: "top-center",
                 progressStyle: {
-                    backgroundColor: "red", // Fehler-Fortschrittsleisten-Farbe
+                    backgroundColor: "red" // Fehler-Fortschrittsleisten-Farbe
                 },
                 icon: false, // Standard-Icon deaktivieren
-                onClose: onClose || undefined, // Optionales Routing oder Aktion
+                onClose: onClose || undefined // Optionales Routing oder Aktion
             }
         )
-    },
+    }
 }
 
 export default CustomToasts
