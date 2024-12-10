@@ -6,7 +6,7 @@ describe("ItemCard", () => {
         render(<ItemCard id={2} photoUrl={""} name={""} icon={""} urn={""} />)
         expect(screen.getByRole("link")).toHaveAttribute(
             "href",
-            "/inventory-item/2"
+            "/item/2"
         )
     })
 })

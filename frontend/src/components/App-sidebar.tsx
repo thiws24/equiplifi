@@ -1,4 +1,4 @@
-import { ChevronUp, Home, Inbox, User2 } from "lucide-react"
+import { Home, Inbox, LogOutIcon, ScrollText } from "lucide-react"
 import {
     SidebarContent,
     SidebarFooter,
@@ -8,37 +8,41 @@ import {
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
-    SidebarMenuItem,
-    SidebarProvider,
-    useSidebar
+    SidebarMenuItem
 } from "./ui/sidebar"
 import { Sidebar } from "./ui/sidebar"
-import {
-    DropdownMenu,
-    DropdownMenuTrigger,
-    DropdownMenuContent,
-    DropdownMenuItem
-} from "./ui/dropdown-menu"
 import React from "react"
+import { useKeycloak } from "../keycloak/KeycloakProvider"
 
-// Menu items.
 const itemsLagerwart = [
     {
+        title: "Reservierungen",
+        url: "/reservations",
+        icon: ScrollText
+    },
+    {
         title: "Neues Inventar erfassen",
-        url: "#",
+        url: "/category/create",
         icon: Inbox
     }
 ]
 const itemsAllgemein = [
     {
         title: "Startseite",
-        url: "http://localhost:3000",
+        url: "/",
         icon: Home
     }
 ]
 
 export function AppSidebar() {
-    const { state } = useSidebar()
+    const { keycloak } = useKeycloak()
+    async function handleLogout() {
+        try {
+            await keycloak?.logout()
+        } catch (e) {
+            console.log(e)
+        }
+    }
     return (
         <Sidebar collapsible="icon">
             <SidebarHeader>
@@ -104,29 +108,14 @@ export function AppSidebar() {
             {/* Footer der Sidebar */}
             <SidebarFooter>
                 <SidebarMenu>
-                    <SidebarMenuItem>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <button className="flex items-center gap-2 text-customBlack">
-                                    {state === "collapsed" ? (
-                                        <User2 className="h-6 w-6" />
-                                    ) : (
-                                        <>
-                                            <User2 /> USERNAME
-                                            <ChevronUp className="ml-auto" />
-                                        </>
-                                    )}
-                                </button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                                side="top"
-                                className="bg-white shadow-lg rounded-md text-customBlack"
-                            >
-                                <DropdownMenuItem>
-                                    <span>Abmelden</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                    <SidebarMenuItem key={"abmelden"}>
+                        <SidebarMenuButton
+                            className="bg-customBeige text-customOrange hover:bg-customRed hover:text-customBeige flex items-center gap-2"
+                            onClick={handleLogout}
+                        >
+                            <LogOutIcon />
+                            <span>Abmelden</span>
+                        </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarFooter>

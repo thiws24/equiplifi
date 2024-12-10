@@ -5,6 +5,7 @@ import LendCategory from "./pages/LendCategory"
 import CategoryDetails from "./pages/CategoryDetails"
 import React from "react"
 import Home from "./pages/Home"
+import Reservations from "./pages/Reservations"
 
 const App = () => {
     return (
@@ -20,6 +21,7 @@ const App = () => {
                     path="/category/:id/reservation"
                     element={<LendCategory />}
                 />
+                <Route path="/reservations" element={<Reservations />} />
             </Routes>
         </div>
     )

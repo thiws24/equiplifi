@@ -40,17 +40,17 @@ function Detail() {
                 })
 
                 // Fetch QR Code
-                if (data) await fetchQrCode()
+                if (data) await fetchQrCode(data.name)
             }
         } catch (e) {
             console.log(e)
         }
     }
 
-    const fetchQrCode = async () => {
+    const fetchQrCode = async (name: string) => {
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_QR_HOST}/qr?name=${inventoryItem?.name}&id=${id}`,
+                `${import.meta.env.VITE_QR_HOST}/qr?name=${name}&id=${id}`,
                 {
                     method: "GET",
                     headers: {

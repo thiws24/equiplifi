@@ -41,13 +41,6 @@ function Home() {
                     alt={params.data.description}
                 />
             )
-        },
-        {
-            field: "urn",
-            headerName: "URN",
-            flex: 1,
-            minWidth: 150,
-            filter: "agSetColumnFilter"
         }
     ]
     const [loading, setLoading] = React.useState(true)
