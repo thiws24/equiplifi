@@ -251,7 +251,7 @@ function LendCategory() {
 
             if (response.ok) {
                 CustomToasts.success({
-                    message: "Items in diesem Zeitraum nicht verfügbar.",
+                    message: "Reservierung erfolgreich! Sie werden nun weitergeleitet.",
                     onClose: () => navigate(`/`)
                 })
             } else {
