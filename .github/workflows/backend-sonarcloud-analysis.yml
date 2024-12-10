@@ -21,7 +21,7 @@ jobs:
   build:
     strategy:
       matrix:
-        service: [ inventoryservice, qrservice, reservationservice ]
+        service: [ inventoryservice, qrservice, reservationservice, mailservice ]
 
     name: Build
     runs-on: ubuntu-latest

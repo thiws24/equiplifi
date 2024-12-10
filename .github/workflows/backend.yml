@@ -13,7 +13,7 @@ jobs:
   build:
     strategy:
       matrix:
-        service: [ inventoryservice, qrservice, reservationservice ]
+        service: [ inventoryservice, qrservice, reservationservice, mailservice ]
         include:
           - service: inventoryservice
             webhook_var: PORTAINER_INVENTORYSERVICE_WEBHOOK_URL
@@ -21,8 +21,8 @@ jobs:
             webhook_var: PORTAINER_QRSERVICE_WEBHOOK_URL
           - service: reservationservice
             webhook_var: PORTAINER_RESERVATIONSERVICE_WEBHOOK_URL
-          #- service: mailservice
-          #  webhook_var: PORTAINER_MAILSERVICE_WEBHOOK_URL
+          - service: mailservice
+            webhook_var: PORTAINER_MAILSERVICE_WEBHOOK_URL
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -52,14 +52,6 @@ jobs:
         uses: tj-actions/changed-files@v45
         with:
           files: backend/${{ matrix.service }}/**
-
-      #for Debugging of changed files
-      #- name: List all changed files
-      #  run: |
-      #    echo ${{ steps.changes.outputs.any_changed }}
-      #    for file in ${{ steps.changes.outputs.all_changed_and_modified_files }}; do
-      #      echo "$file was changed"
-      #    done
 
       - name: Set execute permission for mvnw
         if: steps.changes.outputs.any_modified == 'true'
