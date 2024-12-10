@@ -16,15 +16,15 @@
       </bpmn:outputSet>
     </bpmn:ioSpecification>
     <bpmn:sequenceFlow id="Flow_17db3yp" sourceRef="StartEvent_1" targetRef="Activity_0rp26o1" />
-    <bpmn:sequenceFlow id="Flow_0gmlxmd" sourceRef="Activity_0rp26o1" targetRef="Activity_174dnnk" />
+    <bpmn:sequenceFlow id="Flow_0gmlxmd" sourceRef="Activity_0rp26o1" targetRef="Gateway_1vc0dml" />
     <bpmn:dataObjectReference id="DataObjectReference_0u8ozvv" />
     <bpmn:sequenceFlow id="Flow_058bqqc" name="No" sourceRef="Gateway_1vc0dml" targetRef="Event_0vdxgjm">
-      <bpmn:conditionExpression>(http_status_reservation != 201) or (http_status_InventoryItem  != 200)</bpmn:conditionExpression>
+      <bpmn:conditionExpression>http_status_reservation != 201</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_17db3yp</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:serviceTask id="Activity_0rp26o1" name="create Reservation">
+    <bpmn:serviceTask id="Activity_0rp26o1" name="Check and create Reservation">
       <bpmn:extensionElements>
         <spiffworkflow:postScript>import json
 http_status_reservation = reservationresponse.get("http_status")
@@ -33,7 +33,7 @@ reservationstatus = ""
 reservation = reservationresponse.get("body")
 
 #Temporary fix until Reservation service returns not null for itemID
-reservation["itemId"] = reservationrequest["itemId"]</spiffworkflow:postScript>
+#reservation["itemId"] = reservationrequest["itemId"]</spiffworkflow:postScript>
         <spiffworkflow:instructionsForEndUser />
         <spiffworkflow:serviceTaskOperator id="http/PostRequestV2" resultVariable="reservationresponse">
           <spiffworkflow:parameters>
@@ -46,8 +46,8 @@ reservation["itemId"] = reservationrequest["itemId"]</spiffworkflow:postScript>
         </spiffworkflow:serviceTaskOperator>
         <spiffworkflow:preScript>#TemporaryFix due to bugs in Reservation Serivce
 
-reservationrequest["reservationStatus"] = None
-reservationrequest.pop("userId")</spiffworkflow:preScript>
+#reservationrequest["reservationStatus"] = None
+#reservationrequest.pop("userId")</spiffworkflow:preScript>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_17db3yp</bpmn:incoming>
       <bpmn:outgoing>Flow_0gmlxmd</bpmn:outgoing>
@@ -56,54 +56,24 @@ reservationrequest.pop("userId")</spiffworkflow:preScript>
       </bpmn:ioSpecification>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_19mx8y0" name="Yes" sourceRef="Gateway_1vc0dml" targetRef="EndEvent_1">
-      <bpmn:conditionExpression>(http_status_reservation == 201) and (http_status_InventoryItem == 200)</bpmn:conditionExpression>
+      <bpmn:conditionExpression>http_status_reservation == 201</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:exclusiveGateway id="Gateway_1vc0dml" name="Reservation Process successful?">
-      <bpmn:incoming>Flow_0ghd77l</bpmn:incoming>
+      <bpmn:incoming>Flow_0gmlxmd</bpmn:incoming>
       <bpmn:outgoing>Flow_19mx8y0</bpmn:outgoing>
       <bpmn:outgoing>Flow_058bqqc</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:endEvent id="Event_0vdxgjm" name="Reservation unsuccessful">
-      <bpmn:incoming>Flow_058bqqc</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_0ghd77l" sourceRef="Activity_174dnnk" targetRef="Gateway_1vc0dml" />
-    <bpmn:serviceTask id="Activity_174dnnk" name="get Details of InventoryItem">
-      <bpmn:extensionElements>
-        <spiffworkflow:serviceTaskOperator id="http/GetRequestV2" resultVariable="getInventoryItemResponse">
-          <spiffworkflow:parameters>
-            <spiffworkflow:parameter id="url" type="str" value="&#34;https://inventory.equipli.de/inventoryitems/&#34;+str(reservation[&#34;itemId&#34;])" />
-            <spiffworkflow:parameter id="headers" type="any" value="{&#34;Accept&#34;:&#34;application/json&#34;}" />
-            <spiffworkflow:parameter id="params" type="any" />
-            <spiffworkflow:parameter id="basic_auth_username" type="str" />
-            <spiffworkflow:parameter id="basic_auth_password" type="str" />
-            <spiffworkflow:parameter id="attempts" type="int" />
-          </spiffworkflow:parameters>
-        </spiffworkflow:serviceTaskOperator>
-        <spiffworkflow:postScript>import json
-
-inventoryItem = getInventoryItemResponse.get("body")
-http_status_InventoryItem = getInventoryItemResponse.get("http_status")
-
-sendConfirmation = {
-  "receiverMail": "nar6397@thi.de",
-  "name": "N",
-  "item": inventoryItem["name"],
-  "collectionDate": reservation["startDate"],
-  "returnDate": reservation["endDate"],
-  "pickupLocation": "Hinter Vereinsheim in einer dunklen Ecke"
-}</spiffworkflow:postScript>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0gmlxmd</bpmn:incoming>
-      <bpmn:outgoing>Flow_0ghd77l</bpmn:outgoing>
-    </bpmn:serviceTask>
     <bpmn:endEvent id="EndEvent_1" name="Reservation successful">
       <bpmn:incoming>Flow_19mx8y0</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_0vdxgjm" name="Reservation unsuccessful">
+      <bpmn:incoming>Flow_058bqqc</bpmn:incoming>
     </bpmn:endEvent>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_18hgrt9">
       <bpmndi:BPMNShape id="Participant_02v7qtl_di" bpmnElement="Participant_02v7qtl" isHorizontal="true">
-        <dc:Bounds x="10" y="130" width="780" height="408" />
+        <dc:Bounds x="10" y="130" width="670" height="408" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
@@ -111,27 +81,24 @@ sendConfirmation = {
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0d3tu4w_di" bpmnElement="Activity_0rp26o1">
         <dc:Bounds x="240" y="310" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1vc0dml_di" bpmnElement="Gateway_1vc0dml" isMarkerVisible="true">
-        <dc:Bounds x="555" y="325" width="50" height="50" />
+        <dc:Bounds x="445" y="325" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="550" y="282" width="59" height="40" />
+          <dc:Bounds x="440" y="282" width="59" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_14za570_di" bpmnElement="EndEvent_1">
+        <dc:Bounds x="552" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="541" y="375" width="59" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0vdxgjm_di" bpmnElement="Event_0vdxgjm">
-        <dc:Bounds x="562" y="422" width="36" height="36" />
+        <dc:Bounds x="552" y="432" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="549" y="465" width="64" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1b3s8rk_di" bpmnElement="Activity_174dnnk">
-        <dc:Bounds x="400" y="310" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_14za570_di" bpmnElement="EndEvent_1">
-        <dc:Bounds x="662" y="332" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="651" y="375" width="59" height="27" />
+          <dc:Bounds x="540" y="475" width="64" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="DataInput-388263309-1DI" bpmnElement="reservationrequest">
@@ -141,9 +108,9 @@ sendConfirmation = {
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="DataOutput-731653660-1DI" bpmnElement="reservation">
-        <dc:Bounds x="712" y="155" width="36" height="50" />
+        <dc:Bounds x="602" y="155" width="36" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="703" y="212" width="59" height="14" />
+          <dc:Bounds x="593" y="212" width="59" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_17db3yp_di" bpmnElement="Flow_17db3yp">
@@ -152,25 +119,22 @@ sendConfirmation = {
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0gmlxmd_di" bpmnElement="Flow_0gmlxmd">
         <di:waypoint x="340" y="350" />
-        <di:waypoint x="400" y="350" />
+        <di:waypoint x="445" y="350" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_058bqqc_di" bpmnElement="Flow_058bqqc">
-        <di:waypoint x="580" y="375" />
-        <di:waypoint x="580" y="422" />
+        <di:waypoint x="470" y="375" />
+        <di:waypoint x="470" y="450" />
+        <di:waypoint x="552" y="450" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="588" y="396" width="15" height="14" />
+          <dc:Bounds x="511" y="427" width="15" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_19mx8y0_di" bpmnElement="Flow_19mx8y0">
-        <di:waypoint x="605" y="350" />
-        <di:waypoint x="662" y="350" />
+        <di:waypoint x="495" y="350" />
+        <di:waypoint x="552" y="350" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="625" y="332" width="18" height="14" />
+          <dc:Bounds x="515" y="332" width="18" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0ghd77l_di" bpmnElement="Flow_0ghd77l">
-        <di:waypoint x="500" y="350" />
-        <di:waypoint x="555" y="350" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
