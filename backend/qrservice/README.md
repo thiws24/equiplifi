@@ -25,9 +25,9 @@ Generiert dann einen QR-Code aus dieser URN, erstellt ein Label mit QR-Code und 
 
 Bestimmung des Outputformats (PNG oder PDF)
 
-| Key             | Value            |
-|-----------------|------------------|
-| `Output-Format` | `PNG` oder `PDF` |
+| Key             | Value                              |
+|-----------------|------------------------------------|
+| `Accept` | `application/pdf` oder `image/png` |
 
 Beispiel für die Erzeugung eines Volleyball-Labels mit der ID 17:
 ```http
@@ -37,5 +37,5 @@ https://qr.equipli.de/qr?name=Volleyball&id=17
 
 #### Response
 
-    Status 200 (OK): Label mit dem generierten QR-Code wird als binärer Datenstrom (application/octet-stream) und dem gewüschten Output-Format zurückgegeben.
+    Status 200 (OK): Label mit dem generierten QR-Code wird im gewüschten Output-Format zurückgegeben.
     Status 500 (Internal Server Error): Fehler bei der Generierung des QR-Codes oder PDF-Dokuments.

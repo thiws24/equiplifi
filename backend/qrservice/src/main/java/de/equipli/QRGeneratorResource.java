@@ -34,28 +34,27 @@ public class QRGeneratorResource {
     String fontPath;
 
     @GET
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Produces({MediaType.APPLICATION_OCTET_STREAM, "application/pdf", "image/png"})
     public Response generateQR(
             @QueryParam("name") String name,
             @QueryParam("id") String id,
-            @HeaderParam("Output-Format") String outputFormat)
+            @HeaderParam("Accept") String acceptHeader)
     {
 
-        if (name == null || id == null || outputFormat == null) {
+        if (name == null || id == null || acceptHeader == null) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Es fehlen benötigte Parameter: Name, ID, oder Output-Format")
+                    .entity("Es fehlen benötigte Parameter: Name, ID, oder Accept-Header")
                     .build();
         }
 
         //Create URN
         try {
             String urn = "urn:de.equipli:item:" + id;
-
             // Create QR-Code and combine with text
             BufferedImage finalImage = generateQrCodeImage(urn, name);
 
             //PNG-Format
-            if ("PNG".equalsIgnoreCase(outputFormat)) {
+            if (acceptHeader.contains(MediaType.APPLICATION_OCTET_STREAM) || acceptHeader.contains("image/png")) {
                 byte[] pngData = writePng(finalImage);
                 return Response.ok(pngData)
                         .header("Content-Disposition", "attachment; filename=\"qrcode.png\"")
@@ -63,7 +62,7 @@ public class QRGeneratorResource {
                         .build();
             }
             // PDF-Format
-            else if ("PDF".equalsIgnoreCase(outputFormat)) {
+            else if (acceptHeader.contains("application/pdf")) {
                 byte[] pdfData = writePdf(finalImage);
                 return Response.ok(pdfData)
                         .header("Content-Disposition", "attachment; filename=\"qrcode.pdf\"")
@@ -71,11 +70,11 @@ public class QRGeneratorResource {
                         .build();
             } else {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("Unpassendes Output-Format. Verwende PNG oder PDF.")
+                        .entity("Unpassendes Accept-Header. Verwende application/octet-stream, image/png oder application/pdf.")
                         .build();
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error during QR code generation", e);
+            LOGGER.log(Level.SEVERE, "Fehler bei der QR-Code-Generierung", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Während der QR-Code-Generierung ist ein Fehler aufgetreten.")
                     .build();
@@ -155,7 +154,7 @@ public class QRGeneratorResource {
             return Font.createFont(Font.TRUETYPE_FONT, new File(fontPath + "/PublicSans-SemiBold.ttf"))
                     .deriveFont(Font.PLAIN, fontSize); // Font size depending on image size
         } catch (FontFormatException | IOException e) {
-            LOGGER.log(Level.SEVERE, "Error during Font loading", e);
+            LOGGER.log(Level.SEVERE, "Fehler beim Laden der Schrift", e);
             return new Font("Arial", Font.PLAIN, fontSize);
         }
     }
