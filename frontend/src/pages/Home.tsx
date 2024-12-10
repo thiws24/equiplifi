@@ -2,6 +2,8 @@ import React from "react"
 import { ColDef } from "ag-grid-community"
 import { InventoryItemProps } from "../interfaces/InventoryItemProps"
 import { TableGalleryView } from "../components/TableGalleryView"
+import CustomToasts from "../components/CustomToasts"
+import { ToastContainer } from "react-toastify"
 
 function Home() {
     const [inventoryItems, setInventoryItems] = React.useState<
@@ -55,6 +57,9 @@ function Home() {
                 setInventoryItems(data)
             }
         } catch (e) {
+            CustomToasts.error({
+                message: "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut."
+            })
             console.log(e)
         }
         setLoading(false)
@@ -65,6 +70,7 @@ function Home() {
     }, [])
     return (
         <div className="m-10">
+            <ToastContainer />
             <main className="main">
                 <div className="font-semibold text-3xl text-customBlue flex justify-center w-full text-center">
                     Inventarverwaltung

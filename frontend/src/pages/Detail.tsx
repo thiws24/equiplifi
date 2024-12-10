@@ -11,8 +11,8 @@ import { InventoryItemProps } from "../interfaces/InventoryItemProps"
 import { Button } from "../components/ui/button"
 import { KeyValueRow } from "../components/KeyValueRow"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
-import { toast, ToastContainer } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
+import { ToastContainer } from "react-toastify"
+import CustomToasts from "../components/CustomToasts"
 
 function Detail() {
     const [inventoryItem, setInventoryItem] = useState<InventoryItemProps>()
@@ -99,21 +99,25 @@ function Detail() {
 
             if (response.ok) {
                 const updatedItem = await response.json()
-                setInventoryItem(updatedItem) // Update local state with new data
-                toast.success("Item erfolgreich aktualisiert!")
-
-                // Refresh the page to fetch updated data
-                setTimeout(() => {
-                    window.location.reload()
-                }, 500) // Small delay for toast to be shown
+                setInventoryItem(updatedItem)
+                CustomToasts.success({
+                    message: "Item erfolgreich aktualisiert!",
+                    onClose: () => window.location.reload()
+                })
             } else if (response.status === 404) {
-                toast.error("Item nicht gefunden.")
+                CustomToasts.error({
+                    message: "Item nicht gefunden.",
+                })
             } else {
-                toast.error("Fehler beim Aktualisieren des Items.")
+                CustomToasts.error({
+                    message: "Fehler beim Aktualisieren des Items.",
+                })
             }
         } catch (error) {
             console.error("Fehler beim Speichern:", error)
-            toast.error("Fehler beim Aktualisieren des Items.")
+            CustomToasts.error({
+                message: "Fehler beim Aktualisieren des Items. Versuchen Sie es später erneut.",
+            })
         }
     }
 

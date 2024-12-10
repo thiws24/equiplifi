@@ -12,6 +12,7 @@ import { toast, ToastContainer } from "react-toastify"
 import { ConfirmReservationCard } from "../components/ConfirmReservationCard"
 import { TaskProps } from "../interfaces/TaskProps"
 import { fetchOpenTasksByTaskName } from "../services/fetchTasks"
+import CustomToasts from "../components/CustomToasts"
 
 function Reservations() {
     const { userInfo, token } = useKeycloak()
@@ -48,14 +49,18 @@ function Reservations() {
             )
 
             if (response.ok) {
-                toast.success("Reservierung erfolgreich bestätigt")
+                CustomToasts.success({
+                    message: "Reservierung erfolgreich bestätigt."
+                })
             } else {
-                toast.error(`Es ist ein Fehler aufgetreten.`)
+                CustomToasts.error({
+                    message: "Es ist ein Fehler aufgetreten."
+                })
             }
         } catch (error) {
-            toast.error(
-                "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
-            )
+            CustomToasts.error({
+                message: "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+            })
         }
     }
 

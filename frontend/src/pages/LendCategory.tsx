@@ -11,35 +11,31 @@ import { format } from "date-fns"
 import React, { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useForm } from "react-hook-form"
-import { date, z } from "zod"
+import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
-import { KeyCloakUserInfo } from "../interfaces/KeyCloakUserInfo"
 import { Input } from "../components/ui/input"
-import { useToast } from "../hooks/use-toast"
-import { Toaster } from "../components/ui/toaster"
+import { ToastContainer } from "react-toastify"
 import { CategoryProps } from "../interfaces/CategoryProps"
 import DatePickerField from "../components/DatePickerField"
-import { ToastWithCountdown } from "../components/ToastWithCountdown"
 import { AvailabilityItemProps } from "../interfaces/AvailabilityItemProps"
+import CustomToasts from "../components/CustomToasts"
 
 function LendCategory() {
     const [itemReservations, setItemReservations] = useState<AvailabilityItemProps[]>([])
     const [startDate, setStartDate] = useState<Date | null>(null)
-    // TODO: Remove and use toast instead
-    const [errorMessage, setErrorMessage] = useState<string | null>(null)
-
     const [categoryItem, setCategoryItem] = useState<CategoryProps>()
-    // State for start date popover
+
+    // TODO: Gibt es einen Open Parameter von Calendar/Popover. Wenn ja, dann darüber lösen
+    // Popover State für Startdatumskalender
     const [isStartPopoverOpen, setStartPopoverOpen] = useState(false)
-    // State for end date popover
+    // Popover State für Enddatumskalender
     const [isEndPopoverOpen, setEndPopoverOpen] = useState(false)
 
     const [itemIds, setItemIds] = useState<[number] | []>([])
     const [unavailableDates, setUnavailableDates] = useState<Date[]>([])
 
     const navigate = useNavigate()
-    const { toast } = useToast()
     const { id } = useParams()
     const { userInfo, token } = useKeycloak()
 
@@ -52,21 +48,15 @@ function LendCategory() {
                 const data = await response.json()
                 setCategoryItem(data)
             } else {
-                ToastWithCountdown(
-                    "Fehlermeldung",
-                    "Dieser Gegenstand existiert nicht. Bei Fragen melden Sie sich bei ihrem Administrator",
-                    // TODO: Hier später zu reservations-page navigieren
-                    () => navigate(`/`),
-                    "destructive",
-                    10000,
-                    "#ffffff"
-                )
+                CustomToasts.error({
+                    message: "Dieser Gegenstand existiert nicht. Bei Fragen melden Sie sich bei ihrem Administrator.",
+                    onClose: () => navigate(`/`)
+                })
             }
         } catch (e) {
-            setErrorMessage(
-                "Es ist etwas schiefgelaufen. Versuchen Sie es später erneut."
-            )
-            console.log(e)
+            CustomToasts.error({
+                message: "Es ist etwas schiefgelaufen. Versuchen Sie es später erneut.",
+            })
         }
     }, [id])
 
@@ -88,7 +78,6 @@ function LendCategory() {
             quantity: 1
         }
     })
-
 
     const fetchAvailability = async () => {
         try {
@@ -148,7 +137,6 @@ function LendCategory() {
                                 if (
                                     day.toDateString() === dayAll.toDateString()
                                 ) {
-                                    alert("Test")
                                     count += 1
                                 }
                             })
@@ -166,7 +154,9 @@ function LendCategory() {
             }
         } catch (e) {
             console.log(e)
-            setErrorMessage("Die Verfügbarkeiten konnten nicht geladen werden")
+            CustomToasts.error({
+                message: "Die Verfügbarkeiten konnten nicht geladen werden",
+            })
         }
     }
 
@@ -182,17 +172,8 @@ function LendCategory() {
             newStartDate.setDate(newStartDate.getDate() + 1)
             setStartDate(newStartDate)
         }
-        if (errorMessage) {
-            toast({
-                variant: "destructive",
-                title: "Fehlermeldung",
-                description: errorMessage,
-                duration: Infinity
-            })
-        }
-        setErrorMessage("")
         void fetchCategory()
-    }, [fetchCategory, errorMessage, form.getValues("startDate")])
+    }, [fetchCategory, form.getValues("startDate")])
 
     const onSubmit = async (values: FormschemaType) => {
         const formattedStartDate = format(
@@ -239,15 +220,11 @@ function LendCategory() {
         }
 
         if (jsonArray.length !== values.quantity) {
-            toast({
-                variant: "destructive",
-                title: "Fehlermeldung",
-                description: 'Items in dem Zeitraum nicht verfügbar',
-                duration: Infinity
+            CustomToasts.error({
+                message: "Items in diesem Zeitraum nicht verfügbar."
             })
             return
         }
-
 
         /*itemIds.forEach((id: number) => {
             jsonArray.push({
@@ -273,42 +250,29 @@ function LendCategory() {
             )
 
             if (response.ok) {
-                ToastWithCountdown(
-                    "Reservierung erfolgreich",
-                    `Sie werden auf ihre Reservierungsseite weitergeleitet`,
-                    // TODO: Hier später zu reservations-page navigieren
-                    () => navigate(`/`),
-                    "default",
-                    5000,
-                    // TODO: Ändern zu accent von CustomTheme
-                    "#F27428"
-                )
+                CustomToasts.success({
+                    message: "Items in diesem Zeitraum nicht verfügbar.",
+                    onClose: () => navigate(`/`)
+                })
             } else {
                 const data = await response.json()
+                let errorMessage: string = ""
                 switch (data.status) {
                     // TODO: Fehlermeldung für zu viele Gegenstände ausgewählt (Toast mit bitte weniger auswählen) und dann noch wenn submitted wird
                     case 400:
-                        setErrorMessage(
-                            `${categoryItem?.name} ist zu diesem Zeitraum nicht verfügbar.`
-                        )
+                        errorMessage = `${categoryItem?.name} ist zu diesem Zeitraum nicht verfügbar.`
                         break
                     case 401:
-                        setErrorMessage(
-                            "Du hast nicht die benötigten Rechte um diesen Gegenstand auszuleihen."
-                        )
+                        errorMessage = "Sie haben nicht die benötigten Rechte um diesen Gegenstand auszuleihen."
                         break
                     case 403:
-                        setErrorMessage("Zugriff verweigert.")
+                        errorMessage = "Zugriff verweigert."
                         break
                     case 404:
-                        setErrorMessage(
-                            "Ressource nicht gefunden. Kontaktieren Sie den Administrator"
-                        )
+                        errorMessage = "Ressource nicht gefunden. Kontaktieren Sie den Administrator."
                         break
                     case 500:
-                        setErrorMessage(
-                            "Serverfehler: Ein Problem auf dem Server ist aufgetreten. Bitte versuchen Sie es später erneut."
-                        )
+                        errorMessage = "Serverfehler: Ein Problem auf dem Server ist aufgetreten. Bitte versuchen Sie es später erneut."
                         break
                     default:
                         if (
@@ -316,27 +280,28 @@ function LendCategory() {
                                 "Item is already reserved for this time slot."
                             )
                         ) {
-                            setErrorMessage(`${categoryItem?.name} ist in diesem Zeitpunkt keine ${form.getValues("quantity")}  
-                            mal verfügbar. Bitte wählen Sie ein anderes Datum oder ändern Sie die Anzahl an Gegenständen.`)
+                            errorMessage = `${categoryItem?.name} ist in diesem Zeitpunkt keine ${form.getValues("quantity")}  
+                            mal verfügbar. Bitte wählen Sie ein anderes Datum oder ändern Sie die Anzahl an Gegenständen.`
                         } else {
-                            setErrorMessage(
-                                "Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut."
-                            )
+                            errorMessage = "Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut."
                         }
                         break
                 }
+                CustomToasts.error({
+                    message: errorMessage
+                })
             }
         } catch (error) {
-            setErrorMessage(
-                "Beim senden der Ausleihanfrage ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es später erneut."
-            )
-            console.error("Error message set:", errorMessage)
+            CustomToasts.error({
+                message: "Beim senden der Ausleihanfrage ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es später erneut."
+            })
+            console.log("Error: " + error)
         }
     }
 
     return (
         <div>
-            <Toaster />
+            <ToastContainer />
             {!!categoryItem && (
                 <div className="max-w-[600px] mx-auto">
                     <div className="p-4">
@@ -521,7 +486,7 @@ function LendCategory() {
                                                     }
                                                     className="flex bg-customBlue text-customBeige hover:bg-customRed hover:text-customBeige ml-8"
                                                 >
-                                                    &larr; Detailseite
+                                                    &larr; Detail
                                                 </Button>
                                                 <Button
                                                     type="submit"

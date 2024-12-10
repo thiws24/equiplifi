@@ -20,6 +20,8 @@ import React from "react"
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
+import { CustomToasts } from "../components/CustomToasts"
+import { ToastContainer } from "react-toastify"
 
 const a = z.instanceof(File)
 
@@ -75,7 +77,9 @@ function CategoryCreation() {
                     photoUrl = await createRes.json()
                 }
             } catch (e) {
-                // TODO: show Error
+                CustomToasts.error({
+                    message: "Beim Erstellen der Kategorie ist ein Fehler aufgetreten."
+                })
                 return
             }
         }
@@ -97,18 +101,26 @@ function CategoryCreation() {
 
             if (createRes.ok) {
                 const data = await createRes.json()
-                window.open(`/category/${data.id}`, "_self")
+                CustomToasts.success({
+                    message: "Erstellung erfolgreich!",
+                    onClose: () => window.open(`/category/${data.id}`, "_self")
+                })
             } else {
-                // TODO: Show error msg
+                CustomToasts.error({
+                    message: "Fehler bei der Erstellung der Kategorie."
+                })
             }
         } catch (e) {
-            // TODO: Show error:
+            CustomToasts.error({
+                message: "Es ist ein Problem aufgetreten."
+            })
             console.log(e)
         }
     }
 
     return (
         <Card className="w-11/12 sm:w-4/5 mx-auto my-5 md:my-10 lg:my-20">
+            <ToastContainer />
             <CardHeader>
                 <CardTitle>Inventarisierung</CardTitle>
                 <CardDescription>

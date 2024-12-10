@@ -9,23 +9,20 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
 import { KeyCloakUserInfo } from "../interfaces/KeyCloakUserInfo"
-import { useToast } from "../hooks/use-toast"
-import { Toaster } from "../components/ui/toaster"
 import { ItemProps } from "../interfaces/ItemProps"
 import DatePickerField from "../components/DatePickerField"
-import { ToastWithCountdown } from "../components/ToastWithCountdown"
+import { ToastContainer } from "react-toastify"
+import CustomToasts from "../components/CustomToasts"
 
 function Lend() {
     const navigate = useNavigate()
     const [startDate, setStartDate] = useState<Date | null>(null)
     const [itemExists, setItemExists] = useState(false)
-    const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [item, setItem] = useState<ItemProps>()
     const [userInfo, setUserInfo] = useState<KeyCloakUserInfo>()
     const [isStartPopoverOpen, setStartPopoverOpen] = useState(false)
     const [isEndPopoverOpen, setEndPopoverOpen] = useState(false)
     const [unavailableDates, setUnavailableDates] = useState<Date[][]>([])
-    const { toast } = useToast()
     const { id } = useParams()
     const { keycloak, token } = useKeycloak()
 
@@ -39,20 +36,15 @@ function Lend() {
                 const data = await response.json()
                 setItem(data)
             } else {
-                ToastWithCountdown(
-                    "Fehlermeldung",
-                    "Dieser Gegenstand existiert nicht. Bei Fragen melden Sie sich bei ihrem Administrator",
-                    // TODO: Hier später zu reservations-page navigieren
-                    () => navigate(`/`),
-                    "destructive",
-                    10000,
-                    "#ffffff"
-                )
+                CustomToasts.error({
+                    message: "Dieser Gegenstand existiert nicht. Bei Fragen melden Sie sich bei ihrem Administrator.",
+                    onClose: () => navigate(`/`)
+                })
             }
         } catch (e) {
-            setErrorMessage(
-                "Es ist etwas schiefgelaufen. Versuchen Sie es später erneut."
-            )
+            CustomToasts.error({
+                message: "Es ist etwas schiefgelaufen. Versuchen Sie es später erneut."
+            })
             console.log(e)
         }
     }, [id])
@@ -102,7 +94,6 @@ function Lend() {
                             reservation.endDate
                         )
                         dateArray.push(day)
-                        alert("Test  " + reservation.startDate)
                     }
                 )
 
@@ -110,7 +101,9 @@ function Lend() {
             }
         } catch (e) {
             console.log(e)
-            setErrorMessage("Die Verfügbarkeiten konnten nicht geladen werden")
+            CustomToasts.error({
+                message: "Die Verfügbarkeiten konnten nicht geladen werden."
+            })
         }
     }, [id])
 
@@ -133,18 +126,9 @@ function Lend() {
             newStartDate.setDate(newStartDate.getDate() + 1)
             setStartDate(newStartDate)
         }
-        if (errorMessage) {
-            toast({
-                variant: "destructive",
-                title: "Fehlermeldung",
-                description: errorMessage,
-                duration: Infinity
-            })
-            setErrorMessage("")
-        }
         void fetchItem()
         void fetchAvailability()
-    }, [fetchItem, keycloak, errorMessage, form.getValues("startDate")])
+    }, [fetchItem, keycloak, form.getValues("startDate")])
 
     const onSubmit = async (values: FormschemaType) => {
         const formattedStartDate = format(
@@ -176,40 +160,28 @@ function Lend() {
                 }
             )
             if (response.ok) {
-                ToastWithCountdown(
-                    "Reservierung erfolgreich",
-                    `Sie werden auf ihre Reservierungsseite weitergeleitet`,
-                    // TODO: Hier später zu reservations-page navigieren
-                    () => navigate(`/`),
-                    "default",
-                    5000,
-                    "#F27428"
-                )
+                CustomToasts.success({
+                    message: "Reservierung erfolgreich! Sie werden nun weitergeleitet.",
+                    onClose: () => navigate(`/`)
+                })
             } else {
                 const data = await response.json()
+                let errorMessage: string = ""
                 switch (data.status) {
                     case 400:
-                        setErrorMessage(
-                            `${item?.name} mit der ID: ${item?.id} ist zu diesem Zeitraum nicht verfügbar.`
-                        )
+                        errorMessage = `${item?.name} mit der ID: ${item?.id} ist zu diesem Zeitraum nicht verfügbar.`
                         break
                     case 401:
-                        setErrorMessage(
-                            "Du hast nicht die benötigten Rechte um diesen Gegenstand auszuleihen."
-                        )
+                        errorMessage = "Sie haben hast nicht die benötigten Rechte um diesen Gegenstand auszuleihen."
                         break
                     case 403:
-                        setErrorMessage("Zugriff verweigert.")
+                        errorMessage = "Zugriff verweigert."
                         break
                     case 404:
-                        setErrorMessage(
-                            "Ressource nicht gefunden. Kontaktieren Sie den Administrator"
-                        )
+                        errorMessage = "Ressource nicht gefunden. Kontaktieren Sie den Administrator"
                         break
                     case 500:
-                        setErrorMessage(
-                            "Serverfehler: Ein Problem auf dem Server ist aufgetreten. Bitte versuchen Sie es später erneut."
-                        )
+                        errorMessage = "Serverfehler: Ein Problem auf dem Server ist aufgetreten. Bitte versuchen Sie es später erneut."
                         break
                     default:
                         if (
@@ -217,28 +189,27 @@ function Lend() {
                                 "Item is already reserved for this time slot."
                             )
                         ) {
-                            setErrorMessage(
-                                `${item?.name} mit der ID ${item?.id} ist innerhalb des Zeitraums schon reserviert. Bitte wählen Sie ein anderes Datum.`
-                            )
+                            errorMessage = `${item?.name} mit der ID ${item?.id} ist innerhalb des Zeitraums schon reserviert. Bitte wählen Sie ein anderes Datum.`
                         } else {
-                            setErrorMessage(
-                                "Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut."
-                            )
+                            errorMessage = "Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut."
                         }
                         break
                 }
+                CustomToasts.error({
+                    message: errorMessage
+                })
             }
         } catch (error) {
-            setErrorMessage(
-                "Beim senden der Ausleihanfrage ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es später erneut." +
-                    error
-            )
+            CustomToasts.error({
+                message: "Beim senden der Ausleihanfrage ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es später erneut."
+            })
+            console.log("Error: " + error)
         }
     }
 
     return (
         <div>
-            <Toaster />
+            <ToastContainer />
             {itemExists && (
                 <div className="max-w-[600px] mx-auto">
                     <div className="p-4">

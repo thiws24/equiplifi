@@ -13,8 +13,8 @@ import { KeyValueRow } from "../components/KeyValueRow"
 import { CategoryDetailsProps } from "../interfaces/CategoryDetailsProps"
 import { ColDef } from "ag-grid-community"
 import CategoryDetailsTable from "../components/CategoryDetailsTable"
-import "react-toastify/dist/ReactToastify.css"
-import { toast, ToastContainer } from "react-toastify"
+import { CustomToasts } from "../components/CustomToasts"
+import { ToastContainer } from "react-toastify"
 
 export const categoryColDefs: ColDef<CategoryDetailsProps>[] = [
     {
@@ -102,16 +102,24 @@ function CategoryDetails() {
             if (response.ok) {
                 const updatedCategoryResponse = await response.json()
                 setInventoryItem(updatedCategoryResponse)
-                toast.success("Kategorie erfolgreich aktualisiert!")
+                CustomToasts.success({
+                    message: "Kategorie erfolgreich aktualisiert!"
+                })
                 setIsEditing(false)
             } else if (response.status === 400) {
-                toast.error("Name der Kategorie existiert bereits.")
+                CustomToasts.error({
+                    message: "Name der Kategorie existiert bereits."
+                })
             } else {
-                toast.error("Fehler beim Aktualisieren der Kategorie.")
+                CustomToasts.error({
+                    message: "Fehler beim Aktualisieren der Kategorie."
+                })
             }
         } catch (error) {
             console.error("Fehler beim Speichern:", error)
-            toast.error("Fehler beim Aktualisieren der Kategorie.")
+            CustomToasts.error({
+                message: "Fehler beim Aktualisieren der Kategorie. Bitte versuchen Sie es später erneut."
+            })
         }
     }
 
@@ -124,7 +132,7 @@ function CategoryDetails() {
             <ToastContainer />
             <CardHeader className="flex justify-self-auto mt-4">
                 <CardTitle className="text-3xl text-customOrange col-span-2 flex flex-col items-center justify-center">
-                    {`${inventoryItem?.icon ?? ""} ${inventoryItem?.name}`}
+                    {`${inventoryItem?.name}`}
                     <span className="text-lg text-customOrange font-semibold items-center mt-2">
                         Kategorie {`${inventoryItem?.id}`}
                     </span>
