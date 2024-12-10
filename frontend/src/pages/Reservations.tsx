@@ -50,7 +50,8 @@ function Reservations() {
 
             if (response.ok) {
                 CustomToasts.success({
-                    message: "Reservierung erfolgreich bestätigt."
+                    message: "Reservierung erfolgreich bestätigt.",
+                    onClose: () => window.open(`/reservations`, "_self")
                 })
             } else {
                 CustomToasts.error({

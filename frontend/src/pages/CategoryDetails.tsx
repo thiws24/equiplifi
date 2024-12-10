@@ -103,7 +103,8 @@ function CategoryDetails() {
                 const updatedCategoryResponse = await response.json()
                 setInventoryItem(updatedCategoryResponse)
                 CustomToasts.success({
-                    message: "Kategorie erfolgreich aktualisiert!"
+                    message: "Kategorie erfolgreich aktualisiert!",
+                    onClose: () => window.open(`/category/${id}`, "_self")
                 })
                 setIsEditing(false)
             } else if (response.status === 400) {
@@ -134,14 +135,14 @@ function CategoryDetails() {
                 <CardTitle className="text-3xl text-customOrange col-span-2 flex flex-col items-center justify-center">
                     {`${inventoryItem?.name}`}
                     <span className="text-lg text-customOrange font-semibold items-center mt-2">
-                        Kategorie {`${inventoryItem?.id}`}
+                        {inventoryItem?.id ? `Kategorie ${inventoryItem.id}` : ""}
                     </span>
                 </CardTitle>
             </CardHeader>
             <div className="p-4">
                 <Card className="bg-white text-customBlack p-4 font-semibold">
                     <CardContent>
-                        <div className="flex justify-between mb-4">
+                        <div className="flex justify-between mt-4">
                             <Button
                                 className="bg-customBlue text-customBeige rounded hover:bg-customRed"
                                 onClick={() => setIsEditing(!isEditing)}
