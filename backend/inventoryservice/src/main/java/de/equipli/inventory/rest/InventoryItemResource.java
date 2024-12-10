@@ -4,6 +4,9 @@ import de.equipli.inventory.jpa.Category;
 import de.equipli.inventory.jpa.CategoryRepository;
 import de.equipli.inventory.jpa.InventoryItem;
 import de.equipli.inventory.jpa.InventoryRepository;
+import io.minio.GetObjectArgs;
+import io.minio.GetObjectResponse;
+import io.minio.MinioClient;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
@@ -18,6 +21,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 @Path("/categories/{categoryId}/items")
 public class InventoryItemResource {
 
+    MinioClient minioClient;
     private final CategoryRepository categoryRepository;
     private final InventoryRepository inventoryRepository;
 
@@ -65,6 +69,25 @@ public class InventoryItemResource {
                 .header("Cache-Control", "max-age=300")
                 .build();
     }
+
+
+    @GET
+    @Produces("image/png")
+    @Path("/{id}")
+    public Response getInventoryItemImage(@PathParam("categoryId") Long categoryId, @PathParam("id") Long itemId)
+    {
+        GetObjectArgs args = GetObjectArgs.builder().object(itemId.toString()).build();
+        try
+        {
+            GetObjectResponse object = minioClient.getObject(args);
+            return Response.ok(object.readAllBytes()).build();
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @GET
     @Path("/{id}")
