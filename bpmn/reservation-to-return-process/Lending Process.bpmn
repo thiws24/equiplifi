@@ -2,7 +2,7 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
   <bpmn:collaboration id="Collaboration_1fk2m93">
     <bpmn:participant id="Participant_1xx4y8n" name="Lending" processRef="lending_process_59k0hpx" />
-    <bpmn:correlationKey id="CorrelationKey_03czv6c" name="MainCorrelationKey" />
+    <bpmn:correlationKey id="CorrelationKey_0rbym1o" name="MainCorrelationKey" />
   </bpmn:collaboration>
   <bpmn:process id="lending_process_59k0hpx" name="Lending Process" isExecutable="true">
     <bpmn:ioSpecification>
@@ -17,135 +17,95 @@
     </bpmn:ioSpecification>
     <bpmn:laneSet id="LaneSet_04p3xom">
       <bpmn:lane id="Inventory-Manager" name="Inventory-Manager">
-        <bpmn:flowNodeRef>Gateway_1k8w0kd</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_1h0zkz2</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_1ikmzjd</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Check-out-Inventory-Item</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_1w360rx</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1vdiy0m</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_1whbs0e</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_15i3ia8</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1ikmzjd</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0krfv9o</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_10hbojy</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
-    <bpmn:sequenceFlow id="Flow_0yryw9n" sourceRef="Check-out-Inventory-Item" targetRef="Gateway_1k8w0kd" />
-    <bpmn:sequenceFlow id="Flow_050ylkd" sourceRef="Event_1h0zkz2" targetRef="Check-out-Inventory-Item" />
-    <bpmn:sequenceFlow id="Flow_0v4y45i" name="Yes" sourceRef="Gateway_1k8w0kd" targetRef="Activity_1ikmzjd">
-      <bpmn:conditionExpression>lending == "confirmed"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_08lcyou" sourceRef="Event_1whbs0e" targetRef="Event_1w360rx" />
-    <bpmn:sequenceFlow id="Flow_0jr4nb5" sourceRef="Activity_1ikmzjd" targetRef="Event_1vdiy0m" />
-    <bpmn:sequenceFlow id="Flow_1hzt6bb" sourceRef="Gateway_1k8w0kd" targetRef="Event_15i3ia8">
-      <bpmn:conditionExpression>lending != "confirmed"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:exclusiveGateway id="Gateway_1k8w0kd" name="Confirmed?">
-      <bpmn:incoming>Flow_0yryw9n</bpmn:incoming>
-      <bpmn:outgoing>Flow_0v4y45i</bpmn:outgoing>
-      <bpmn:outgoing>Flow_1hzt6bb</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:startEvent id="Event_1h0zkz2">
-      <bpmn:outgoing>Flow_050ylkd</bpmn:outgoing>
-    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_1vdiy0m" name="Lending successfull">
+      <bpmn:incoming>Flow_1xjtylu</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1xjtylu" sourceRef="Activity_1ikmzjd" targetRef="Event_1vdiy0m" />
     <bpmn:serviceTask id="Activity_1ikmzjd" name="Update InventoryItem status">
       <bpmn:extensionElements>
         <spiffworkflow:serviceTaskOperator id="http/PutRequestV2" resultVariable="putResult">
           <spiffworkflow:parameters>
-            <spiffworkflow:parameter id="url" type="str" value="&#34;https://inventory.equipli.de/inventoryitems/&#34;+str(reservation[&#34;itemId&#34;])" />
+            <spiffworkflow:parameter id="url" type="str" value="&#34;https://inventory.equipli.de/categories/&#34;+str(reservation[&#34;categoryId&#34;])+&#34;/items/&#34;+str(reservation[&#34;itemId&#34;])" />
             <spiffworkflow:parameter id="headers" type="any" value="{&#34;Accept&#34;:&#34;application/json&#34;}" />
-            <spiffworkflow:parameter id="data" type="any" value="{&#34;status&#34;: &#34;lent&#34;}" />
+            <spiffworkflow:parameter id="data" type="any" value="{&#34;status&#34;: &#34;LENT&#34;}" />
             <spiffworkflow:parameter id="basic_auth_username" type="str" />
             <spiffworkflow:parameter id="basic_auth_password" type="str" />
           </spiffworkflow:parameters>
         </spiffworkflow:serviceTaskOperator>
         <spiffworkflow:postScript>activereservation = reservation
-activereservation["lendingStatus"]= lending
+activereservation["lendingStatus"]= check_out_inventoryitem_message["checkout_confirmation"]
 
 
 </spiffworkflow:postScript>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0v4y45i</bpmn:incoming>
-      <bpmn:outgoing>Flow_0jr4nb5</bpmn:outgoing>
+      <bpmn:incoming>Flow_0iji06c</bpmn:incoming>
+      <bpmn:outgoing>Flow_1xjtylu</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:userTask id="Check-out-Inventory-Item" name="Check-out InventoryItem">
+    <bpmn:sequenceFlow id="Flow_0iji06c" sourceRef="Activity_0krfv9o" targetRef="Activity_1ikmzjd" />
+    <bpmn:receiveTask id="Activity_0krfv9o" name="Check-out InventoryItem" messageRef="check-out-inventoryitem" spiffworkflow:isMatchingCorrelation="true">
       <bpmn:extensionElements>
-        <spiffworkflow:preScript># Script task to assign lane 
-#lane_owners = {"Inventory-Manager": ["d10cfd7a-bbd1-4ae5-a02c-3ca324960371@https://id.equipli.de/realms/master"]}</spiffworkflow:preScript>
-        <spiffworkflow:properties>
-          <spiffworkflow:property name="formJsonSchemaFilename" value="confirm-lending-schema.json" />
-          <spiffworkflow:property name="formUiSchemaFilename" value="confirm-lending-uischema.json" />
-        </spiffworkflow:properties>
-        <spiffworkflow:allowGuest>false</spiffworkflow:allowGuest>
-        <spiffworkflow:guestConfirmation />
+        <spiffworkflow:messageVariable>check_out_inventoryitem_message</spiffworkflow:messageVariable>
+        <spiffworkflow:processVariableCorrelation>
+          <spiffworkflow:propertyId>reservationId</spiffworkflow:propertyId>
+          <spiffworkflow:expression>reservation["id"]</spiffworkflow:expression>
+        </spiffworkflow:processVariableCorrelation>
+        <spiffworkflow:processVariableCorrelation>
+          <spiffworkflow:propertyId>categoryId</spiffworkflow:propertyId>
+          <spiffworkflow:expression>reservation["categoryId"]</spiffworkflow:expression>
+        </spiffworkflow:processVariableCorrelation>
+        <spiffworkflow:processVariableCorrelation>
+          <spiffworkflow:propertyId>itemId</spiffworkflow:propertyId>
+          <spiffworkflow:expression>reservation["itemId"]</spiffworkflow:expression>
+        </spiffworkflow:processVariableCorrelation>
+        <spiffworkflow:processVariableCorrelation>
+          <spiffworkflow:propertyId>reservationid</spiffworkflow:propertyId>
+          <spiffworkflow:expression>reservation["id"]</spiffworkflow:expression>
+        </spiffworkflow:processVariableCorrelation>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_050ylkd</bpmn:incoming>
-      <bpmn:outgoing>Flow_0yryw9n</bpmn:outgoing>
-      <bpmn:ioSpecification>
-        <bpmn:inputSet />
-      </bpmn:ioSpecification>
-    </bpmn:userTask>
-    <bpmn:endEvent id="Event_1w360rx" name="Lending not confirmed on time">
-      <bpmn:incoming>Flow_08lcyou</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:endEvent id="Event_1vdiy0m" name="Lending successfull">
-      <bpmn:incoming>Flow_0jr4nb5</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:boundaryEvent id="Event_1whbs0e" name="After reservation start" attachedToRef="Check-out-Inventory-Item">
-      <bpmn:outgoing>Flow_08lcyou</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_1fso1vn">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">"P14D"</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:boundaryEvent>
-    <bpmn:endEvent id="Event_15i3ia8" name="Lending not successfull">
-      <bpmn:incoming>Flow_1hzt6bb</bpmn:incoming>
-    </bpmn:endEvent>
+      <bpmn:incoming>Flow_1609vhl</bpmn:incoming>
+      <bpmn:outgoing>Flow_0iji06c</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:startEvent id="Event_10hbojy">
+      <bpmn:outgoing>Flow_1609vhl</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1609vhl" sourceRef="Event_10hbojy" targetRef="Activity_0krfv9o" />
   </bpmn:process>
+  <bpmn:message id="check-out-inventoryitem" name="check-out-inventoryitem" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1fk2m93">
       <bpmndi:BPMNShape id="Participant_1xx4y8n_di" bpmnElement="Participant_1xx4y8n" isHorizontal="true">
-        <dc:Bounds x="-270" y="190" width="920" height="470" />
+        <dc:Bounds x="-270" y="190" width="920" height="310" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_085nnlm_di" bpmnElement="Inventory-Manager" isHorizontal="true">
-        <dc:Bounds x="-240" y="190" width="890" height="470" />
+        <dc:Bounds x="-240" y="190" width="890" height="310" />
         <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1vdiy0m_di" bpmnElement="Event_1vdiy0m">
+        <dc:Bounds x="432" y="382" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="423" y="425" width="54" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_15ta2q8_di" bpmnElement="Activity_1ikmzjd">
+        <dc:Bounds x="190" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1y30a4d_di" bpmnElement="Activity_0krfv9o">
+        <dc:Bounds x="-30" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_10hbojy_di" bpmnElement="Event_10hbojy">
+        <dc:Bounds x="-198" y="382" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="DataInput-388263309-1DI" bpmnElement="reservation">
         <dc:Bounds x="-168" y="215" width="36" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="-177" y="272" width="59" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1k8w0kd_di" bpmnElement="Gateway_1k8w0kd" isMarkerVisible="true">
-        <dc:Bounds x="105" y="255" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="102" y="225" width="58" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1h0zkz2_di" bpmnElement="Event_1h0zkz2">
-        <dc:Bounds x="-198" y="542" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_15ta2q8_di" bpmnElement="Activity_1ikmzjd">
-        <dc:Bounds x="250" y="240" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_18kfawe_di" bpmnElement="Check-out-Inventory-Item">
-        <dc:Bounds x="-50" y="520" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1w360rx_di" bpmnElement="Event_1w360rx">
-        <dc:Bounds x="192" y="582" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="166" y="545" width="88" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1vdiy0m_di" bpmnElement="Event_1vdiy0m">
-        <dc:Bounds x="442" y="262" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="433" y="305" width="54" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_15i3ia8_di" bpmnElement="Event_15i3ia8">
-        <dc:Bounds x="112" y="372" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="101" y="415" width="59" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="DataOutput-731653660-1DI" bpmnElement="activereservation">
@@ -154,39 +114,17 @@ activereservation["lendingStatus"]= lending
           <dc:Bounds x="554" y="272" width="59" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1f5psnj_di" bpmnElement="Event_1whbs0e">
-        <dc:Bounds x="32" y="582" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="30" y="625" width="81" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_0yryw9n_di" bpmnElement="Flow_0yryw9n">
-        <di:waypoint x="0" y="520" />
-        <di:waypoint x="0" y="280" />
-        <di:waypoint x="105" y="280" />
+      <bpmndi:BPMNEdge id="Flow_1xjtylu_di" bpmnElement="Flow_1xjtylu">
+        <di:waypoint x="290" y="400" />
+        <di:waypoint x="432" y="400" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_050ylkd_di" bpmnElement="Flow_050ylkd">
-        <di:waypoint x="-162" y="560" />
-        <di:waypoint x="-50" y="560" />
+      <bpmndi:BPMNEdge id="Flow_0iji06c_di" bpmnElement="Flow_0iji06c">
+        <di:waypoint x="70" y="400" />
+        <di:waypoint x="190" y="400" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0v4y45i_di" bpmnElement="Flow_0v4y45i">
-        <di:waypoint x="155" y="280" />
-        <di:waypoint x="250" y="280" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="194" y="262" width="18" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_08lcyou_di" bpmnElement="Flow_08lcyou">
-        <di:waypoint x="68" y="600" />
-        <di:waypoint x="192" y="600" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0jr4nb5_di" bpmnElement="Flow_0jr4nb5">
-        <di:waypoint x="350" y="280" />
-        <di:waypoint x="442" y="280" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1hzt6bb_di" bpmnElement="Flow_1hzt6bb">
-        <di:waypoint x="130" y="305" />
-        <di:waypoint x="130" y="372" />
+      <bpmndi:BPMNEdge id="Flow_1609vhl_di" bpmnElement="Flow_1609vhl">
+        <di:waypoint x="-162" y="400" />
+        <di:waypoint x="-30" y="400" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

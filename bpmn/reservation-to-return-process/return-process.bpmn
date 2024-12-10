@@ -18,7 +18,7 @@
       </bpmn:inputSet>
     </bpmn:ioSpecification>
     <bpmn:laneSet id="LaneSet_1md4utm">
-      <bpmn:lane id="Lane_16qdnax" name="equipli">
+      <bpmn:lane id="Lane_16qdnax" name="Inventory-Manager">
         <bpmn:flowNodeRef>DataInput-388263309-1DI</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_02afkrd</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1eomei3</bpmn:flowNodeRef>
@@ -56,7 +56,7 @@
       <bpmn:incoming>Flow_1pxtpvl</bpmn:incoming>
       <bpmn:outgoing>Flow_1cpuhgr</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:userTask id="Check-in-Inventory-Item" name="Check-in Inventory Item">
+    <bpmn:userTask id="Check-in-Inventory-Item" name="Check-in InventoryItem">
       <bpmn:incoming>Flow_1cpuhgr</bpmn:incoming>
       <bpmn:outgoing>Flow_0o19equ</bpmn:outgoing>
     </bpmn:userTask>
@@ -130,12 +130,6 @@
         <dc:Bounds x="290" y="100" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0802k87_di" bpmnElement="Event_0802k87">
-        <dc:Bounds x="952" y="262" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="927" y="305" width="88" height="53" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_03nq5f6_di" bpmnElement="Activity_1epgimf">
         <dc:Bounds x="290" y="300" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -170,6 +164,12 @@
         <dc:Bounds x="765" y="255" width="50" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="767" y="312" width="47" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0802k87_di" bpmnElement="Event_0802k87">
+        <dc:Bounds x="952" y="262" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="927" y="305" width="88" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="DataInput-388263309-1DI" bpmnElement="reservation">
@@ -254,6 +254,10 @@
         <dc:Bounds x="20" y="-60" width="1240" height="70" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_08dwimb_di" bpmnElement="TextAnnotation_08dwimb">
+        <dc:Bounds x="1040" y="210" width="100" height="55" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_0ctuddm_di" bpmnElement="Association_0ctuddm">
         <di:waypoint x="960" y="169" />
         <di:waypoint x="1041" y="210" />
@@ -265,10 +269,6 @@
           <dc:Bounds x="1054" y="52" width="63" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_08dwimb_di" bpmnElement="TextAnnotation_08dwimb">
-        <dc:Bounds x="1040" y="210" width="100" height="55" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
   <bpmndi:BPMNDiagram id="BPMNDiagram_0bw9d13">
