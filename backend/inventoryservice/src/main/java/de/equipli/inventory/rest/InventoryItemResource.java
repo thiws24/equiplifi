@@ -19,6 +19,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 @Path("/categories/{categoryId}/items")
 public class InventoryItemResource {
 
+    MinioClient minioClient;
     private final CategoryRepository categoryRepository;
     private final InventoryRepository inventoryRepository;
 
@@ -33,7 +34,7 @@ public class InventoryItemResource {
     @Transactional
     @Operation(summary = "Create a new InventoryItem", description = "Creates a new InventoryItem and persists it to the database.")
     @APIResponses(value = {
-            @APIResponse(responseCode = "201", description = "Inventory item created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateInventoryItemRequest.class))),
+            @APIResponse(responseCode = "201", description = "Inventory item created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InventoryItem.class))),
             @APIResponse(responseCode = "404", description = "Category not found", content = @Content(mediaType = "application/json"))
     })
     public Response createInventoryItem(@PathParam("categoryId") Long categoryId, InventoryItem item) {
@@ -68,6 +69,32 @@ public class InventoryItemResource {
     }
 
     @GET
+    @Produces("image/png")
+    @Path("/{id}")
+    public Response getInventoryItemImage(@PathParam("categoryId") Long categoryId, @PathParam("id") Long itemId) {
+        try {
+            GetObjectArgs args = GetObjectArgs.builder()
+                    .bucket("category-pictures")
+                    .object(itemId.toString())
+                    .build();
+            GetObjectResponse object = minioClient.getObject(args);
+
+            return Response.ok(object.readAllBytes())
+                    .type("image/png")
+                    .build();
+        } catch (io.minio.errors.MinioException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Error retrieving image: " + e.getMessage())
+                    .build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getMessage())
+                    .build();
+        }
+    }
+
+
+    @GET
     @Path("/{id}")
     @Operation(summary = "Get an InventoryItem by ID", description = "Returns an InventoryItem by its ID.")
     @APIResponses(value = {
@@ -97,7 +124,7 @@ public class InventoryItemResource {
     @Transactional
     @Operation(summary = "Update an InventoryItem by ID", description = "Updates an InventoryItem by its ID.")
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Inventory item updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateInventoryItemRequest.class))),
+            @APIResponse(responseCode = "200", description = "Inventory item updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InventoryItem.class))),
             @APIResponse(responseCode = "404", description = "Category not found", content = @Content(mediaType = "application/json")),
             @APIResponse(responseCode = "404", description = "Item not found", content = @Content(mediaType = "application/json"))
     })
