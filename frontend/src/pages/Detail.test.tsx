@@ -65,9 +65,9 @@ describe("Detail Component", () => {
 
     test("renders item data correctly", async () => {
         render(
-            <MemoryRouter initialEntries={["/inventory-item/1"]}>
+            <MemoryRouter initialEntries={["/item/1"]}>
                 <Routes>
-                    <Route path="/inventory-item/:id" element={<Detail />} />
+                    <Route path="/item/:id" element={<Detail />} />
                 </Routes>
             </MemoryRouter>
         )
@@ -82,9 +82,9 @@ describe("Detail Component", () => {
 
     test("opens and closes the QR code modal", async () => {
         render(
-            <MemoryRouter initialEntries={["/inventory-item/1"]}>
+            <MemoryRouter initialEntries={["/item/1"]}>
                 <Routes>
-                    <Route path="/inventory-item/:id" element={<Detail />} />
+                    <Route path="/item/:id" element={<Detail />} />
                 </Routes>
             </MemoryRouter>
         )
@@ -100,9 +100,9 @@ describe("Detail Component", () => {
 
     test("renders reservations correctly", async () => {
         render(
-            <MemoryRouter initialEntries={["/inventory-item/1"]}>
+            <MemoryRouter initialEntries={["/item/1"]}>
                 <Routes>
-                    <Route path="/inventory-item/:id" element={<Detail />} />
+                    <Route path="/item/:id" element={<Detail />} />
                 </Routes>
             </MemoryRouter>
         )

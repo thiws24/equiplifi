@@ -1,4 +1,4 @@
-import { Home, Inbox, LogOutIcon } from "lucide-react"
+import { Home, Inbox, LogOutIcon, ScrollText } from "lucide-react"
 import {
     SidebarContent,
     SidebarFooter,
@@ -15,6 +15,11 @@ import React from "react"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
 
 const itemsLagerwart = [
+    {
+        title: "Reservierungen",
+        url: "/reservations",
+        icon: ScrollText
+    },
     {
         title: "Neues Inventar erfassen",
         url: "/category/create",

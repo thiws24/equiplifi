@@ -1,8 +1,9 @@
 import { fetchDataObjectFromProcess } from "./fetchDataObject"
 import { TaskProps } from "../interfaces/TaskProps"
+import { Process } from "../interfaces/Process"
 
-export async function fetchOpenTasksByItemId(
-    itemId: number,
+export async function fetchOpenTasksByTaskName(
+    taskName: string,
     token: string
 ): Promise<TaskProps[]> {
     try {
@@ -17,7 +18,26 @@ export async function fetchOpenTasksByItemId(
         )
         if (response.ok) {
             const data = await response.json()
-            return await filterTasksByItemId(data.results, itemId, token)
+
+            let results = data.results.filter(
+                (p: Process) => p.task_title?.toLowerCase() === taskName.toLowerCase()
+            )
+
+            const filteredTasks: TaskProps[] = []
+            // Fetch Data Object for each task
+            await Promise.all(
+                results.map(async (pItem: TaskProps) => {
+                    const dataRes = await fetchDataObjectFromProcess(
+                        pItem.process_instance_id,
+                        token
+                    )
+                    filteredTasks.push({
+                        ...pItem,
+                        dataObject: dataRes
+                    })
+                })
+            )
+            return filteredTasks
         }
     } catch (e) {
         console.log(e)

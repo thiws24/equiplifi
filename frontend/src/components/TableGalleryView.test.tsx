@@ -10,8 +10,7 @@ const colDefs: ColDef<InventoryItemProps, any>[] = [
     { field: "id" },
     { field: "name" },
     { field: "icon" },
-    { field: "photoUrl" },
-    { field: "urn" }
+    { field: "photoUrl" }
 ]
 
 describe("TableGalleryView", () => {

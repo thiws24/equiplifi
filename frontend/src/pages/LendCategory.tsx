@@ -21,17 +21,23 @@ import { Toaster } from "../components/ui/toaster"
 import { CategoryProps } from "../interfaces/CategoryProps"
 import DatePickerField from "../components/DatePickerField"
 import { ToastWithCountdown } from "../components/ToastWithCountdown"
+import { AvailabilityItemProps } from "../interfaces/AvailabilityItemProps"
 
 function LendCategory() {
-    const [categoryItemsCount, setCategoryItemsCount] = useState<number>(1)
+    const [itemReservations, setItemReservations] = useState<AvailabilityItemProps[]>([])
     const [startDate, setStartDate] = useState<Date | null>(null)
+    // TODO: Remove and use toast instead
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
     const [categoryItem, setCategoryItem] = useState<CategoryProps>()
+    // State for start date popover
     const [isStartPopoverOpen, setStartPopoverOpen] = useState(false)
+    // State for end date popover
     const [isEndPopoverOpen, setEndPopoverOpen] = useState(false)
-    const [itemId, setItemId] = useState<[number] | []>([])
-    const [categoryExists, setCategoryExists] = useState(false)
+
+    const [itemIds, setItemIds] = useState<[number] | []>([])
     const [unavailableDates, setUnavailableDates] = useState<Date[]>([])
+
     const navigate = useNavigate()
     const { toast } = useToast()
     const { id } = useParams()
@@ -43,7 +49,6 @@ function LendCategory() {
                 `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories/${id}`
             )
             if (response.ok) {
-                setCategoryExists(true)
                 const data = await response.json()
                 setCategoryItem(data)
             } else {
@@ -84,13 +89,15 @@ function LendCategory() {
         }
     })
 
-    const fetchAvailability = React.useCallback(async () => {
+
+    const fetchAvailability = async () => {
         try {
             const response = await fetch(
                 `${import.meta.env.VITE_RESERVATION_HOST}/availability/reservations/categories/${id}`
             )
             if (response.ok) {
                 const data = await response.json()
+                setItemReservations(data)
                 const quantity = form.getValues("quantity")
                 let dateDisableArray: Date[] = []
 
@@ -155,82 +162,13 @@ function LendCategory() {
 
                 setUnavailableDates(dateDisableArray)
 
-                setItemId([])
+                setItemIds([])
             }
         } catch (e) {
             console.log(e)
             setErrorMessage("Die Verfügbarkeiten konnten nicht geladen werden")
         }
-    }, [id])
-
-    // const fetchAvailability = React.useCallback(async () => {
-    //     try {
-    //         const response = await fetch(`${process.env.REACT_APP_II_RESERVATION_HOST}/availability/reservations/categories/${id}`)
-    //
-    //         if (response.ok) {
-    //             const data = await response.json()
-    //             const quantity = form.getValues("quantity")
-    //             let dateDisableArray: Date[] = []
-    //
-    //             const getDaysArray = function (start: string | Date, end: string | Date) {
-    //                 const arr = []
-    //                 for (const dt = new Date(start); dt <= new Date(end); dt.setDate(dt.getDate() + 1)) {
-    //                     arr.push(new Date(dt))
-    //                 }
-    //                 return arr
-    //             }
-    //
-    //             const reservationData: { [key: number]: Date[] } = {}
-    //             let allDays: Date[] = []
-    //
-    //             alert("KCSAMOKA")
-    //
-    //             data.forEach((reservation: { startDate: Date; endDate: Date }) => {
-    //                 let day = getDaysArray(reservation.startDate, reservation.endDate)
-    //                 alert(reservation.startDate + "   -   " + itemId)
-    //             })
-    //
-    //
-    //             data.forEach((reservation: { startDate: Date; endDate: Date }, itemId: number) => {
-    //                 if (!reservationData[itemId]) reservationData[itemId] = []
-    //
-    //                 let days = getDaysArray(reservation.startDate, reservation.endDate)
-    //                 reservationData[itemId].push(...days)
-    //                 allDays.push(...days)
-    //             });
-    //
-    //             allDays.forEach(dayAll => {
-    //                 let count: number = 0
-    //                 if (categoryItem?.items?.length) {
-    //                     categoryItem.items.forEach((id: any) => {
-    //                         alert("Test2")
-    //                         reservationData[id].forEach((day: Date) => {
-    //                             if (day.toDateString() === dayAll.toDateString()) {
-    //                                 alert("Test")
-    //                                 count += 1
-    //                             }
-    //                         })
-    //                     })
-    //
-    //                     if (quantity > (categoryItem.items.length - count)) {
-    //                         dateDisableArray.push(dayAll)
-    //                     }
-    //                 }
-    //             })
-    //
-    //             alert("Quantity: " + quantity + "----- Max Item: " + categoryItem?.items?.length + "----- Array: " + allDays)
-    //
-    //
-    //             // Setze die deaktivierten Daten (für die Anzeige)
-    //             setUnavailableDates(dateDisableArray)
-    //
-    //             // Hier kannst du die verfügbaren Items auflisten, wenn notwendig
-    //
-    //         }
-    //     } catch (e) {
-    //         console.error(e)
-    //     }
-    // }, [id])
+    }
 
     const isDateUnavailable = (date: Date) => {
         return unavailableDates.some(
@@ -270,15 +208,56 @@ function LendCategory() {
             endDate: string
             itemId: number
             userId: string | undefined
+            categoryId: number
         }> = []
-        itemId.forEach((id: number) => {
+
+        // TODO: improve - solution only for testing purposes
+        // Get item ids
+        for (let i = 0; i < itemReservations.length; i++) {
+            const item = itemReservations[i]
+            const x = item.reservations.some((r) => {
+                const rStart = new Date(r.startDate)
+                const rEnd = new Date(r.endDate)
+                const iStart = new Date(formattedStartDate)
+                const iEnd = new Date(formattedEndDate)
+                return ((iStart <= rEnd && iStart >= rStart) || (iEnd <= rEnd && iEnd >= rStart))
+            })
+
+            if (!x) {
+                jsonArray.push({
+                    startDate: formattedStartDate,
+                    endDate: formattedEndDate,
+                    itemId: item.itemId,
+                    userId: userInfo?.sub,
+                    categoryId: categoryItem!.id
+                })
+            }
+
+            if (jsonArray.length === values.quantity) {
+                break;
+            }
+        }
+
+        if (jsonArray.length !== values.quantity) {
+            toast({
+                variant: "destructive",
+                title: "Fehlermeldung",
+                description: 'Items in dem Zeitraum nicht verfügbar',
+                duration: Infinity
+            })
+            return
+        }
+
+
+        /*itemIds.forEach((id: number) => {
             jsonArray.push({
                 startDate: formattedStartDate,
                 endDate: formattedEndDate,
                 itemId: id,
-                userId: userInfo?.sub
+                userId: userInfo?.sub,
+                categoryId: categoryItem?.id
             })
-        })
+        })*/
 
         try {
             const response = await fetch(
@@ -358,7 +337,7 @@ function LendCategory() {
     return (
         <div>
             <Toaster />
-            {categoryExists && (
+            {!!categoryItem && (
                 <div className="max-w-[600px] mx-auto">
                     <div className="p-4">
                         <CardHeader className="flex items-center text-customBlue">

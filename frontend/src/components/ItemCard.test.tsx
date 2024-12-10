@@ -18,7 +18,7 @@ describe("ItemCard", () => {
         )
         expect(screen.getByRole("link")).toHaveAttribute(
             "href",
-            "/inventory-item/2"
+            "/item/2"
         )
     })
 })

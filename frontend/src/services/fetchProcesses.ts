@@ -49,9 +49,8 @@ const reportMetadataColumns = [
     }
 ]
 
-export async function fetchWaitingProcessesByTaskNameAndItemId(
+export async function fetchProcessesByTaskName(
     taskName: string,
-    itemId: number,
     token: string
 ): Promise<Process[]> {
     try {
@@ -86,15 +85,23 @@ export async function fetchWaitingProcessesByTaskNameAndItemId(
 
         if (response.ok) {
             const data = await response.json()
-            let processes: Process[] = data.results.filter(
-                (p: Process) => p.last_milestone_bpmn_name === taskName
+            let results = data.results.filter(
+                (p: Process) => p.task_title?.toLowerCase() === taskName.toLowerCase()
             )
 
-            return await filterWaitingProcessesByItemId(
-                processes,
-                itemId,
-                token
+            const filteredProcesses: Process[] = []
+
+            // Add data object
+            await Promise.all(
+                results.map(async (pItem: Process) => {
+                    const dataRes = await fetchDataObjectFromProcess(pItem.id, token)
+                    filteredProcesses.push({
+                        ...pItem,
+                        dataObject: dataRes
+                    })
+                })
             )
+            return filteredProcesses
         }
     } catch (e) {
         console.log(e)
@@ -102,7 +109,7 @@ export async function fetchWaitingProcessesByTaskNameAndItemId(
     return []
 }
 
-export async function filterWaitingProcessesByItemId(
+export async function filterProcessesByItemId(
     data: Process[],
     itemId: number,
     token: string
