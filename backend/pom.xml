@@ -12,6 +12,7 @@
         <module>inventoryservice</module>
         <module>qrservice</module>
         <module>reservationservice</module>
+        <module>mailservice</module>
     </modules>
 
     <build>
@@ -25,6 +26,7 @@
                         <directory>inventoryservice/src/main/java</directory>
                         <directory>qrservice/src/main/java</directory>
                         <directory>reservationservice/src/main/java</directory>
+                        <directory>mailservice/src/main/java</directory>
                     </directories>
                     <encoding>UTF-8</encoding>
                 </configuration>
