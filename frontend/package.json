@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@ag-grid-community/locale": "^32.3.0",
+    "@ag-grid-community/locale": "^32.3.3",
     "@ag-grid-community/theming": "^32.3.2",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-brands-svg-icons": "^6.6.0",
