@@ -17,6 +17,9 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 @ApplicationScoped
 @Path("/qr")
@@ -24,6 +27,8 @@ public class QRGeneratorResource {
     // Define 1400 dpi and 62mm label size
     private static final float DPI = 1400;
     private static final float LABEL_SIZE_IN_MM = 62.0f;
+
+    private static final Logger LOGGER = Logger.getLogger(QRGeneratorResource.class.getName());
 
     @ConfigProperty(name = "quarkus.fontPath")
     String fontPath;
@@ -70,7 +75,7 @@ public class QRGeneratorResource {
                         .build();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error during QR code generation", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Während der QR-Code-Generierung ist ein Fehler aufgetreten.")
                     .build();
@@ -150,7 +155,7 @@ public class QRGeneratorResource {
             return Font.createFont(Font.TRUETYPE_FONT, new File(fontPath + "/PublicSans-SemiBold.ttf"))
                     .deriveFont(Font.PLAIN, fontSize); // Font size depending on image size
         } catch (FontFormatException | IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error during Font loading", e);
             return new Font("Arial", Font.PLAIN, fontSize);
         }
     }
