@@ -72,7 +72,7 @@ public class InventoryItemResource {
     @Produces("image/png")
     @Path("/{id}")
     public Response getInventoryItemImage(@PathParam("categoryId") Long categoryId, @PathParam("id") Long itemId) {
-        try {
+         try {
             GetObjectArgs args = GetObjectArgs.builder()
                     .bucket("category-pictures")
                     .object(itemId.toString())
