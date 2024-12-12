@@ -36,7 +36,7 @@ export const KeycloakProvider: React.FC<Props> = ({ children }) => {
         // In development useEffect runs 2 times. To avoid error by calling init a second time, we count the renders and init on first
         if (run === 1) {
             keycloakConfig
-                .init({ onLoad: "check-sso" })
+                .init({ onLoad: "check-sso", checkLoginIframe: false })
                 .then((authenticated: any) => {
                     if (!authenticated) {
                         void keycloakConfig.login()
