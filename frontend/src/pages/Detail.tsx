@@ -54,7 +54,7 @@ function Detail() {
                 {
                     method: "GET",
                     headers: {
-                        "Output-Format": "PNG"
+                        "Accept": "image/png"
                     }
                 }
             )
