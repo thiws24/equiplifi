@@ -32,6 +32,7 @@ function LendCategory() {
     // Popover State für Enddatumskalender
     const [isEndPopoverOpen, setEndPopoverOpen] = useState(false)
 
+    // TODO: Löschen, verwenden für das schicken des Arrays. Ansonsten noch löschen
     const [itemIds, setItemIds] = useState<[number] | []>([])
     const [unavailableDates, setUnavailableDates] = useState<Date[]>([])
 
@@ -90,6 +91,10 @@ function LendCategory() {
                 const quantity = form.getValues("quantity")
                 let dateDisableArray: Date[] = []
 
+                // TODO: Idee, beim Start die Availability des jetzigen Monats laden.
+                //  Wenn der Button zum Monatswechsel gedrückt wird, soll die Availability
+                //  für den nächsten Monat geladen werden. Deswegen am besten alles was
+                //  nicht im Monat der gerade offen ist, ist disablen?
                 const getDaysArray = function (
                     start: string | Date,
                     end: string | Date
@@ -256,9 +261,8 @@ function LendCategory() {
                 })
             } else {
                 const data = await response.json()
-                let errorMessage: string = ""
+                let errorMessage: string
                 switch (data.status) {
-                    // TODO: Fehlermeldung für zu viele Gegenstände ausgewählt (Toast mit bitte weniger auswählen) und dann noch wenn submitted wird
                     case 400:
                         errorMessage = `${categoryItem?.name} ist zu diesem Zeitraum nicht verfügbar.`
                         break
@@ -508,7 +512,8 @@ function LendCategory() {
                                                         ) <
                                                             form.getValues(
                                                                 "startDate"
-                                                            )
+                                                            ) ||
+                                                        (categoryItem?.items.length || 9999) < form.getValues("quantity")
                                                         // TODO: Hier noch wenn anzahl > gesamtmenge
                                                     }
                                                     className="text-customBeige bg-customBlue mr-8 hover:bg-customRed hover:text-customBeige"

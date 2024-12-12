@@ -49,9 +49,11 @@ function Reservations() {
             )
 
             if (response.ok) {
+                // TODO: passt diese Bestätigung der Reservation oder lieber gleich neuladen
                 CustomToasts.success({
                     message: "Reservierung erfolgreich bestätigt.",
-                    onClose: () => window.open(`/reservations`, "_self")
+                    duration: 1000,
+                    onClose: () =>  window.open(`/reservations`, "_self")
                 })
             } else {
                 CustomToasts.error({

@@ -1,18 +1,20 @@
 import React from "react"
 import { toast } from "react-toastify"
-import { FaExclamationCircle, FaCheckCircle } from "react-icons/fa"
+import { CheckCircle } from "lucide-react"
+import { FaExclamationCircle } from "react-icons/fa"
 import "react-toastify/dist/ReactToastify.css"
 
 type ToastProps = {
     message: string
     onClose?: () => void
+    duration?: number
 };
 
 export const CustomToasts = {
-    success: ({ message, onClose }: ToastProps) => {
+    success: ({ message, onClose, duration }: ToastProps) => {
         toast.success(
             <div style={{ display: "flex", alignItems: "center" }}>
-                <FaCheckCircle color="#F27428" size={24} style={{ marginRight: "10px" }} />
+                <CheckCircle color="#5588c7" size={24} style={{ marginRight: "10px" }} />
                 <span>{message}</span>
             </div>,
             {
@@ -20,17 +22,18 @@ export const CustomToasts = {
                 pauseOnFocusLoss: false,
                 position: "top-center",
                 progressStyle: {
-                    backgroundColor: "#F27428"
+                    backgroundColor: "#5588c7"
                 },
                 icon: false,
-                onClose: onClose || undefined
+                onClose: onClose || undefined,
+                autoClose: duration || 5000
             }
         )
     },
-    error: ({ message, onClose }: ToastProps) => {
+    error: ({ message, onClose, duration }: ToastProps) => {
         toast.error(
             <div style={{ display: "flex", alignItems: "center" }}>
-                <FaExclamationCircle color="red" size={48} style={{ marginRight: "10px" }} />
+                <FaExclamationCircle color="red" size={32} style={{ marginRight: "10px" }} />
                 <span>{message}</span>
             </div>,
             {
@@ -38,10 +41,11 @@ export const CustomToasts = {
                 pauseOnFocusLoss: false,
                 position: "top-center",
                 progressStyle: {
-                    backgroundColor: "red" // Fehler-Fortschrittsleisten-Farbe
+                    backgroundColor: "red"
                 },
-                icon: false, // Standard-Icon deaktivieren
-                onClose: onClose || undefined // Optionales Routing oder Aktion
+                icon: false,
+                onClose: onClose || undefined,
+                autoClose: duration || 5000
             }
         )
     }
