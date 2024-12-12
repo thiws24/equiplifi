@@ -101,22 +101,22 @@ function Detail() {
                 const updatedItem = await response.json()
                 setInventoryItem(updatedItem)
                 CustomToasts.success({
-                    message: "Item erfolgreich aktualisiert!",
+                    message: "Gegenstand erfolgreich aktualisiert!",
                     onClose: () => window.location.reload()
                 })
             } else if (response.status === 404) {
                 CustomToasts.error({
-                    message: "Item nicht gefunden.",
+                    message: "Gegenstand nicht gefunden.",
                 })
             } else {
                 CustomToasts.error({
-                    message: "Fehler beim Aktualisieren des Items.",
+                    message: "Fehler beim Aktualisieren des Gegenstands.",
                 })
             }
         } catch (error) {
             console.error("Fehler beim Speichern:", error)
             CustomToasts.error({
-                message: "Fehler beim Aktualisieren des Items. Versuchen Sie es später erneut.",
+                message: "Fehler beim Aktualisieren des Gegenstands.",
             })
         }
     }

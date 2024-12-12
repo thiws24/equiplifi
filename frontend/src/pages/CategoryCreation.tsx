@@ -78,7 +78,7 @@ function CategoryCreation() {
                 }
             } catch (e) {
                 CustomToasts.error({
-                    message: "Beim Erstellen der Kategorie ist ein Fehler aufgetreten."
+                    message: "Fehler beim Erstellen der Kategorie."
                 })
                 return
             }
@@ -107,7 +107,7 @@ function CategoryCreation() {
                 })
             } else {
                 CustomToasts.error({
-                    message: "Fehler bei der Erstellung der Kategorie."
+                    message: "Fehler beim Erstellen der Kategorie."
                 })
             }
         } catch (e) {
