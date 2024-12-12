@@ -15,6 +15,7 @@ import { ColDef } from "ag-grid-community"
 import CategoryDetailsTable from "../components/CategoryDetailsTable"
 import { CustomToasts } from "../components/CustomToasts"
 import { ToastContainer } from "react-toastify"
+import { useKeycloak } from "../keycloak/KeycloakProvider"
 
 export const categoryColDefs: ColDef<CategoryDetailsProps>[] = [
     {
@@ -43,6 +44,7 @@ export const categoryColDefs: ColDef<CategoryDetailsProps>[] = [
 function CategoryDetails() {
     const [inventoryItem, setInventoryItem] = useState<InventoryItemProps>()
     const navigate = useNavigate()
+    const { token } = useKeycloak()
     const { id } = useParams()
     const [categoryDetails, setCategoryDetails] = useState<
         CategoryDetailsProps[]
@@ -58,7 +60,12 @@ function CategoryDetails() {
     const fetchItems = React.useCallback(async () => {
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories/${id}`
+                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories/${id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
             )
             if (response.ok) {
                 const data = await response.json()
@@ -93,7 +100,8 @@ function CategoryDetails() {
                 {
                     method: "PUT",
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
                     },
                     body: JSON.stringify(updatedCategory)
                 }

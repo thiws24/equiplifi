@@ -1,4 +1,4 @@
-import { Home, Inbox, LogOutIcon, ScrollText } from "lucide-react"
+import {ChevronUp, Home, Inbox, LogOutIcon, ScrollText, SquarePlus } from "lucide-react"
 import {
     SidebarContent,
     SidebarFooter,
@@ -23,7 +23,7 @@ const itemsLagerwart = [
     {
         title: "Neues Inventar erfassen",
         url: "/category/create",
-        icon: Inbox
+        icon: SquarePlus
     }
 ]
 const itemsAllgemein = [
