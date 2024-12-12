@@ -37,11 +37,15 @@ function Home() {
             flex: 1,
             minWidth: 150,
             cellRenderer: (params: any) => (
-                <img
-                    style={{ height: 40 }}
-                    src={params.data.photoUrl}
-                    alt={params.data.description}
-                />
+                <div>
+                    {params.data.photoUrl ? (
+                        <img
+                            style={{ height: 40 }}
+                            src={params.data.photoUrl}
+                            alt={params.data.description}
+                        />
+                    ) : ""}
+                </div>
             )
         }
     ]
