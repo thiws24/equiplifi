@@ -50,7 +50,7 @@ function LendCategory() {
                 setCategoryItem(data)
             } else {
                 CustomToasts.error({
-                    message: "Dieser Gegenstand existiert nicht. Bei Fragen melden Sie sich bei ihrem Administrator.",
+                    message: "Dieser Gegenstand existiert nicht.",
                     onClose: () => navigate(`/`)
                 })
             }
@@ -156,11 +156,15 @@ function LendCategory() {
                 setUnavailableDates(dateDisableArray)
 
                 setItemIds([])
+            } else {
+                CustomToasts.error({
+                    message: "Die Verfügbarkeiten konnten nicht geladen werden",
+                })
             }
         } catch (e) {
             console.log(e)
             CustomToasts.error({
-                message: "Die Verfügbarkeiten konnten nicht geladen werden",
+                message: "Es ist etwas schiefgelaufen.",
             })
         }
     }
@@ -226,7 +230,7 @@ function LendCategory() {
 
         if (jsonArray.length !== values.quantity) {
             CustomToasts.error({
-                message: "Items in diesem Zeitraum nicht verfügbar."
+                message: "Gegenstände in diesem Zeitraum nicht verfügbar."
             })
             return
         }
@@ -267,16 +271,16 @@ function LendCategory() {
                         errorMessage = `${categoryItem?.name} ist zu diesem Zeitraum nicht verfügbar.`
                         break
                     case 401:
-                        errorMessage = "Sie haben nicht die benötigten Rechte um diesen Gegenstand auszuleihen."
+                        errorMessage = "Keine Berechtigungen."
                         break
                     case 403:
                         errorMessage = "Zugriff verweigert."
                         break
                     case 404:
-                        errorMessage = "Ressource nicht gefunden. Kontaktieren Sie den Administrator."
+                        errorMessage = "Ressource nicht gefunden."
                         break
                     case 500:
-                        errorMessage = "Serverfehler: Ein Problem auf dem Server ist aufgetreten. Bitte versuchen Sie es später erneut."
+                        errorMessage = "Ein Serverproblem ist aufgetreten"
                         break
                     default:
                         if (
@@ -284,10 +288,9 @@ function LendCategory() {
                                 "Item is already reserved for this time slot."
                             )
                         ) {
-                            errorMessage = `${categoryItem?.name} ist in diesem Zeitpunkt keine ${form.getValues("quantity")}  
-                            mal verfügbar. Bitte wählen Sie ein anderes Datum oder ändern Sie die Anzahl an Gegenständen.`
+                            errorMessage = `Zu diesem Zeitpunkt sind keine ${form.getValues("quantity")} Gegenstände verfügbar.`
                         } else {
-                            errorMessage = "Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut."
+                            errorMessage = "Unerwarteter Fehler. Bitte versuchen Sie es erneut."
                         }
                         break
                 }
@@ -297,7 +300,7 @@ function LendCategory() {
             }
         } catch (error) {
             CustomToasts.error({
-                message: "Beim senden der Ausleihanfrage ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es später erneut."
+                message: "Ein Fehler ist eingetreten."
             })
             console.log("Error: " + error)
         }

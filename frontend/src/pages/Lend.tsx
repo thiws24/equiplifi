@@ -37,7 +37,7 @@ function Lend() {
                 setItem(data)
             } else {
                 CustomToasts.error({
-                    message: "Dieser Gegenstand existiert nicht. Bei Fragen melden Sie sich bei ihrem Administrator.",
+                    message: "Dieser Gegenstand existiert nicht.",
                     onClose: () => navigate(`/`)
                 })
             }
@@ -98,11 +98,15 @@ function Lend() {
                 )
 
                 setUnavailableDates(dateArray)
+            } else {
+                CustomToasts.error({
+                    message: "Die Verfügbarkeiten konnten nicht geladen werden",
+                })
             }
         } catch (e) {
             console.log(e)
             CustomToasts.error({
-                message: "Die Verfügbarkeiten konnten nicht geladen werden."
+                message: "Es ist etwas schiefgelaufen."
             })
         }
     }, [id])
@@ -169,19 +173,19 @@ function Lend() {
                 let errorMessage: string = ""
                 switch (data.status) {
                     case 400:
-                        errorMessage = `${item?.name} mit der ID: ${item?.id} ist zu diesem Zeitraum nicht verfügbar.`
+                        errorMessage = `${item?.name} ist zu diesem Zeitraum nicht verfügbar.`
                         break
                     case 401:
-                        errorMessage = "Sie haben hast nicht die benötigten Rechte um diesen Gegenstand auszuleihen."
+                        errorMessage = "Keine Berechtigungen."
                         break
                     case 403:
                         errorMessage = "Zugriff verweigert."
                         break
                     case 404:
-                        errorMessage = "Ressource nicht gefunden. Kontaktieren Sie den Administrator"
+                        errorMessage = "Ressource nicht gefunden."
                         break
                     case 500:
-                        errorMessage = "Serverfehler: Ein Problem auf dem Server ist aufgetreten. Bitte versuchen Sie es später erneut."
+                        errorMessage = "Ein Serverproblem ist aufgetreten."
                         break
                     default:
                         if (
@@ -189,9 +193,9 @@ function Lend() {
                                 "Item is already reserved for this time slot."
                             )
                         ) {
-                            errorMessage = `${item?.name} mit der ID ${item?.id} ist innerhalb des Zeitraums schon reserviert. Bitte wählen Sie ein anderes Datum.`
+                            errorMessage = `${item?.name} zu diesem Zeitpunkt nicht verfügbar`
                         } else {
-                            errorMessage = "Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut."
+                            errorMessage = "Unerwarteter Fehler. Bitte versuchen Sie es erneut."
                         }
                         break
                 }
@@ -201,7 +205,7 @@ function Lend() {
             }
         } catch (error) {
             CustomToasts.error({
-                message: "Beim senden der Ausleihanfrage ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es später erneut."
+                message: "Ein Fehler ist eingetreten."
             })
             console.log("Error: " + error)
         }

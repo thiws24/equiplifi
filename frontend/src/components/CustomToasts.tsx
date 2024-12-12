@@ -15,7 +15,7 @@ export const CustomToasts = {
         toast.success(
             <div style={{ display: "flex", alignItems: "center" }}>
                 <CheckCircle color="#5588c7" size={24} style={{ marginRight: "10px" }} />
-                <span>{message}</span>
+                <span className="mr-1 ml-1">{message}</span>
             </div>,
             {
                 className: "custom-toast",
@@ -34,7 +34,7 @@ export const CustomToasts = {
         toast.error(
             <div style={{ display: "flex", alignItems: "center" }}>
                 <FaExclamationCircle color="red" size={32} style={{ marginRight: "10px" }} />
-                <span>{message}</span>
+                <span className="mr-1 ml-1">{message}</span>
             </div>,
             {
                 className: "custom-toast",

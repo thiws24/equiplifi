@@ -127,7 +127,7 @@ function CategoryDetails() {
         } catch (error) {
             console.error("Fehler beim Speichern:", error)
             CustomToasts.error({
-                message: "Fehler beim Aktualisieren der Kategorie. Bitte versuchen Sie es später erneut."
+                message: "Fehler beim Aktualisieren der Kategorie."
             })
         }
     }
