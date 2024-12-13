@@ -53,7 +53,7 @@ function Reservations() {
                 CustomToasts.success({
                     message: "Reservierung erfolgreich bestätigt.",
                     duration: 1000,
-                    onClose: () =>  window.open(`/reservations`, "_self")
+                    onClose: () => window.open(`/reservations`, "_self")
                 })
             } else {
                 CustomToasts.error({

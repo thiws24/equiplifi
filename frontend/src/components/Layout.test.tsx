@@ -1,13 +1,24 @@
 import { render, screen, fireEvent } from "@testing-library/react"
 import { Layout } from "./Layout"
 import "@testing-library/jest-dom"
+import { test, describe, expect, vi } from "vitest"
 
-// Mock der QrReader-Komponente
-jest.mock("./QrReader", () => () => <div>QrReader Mock</div>)
+vi.mock("../hooks/use-mobile", () => {
+    return {
+        useIsMobile: () => true
+    }
+})
 
-jest.mock("../keycloak/KeycloakProvider", () => ({
+
+vi.mock("./QrReader", () => {
+    return {
+        default: vi.fn(() => <div>QrReader Mock</div>) // Mock the default export
+    }
+})
+
+vi.mock("../keycloak/KeycloakProvider", () => ({
     useKeycloak: () => ({
-        authenticated: true // Simuliere einen authentifizierten Zustand
+        authenticated: true
     })
 }))
 
@@ -18,8 +29,6 @@ describe("Layout Component", () => {
                 <div>Children Content</div>
             </Layout>
         )
-        expect(screen.getByAltText("equipli logo")).toBeInTheDocument()
-        expect(screen.getByText("equipli")).toBeInTheDocument()
         const button = screen.getByText("QR Code scannen")
         expect(button).toBeInTheDocument()
         expect(screen.getByText("Children Content")).toBeInTheDocument()

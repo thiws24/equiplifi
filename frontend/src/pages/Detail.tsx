@@ -41,6 +41,11 @@ function Detail() {
 
                 // Fetch QR Code
                 if (data) await fetchQrCode(data.name)
+            }else {
+                CustomToasts.error({
+                    message: "Dieses Exemplar existiert nicht. Bei Fragen melden Sie sich bei ihrem Administrator.",
+                    onClose: () => navigate(`/`)
+                })
             }
         } catch (e) {
             console.log(e)
