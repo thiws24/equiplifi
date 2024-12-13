@@ -15,7 +15,7 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
 import { Input } from "../components/ui/input"
-import { ToastContainer } from "react-toastify"
+import { toast, ToastContainer } from "react-toastify"
 import { CategoryProps } from "../interfaces/CategoryProps"
 import DatePickerField from "../components/DatePickerField"
 import { AvailabilityItemProps } from "../interfaces/AvailabilityItemProps"
@@ -56,7 +56,7 @@ function LendCategory() {
             }
         } catch (e) {
             CustomToasts.error({
-                message: "Es ist etwas schiefgelaufen. Versuchen Sie es später erneut.",
+                message: "Es ist etwas schiefgelaufen. Versuchen Sie es später erneut."
             })
         }
     }, [id])
@@ -95,7 +95,7 @@ function LendCategory() {
                 //  Wenn der Button zum Monatswechsel gedrückt wird, soll die Availability
                 //  für den nächsten Monat geladen werden. Deswegen am besten alles was
                 //  nicht im Monat der gerade offen ist, ist disablen?
-                const getDaysArray = function (
+                const getDaysArray = function(
                     start: string | Date,
                     end: string | Date
                 ) {
@@ -157,14 +157,16 @@ function LendCategory() {
 
                 setItemIds([])
             } else {
-                CustomToasts.error({
-                    message: "Die Verfügbarkeiten konnten nicht geladen werden",
-                })
+                if (!toast.isActive("Die Verfügbarkeiten konnten nicht geladen werden")) {
+                    CustomToasts.error({
+                        message: "Die Verfügbarkeiten konnten nicht geladen werden"
+                    })
+                }
             }
         } catch (e) {
             console.log(e)
             CustomToasts.error({
-                message: "Es ist etwas schiefgelaufen.",
+                message: "Es ist etwas schiefgelaufen."
             })
         }
     }
@@ -224,7 +226,7 @@ function LendCategory() {
             }
 
             if (jsonArray.length === values.quantity) {
-                break;
+                break
             }
         }
 
@@ -353,7 +355,8 @@ function LendCategory() {
                                                                 <label className="text-sm pb-2">
                                                                     Anzahl
                                                                 </label>
-                                                                <FormControl className="text-left font-sans w-[80px] pl-3">
+                                                                <FormControl
+                                                                    className="text-left font-sans w-[80px] pl-3">
                                                                     <Input
                                                                         type="number"
                                                                         {...field}
@@ -401,7 +404,7 @@ function LendCategory() {
                                                             }
                                                             disabled={(date) =>
                                                                 date <
-                                                                    new Date() ||
+                                                                new Date() ||
                                                                 isDateUnavailable(
                                                                     date
                                                                 )
@@ -413,7 +416,7 @@ function LendCategory() {
                                                                         new Date()
                                                                     tomorrow.setDate(
                                                                         tomorrow.getDate() +
-                                                                            1
+                                                                        1
                                                                     )
                                                                     return tomorrow
                                                                 })()
@@ -425,7 +428,7 @@ function LendCategory() {
                                                                             "startDate"
                                                                         ),
                                                                     endDate:
-                                                                        undefined,
+                                                                    undefined,
                                                                     quantity:
                                                                         form.getValues(
                                                                             "quantity"
@@ -451,13 +454,13 @@ function LendCategory() {
                                                             disabled={(date) =>
                                                                 startDate
                                                                     ? date <
-                                                                          startDate ||
-                                                                      isDateUnavailable(
-                                                                          date
-                                                                      )
+                                                                    startDate ||
+                                                                    isDateUnavailable(
+                                                                        date
+                                                                    )
                                                                     : isDateUnavailable(
-                                                                          date
-                                                                      )
+                                                                        date
+                                                                    )
                                                             }
                                                             defaultMonth={
                                                                 form.getValues(
@@ -469,7 +472,7 @@ function LendCategory() {
                                                                         new Date()
                                                                     tomorrow.setDate(
                                                                         tomorrow.getDate() +
-                                                                            1
+                                                                        1
                                                                     )
                                                                     return tomorrow
                                                                 })()
@@ -499,23 +502,23 @@ function LendCategory() {
                                                     type="submit"
                                                     disabled={
                                                         undefined ==
-                                                            form.getValues(
-                                                                "startDate"
-                                                            ) ||
+                                                        form.getValues(
+                                                            "startDate"
+                                                        ) ||
                                                         undefined ==
-                                                            form.getValues(
-                                                                "endDate"
-                                                            ) ||
+                                                        form.getValues(
+                                                            "endDate"
+                                                        ) ||
                                                         0 ==
-                                                            form.getValues(
-                                                                "quantity"
-                                                            ) ||
+                                                        form.getValues(
+                                                            "quantity"
+                                                        ) ||
                                                         form.getValues(
                                                             "endDate"
                                                         ) <
-                                                            form.getValues(
-                                                                "startDate"
-                                                            ) ||
+                                                        form.getValues(
+                                                            "startDate"
+                                                        ) ||
                                                         (categoryItem?.items.length || 9999) < form.getValues("quantity")
                                                         // TODO: Hier noch wenn anzahl > gesamtmenge
                                                     }

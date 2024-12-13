@@ -11,7 +11,7 @@ import { useKeycloak } from "../keycloak/KeycloakProvider"
 import { KeyCloakUserInfo } from "../interfaces/KeyCloakUserInfo"
 import { ItemProps } from "../interfaces/ItemProps"
 import DatePickerField from "../components/DatePickerField"
-import { ToastContainer } from "react-toastify"
+import { toast, ToastContainer } from "react-toastify"
 import CustomToasts from "../components/CustomToasts"
 
 function Lend() {
@@ -99,9 +99,11 @@ function Lend() {
 
                 setUnavailableDates(dateArray)
             } else {
-                CustomToasts.error({
-                    message: "Die Verfügbarkeiten konnten nicht geladen werden",
-                })
+                if (!toast.isActive("Die Verfügbarkeiten konnten nicht geladen werden")) {
+                    CustomToasts.error({
+                        message: "Die Verfügbarkeiten konnten nicht geladen werden",
+                    })
+                }
             }
         } catch (e) {
             console.log(e)
@@ -131,6 +133,8 @@ function Lend() {
             setStartDate(newStartDate)
         }
         void fetchItem()
+        // TODO: Diese function soll nur aufgerufen werden, wenn der Monatsbutton geändert wird sonst nicht
+        //  da sonst bei auswählen des startdates die fehlermeldung wieder kommt
         void fetchAvailability()
     }, [fetchItem, keycloak, form.getValues("startDate")])
 
