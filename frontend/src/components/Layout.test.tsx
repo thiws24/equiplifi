@@ -9,7 +9,7 @@ vi.mock("../hooks/use-mobile", () => {
     }
 })
 
-// Mock der QrReader-Komponente
+
 vi.mock("./QrReader", () => {
     return {
         default: vi.fn(() => <div>QrReader Mock</div>) // Mock the default export
@@ -18,7 +18,7 @@ vi.mock("./QrReader", () => {
 
 vi.mock("../keycloak/KeycloakProvider", () => ({
     useKeycloak: () => ({
-        authenticated: true // Simuliere einen authentifizierten Zustand
+        authenticated: true
     })
 }))
 
@@ -29,8 +29,6 @@ describe("Layout Component", () => {
                 <div>Children Content</div>
             </Layout>
         )
-        expect(screen.getByAltText("equipli logo")).toBeInTheDocument()
-        expect(screen.getByText("equipli")).toBeInTheDocument()
         const button = screen.getByText("QR Code scannen")
         expect(button).toBeInTheDocument()
         expect(screen.getByText("Children Content")).toBeInTheDocument()

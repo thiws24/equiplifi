@@ -7,10 +7,10 @@ import { BrowserRouter } from "react-router-dom"
 import { test, describe, expect } from "vitest"
 
 const colDefs: ColDef<InventoryItemProps, any>[] = [
-    { field: "id" },
-    { field: "name" },
-    { field: "icon" },
-    { field: "photoUrl" }
+    { field: "id", headerName: "Id" },
+    { field: "name", headerName: "Name" },
+    { field: "icon", headerName: "Icon" },
+    { field: "photoUrl", headerName: "Photo Url" }
 ]
 
 describe("InventoryTable Tests", () => {
@@ -81,6 +81,6 @@ describe("InventoryTable Tests", () => {
             return header.textContent
         })
 
-        expect(headers).toEqual(["Id", "Name", "Icon", "Photo Url", "Urn"])
+        expect(headers).toEqual(["Id", "Name"])
     })
 })

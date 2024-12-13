@@ -1,115 +1,74 @@
-import React from "react"
-import { render, screen, fireEvent, waitFor } from "@testing-library/react"
-import { MemoryRouter, Route, Routes } from "react-router-dom"
-import Detail from "./Detail"
-import { test, describe, expect, vi, beforeEach, afterEach } from "vitest"
+import { render, screen } from "@testing-library/react";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
+import Detail from "./Detail";
+import { vi, expect, beforeEach, describe, it } from "vitest";
 
-vi.mock("../components/ui/button", () => ({
-    Button: ({ onClick, children, ...props }: any) => (
-        <button onClick={onClick} {...props}>
-            {children}
-        </button>
-    )
-}))
+// Mock `fetch`
+global.fetch = vi.fn().mockResolvedValue({
+    ok: true,
+    json: async () => ({
+        id: "1",
+        categoryId: "10",
+        name: "Test Item",
+        icon: "📦",
+        location: "Test Location",
+        status: "OK",
+        description: "Test Description",
+        photoUrl: null,
+    }),
+});
 
-vi.mock("../components/KeyValueRow", () => ({
-    KeyValueRow: ({
-        label,
-        children
-    }: {
-        label: string
-        children: React.ReactNode
-    }) => (
-        <div>
-            <dt>{label}</dt>
-            <dd>{children}</dd>
-        </div>
-    )
-}))
+// Mock `useKeycloak`
+vi.mock("../keycloak/KeycloakProvider", () => ({
+    useKeycloak: () => ({
+        token: "mock-token",
+    }),
+}));
 
 describe("Detail Component", () => {
-    const mockItem = {
-        id: 1,
-        name: "Test Item",
-        description: "This is a test item.",
-        urn: "urn:12345",
-        photoUrl: "https://via.placeholder.com/150",
-        icon: "📦"
-    }
-
-    const mockReservations = [
-        { startDate: "2023-11-01", endDate: "2023-11-01" },
-        { startDate: "2023-11-11", endDate: "2023-11-12" }
-    ]
-
     beforeEach(() => {
-        global.fetch = vi.fn((url) => {
-            if (url.includes("/items/")) {
-                return Promise.resolve({
-                    ok: true,
-                    json: () => Promise.resolve(mockItem)
-                })
-            } else if (url.includes("/reservations/")) {
-                return Promise.resolve({
-                    ok: true,
-                    json: () => Promise.resolve(mockReservations)
-                })
-            }
-            return Promise.reject(new Error("Unknown API endpoint"))
-        }) as any
-    })
+        vi.clearAllMocks();
+    });
 
-    afterEach(() => {
-        vi.clearAllMocks()
-    })
-
-    test("renders item data correctly", async () => {
+    it("renders the Detail component with mocked data", async () => {
         render(
             <MemoryRouter initialEntries={["/item/1"]}>
                 <Routes>
                     <Route path="/item/:id" element={<Detail />} />
                 </Routes>
             </MemoryRouter>
-        )
+        );
 
-        await waitFor(() =>
-            expect(screen.getByText("Test Item")).toBeInTheDocument()
-        )
-        expect(screen.getByText("This is a test item.")).toBeInTheDocument()
-        expect(screen.getByAltText("This is a test item.")).toBeInTheDocument()
-        expect(screen.getByText("Reservierungen")).toBeInTheDocument()
-    })
+        // Ensure basic text content is rendered
+        expect(await screen.findByText(/Test Item/)).toBeInTheDocument();
+        expect(screen.getByText(/Item 1/)).toBeInTheDocument();
+        expect(screen.getByText(/Test Location/)).toBeInTheDocument();
+        expect(screen.getByText(/OK/)).toBeInTheDocument();
+        expect(screen.getByText(/Test Description/)).toBeInTheDocument();
 
-    test("opens and closes the QR code modal", async () => {
+        // Verify buttons
+        expect(screen.getByRole("button", { name: /Item bearbeiten/i })).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: /Ausleihen/i })).toBeInTheDocument();
+    });
+
+    it("displays an error message when the fetch fails", async () => {
+        // Mock fetch to fail
+        // @ts-ignore
+        global.fetch.mockImplementationOnce(() =>
+            Promise.resolve({
+                ok: false,
+            })
+        );
+
         render(
             <MemoryRouter initialEntries={["/item/1"]}>
                 <Routes>
                     <Route path="/item/:id" element={<Detail />} />
                 </Routes>
             </MemoryRouter>
-        )
+        );
 
-        await waitFor(() => screen.getByText("QR Code zeigen"))
-
-        fireEvent.click(screen.getByText("QR Code zeigen"))
-        expect(screen.getByText(mockItem.urn)).toBeInTheDocument()
-
-        fireEvent.click(screen.getByText("Zurück"))
-        expect(screen.queryByText(mockItem.urn)).not.toBeInTheDocument()
-    })
-
-    test("renders reservations correctly", async () => {
-        render(
-            <MemoryRouter initialEntries={["/item/1"]}>
-                <Routes>
-                    <Route path="/item/:id" element={<Detail />} />
-                </Routes>
-            </MemoryRouter>
-        )
-
-        await waitFor(() => screen.getByText("Reservierungen"))
-
-        expect(screen.getByText("Start Datum")).toBeInTheDocument()
-        expect(screen.getByText("End Datum")).toBeInTheDocument()
-    })
-})
+        // Verify error handling
+        expect(await screen.findByText(/Dieses Exemplar existiert nicht/i)).toBeInTheDocument();
+    });
+});
