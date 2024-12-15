@@ -1,0 +1,21 @@
+### Create Categorie 1
+POST http://localhost:8083/categories
+Content-Type: application/json
+
+{
+  "name": "Category 1",
+  "description": "Category 1 Description",
+  "icon": "🏐",
+  "photoUrl": "example-urn"
+}
+
+### Create Categorie 2
+POST http://localhost:8083/categories
+Content-Type: application/json
+
+{
+  "name": "Category 2",
+  "description": "Category 2 Description",
+  "icon": "🏀",
+  "photoUrl": "example-urn-basketball"
+}
