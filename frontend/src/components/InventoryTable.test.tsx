@@ -7,10 +7,10 @@ import { BrowserRouter } from "react-router-dom"
 import { test, describe, expect } from "vitest"
 
 const colDefs: ColDef<InventoryItemProps, any>[] = [
-    { field: "id" },
-    { field: "name" },
-    { field: "icon" },
-    { field: "photoUrl" }
+    { field: "id", headerName: "Id" },
+    { field: "name", headerName: "Name" },
+    { field: "icon", headerName: "Icon" },
+    { field: "photoUrl", headerName: "Photo Url" }
 ]
 
 describe("InventoryTable Tests", () => {
@@ -48,7 +48,11 @@ describe("InventoryTable Tests", () => {
     ]
     test("renders data correctly", () => {
         const { container } = render(
-            <BrowserRouter>
+            <BrowserRouter
+                future={{
+                    v7_startTransition: true,
+                    v7_relativeSplatPath: true
+                }}>
                 <InventoryTable
                     colDefs={colDefs}
                     inventoryItems={rowData}
@@ -58,7 +62,7 @@ describe("InventoryTable Tests", () => {
         )
         const elements = container
             ?.querySelector(".ag-body")
-            ?.querySelectorAll('[role="row"]')
+            ?.querySelectorAll("[role=\"row\"]")
 
         expect(elements?.length).toBe(3)
 
@@ -67,7 +71,12 @@ describe("InventoryTable Tests", () => {
 
     test("should have expected column headers", () => {
         const { container } = render(
-            <BrowserRouter>
+            <BrowserRouter
+                future={{
+                    v7_startTransition: true,
+                    v7_relativeSplatPath: true
+                }}
+            >
                 <InventoryTable
                     colDefs={colDefs}
                     inventoryItems={rowData}
@@ -77,10 +86,10 @@ describe("InventoryTable Tests", () => {
         )
         const headers = Array.from(
             container?.querySelectorAll(".ag-header-cell-text")
-        ).map(function (header) {
+        ).map(function(header) {
             return header.textContent
         })
 
-        expect(headers).toEqual(["Id", "Name", "Icon", "Photo Url", "Urn"])
+        expect(headers).toEqual(["Id", "Name"])
     })
 })

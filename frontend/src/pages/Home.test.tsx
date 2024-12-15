@@ -1,68 +1,97 @@
 import React from "react"
-import { render, waitFor } from "@testing-library/react"
+import { render, screen, waitFor } from "@testing-library/react"
 import Home from "./Home"
 import { BrowserRouter } from "react-router-dom"
-import { test, describe, expect, vi } from "vitest"
+import { ToastContainer } from "react-toastify"
+import { vi, expect, beforeEach, describe, test } from "vitest"
 
-const mockData = [
+// Mocking fetch globally
+const mockFetch = vi.fn()
+global.fetch = mockFetch as unknown as typeof fetch
+
+// Mock Data
+const mockInventoryItems = [
     {
         id: 1,
         name: "Magischer Schlüssel",
         icon: "🗝️",
-        photoUrl: "",
-        urn: "QR-Code 001"
+        photoUrl: "https://example.com/key.png",
+        description: "Ein magischer Schlüssel"
     },
     {
         id: 2,
         name: "Heiltrank",
         icon: "🧪",
-        photoUrl: "",
-        urn: "QR-Code 002"
+        photoUrl: "https://example.com/potion.png",
+        description: "Ein mächtiger Heiltrank"
     },
     {
         id: 3,
         name: "Drachenfeuer",
         icon: "🔥",
-        photoUrl: "",
-        urn: "QR-Code 003"
+        photoUrl: "https://example.com/fire.png",
+        description: "Ein gefährliches Drachenfeuer"
     }
 ]
 
-// Mock fetch
-vi.stubGlobal(
-    "fetch",
-    vi.fn().mockResolvedValue({
-        json: vi.fn().mockResolvedValue(mockData)
+describe("Home Page Tests", () => {
+    beforeEach(() => {
+        mockFetch.mockClear()
     })
-)
 
-const f = { v7_startTransition: true, v7_relativeSplatPath: true }
-
-describe("Home Tests", () => {
-    test("renders the AG Grid table", async () => {
-        const { container } = render(
-            <BrowserRouter future={f}>
-                <Home />
-            </BrowserRouter>
-        )
-        await waitFor(() => {
-            expect(container.querySelector(".ag-root")).not.toBeNull()
+    test("renders the home page correctly", async () => {
+        // Mocking a successful fetch response
+        mockFetch.mockResolvedValueOnce({
+            ok: true,
+            json: async () => mockInventoryItems
         })
-    })
-    test("renders 3 elements in the table body", async () => {
-        const { container } = render(
-            <BrowserRouter future={f}>
+
+        render(
+            <BrowserRouter
+                future={{
+                    v7_startTransition: true,
+                    v7_relativeSplatPath: true
+                }}>
                 <Home />
+                <ToastContainer />
             </BrowserRouter>
         )
-        await waitFor(
-            async () => {
-                const elements = container
-                    ?.querySelector(".ag-body")
-                    ?.querySelectorAll('[role="row"]')
-                expect(elements?.length).toBe(3)
-            },
-            { timeout: 3000 }
+
+        // Check if the heading is rendered
+        expect(
+            screen.getByText("Inventarverwaltung")
+        ).toBeInTheDocument()
+
+        // Wait for the inventory items to load
+        await waitFor(() =>
+            expect(screen.getByText("Magischer Schlüssel")).toBeInTheDocument()
+        )
+
+        expect(screen.getByText("Heiltrank")).toBeInTheDocument()
+        expect(screen.getByText("Drachenfeuer")).toBeInTheDocument()
+    })
+
+    test("renders the correct number of inventory items", async () => {
+        // Mocking a successful fetch response
+        mockFetch.mockResolvedValueOnce({
+            ok: true,
+            json: async () => mockInventoryItems
+        })
+
+        const { container } = render(
+            <BrowserRouter
+                future={{
+                    v7_startTransition: true,
+                    v7_relativeSplatPath: true
+                }}>
+                <Home />
+                <ToastContainer />
+            </BrowserRouter>
+        )
+
+        // Wait for the inventory items to load
+        await waitFor(() =>
+            expect(container.querySelectorAll(".ag-row").length).toBe(3)
         )
     })
 })

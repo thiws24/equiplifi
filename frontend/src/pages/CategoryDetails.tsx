@@ -57,7 +57,7 @@ function CategoryDetails() {
         icon: ""
     })
 
-    const fetchItems = React.useCallback(async () => {
+    const fetchItems = async () => {
         try {
             const response = await fetch(
                 `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories/${id}`,
@@ -76,13 +76,18 @@ function CategoryDetails() {
                     icon: data.icon
                 })
                 setCategoryDetails(data.items || [])
+            }else {
+                CustomToasts.error({
+                    message: "Diese Kategorie existiert nicht. Bei Fragen melden Sie sich bei ihrem Administrator.",
+                    onClose: () => navigate(`/`)
+                })
             }
         } catch (e) {
             console.log(e)
         } finally {
             setLoading(false)
         }
-    }, [id])
+    };
 
     const handleSave = async () => {
         if (!inventoryItem) return
@@ -134,7 +139,7 @@ function CategoryDetails() {
 
     React.useEffect(() => {
         void fetchItems()
-    }, [fetchItems])
+    }, [])
 
     return (
         <div className="max-w-[1000px] mx-auto">
