@@ -123,10 +123,6 @@ function Lend() {
     }
 
     useEffect(() => {
-        keycloak?.loadUserInfo().then(
-            (val) => setUserInfo(val as any),
-            (e) => console.log(e)
-        )
         if (form.getValues("startDate")) {
             const newStartDate = new Date(form.getValues("startDate"))
             newStartDate.setDate(newStartDate.getDate() + 1)
@@ -134,9 +130,9 @@ function Lend() {
         }
         void fetchItem()
         // TODO: Diese function soll nur aufgerufen werden, wenn der Monatsbutton geändert wird sonst nicht
-        //  da sonst bei auswählen des startdates die fehlermeldung wieder kommt
+        //  da sonst bei auswählen des startdates die fehlermeldung wieder kommt (Müsste im Kalender sein)
         void fetchAvailability()
-    }, [fetchItem, keycloak, form.getValues("startDate")])
+    }, [form.getValues("startDate")])
 
     const onSubmit = async (values: FormschemaType) => {
         const formattedStartDate = format(
