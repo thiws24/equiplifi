@@ -20,7 +20,11 @@ describe("ReservationTable Component", () => {
 
     it("renders without crashing", () => {
         const { container } = render(
-            <MemoryRouter>
+            <MemoryRouter
+                future={{
+                    v7_startTransition: true,
+                    v7_relativeSplatPath: true
+                }}>
                 <ReservationTable
                     reservationItems={mockReservationItems}
                     colDefs={mockColDefs}
@@ -33,7 +37,11 @@ describe("ReservationTable Component", () => {
 
     it("renders reservation data", () => {
         const { getByText } = render(
-            <MemoryRouter>
+            <MemoryRouter
+                future={{
+                    v7_startTransition: true,
+                    v7_relativeSplatPath: true
+                }}>
                 <ReservationTable
                     reservationItems={mockReservationItems}
                     colDefs={mockColDefs}
@@ -51,7 +59,11 @@ describe("ReservationTable Component", () => {
 
     it("shows loading state", () => {
         const { container } = render(
-            <MemoryRouter>
+            <MemoryRouter
+                future={{
+                    v7_startTransition: true,
+                    v7_relativeSplatPath: true
+                }}>
                 <ReservationTable
                     reservationItems={[]}
                     colDefs={mockColDefs}

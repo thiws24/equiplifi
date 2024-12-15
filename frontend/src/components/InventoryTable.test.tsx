@@ -48,7 +48,11 @@ describe("InventoryTable Tests", () => {
     ]
     test("renders data correctly", () => {
         const { container } = render(
-            <BrowserRouter>
+            <BrowserRouter
+                future={{
+                    v7_startTransition: true,
+                    v7_relativeSplatPath: true
+                }}>
                 <InventoryTable
                     colDefs={colDefs}
                     inventoryItems={rowData}
@@ -58,7 +62,7 @@ describe("InventoryTable Tests", () => {
         )
         const elements = container
             ?.querySelector(".ag-body")
-            ?.querySelectorAll('[role="row"]')
+            ?.querySelectorAll("[role=\"row\"]")
 
         expect(elements?.length).toBe(3)
 
@@ -67,7 +71,12 @@ describe("InventoryTable Tests", () => {
 
     test("should have expected column headers", () => {
         const { container } = render(
-            <BrowserRouter>
+            <BrowserRouter
+                future={{
+                    v7_startTransition: true,
+                    v7_relativeSplatPath: true
+                }}
+            >
                 <InventoryTable
                     colDefs={colDefs}
                     inventoryItems={rowData}
@@ -77,7 +86,7 @@ describe("InventoryTable Tests", () => {
         )
         const headers = Array.from(
             container?.querySelectorAll(".ag-header-cell-text")
-        ).map(function (header) {
+        ).map(function(header) {
             return header.textContent
         })
 

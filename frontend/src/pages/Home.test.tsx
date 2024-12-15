@@ -47,7 +47,11 @@ describe("Home Page Tests", () => {
         })
 
         render(
-            <BrowserRouter>
+            <BrowserRouter
+                future={{
+                    v7_startTransition: true,
+                    v7_relativeSplatPath: true
+                }}>
                 <Home />
                 <ToastContainer />
             </BrowserRouter>
@@ -75,7 +79,11 @@ describe("Home Page Tests", () => {
         })
 
         const { container } = render(
-            <BrowserRouter>
+            <BrowserRouter
+                future={{
+                    v7_startTransition: true,
+                    v7_relativeSplatPath: true
+                }}>
                 <Home />
                 <ToastContainer />
             </BrowserRouter>

@@ -39,7 +39,11 @@ vi.mock("react-router-dom", async () => {
 describe("CategoryDetailsTable Component", () => {
     test("renders the table with the correct column headers", () => {
         const { container } = render(
-            <BrowserRouter>
+            <BrowserRouter
+                future={{
+                    v7_startTransition: true,
+                    v7_relativeSplatPath: true
+                }}>
                 <CategoryDetailsTable
                     categoryDetails={categoryDetails}
                     colDefs={colDefs}
@@ -57,7 +61,11 @@ describe("CategoryDetailsTable Component", () => {
 
     test("renders the correct number of rows", () => {
         const { container } = render(
-            <BrowserRouter>
+            <BrowserRouter
+                future={{
+                    v7_startTransition: true,
+                    v7_relativeSplatPath: true
+                }}>
                 <CategoryDetailsTable
                     categoryDetails={categoryDetails}
                     colDefs={colDefs}
