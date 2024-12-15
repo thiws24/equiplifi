@@ -36,7 +36,11 @@ describe("Reservations Component", () => {
 
     it("renders loading state initially", () => {
         render(
-            <MemoryRouter initialEntries={["/reservations"]}>
+            <MemoryRouter initialEntries={["/reservations"]}
+                          future={{
+                              v7_startTransition: true,
+                              v7_relativeSplatPath: true
+                          }}>
                 <Routes>
                     <Route path="/reservations" element={<Reservations />} />
                 </Routes>
@@ -57,7 +61,11 @@ describe("Reservations Component", () => {
         );
 
         render(
-            <MemoryRouter initialEntries={["/reservations"]}>
+            <MemoryRouter initialEntries={["/reservations"]}
+                          future={{
+                              v7_startTransition: true,
+                              v7_relativeSplatPath: true
+                          }}>
                 <Routes>
                     <Route path="/reservations" element={<Reservations />} />
                 </Routes>
@@ -65,6 +73,6 @@ describe("Reservations Component", () => {
         );
 
         // Verify no tasks are rendered
-        expect(await screen.queryByText(/Test Reservation/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/Test Reservation/i)).not.toBeInTheDocument();
     });
 });
