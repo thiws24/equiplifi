@@ -74,6 +74,21 @@ public class MailRoute extends RouteBuilder {
                 .setProperty("mailTemplate", simple("cancellation-confirmation-mail.html"))
                 .to("direct:sendMail");
 
+
+// Return Confirmation Route
+        from("activemq:queue:return-confirmation")
+                .routeId("sendReturnConfirmation-Route")
+                .unmarshal(mailDtoFormat)
+                .setProperty("mailTemplate", simple("return-confirmation-mail.html"))
+                .to("direct:sendMail");
+
+// Return Reminder Route
+        from("activemq:queue:return-reminder")
+                .routeId("sendReturnReminder-Route")
+                .unmarshal(mailDtoFormat)
+                .setProperty("mailTemplate", simple("return-reminder-mail.html"))
+                .to("direct:sendMail");
+
 // Main E-Mail Route
         from("direct:sendMail")
                 // Validate Input
