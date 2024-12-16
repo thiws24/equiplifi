@@ -4,12 +4,13 @@ import { BrowserRouter } from "react-router-dom" // Für Router-Kontext
 import QrReader from "./QrReader"
 import "@testing-library/jest-dom"
 import QrScanner from "qr-scanner"
+import { test, describe, expect, vi } from "vitest"
 
-jest.mock("qr-scanner")
+vi.mock("qr-scanner")
 
 describe("QrReader Component", () => {
     test("renders without crashing", async () => {
-        jest.spyOn(QrScanner.prototype, "start").mockImplementation(() =>
+        vi.spyOn(QrScanner.prototype, "start").mockImplementation(() =>
             Promise.resolve()
         )
         const { container } = render(

@@ -55,7 +55,7 @@ export async function fetchAllProcessesByUser(
 ): Promise<Process[]> {
     try {
         const response = await fetch(
-            `${process.env.REACT_APP_SPIFF}/api/v1.0/process-instances`,
+            `${import.meta.env.VITE_SPIFF}/api/v1.0/process-instances`,
             {
                 method: "POST",
                 headers: {

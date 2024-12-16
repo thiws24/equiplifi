@@ -1,9 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react"
+import { render } from "@testing-library/react"
 import { TableGalleryView } from "./TableGalleryView"
 import { InventoryItemProps } from "../interfaces/InventoryItemProps"
 import { ColDef } from "ag-grid-community"
 import { BrowserRouter } from "react-router-dom"
 import userEvent from "@testing-library/user-event"
+import { test, describe, expect } from "vitest"
 
 const colDefs: ColDef<InventoryItemProps, any>[] = [
     { field: "id" },

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react"
 import Keycloak from "keycloak-js"
+import { KeyCloakUserInfo } from "../interfaces/KeyCloakUserInfo"
 
 interface Props {
     children: React.ReactNode
@@ -9,18 +10,20 @@ interface Context {
     keycloak?: Keycloak
     authenticated?: boolean
     token?: string
+    userInfo?: KeyCloakUserInfo
 }
 
 export const keycloakConfig = new Keycloak({
-    url: process.env.REACT_APP_KEYCLOAK || "",
+    url: import.meta.env.VITE_KEYCLOAK || "",
     realm: "master",
-    clientId: process.env.NODE_ENV === "production" ? "frontend" : "localhost"
+    clientId: import.meta.env.PROD ? "frontend" : "localhost"
 })
 
 const KeycloakContext = createContext<Context>({
     keycloak: undefined,
     authenticated: false,
-    token: undefined
+    token: undefined,
+    userInfo: undefined
 })
 
 export const useKeycloak = () => useContext(KeycloakContext)
@@ -41,11 +44,16 @@ export const KeycloakProvider: React.FC<Props> = ({ children }) => {
                     if (!authenticated) {
                         void keycloakConfig.login()
                     } else {
-                        setKeycloakState({
-                            keycloak: keycloakConfig,
-                            authenticated,
-                            token: keycloakConfig.token
-                        })
+                        keycloakConfig?.loadUserInfo().then(
+                            (val) =>
+                                setKeycloakState({
+                                    keycloak: keycloakConfig,
+                                    authenticated,
+                                    token: keycloakConfig.token,
+                                    userInfo: val as any
+                                }),
+                            (e) => console.log(e)
+                        )
                     }
                 })
                 .catch((error) => {

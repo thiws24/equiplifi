@@ -8,7 +8,7 @@ export async function fetchOpenTasksByTaskName(
 ): Promise<TaskProps[]> {
     try {
         const response = await fetch(
-            `${process.env.REACT_APP_SPIFF}/api/v1.0/tasks`,
+            `${import.meta.env.VITE_SPIFF}/api/v1.0/tasks`,
             {
                 headers: {
                     "Content-Type": "application/json",

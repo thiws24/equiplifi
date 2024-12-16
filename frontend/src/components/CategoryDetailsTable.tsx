@@ -29,8 +29,7 @@ const CategoryDetailsTable: React.FC<CategoryDetailsTableProps> = ({ categoryDet
                 theme={customTheme}
             />
         </div>
-    );
+    )
 }
 
-export default CategoryDetailsTable;
-
+export default CategoryDetailsTable
