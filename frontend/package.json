@@ -24,6 +24,7 @@
     "@testing-library/jest-dom": "^6.6.2",
     "@testing-library/react": "^16.0.1",
     "@testing-library/user-event": "^14.5.2",
+    "@types/lodash": "^4.17.13",
     "@vitejs/plugin-react-swc": "^3.7.2",
     "ag-grid-community": "^32.3.2",
     "ag-grid-react": "^32.3.2",
@@ -76,7 +77,6 @@
     ]
   },
   "devDependencies": {
-    "@types/lodash": "^4.17.13",
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.17",
     "@types/react-dom": "^18.3.5",
