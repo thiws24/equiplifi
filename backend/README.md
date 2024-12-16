@@ -23,3 +23,10 @@ Der QRService kann QR-Codes aus einer gegebenen URN generieren und stellt diese 
 Der ReservationService ermöglicht das Erstellen und Abrufen von Reservierungen für Inventargegenstände.
 
 [👉 Detaillierte Dokumentation des ReservationService](./reservationservice/README.md)
+
+## Mailservice
+Der Mailservice ermöglicht das senden von E-Mails an in Keycloak registrierte Benutzer.
+
+[👉 Detaillierte Dokumentation des Mailservice](./mailservice/README.md)
+
+
