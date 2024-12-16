@@ -5,7 +5,7 @@ import {
     ToastTitle,
     ToastDescription,
     ToastViewport,
-} from "./ui/toast";
+} from "./toast";
 
 const renderToast = (ui: any) => {
     return render(

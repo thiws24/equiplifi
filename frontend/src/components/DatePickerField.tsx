@@ -5,15 +5,13 @@ import { Popover, PopoverTrigger, PopoverContent } from "./ui/popover"
 import { CalendarIcon } from "lucide-react"
 import { cn } from "../lib/utils"
 import { format } from "date-fns"
-import React from "react"
+import React, { useState } from "react"
 
 interface DatePickerFieldProps {
     label: string
     description?: string
     field: any
-    popoverOpen: boolean
-    setPopoverOpen: (open: boolean) => void
-    disabled?: (date: Date) => boolean
+    disabledDays?: any[]
     defaultMonth?: Date
     required?: boolean
     isDisabled?: boolean
@@ -24,13 +22,13 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
     label,
     description,
     field,
-    popoverOpen,
-    setPopoverOpen,
-    disabled,
+    disabledDays,
     defaultMonth,
     isDisabled,
     onClick
 }) => {
+    const [popoverOpen, setPopoverOpen] = useState(false)
+
     return (
         <FormItem className="flex flex-col">
             <div className="flex flex-col sm:justify-center ml-8 mr-8">
@@ -78,7 +76,7 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
                                     field.onChange(date)
                                     setPopoverOpen(false)
                                 }}
-                                disabled={disabled}
+                                disabled={disabledDays}
                                 defaultMonth={defaultMonth}
                                 initialFocus
                             />

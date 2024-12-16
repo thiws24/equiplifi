@@ -16,11 +16,6 @@ import { useKeycloak } from "../keycloak/KeycloakProvider"
 
 const itemsLagerwart = [
     {
-        title: "Reservierungen",
-        url: "/reservations",
-        icon: ScrollText
-    },
-    {
         title: "Neues Inventar erfassen",
         url: "/category/create",
         icon: SquarePlus
@@ -31,11 +26,16 @@ const itemsAllgemein = [
         title: "Startseite",
         url: "/",
         icon: Home
+    },
+    {
+        title: "Reservierungen",
+        url: "/reservations",
+        icon: ScrollText
     }
 ]
 
 export function AppSidebar() {
-    const { keycloak } = useKeycloak()
+    const { keycloak, userInfo } = useKeycloak()
     async function handleLogout() {
         try {
             await keycloak?.logout()
@@ -43,6 +43,9 @@ export function AppSidebar() {
             console.log(e)
         }
     }
+
+    const isInventoryManager = userInfo?.groups.includes("Inventory-Manager")
+
     return (
         <Sidebar collapsible="icon">
             <SidebarHeader>
@@ -78,7 +81,7 @@ export function AppSidebar() {
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
-                <SidebarGroup>
+                {isInventoryManager && <SidebarGroup>
                     <SidebarGroupLabel className="text-xl text-customBlue">
                         Lagerwart
                     </SidebarGroupLabel>
@@ -102,7 +105,7 @@ export function AppSidebar() {
                             ))}
                         </SidebarMenu>
                     </SidebarGroupContent>
-                </SidebarGroup>
+                </SidebarGroup>}
             </SidebarContent>
 
             {/* Footer der Sidebar */}

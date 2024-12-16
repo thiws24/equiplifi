@@ -2,11 +2,12 @@ import { ProcessInputProps } from "../interfaces/ProcessInputProps"
 
 export async function fetchDataObjectFromProcess(
     processId: number,
-    token: string
+    token: string,
+    dataObject: 'reservations' | 'reservationrequests'
 ): Promise<ProcessInputProps | undefined> {
     try {
         const response = await fetch(
-            `${import.meta.env.VITE_SPIFF}/api/v1.0/process-data/default/equipli-processes:inventory-management-processes:reservation-to-return-process/reservationrequests/${processId}`,
+            `${import.meta.env.VITE_SPIFF}/api/v1.0/process-data/default/equipli-processes:inventory-management-processes:reservation-to-return-process/${dataObject}/${processId}`,
             {
                 headers: {
                     "Content-Type": "application/json",
