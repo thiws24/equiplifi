@@ -148,7 +148,5 @@ public class MailRoute extends RouteBuilder {
 
                 })
                 .end();
-
-
     }
 }
