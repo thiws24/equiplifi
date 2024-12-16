@@ -173,7 +173,7 @@ function LendCategory() {
 
     useEffect(() => {
         void getUnavailableDatesByOccurrences()
-    }, [form.getValues("quantity")])
+    }, [form.getValues("quantity"), occurrences])
 
     useEffect(() => {
         if (form.getValues('startDate')) {
@@ -204,22 +204,32 @@ function LendCategory() {
             if (jsonArray.length === quantity) {
                 break
             }
-            for (let j = 0; j < itemReservations[i].reservations.length; j++) {
-                const resStart = new Date(itemReservations[i].reservations[j].startDate)
-                const resEnd = new Date(itemReservations[i].reservations[j].endDate)
-                // Stop if unavailability of item found
-                if ((resStart <= startDate && resEnd >= startDate) || (resStart <= endDate && resEnd >= endDate)) {
-                    break
-                }
+            if (!itemReservations[i].reservations.length) {
+                jsonArray.push({
+                    startDate: formattedStartDate,
+                    endDate: formattedEndDate,
+                    itemId: itemReservations[i].itemId,
+                    userId: userInfo?.sub,
+                    categoryId: categoryItem!.id
+                })
+            } else {
+                for (let j = 0; j < itemReservations[i].reservations.length; j++) {
+                    const resStart = new Date(itemReservations[i].reservations[j].startDate)
+                    const resEnd = new Date(itemReservations[i].reservations[j].endDate)
+                    // Stop if unavailability of item found
+                    if ((resStart <= startDate && resEnd >= startDate) || (resStart <= endDate && resEnd >= endDate)) {
+                        break
+                    }
 
-                if (j === itemReservations[i].reservations.length - 1) {
-                    jsonArray.push({
-                        startDate: formattedStartDate,
-                        endDate: formattedEndDate,
-                        itemId: itemReservations[i].itemId,
-                        userId: userInfo?.sub,
-                        categoryId: categoryItem!.id
-                    })
+                    if (j === itemReservations[i].reservations.length - 1) {
+                        jsonArray.push({
+                            startDate: formattedStartDate,
+                            endDate: formattedEndDate,
+                            itemId: itemReservations[i].itemId,
+                            userId: userInfo?.sub,
+                            categoryId: categoryItem!.id
+                        })
+                    }
                 }
             }
         }
