@@ -33,6 +33,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "keycloak-js": "^25.0.6",
+    "lodash": "^4.17.21",
     "lucide-react": "^0.453.0",
     "pdfjs-dist": "^4.9.155",
     "qr-scanner": "^1.4.2",
@@ -75,6 +76,7 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.13",
     "@types/node": "^22.7.6",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",

@@ -8,7 +8,7 @@ import {
 } from "../components/ui/form"
 import { Button } from "../components/ui/button"
 import { format } from "date-fns"
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -20,20 +20,22 @@ import { CategoryProps } from "../interfaces/CategoryProps"
 import DatePickerField from "../components/DatePickerField"
 import { AvailabilityItemProps } from "../interfaces/AvailabilityItemProps"
 import CustomToasts from "../components/CustomToasts"
-import { DateInterval } from "react-day-picker"
+import _ from "lodash"
+import { Matcher } from "react-day-picker"
 
 function LendCategory() {
     const [itemReservations, setItemReservations] = useState<AvailabilityItemProps[]>([])
     const [categoryItem, setCategoryItem] = useState<CategoryProps>()
 
-    const [unavailableDates, setUnavailableDates] = useState<Date[]>([])
+    const [occurrences, setOccurrences] = useState<_.Dictionary<number>>()
+    const [unavailableDates, setUnavailableDates] = useState<Matcher[]>([])
     const [endDateUnavailability, setEndDateUnavailability] = useState<any>()
 
     const navigate = useNavigate()
     const { id } = useParams()
     const { userInfo, token } = useKeycloak()
 
-    const fetchCategory = React.useCallback(async () => {
+    const fetchCategory = async () => {
         try {
             const response = await fetch(
                 `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories/${id}`
@@ -52,7 +54,7 @@ function LendCategory() {
                 message: "Es ist etwas schiefgelaufen. Versuchen Sie es später erneut."
             })
         }
-    }, [id])
+    }
 
     const FormSchema = z.object({
         quantity: z.number({}).min(1, "Anzahl muss größer als Null sein"),
@@ -79,15 +81,8 @@ function LendCategory() {
                 `${import.meta.env.VITE_RESERVATION_HOST}/availability/reservations/categories/${id}`
             )
             if (response.ok) {
-                const data = await response.json()
+                const data: AvailabilityItemProps[] = await response.json()
                 setItemReservations(data)
-                const quantity = form.getValues("quantity")
-                let dateDisableArray: Date[] = []
-
-                // TODO: Idee, beim Start die Availability des jetzigen Monats laden.
-                //  Wenn der Button zum Monatswechsel gedrückt wird, soll die Availability
-                //  für den nächsten Monat geladen werden. Deswegen am besten alles was
-                //  nicht im Monat der gerade offen ist, ist disablen?
                 const getDaysArray = function(
                     start: string | Date,
                     end: string | Date
@@ -98,12 +93,11 @@ function LendCategory() {
                         dt <= new Date(end);
                         dt.setDate(dt.getDate() + 1)
                     ) {
-                        arr.push(new Date(dt))
+                        arr.push((new Date(dt)))
                     }
                     return arr
                 }
 
-                const reservationData: { [key: number]: Date[] } = {}
                 let allDays: Date[] = []
 
                 data.forEach(
@@ -112,41 +106,15 @@ function LendCategory() {
                         itemId: number
                     }) => {
                         item.reservations.forEach((reservation) => {
-                            let day = getDaysArray(
+                            let days = getDaysArray(
                                 reservation.startDate,
                                 reservation.endDate
                             )
-                            day.forEach((d) => {
-                                if (!reservationData[item.itemId]) {
-                                    reservationData[item.itemId] = []
-                                }
-                                allDays.push(d)
-                                reservationData[item.itemId].push(d)
-                            })
+                            allDays = allDays.concat(days)
                         })
                     }
                 )
-
-                /*allDays.forEach((dayAll) => {
-                    let count: number = 0
-                    if (categoryItem?.items?.length) {
-                        categoryItem.items.forEach((id: number) => {
-                            reservationData[id].forEach((day: Date) => {
-                                if (
-                                    day.toDateString() === dayAll.toDateString()
-                                ) {
-                                    count += 1
-                                }
-                            })
-                        })
-
-                        if (quantity > categoryItem.items.length - count) {
-                            dateDisableArray.push(dayAll)
-                        }
-                    }
-                })*/
-
-                setUnavailableDates(dateDisableArray)
+                setOccurrences(_.countBy(allDays))
             } else {
                 if (!toast.isActive("Die Verfügbarkeiten konnten nicht geladen werden")) {
                     CustomToasts.error({
@@ -162,22 +130,26 @@ function LendCategory() {
         }
     }
 
+    // Unavailability of end date is calculated depending on chosen start date
     const updateEndDateUnavailability = () => {
         const selectedStartDate = new Date(form.getValues('startDate').getTime())
 
-        let possibleEndDate = new Date()
+        let possibleEndDate: Matcher = new Date()
         possibleEndDate.setDate(possibleEndDate.getDate()+365)
 
         unavailableDates.forEach((d) => {
-            if (d < possibleEndDate && d >= selectedStartDate) {
+            const date = d as Date
+            if (date < possibleEndDate && date > selectedStartDate) {
                 possibleEndDate = d
             }
         })
 
-        selectedStartDate.setDate(selectedStartDate.getDate() + 1)
+
+        selectedStartDate.setDate(form.getValues('startDate').getDate() + 1)
+        possibleEndDate.setDate(possibleEndDate.getDate() - 1)
 
         // @ts-ignore
-        if ((possibleEndDate - form.getValues('startDate')) === 0) {
+        if ((possibleEndDate - selectedStartDate) === 0) {
             setEndDateUnavailability(true)
         } else {
             setEndDateUnavailability({
@@ -188,9 +160,20 @@ function LendCategory() {
 
     }
 
+    const getUnavailableDatesByOccurrences = () => {
+        const quantity = form.getValues("quantity")
+        let filterByQuantityLogic = _.pickBy(occurrences, (v, k) => v > ((categoryItem?.items.length ?? quantity) - quantity))
+        setUnavailableDates(Object.keys(filterByQuantityLogic).map((el) => new Date(el)))
+    }
+
     useEffect(() => {
         void fetchCategory()
+        void fetchAvailability()
     }, [])
+
+    useEffect(() => {
+        void getUnavailableDatesByOccurrences()
+    }, [form.getValues("quantity")])
 
     useEffect(() => {
         if (form.getValues('startDate')) {
@@ -199,12 +182,13 @@ function LendCategory() {
     }, [form.getValues('startDate')])
 
     const onSubmit = async (values: FormschemaType) => {
+        const { startDate, endDate, quantity } = values
         const formattedStartDate = format(
-            values.startDate,
+            startDate,
             "yyyy-MM-dd'T'HH:mm:ss'Z'"
         )
         const formattedEndDate = format(
-            values.endDate,
+            endDate,
             "yyyy-MM-dd'T'HH:mm:ss'Z'"
         )
         const jsonArray: Array<{
@@ -215,49 +199,30 @@ function LendCategory() {
             categoryId: number
         }> = []
 
-        // TODO: improve - solution only for testing purposes
-        // Get item ids
         for (let i = 0; i < itemReservations.length; i++) {
-            const item = itemReservations[i]
-            const x = item.reservations.some((r) => {
-                const rStart = new Date(r.startDate)
-                const rEnd = new Date(r.endDate)
-                const iStart = new Date(formattedStartDate)
-                const iEnd = new Date(formattedEndDate)
-                return ((iStart <= rEnd && iStart >= rStart) || (iEnd <= rEnd && iEnd >= rStart))
-            })
-
-            if (!x) {
-                jsonArray.push({
-                    startDate: formattedStartDate,
-                    endDate: formattedEndDate,
-                    itemId: item.itemId,
-                    userId: userInfo?.sub,
-                    categoryId: categoryItem!.id
-                })
-            }
-
-            if (jsonArray.length === values.quantity) {
+            // Stop, if number of desired items reached
+            if (jsonArray.length === quantity) {
                 break
             }
-        }
+            for (let j = 0; j < itemReservations[i].reservations.length; j++) {
+                const resStart = new Date(itemReservations[i].reservations[j].startDate)
+                const resEnd = new Date(itemReservations[i].reservations[j].endDate)
+                // Stop if unavailability of item found
+                if ((resStart <= startDate && resEnd >= startDate) || (resStart <= endDate && resEnd >= endDate)) {
+                    break
+                }
 
-        if (jsonArray.length !== values.quantity) {
-            CustomToasts.error({
-                message: "Gegenstände in diesem Zeitraum nicht verfügbar."
-            })
-            return
+                if (j === itemReservations[i].reservations.length - 1) {
+                    jsonArray.push({
+                        startDate: formattedStartDate,
+                        endDate: formattedEndDate,
+                        itemId: itemReservations[i].itemId,
+                        userId: userInfo?.sub,
+                        categoryId: categoryItem!.id
+                    })
+                }
+            }
         }
-
-        /*itemIds.forEach((id: number) => {
-            jsonArray.push({
-                startDate: formattedStartDate,
-                endDate: formattedEndDate,
-                itemId: id,
-                userId: userInfo?.sub,
-                categoryId: categoryItem?.id
-            })
-        })*/
 
         try {
             const response = await fetch(
@@ -372,22 +337,13 @@ function LendCategory() {
                                                                     <Input
                                                                         type="number"
                                                                         {...field}
-                                                                        onChange={(
-                                                                            e
-                                                                        ) => {
-                                                                            field.onChange(
-                                                                                e
-                                                                                    .target
-                                                                                    .valueAsNumber
-                                                                            )
-                                                                            void fetchAvailability()
+                                                                        onChange={(e) => {
+                                                                            field.onChange(e.target.valueAsNumber)
+                                                                            form.resetField('startDate')
+                                                                            form.resetField('endDate')
                                                                         }}
                                                                         min={1}
-                                                                        max={
-                                                                            categoryItem
-                                                                                ?.items
-                                                                                .length
-                                                                        }
+                                                                        max={categoryItem?.items.length}
                                                                     />
                                                                 </FormControl>
                                                                 <FormMessage />
@@ -408,11 +364,11 @@ function LendCategory() {
                                                         <DatePickerField
                                                             label="Ausleihdatum"
                                                             field={field}
-                                                            disabledDays={[
+                                                            disabledDays={([
                                                                 {
                                                                     before: new Date()
                                                                 }
-                                                            ].concat(unavailableDates)}
+                                                            ] as Matcher[]).concat(unavailableDates)}
                                                             defaultMonth={
                                                                 field.value ||
                                                                 (() => {
@@ -425,19 +381,8 @@ function LendCategory() {
                                                                     return tomorrow
                                                                 })()
                                                             }
-                                                            onClick={() => {
-                                                                form.reset({
-                                                                    startDate:
-                                                                        form.getValues(
-                                                                            "startDate"
-                                                                        ),
-                                                                    endDate:
-                                                                    undefined,
-                                                                    quantity:
-                                                                        form.getValues(
-                                                                            "quantity"
-                                                                        )
-                                                                })
+                                                            onDayClick={() => {
+                                                                form.resetField('endDate')
                                                             }}
                                                         />
                                                     )}
@@ -446,17 +391,12 @@ function LendCategory() {
                                                     control={form.control}
                                                     name="endDate"
                                                     render={({ field }) => {
-                                                        const startDate = new Date(form.getValues("startDate"))
-                                                        startDate.setDate(startDate.getDate() + 1)
+                                                        const startDate = form.getValues("startDate")
                                                         return (
                                                             <DatePickerField
                                                                 label="Abgabedatum"
                                                                 field={field}
-                                                                disabledDays={[
-                                                                    {
-                                                                        before: startDate
-                                                                    }
-                                                                ].concat(unavailableDates)}
+                                                                disabledDays={endDateUnavailability}
                                                                 defaultMonth={
                                                                     form.getValues(
                                                                         "endDate"
