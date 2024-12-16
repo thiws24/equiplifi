@@ -1,112 +1,64 @@
-# Mail Service 📧 API Documentation
+# Mail Service 📧 API Dokumentation
 
-## Endpoints
+## Arten von E-Mails
 
-### 1. Send Collection Mail
+Im Moment können folgende Arten von E-Mails versendet werden:
 
-**Endpoint:** `/sendCollectionMail`
+### 1. Reservierungsbestätigung
+Bestätigung einer Reservierung.
 
-**Method:** `POST`
+### 2. Stornierbestätigung
+Bestätigung einer Stornierung.
 
-**Request Body:**
+### 3. Rückgabebestätigung
+Bestätigung einer Rückgabe.
 
+### 4. Erinnerung an Rückgabe
+Erinnerung an eine Rückgabe.
 
+### 5. Bestätigung des Lagerwartes
+Bestätigung durch den Lagerwart.
 
-```json
-{
-  "itemId": "1",
-  "startDate": "2024-11-28",
-  "endDate": "2024-11-30",
-  "userId": "user_1"
-}
+## Verwendung
+Der Mail-Service wird von anderen Services verwendet, um E-Mails zu versenden. Dazu wird ein POST-Request an den ActiveMQ-Server gesendet.
+
+### z.B für Reservierung bestätigen
+
+#### HTTP Request
 ```
-Sowohl die E-Mail-Adresse des Benutzers, als auch dessen Name wird aus Keycloak ausgelesen und in der Mail verwendet.
-Die itemId wird benutzt, um den Namen des Items mit Hilfe des inventoryservices zu holen.
-
-[//]: # ()
-[//]: # (### 2. Send Return Mail)
-
-[//]: # ()
-[//]: # (**Endpoint:** `/sendReturnMail`)
-
-[//]: # ()
-[//]: # (**Method:** `POST`)
-
-[//]: # ()
-[//]: # (**Request Body:**)
-
-[//]: # ()
-[//]: # (```json)
-
-[//]: # ({)
-
-[//]: # (  "receiverMail": "example@gmail.com",)
-
-[//]: # (  "name": "Hans",)
-
-[//]: # (  "item": "Volleyball",)
-
-[//]: # (  "returnDate": "24.01.2024",)
-
-[//]: # (  "returnLocation": "Hinter Vereinsheim in einer dunklen Ecke")
-
-[//]: # (})
-
-[//]: # (```)
-
-# Quarkus specific Docs
-
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
-
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
-
-## Running the application in dev mode
-
-You can run your application in dev mode that enables live coding using:
-
-```shell script
-./mvnw compile quarkus:dev
+POST http://localhost:8161/api/message/send-reservation-confirmation?type=queue
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4xMjM=
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
-
-## Packaging and running the application
-
-The application can be packaged using:
-
-```shell script
-./mvnw package
+#### Request Body
+```
+[
+  {
+    "itemId": "1",
+    "startDate": "2024-11-28",
+    "endDate": "2024-11-30",
+    "userId": "26d7ee63-43f1-4deb-9d2f-41e297c9953a",
+    "reservationId": "123"
+  },
+  {
+    "itemId": "2",
+    "startDate": "2024-12-28",
+    "endDate": "2024-12-30",
+    "userId": "26d7ee63-43f1-4deb-9d2f-41e297c9953a",
+    "reservationId": "456"
+  }
+]
 ```
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+### Beachten:
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
+Das Beispiel zeigt einen Request für die Bestätigung einer Reservierung. Die anderen E-Mail-Typen können analog versendet werden.
+Dazu muss die Queue im Request, hier ``send-reservation-confirmation`` entsprechend angepasst werden.
 
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
-```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./mvnw package -Dnative
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./target/mailservice-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
-
-
+Die möglichen Queues sind:
+- send-reservation-confirmation
+- cancellation-confirmation
+- return-confirmation
+- return-reminder
+- storekeeper-confirmation
