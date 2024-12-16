@@ -63,7 +63,7 @@ describe("ConfirmReservationCard", () => {
             />
         )
 
-        const button = screen.getByText("Reservierung Bestätigen")
+        const button = screen.getByText("Reservierung bestätigen")
         fireEvent.click(button)
 
         expect(mockOnConfirmReservation).toHaveBeenCalledTimes(1)

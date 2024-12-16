@@ -49,8 +49,8 @@ const reportMetadataColumns = [
     }
 ]
 
-export async function fetchProcessesByTaskName(
-    taskName: string,
+export async function fetchAllProcessesByUser(
+    userId: string,
     token: string
 ): Promise<Process[]> {
     try {
@@ -85,20 +85,19 @@ export async function fetchProcessesByTaskName(
 
         if (response.ok) {
             const data = await response.json()
-            let results = data.results.filter(
-                (p: Process) => p.task_title?.toLowerCase() === taskName.toLowerCase()
-            )
 
             const filteredProcesses: Process[] = []
 
             // Add data object
             await Promise.all(
-                results.map(async (pItem: Process) => {
-                    const dataRes = await fetchDataObjectFromProcess(pItem.id, token)
-                    filteredProcesses.push({
-                        ...pItem,
-                        dataObject: dataRes
-                    })
+                data.results.map(async (pItem: Process) => {
+                    const dataRes = await fetchDataObjectFromProcess(pItem.id, token, 'reservations')
+                    if (dataRes && dataRes.userId === userId) {
+                        filteredProcesses.push({
+                            ...pItem,
+                            dataObject: dataRes
+                        })
+                    }
                 })
             )
             return filteredProcesses
@@ -107,26 +106,4 @@ export async function fetchProcessesByTaskName(
         console.log(e)
     }
     return []
-}
-
-export async function filterProcessesByItemId(
-    data: Process[],
-    itemId: number,
-    token: string
-): Promise<Process[]> {
-    const filteredProcesses: Process[] = []
-    // Fetch Data Object for each process
-    await Promise.all(
-        data.map(async (pItem) => {
-            const dataRes = await fetchDataObjectFromProcess(pItem.id, token)
-            if (dataRes && dataRes.itemId === itemId) {
-                filteredProcesses.push({
-                    ...pItem,
-                    dataObject: dataRes
-                })
-            }
-        })
-    )
-
-    return filteredProcesses
 }

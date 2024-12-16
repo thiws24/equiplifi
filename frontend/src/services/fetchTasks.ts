@@ -29,7 +29,8 @@ export async function fetchOpenTasksByTaskName(
                 results.map(async (pItem: TaskProps) => {
                     const dataRes = await fetchDataObjectFromProcess(
                         pItem.process_instance_id,
-                        token
+                        token,
+                        'reservationrequests'
                     )
                     filteredTasks.push({
                         ...pItem,
@@ -44,29 +45,4 @@ export async function fetchOpenTasksByTaskName(
     }
 
     return []
-}
-
-export async function filterTasksByItemId(
-    data: TaskProps[],
-    itemId: number,
-    token: string
-): Promise<TaskProps[]> {
-    const filteredTasks: TaskProps[] = []
-    // Fetch Data Object for each process
-    await Promise.all(
-        data.map(async (pItem) => {
-            const dataRes = await fetchDataObjectFromProcess(
-                pItem.process_instance_id,
-                token
-            )
-            if (dataRes && dataRes.itemId === itemId) {
-                filteredTasks.push({
-                    ...pItem,
-                    dataObject: dataRes
-                })
-            }
-        })
-    )
-
-    return filteredTasks
 }

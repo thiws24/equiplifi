@@ -8,31 +8,27 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
-import { KeyCloakUserInfo } from "../interfaces/KeyCloakUserInfo"
 import { ItemProps } from "../interfaces/ItemProps"
 import DatePickerField from "../components/DatePickerField"
 import { toast, ToastContainer } from "react-toastify"
 import CustomToasts from "../components/CustomToasts"
+import { DateInterval } from "react-day-picker"
+
 
 function Lend() {
     const navigate = useNavigate()
-    const [startDate, setStartDate] = useState<Date | null>(null)
-    const [itemExists, setItemExists] = useState(false)
     const [item, setItem] = useState<ItemProps>()
-    const [userInfo, setUserInfo] = useState<KeyCloakUserInfo>()
-    const [isStartPopoverOpen, setStartPopoverOpen] = useState(false)
-    const [isEndPopoverOpen, setEndPopoverOpen] = useState(false)
-    const [unavailableDates, setUnavailableDates] = useState<Date[][]>([])
+    const [unavailableDates, setUnavailableDates] = useState<DateInterval[]>([])
+    const [endDateUnavailability, setEndDateUnavailability] = useState<any>()
     const { id } = useParams()
-    const { keycloak, token } = useKeycloak()
+    const { token, userInfo } = useKeycloak()
 
-    const fetchItem = React.useCallback(async () => {
+    const fetchItem = async () => {
         try {
             const response = await fetch(
                 `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/items/${id}`
             )
             if (response.ok) {
-                setItemExists(true)
                 const data = await response.json()
                 setItem(data)
             } else {
@@ -47,7 +43,7 @@ function Lend() {
             })
             console.log(e)
         }
-    }, [id])
+    }
 
     const FormSchema = z.object({
         startDate: z.date({
@@ -64,36 +60,29 @@ function Lend() {
 
     type FormschemaType = z.infer<typeof FormSchema>
 
-    const fetchAvailability = React.useCallback(async () => {
+    const fetchItemAvailability = async () => {
         try {
-            let dateArray: Date[][] = []
+            let dateArray: any[] = []
             const response = await fetch(
                 `${import.meta.env.VITE_RESERVATION_HOST}/availability/reservations/items/${id}`
             )
             if (response.ok) {
                 const data = await response.json()
-                const getDaysArray = function (
-                    start: string | Date,
-                    end: string | Date
-                ) {
-                    const arr = []
-                    for (
-                        const dt = new Date(start);
-                        dt <= new Date(end);
-                        dt.setDate(dt.getDate() + 1)
-                    ) {
-                        arr.push(new Date(dt))
-                    }
-                    return arr
-                }
 
                 data.reservations.forEach(
                     (reservation: { startDate: Date; endDate: Date }) => {
-                        let day = getDaysArray(
-                            reservation.startDate,
-                            reservation.endDate
-                        )
-                        dateArray.push(day)
+                        // Date Start yesterday
+                        const ds = new Date(reservation.startDate);
+                        ds.setDate(ds.getDate() - 1)
+
+                        // Day End + 1
+                        const de = new Date(reservation.endDate);
+                        de.setDate(de.getDate() + 1)
+
+                        dateArray.push({
+                            after: ds,
+                            before: de,
+                        })
                     }
                 )
 
@@ -111,28 +100,44 @@ function Lend() {
                 message: "Es ist etwas schiefgelaufen."
             })
         }
-    }, [id])
+    }
 
-    const isDateUnavailable = (date: Date) => {
-        return unavailableDates.some((dateArray) =>
-            dateArray.some(
-                (unavailableDate) =>
-                    unavailableDate.toDateString() === date.toDateString()
-            )
-        )
+    const updateEndDateUnavailability = () => {
+        const selectedStartDate = new Date(form.getValues('startDate').getTime())
+
+        let possibleEndDate = new Date()
+        possibleEndDate.setDate(possibleEndDate.getDate()+365)
+
+        unavailableDates.forEach((d) => {
+            if (d.after < possibleEndDate && d.after >= selectedStartDate) {
+                possibleEndDate = d.after
+            }
+        })
+
+        selectedStartDate.setDate(selectedStartDate.getDate() + 1)
+
+        // @ts-ignore
+        if ((possibleEndDate - form.getValues('startDate')) === 0) {
+            setEndDateUnavailability(true)
+        } else {
+            setEndDateUnavailability({
+                before: selectedStartDate,
+                after: possibleEndDate
+            })
+        }
+
     }
 
     useEffect(() => {
-        if (form.getValues("startDate")) {
-            const newStartDate = new Date(form.getValues("startDate"))
-            newStartDate.setDate(newStartDate.getDate() + 1)
-            setStartDate(newStartDate)
-        }
         void fetchItem()
-        // TODO: Diese function soll nur aufgerufen werden, wenn der Monatsbutton geändert wird sonst nicht
-        //  da sonst bei auswählen des startdates die fehlermeldung wieder kommt (Müsste im Kalender sein)
-        void fetchAvailability()
-    }, [form.getValues("startDate")])
+        void fetchItemAvailability()
+    }, [])
+
+    useEffect(() => {
+       if (form.getValues('startDate')) {
+           updateEndDateUnavailability()
+       }
+    }, [form.getValues('startDate')])
 
     const onSubmit = async (values: FormschemaType) => {
         const formattedStartDate = format(
@@ -158,7 +163,8 @@ function Lend() {
                             startDate: formattedStartDate,
                             endDate: formattedEndDate,
                             itemId: Number(id),
-                            userId: userInfo?.sub
+                            userId: userInfo?.sub,
+                            categoryId: item?.categoryId
                         }
                     ])
                 }
@@ -214,7 +220,7 @@ function Lend() {
     return (
         <div>
             <ToastContainer />
-            {itemExists && (
+            {!!item && (
                 <div className="max-w-[600px] mx-auto">
                     <div className="p-4">
                         <CardHeader className="flex items-center text-customBlue">
@@ -256,19 +262,11 @@ function Lend() {
                                                         <DatePickerField
                                                             label="Ausleihdatum"
                                                             field={field}
-                                                            popoverOpen={
-                                                                isStartPopoverOpen
-                                                            }
-                                                            setPopoverOpen={
-                                                                setStartPopoverOpen
-                                                            }
-                                                            disabled={(date) =>
-                                                                date <
-                                                                    new Date() ||
-                                                                isDateUnavailable(
-                                                                    date
-                                                                )
-                                                            }
+                                                            disabledDays={[
+                                                                {
+                                                                    before: new Date()
+                                                                }
+                                                            ].concat(unavailableDates)}
                                                             defaultMonth={
                                                                 field.value ||
                                                                 (() => {
@@ -297,50 +295,34 @@ function Lend() {
                                                 <FormField
                                                     control={form.control}
                                                     name="endDate"
-                                                    render={({ field }) => (
-                                                        <DatePickerField
-                                                            label="Abgabedatum"
-                                                            field={field}
-                                                            popoverOpen={
-                                                                isEndPopoverOpen
-                                                            }
-                                                            setPopoverOpen={
-                                                                setEndPopoverOpen
-                                                            }
-                                                            disabled={(date) =>
-                                                                startDate
-                                                                    ? date <
-                                                                          startDate ||
-                                                                      isDateUnavailable(
-                                                                          date
-                                                                      )
-                                                                    : isDateUnavailable(
-                                                                          date
-                                                                      )
-                                                            }
-                                                            defaultMonth={
-                                                                form.getValues(
-                                                                    "endDate"
-                                                                ) ||
-                                                                startDate ||
-                                                                (() => {
-                                                                    const tomorrow =
-                                                                        new Date()
-                                                                    tomorrow.setDate(
-                                                                        tomorrow.getDate() +
-                                                                            1
-                                                                    )
-                                                                    return tomorrow
-                                                                })()
-                                                            }
-                                                            required={
-                                                                !!startDate
-                                                            }
-                                                            isDisabled={
-                                                                !startDate
-                                                            }
-                                                        />
-                                                    )}
+                                                    render={({ field }) => {
+                                                        const startDate = new Date(form.getValues("startDate"))
+                                                        startDate.setDate(startDate.getDate() + 1)
+                                                        return (
+                                                            <DatePickerField
+                                                                label="Abgabedatum"
+                                                                field={field}
+                                                                disabledDays={endDateUnavailability}
+                                                                defaultMonth={
+                                                                    form.getValues(
+                                                                        "endDate"
+                                                                    ) ||
+                                                                    startDate ||
+                                                                    (() => {
+                                                                        const tomorrow = new Date()
+                                                                        tomorrow.setDate(tomorrow.getDate() + 1)
+                                                                        return tomorrow
+                                                                    })()
+                                                                }
+                                                                required={
+                                                                    !!startDate
+                                                                }
+                                                                isDisabled={
+                                                                    !startDate
+                                                                }
+                                                            />
+                                                        )
+                                                    }}
                                                 />
                                             </div>
                                             <div className="flex justify-between items-center mt-4">
@@ -355,12 +337,10 @@ function Lend() {
                                                 <Button
                                                     type="submit"
                                                     disabled={
-                                                        undefined ==
-                                                            form.getValues(
+                                                        !form.getValues(
                                                                 "startDate"
                                                             ) ||
-                                                        undefined ==
-                                                            form.getValues(
+                                                        !form.getValues(
                                                                 "endDate"
                                                             )
                                                     }

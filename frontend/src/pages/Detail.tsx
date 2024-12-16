@@ -41,7 +41,7 @@ function Detail() {
 
                 // Fetch QR Code
                 if (data) await fetchQrCode(data.name)
-            }else {
+            } else {
                 CustomToasts.error({
                     message: "Dieses Exemplar existiert nicht. Bei Fragen melden Sie sich bei ihrem Administrator.",
                     onClose: () => navigate(`/`)
@@ -55,7 +55,7 @@ function Detail() {
     const fetchQrCode = async (name: string) => {
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_QR_HOST}/qr?name=${name}&id=${id}`,
+                `${import.meta.env.VITE_QR_HOST}/qr?name=${name}-${id}&id=${id}`,
                 {
                     method: "GET",
                     headers: {
