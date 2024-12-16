@@ -279,15 +279,8 @@ function Lend() {
                                                                     return tomorrow
                                                                 })()
                                                             }
-                                                            onClick={() => {
-                                                                form.reset({
-                                                                    startDate:
-                                                                        form.getValues(
-                                                                            "startDate"
-                                                                        ),
-                                                                    endDate:
-                                                                        undefined
-                                                                })
+                                                            onDayClick={() => {
+                                                                form.resetField('endDate')
                                                             }}
                                                         />
                                                     )}

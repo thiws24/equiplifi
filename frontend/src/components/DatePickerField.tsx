@@ -15,7 +15,7 @@ interface DatePickerFieldProps {
     defaultMonth?: Date
     required?: boolean
     isDisabled?: boolean
-    onClick?: () => void
+    onDayClick?: () => void
 }
 
 const DatePickerField: React.FC<DatePickerFieldProps> = ({
@@ -25,7 +25,7 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
     disabledDays,
     defaultMonth,
     isDisabled,
-    onClick
+    onDayClick
 }) => {
     const [popoverOpen, setPopoverOpen] = useState(false)
 
@@ -48,10 +48,6 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
                                     "w-[160px] pl-3 text-left font-normal",
                                     !field.value && "text-muted-foreground"
                                 )}
-                                onClick={() => {
-                                    if (onClick) onClick()
-                                    setPopoverOpen(true)
-                                }}
                                 disabled={isDisabled}
                             >
                                 {field.value ? (
@@ -80,6 +76,7 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
                                 }}
                                 disabled={disabledDays}
                                 defaultMonth={defaultMonth}
+                                onDayClick={onDayClick}
                                 initialFocus
                             />
                         </PopoverContent>
