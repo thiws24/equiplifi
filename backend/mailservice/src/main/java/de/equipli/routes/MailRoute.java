@@ -54,7 +54,7 @@ public class MailRoute extends RouteBuilder {
 
 
 // Reservation Confirmation Route
-        from("activemq:queue:send-reservation-confirmation")
+        from("activemq:queue:reservation-confirmation")
                 .routeId("sendReservationConfirmation-Route")
                 .unmarshal(mailDtoFormat)
                 .setProperty("mailTemplate", simple("reservation-confirmation-mail.html"))

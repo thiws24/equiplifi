@@ -5,19 +5,19 @@
 Im Moment können folgende Arten von E-Mails versendet werden:
 
 ### 1. Reservierungsbestätigung
-Bestätigung einer Reservierung.
+Queue: ```reservation-confirmation```
 
 ### 2. Stornierbestätigung
-Bestätigung einer Stornierung.
+Queue: ```cancellation-confirmation```
 
 ### 3. Rückgabebestätigung
-Bestätigung einer Rückgabe.
+Queue: ```return-confirmation```
 
 ### 4. Erinnerung an Rückgabe
-Erinnerung an eine Rückgabe.
+Queue: ```return-reminder```
 
 ### 5. Bestätigung des Lagerwartes
-Bestätigung durch den Lagerwart.
+Queue: ```storekeeper-confirmation```
 
 ## Verwendung
 Der Mail-Service wird von anderen Services verwendet, um E-Mails zu versenden. Dazu wird ein POST-Request an den ActiveMQ-Server gesendet.
@@ -26,7 +26,7 @@ Der Mail-Service wird von anderen Services verwendet, um E-Mails zu versenden. D
 
 #### HTTP Request
 ```
-POST http://localhost:8161/api/message/send-reservation-confirmation?type=queue
+POST http://activemq:8161/api/message/reservation-confirmation?type=queue
 Content-Type: application/json
 Authorization: Basic YWRtaW46YWRtaW4xMjM=
 ```
@@ -38,14 +38,14 @@ Authorization: Basic YWRtaW46YWRtaW4xMjM=
     "itemId": "1",
     "startDate": "2024-11-28",
     "endDate": "2024-11-30",
-    "userId": "26d7ee63-43f1-4deb-9d2f-41e297c9953a",
+    "userId": "705d4906-3bd6-4c21-84e1-15994b49730d",
     "reservationId": "123"
   },
   {
     "itemId": "2",
     "startDate": "2024-12-28",
     "endDate": "2024-12-30",
-    "userId": "26d7ee63-43f1-4deb-9d2f-41e297c9953a",
+    "userId": "705d4906-3bd6-4c21-84e1-15994b49730d",
     "reservationId": "456"
   }
 ]

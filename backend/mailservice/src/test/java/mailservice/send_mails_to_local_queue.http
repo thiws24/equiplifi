@@ -1,5 +1,5 @@
 ### Reservierung bestätigen
-POST http://localhost:8161/api/message/send-reservation-confirmation?type=queue
+POST http://localhost:8161/api/message/reservation-confirmation?type=queue
 Content-Type: application/json
 Authorization: Basic YWRtaW46YWRtaW4xMjM=
 
