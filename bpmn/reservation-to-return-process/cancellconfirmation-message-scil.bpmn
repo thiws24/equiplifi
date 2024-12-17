@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
+  <bpmn:collaboration id="Collaboration_07v7cjg">
+    <bpmn:participant id="Participant_1o4jhwu" name="Cancellconfirmation Message SCIL" processRef="Process_cancellconfirmation_message_scil_bxmxh2a" />
+    <bpmn:textAnnotation id="TextAnnotation_1lnrix0">
+      <bpmn:text>Endpunkt mit Hubertus besprechen</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1a61uxl" associationDirection="None" sourceRef="Activity_1lrmhpe" targetRef="TextAnnotation_1lnrix0" />
+    <bpmn:correlationKey id="CorrelationKey_0rewd5r" name="MainCorrelationKey" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_cancellconfirmation_message_scil_bxmxh2a" isExecutable="true">
+    <bpmn:sequenceFlow id="Flow_1etjf8x" sourceRef="Event_1tr6f2u" targetRef="Activity_1lrmhpe" />
+    <bpmn:startEvent id="Event_1tr6f2u" name="Cancell confimration received">
+      <bpmn:outgoing>Flow_1etjf8x</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1iq08sa" messageRef="cancellation-confirmation">
+        <bpmn:extensionElements>
+          <spiffworkflow:messageVariable>cancelledreservations</spiffworkflow:messageVariable>
+        </bpmn:extensionElements>
+      </bpmn:messageEventDefinition>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Activity_1lrmhpe" name="send Cancellconfirmation">
+      <bpmn:extensionElements>
+        <spiffworkflow:serviceTaskOperator id="http/PostRequestV2" resultVariable="postResult">
+          <spiffworkflow:parameters>
+            <spiffworkflow:parameter id="url" type="str" value="&#34;http://activemq:8161/api/message/send-reservation-confirmation?type=queue&#34;" />
+            <spiffworkflow:parameter id="headers" type="any" value="{&#34;Content-Type&#34;:&#34;application/json&#34;, &#34;Authorization&#34;:&#34;Basic YWRtaW46d0JQZDJYWUpwQjhq&#34;}" />
+            <spiffworkflow:parameter id="data" type="any" value="cancelledreservations" />
+            <spiffworkflow:parameter id="basic_auth_username" type="str" />
+            <spiffworkflow:parameter id="basic_auth_password" type="str" />
+          </spiffworkflow:parameters>
+        </spiffworkflow:serviceTaskOperator>
+        <spiffworkflow:preScript>#Adjust the object for the message service
+for reservation in cancelledreservations:
+    reservation["reservationId"] = reservation.pop("id")
+    reservation.pop("categoryId")
+    reservation.pop("status")</spiffworkflow:preScript>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1etjf8x</bpmn:incoming>
+      <bpmn:outgoing>Flow_1p1c1fm</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1p1c1fm" sourceRef="Activity_1lrmhpe" targetRef="Gateway_0fh6se3" />
+    <bpmn:exclusiveGateway id="Gateway_0fh6se3" name="Message sent successfully?" default="Flow_1dhbtuw">
+      <bpmn:incoming>Flow_1p1c1fm</bpmn:incoming>
+      <bpmn:outgoing>Flow_1dhbtuw</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1dv135y</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1dhbtuw" name="Yes" sourceRef="Gateway_0fh6se3" targetRef="Event_0gu8f1e" />
+    <bpmn:sequenceFlow id="Flow_1dv135y" name="No" sourceRef="Gateway_0fh6se3" targetRef="Event_0rmj2qe">
+      <bpmn:conditionExpression>messageResult["http_status"] != 200</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_0gu8f1e" name="Successfully cancelled">
+      <bpmn:incoming>Flow_1dhbtuw</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_0rmj2qe" name="Successfully not cancelled">
+      <bpmn:incoming>Flow_1dv135y</bpmn:incoming>
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmn:message id="cancellation-confirmation" name="cancellation-confirmation" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_07v7cjg">
+      <bpmndi:BPMNShape id="Participant_1o4jhwu_di" bpmnElement="Participant_1o4jhwu" isHorizontal="true">
+        <dc:Bounds x="40" y="50" width="610" height="255" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_149oir9_di" bpmnElement="Event_1tr6f2u">
+        <dc:Bounds x="122" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="110" y="205" width="60" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_02eh31c_di" bpmnElement="Activity_1lrmhpe">
+        <dc:Bounds x="210" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0fh6se3_di" bpmnElement="Gateway_0fh6se3" isMarkerVisible="true">
+        <dc:Bounds x="395" y="155" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="466" y="170" width="69" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0gu8f1e_di" bpmnElement="Event_0gu8f1e">
+        <dc:Bounds x="532" y="92" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="519" y="135" width="62" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0rmj2qe_di" bpmnElement="Event_0rmj2qe">
+        <dc:Bounds x="532" y="222" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="510" y="265" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1etjf8x_di" bpmnElement="Flow_1etjf8x">
+        <di:waypoint x="158" y="180" />
+        <di:waypoint x="210" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1p1c1fm_di" bpmnElement="Flow_1p1c1fm">
+        <di:waypoint x="310" y="180" />
+        <di:waypoint x="395" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dhbtuw_di" bpmnElement="Flow_1dhbtuw">
+        <di:waypoint x="420" y="155" />
+        <di:waypoint x="420" y="110" />
+        <di:waypoint x="532" y="110" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="426" y="134" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dv135y_di" bpmnElement="Flow_1dv135y">
+        <di:waypoint x="420" y="205" />
+        <di:waypoint x="420" y="240" />
+        <di:waypoint x="532" y="240" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="431" y="220" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_1lnrix0_di" bpmnElement="TextAnnotation_1lnrix0">
+        <dc:Bounds x="350" y="250" width="100" height="55" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1a61uxl_di" bpmnElement="Association_1a61uxl">
+        <di:waypoint x="310" y="210" />
+        <di:waypoint x="375" y="250" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

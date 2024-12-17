@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
+  <bpmn:collaboration id="Collaboration_0in2o0j">
+    <bpmn:participant id="Participant_0a6ho0p" name="Lendingconfirmation Message SCIL" processRef="Process_lendingconfirmation_message_scil_rlkj479" />
+    <bpmn:correlationKey id="CorrelationKey_1yx5akc" name="MainCorrelationKey" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_lendingconfirmation_message_scil_rlkj479" isExecutable="true">
+    <bpmn:serviceTask id="Activity_0nrv7e2" name="send Lendingconfirmation">
+      <bpmn:extensionElements>
+        <spiffworkflow:serviceTaskOperator id="http/PostRequestV2">
+          <spiffworkflow:parameters>
+            <spiffworkflow:parameter id="url" type="str" value="&#34;http://activemq:8161/api/message/storekeeper-confirmation?type=queue&#34;" />
+            <spiffworkflow:parameter id="headers" type="any" value="{&#34;Content-Type&#34;:&#34;application/json&#34;, &#34;Authorization&#34;:&#34;Basic YWRtaW46d0JQZDJYWUpwQjhq&#34;}" />
+            <spiffworkflow:parameter id="data" type="any" value="activereservations" />
+            <spiffworkflow:parameter id="basic_auth_username" type="str" />
+            <spiffworkflow:parameter id="basic_auth_password" type="str" />
+          </spiffworkflow:parameters>
+        </spiffworkflow:serviceTaskOperator>
+        <spiffworkflow:preScript>#Adjust the object for the message service
+for reservation in activereservations:
+    reservation["reservationId"] = reservation.pop("id")
+    reservation.pop("categoryId")
+    reservation.pop("status")</spiffworkflow:preScript>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1w1vzg5</bpmn:incoming>
+      <bpmn:outgoing>Flow_0u63qkc</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1w1vzg5" sourceRef="Event_0ksv9qn" targetRef="Activity_0nrv7e2" />
+    <bpmn:startEvent id="Event_0ksv9qn" name="Lendingconfirmation received">
+      <bpmn:outgoing>Flow_1w1vzg5</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_06p94dc" messageRef="lending-confirmation">
+        <bpmn:extensionElements>
+          <spiffworkflow:messageVariable>activereservations</spiffworkflow:messageVariable>
+        </bpmn:extensionElements>
+      </bpmn:messageEventDefinition>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="Gateway_03gx2wb" default="Flow_10u4312">
+      <bpmn:incoming>Flow_0u63qkc</bpmn:incoming>
+      <bpmn:outgoing>Flow_10u4312</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0wbl9rs</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0u63qkc" sourceRef="Activity_0nrv7e2" targetRef="Gateway_03gx2wb" />
+    <bpmn:sequenceFlow id="Flow_10u4312" name="Yes" sourceRef="Gateway_03gx2wb" targetRef="Event_1h34y04" />
+    <bpmn:endEvent id="Event_1h34y04" name="Lendingconfirmation sent">
+      <bpmn:incoming>Flow_10u4312</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_1d5txiq" name="Lendingconfirmation not sent">
+      <bpmn:incoming>Flow_0wbl9rs</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0wbl9rs" name="No" sourceRef="Gateway_03gx2wb" targetRef="Event_1d5txiq">
+      <bpmn:conditionExpression>messageResult["http_status"] != 200</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmn:message id="lending-confirmation" name="lending-confirmation" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0in2o0j">
+      <bpmndi:BPMNShape id="Participant_0a6ho0p_di" bpmnElement="Participant_0a6ho0p" isHorizontal="true">
+        <dc:Bounds x="-270" y="-30" width="490" height="230" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1w02qk6_di" bpmnElement="Activity_0nrv7e2">
+        <dc:Bounds x="-90" y="40" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1goln0h_di" bpmnElement="Event_0ksv9qn">
+        <dc:Bounds x="-208" y="62" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-233" y="105" width="87" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_03gx2wb_di" bpmnElement="Gateway_03gx2wb" isMarkerVisible="true">
+        <dc:Bounds x="35" y="55" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1h34y04_di" bpmnElement="Event_1h34y04">
+        <dc:Bounds x="142" y="2" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="117" y="45" width="87" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1d5txiq_di" bpmnElement="Event_1d5txiq">
+        <dc:Bounds x="142" y="112" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="117" y="155" width="87" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1w1vzg5_di" bpmnElement="Flow_1w1vzg5">
+        <di:waypoint x="-172" y="80" />
+        <di:waypoint x="-90" y="80" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0u63qkc_di" bpmnElement="Flow_0u63qkc">
+        <di:waypoint x="10" y="80" />
+        <di:waypoint x="35" y="80" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10u4312_di" bpmnElement="Flow_10u4312">
+        <di:waypoint x="60" y="55" />
+        <di:waypoint x="60" y="20" />
+        <di:waypoint x="142" y="20" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="66" y="35" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wbl9rs_di" bpmnElement="Flow_0wbl9rs">
+        <di:waypoint x="60" y="105" />
+        <di:waypoint x="60" y="130" />
+        <di:waypoint x="142" y="130" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="68" y="115" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
