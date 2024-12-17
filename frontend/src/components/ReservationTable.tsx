@@ -1,22 +1,25 @@
-import React from "react";
-import {useNavigate} from "react-router-dom";
-import {AgGridReact} from "ag-grid-react";
-import {AG_GRID_LOCALE_DE} from "@ag-grid-community/locale";
-import {customTheme} from "../customTheme";
-import { ReservationItemProps } from "../interfaces/ReservationItemProps";
-import {ColDef} from "ag-grid-community";
+import React from "react"
+import { useNavigate } from "react-router-dom"
+import { AgGridReact } from "ag-grid-react"
+import { AG_GRID_LOCALE_DE } from "@ag-grid-community/locale"
+import { customTheme } from "../customTheme"
+import { ReservationItemProps } from "../interfaces/ReservationItemProps"
+import { ColDef } from "ag-grid-community"
 
 interface ReservationCardProps {
-    reservationItems: ReservationItemProps[];
-    colDefs: ColDef<ReservationItemProps>[];
-    loading: boolean;
+    reservationItems: ReservationItemProps[]
+    colDefs: ColDef<ReservationItemProps>[]
+    loading: boolean
 }
 
-
-const ReservationTable: React.FC<ReservationCardProps> = ({reservationItems, colDefs, loading}) => {
+const ReservationTable: React.FC<ReservationCardProps> = ({
+    reservationItems,
+    colDefs,
+    loading
+}) => {
     const navigate = useNavigate()
     return (
-        <div className='h-[550px]'>
+        <div className="h-[550px]">
             <AgGridReact
                 rowData={reservationItems}
                 columnDefs={colDefs}
@@ -28,7 +31,7 @@ const ReservationTable: React.FC<ReservationCardProps> = ({reservationItems, col
                 theme={customTheme}
             />
         </div>
-    );
+    )
 }
 
-export default ReservationTable;
+export default ReservationTable

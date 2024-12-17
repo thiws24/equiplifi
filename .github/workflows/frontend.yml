@@ -37,5 +37,6 @@ jobs:
             RESERVATION_HOST=https://reservation.equipli.de
             KEYCLOAK_HOST=https://id.equipli.de
             SPIFF_HOST=https://spiff.equipli.de
+            QR_HOST=https://qr.equipli.de
           push: true
           tags: ghcr.io/thiws24/frontend:latest
