@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
+  <bpmn:collaboration id="Collaboration_042fdsz">
+    <bpmn:participant id="Participant_0cbg6tt" name="Manage Damage" processRef="Process_manage_damage_z24p3su" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_manage_damage_z24p3su" isExecutable="true">
+    <bpmn:ioSpecification>
+      <bpmn:dataInput id="DataInput-106194383-1" name="InventoryItem" />
+      <bpmn:dataOutput id="DataOutput-497733830-1" name="InventoryItem" />
+      <bpmn:inputSet>
+        <bpmn:dataInputRefs>DataInput-106194383-1</bpmn:dataInputRefs>
+      </bpmn:inputSet>
+      <bpmn:outputSet>
+        <bpmn:dataOutputRefs>DataOutput-497733830-1</bpmn:dataOutputRefs>
+      </bpmn:outputSet>
+    </bpmn:ioSpecification>
+    <bpmn:sequenceFlow id="Flow_17db3yp" sourceRef="StartEvent_1" targetRef="Activity_0qpzdpu" />
+    <bpmn:sequenceFlow id="Flow_12pkbxb" sourceRef="Activity_0qpzdpu" targetRef="Gateway_0pqe4ia" />
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_17db3yp</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_1" name="InventoryItem repaired">
+      <bpmn:incoming>Flow_0b9me0b</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Activity_0qpzdpu" name="Repair Item">
+      <bpmn:extensionElements>
+        <spiffworkflow:instructionsForEndUser>This is an example **Manual Task**. A **Manual Task** is designed to allow someone to complete a task outside of the system and then report back that it is complete. You can click the *Continue* button to proceed. When you are done running this process, you can edit the **Process Model** to include a:
+
+ * **Script Task** - write a short snippet of python code to update some data
+ *  **User Task** - generate a form that collects information from a user
+ * **Service Task** - communicate with an external API to fetch or update some data.
+
+You can also change the text you are reading here by updating the *Instructions* on this example manual task.</spiffworkflow:instructionsForEndUser>
+        <spiffworkflow:properties>
+          <spiffworkflow:property name="formJsonSchemaFilename" value="manage-damage-schema.json" />
+          <spiffworkflow:property name="formUiSchemaFilename" value="manage-damage-uischema.json" />
+        </spiffworkflow:properties>
+        <spiffworkflow:postScript></spiffworkflow:postScript>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_17db3yp</bpmn:incoming>
+      <bpmn:outgoing>Flow_12pkbxb</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_0pqe4ia" name="InventoryItem repaired?">
+      <bpmn:incoming>Flow_12pkbxb</bpmn:incoming>
+      <bpmn:outgoing>Flow_0b9me0b</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1ymzqbl</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0b9me0b" name="Yes" sourceRef="Gateway_0pqe4ia" targetRef="EndEvent_1">
+      <bpmn:conditionExpression>repairStatus == "OK"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_0wkyikh" name="InventoryItem not repaired?">
+      <bpmn:incoming>Flow_1ymzqbl</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1ymzqbl" sourceRef="Gateway_0pqe4ia" targetRef="Event_0wkyikh">
+      <bpmn:conditionExpression>repairStatus == "BROKEN"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_042fdsz">
+      <bpmndi:BPMNShape id="Participant_0cbg6tt_di" bpmnElement="Participant_0cbg6tt" isHorizontal="true">
+        <dc:Bounds x="-30" y="45" width="600" height="333" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="52" y="172" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_14za570_di" bpmnElement="EndEvent_1">
+        <dc:Bounds x="422" y="172" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="407" y="215" width="68" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0sq13t2_di" bpmnElement="Activity_0qpzdpu">
+        <dc:Bounds x="150" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0pqe4ia_di" bpmnElement="Gateway_0pqe4ia" isMarkerVisible="true">
+        <dc:Bounds x="305" y="165" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="297" y="141" width="68" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0wkyikh_di" bpmnElement="Event_0wkyikh">
+        <dc:Bounds x="422" y="282" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="397" y="325" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataInput-106194383-1DI" bpmnElement="DataInput-106194383-1">
+        <dc:Bounds x="42" y="65" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="27" y="122" width="68" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataOutput-497733830-1DI" bpmnElement="DataOutput-497733830-1">
+        <dc:Bounds x="472" y="65" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="456" y="122" width="68" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_17db3yp_di" bpmnElement="Flow_17db3yp">
+        <di:waypoint x="88" y="190" />
+        <di:waypoint x="150" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12pkbxb_di" bpmnElement="Flow_12pkbxb">
+        <di:waypoint x="250" y="190" />
+        <di:waypoint x="305" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0b9me0b_di" bpmnElement="Flow_0b9me0b">
+        <di:waypoint x="355" y="190" />
+        <di:waypoint x="422" y="190" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="380" y="172" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ymzqbl_di" bpmnElement="Flow_1ymzqbl">
+        <di:waypoint x="330" y="215" />
+        <di:waypoint x="330" y="300" />
+        <di:waypoint x="422" y="300" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
