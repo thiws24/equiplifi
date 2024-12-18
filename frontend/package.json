@@ -39,7 +39,7 @@
     "pdfjs-dist": "^4.9.155",
     "qr-scanner": "^1.4.2",
     "react": "^19.0.0",
-    "react-datepicker": "^4.8.0",
+    "react-datepicker": "^7.5.0",
     "react-day-picker": "^9.4.4",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.1",
