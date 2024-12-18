@@ -35,7 +35,7 @@
     "date-fns": "^4.1.0",
     "keycloak-js": "^26.0.7",
     "lodash": "^4.17.21",
-    "lucide-react": "^0.453.0",
+    "lucide-react": "^0.468.0",
     "pdfjs-dist": "^4.9.155",
     "qr-scanner": "^1.4.2",
     "react": "^19.0.0",
