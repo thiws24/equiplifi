@@ -27,7 +27,7 @@
     "@types/lodash": "^4.17.13",
     "@vitejs/plugin-react-swc": "^3.7.2",
     "ag-grid-community": "^32.3.2",
-    "ag-grid-react": "^32.3.2",
+    "ag-grid-react": "^33.0.3",
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.7",
     "class-variance-authority": "^0.7.1",
