@@ -39,11 +39,7 @@ describe("CategoryDetails Component", () => {
     it("allows editing category details", async () => {
         await act(async () => {
             render(
-                <MemoryRouter initialEntries={["/category/1"]}
-                              future={{
-                                  v7_startTransition: true,
-                                  v7_relativeSplatPath: true
-                              }}>
+                <MemoryRouter initialEntries={["/category/1"]}>
                     <Routes>
                         <Route path="/category/:id" element={<CategoryDetails />} />
                     </Routes>

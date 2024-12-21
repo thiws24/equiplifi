@@ -39,7 +39,7 @@ type CategoryCreationType = z.infer<typeof CategoryCreationSchema>
 function CategoryCreation() {
     const { userInfo, token } = useKeycloak()
 
-    if (!userInfo?.groups.includes("Inventory-Manager")) {
+    if (!userInfo?.groups?.includes("Inventory-Manager")) {
         window.open("/", "_self")
     }
 

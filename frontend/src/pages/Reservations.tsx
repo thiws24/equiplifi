@@ -6,7 +6,7 @@ import { UserReservationsList } from "../components/UserReservationsList"
 function Reservations() {
     const { userInfo } = useKeycloak()
 
-    const isInventoryManager = userInfo?.groups.includes("Inventory-Manager")
+    const isInventoryManager = userInfo?.groups?.includes("Inventory-Manager")
 
     if (isInventoryManager) {
         return (

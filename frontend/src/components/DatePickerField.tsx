@@ -77,7 +77,6 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
                                 disabled={disabledDays}
                                 defaultMonth={defaultMonth}
                                 onDayClick={onDayClick}
-                                initialFocus
                             />
                         </PopoverContent>
                     )}

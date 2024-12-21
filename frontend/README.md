@@ -1,10 +1,32 @@
 # Equipli Frontend
 
+## Requirements
+Node.js >= v20 (all developers have v20)
+https://nodejs.org/en/download/prebuilt-installer
+We suggest to use a package-manager like nvm if possible. 
+For MacOS users the installation is easier. Windows users will need to install Chocolatey
+https://nodejs.org/en/download/package-manager
+
+After installation check node and npm versions with following commands:
+```
+node -v
+
+npm -v
+```
+
+
 ## Setup
 In the frontend folder create a .env file. There you should set following variables:
-`VITE_INVENTORY_SERVICE_HOST='http://localhost:8080'`
+```
+NODE_ENV=development
+VITE_INVENTORY_SERVICE_HOST='https://inventory.equipli.de'
+VITE_KEYCLOAK='https://id.equipli.de'
+VITE_RESERVATION_HOST='https://reservation.equipli.de'
+VITE_QR_HOST='https://qr.equipli.de'
+VITE_SPIFF='https://spiff.equipli.de'
+```
 
-With localhost:8080 being your iiservice running locally. Change it if port or host differ. 
+You can also use a service that is locally running, e.g. localhost:8080
 
 Install dependencies:
  `npm install`
@@ -29,10 +51,16 @@ See the section about [running tests](https://facebook.github.io/create-react-ap
 ### `npm run build`
 
 Builds the app for production to the `dist` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Project structure
 
+The project is using **Typescript**, so reusable interfaces should be defined in the src/interfaces folder.
+
+Avoid creating unnecessary .css files. Use **Tailwind** classes instead: https://tailwindcss.com/docs/utility-first
+
+Routing for new pages is defined in App.tsx.
+
+Pages are in the src/pages folder.
+
+Shadcn components https://ui.shadcn.com/docs are under *src/components/ui*. Everything else under src/components folder are custom components written by us. 

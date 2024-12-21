@@ -52,11 +52,7 @@ describe("LendCategory Component", () => {
 
     it("renders LendCategory component with category data", async () => {
         render(
-            <MemoryRouter initialEntries={["/lend/1"]}
-                          future={{
-                              v7_startTransition: true,
-                              v7_relativeSplatPath: true
-                          }}>
+            <MemoryRouter initialEntries={["/lend/1"]}>
                 <Routes>
                     <Route path="/lend/:id" element={<LendCategory />} />
                 </Routes>

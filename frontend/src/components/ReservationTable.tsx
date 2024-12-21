@@ -1,5 +1,4 @@
 import React from "react"
-import { useNavigate } from "react-router-dom"
 import { AgGridReact } from "ag-grid-react"
 import { AG_GRID_LOCALE_DE } from "@ag-grid-community/locale"
 import { customTheme } from "../customTheme"
@@ -17,7 +16,6 @@ const ReservationTable: React.FC<ReservationCardProps> = ({
     colDefs,
     loading
 }) => {
-    const navigate = useNavigate()
     return (
         <div className="h-[550px]">
             <AgGridReact

@@ -32,11 +32,7 @@ describe("Detail Component", () => {
 
     it("renders the Detail component with mocked data", async () => {
         render(
-            <MemoryRouter initialEntries={["/item/1"]}
-                          future={{
-                              v7_startTransition: true,
-                              v7_relativeSplatPath: true
-                          }}>
+            <MemoryRouter initialEntries={["/item/1"]}>
                 <Routes>
                     <Route path="/item/:id" element={<Detail />} />
                 </Routes>
@@ -65,11 +61,7 @@ describe("Detail Component", () => {
         );
 
         render(
-            <MemoryRouter initialEntries={["/item/1"]}
-                          future={{
-                              v7_startTransition: true,
-                              v7_relativeSplatPath: true
-                          }}>
+            <MemoryRouter initialEntries={["/item/1"]}>
                 <Routes>
                     <Route path="/item/:id" element={<Detail />} />
                 </Routes>

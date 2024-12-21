@@ -1,4 +1,4 @@
-import {ChevronUp, Home, Inbox, LogOutIcon, ScrollText, SquarePlus } from "lucide-react"
+import { Home, LogOutIcon, ScrollText, SquarePlus } from "lucide-react"
 import {
     SidebarContent,
     SidebarFooter,
@@ -44,7 +44,7 @@ export function AppSidebar() {
         }
     }
 
-    const isInventoryManager = userInfo?.groups.includes("Inventory-Manager")
+    const isInventoryManager = userInfo?.groups?.includes("Inventory-Manager")
 
     return (
         <Sidebar collapsible="icon">

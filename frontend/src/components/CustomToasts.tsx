@@ -21,7 +21,7 @@ export const CustomToasts = {
                 className: "custom-toast",
                 pauseOnFocusLoss: false,
                 position: "top-center",
-                progressStyle: {
+                style: {
                     backgroundColor: "#5588c7"
                 },
                 icon: false,
@@ -40,7 +40,7 @@ export const CustomToasts = {
                 className: "custom-toast",
                 pauseOnFocusLoss: false,
                 position: "top-center",
-                progressStyle: {
+                style: {
                     backgroundColor: "red"
                 },
                 icon: false,

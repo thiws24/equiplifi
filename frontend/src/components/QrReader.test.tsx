@@ -14,11 +14,7 @@ describe("QrReader Component", () => {
             Promise.resolve()
         )
         const { container } = render(
-            <BrowserRouter
-                future={{
-                    v7_startTransition: true,
-                    v7_relativeSplatPath: true
-                }}>
+            <BrowserRouter>
                 <QrReader />
             </BrowserRouter>
         )

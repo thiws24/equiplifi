@@ -43,11 +43,7 @@ describe("Reservations Component", () => {
 
     it("renders loading state initially", () => {
         render(
-            <MemoryRouter initialEntries={["/reservations"]}
-                          future={{
-                              v7_startTransition: true,
-                              v7_relativeSplatPath: true
-                          }}>
+            <MemoryRouter initialEntries={["/reservations"]}>
                 <Routes>
                     <Route path="/reservations" element={<Reservations />} />
                 </Routes>
@@ -68,11 +64,7 @@ describe("Reservations Component", () => {
         );
 
         render(
-            <MemoryRouter initialEntries={["/reservations"]}
-                          future={{
-                              v7_startTransition: true,
-                              v7_relativeSplatPath: true
-                          }}>
+            <MemoryRouter initialEntries={["/reservations"]}>
                 <Routes>
                     <Route path="/reservations" element={<Reservations />} />
                 </Routes>
@@ -85,11 +77,7 @@ describe("Reservations Component", () => {
 
     it('should confirm reservation successfully and show success toast', async () => {
         render(
-            <MemoryRouter initialEntries={["/reservations"]}
-                          future={{
-                              v7_startTransition: true,
-                              v7_relativeSplatPath: true
-                          }}>
+            <MemoryRouter initialEntries={["/reservations"]}>
                 <Reservations/>
             </MemoryRouter>
         )

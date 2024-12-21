@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react"
+// @ts-ignore
 import Keycloak from "keycloak-js"
 import { KeyCloakUserInfo } from "../interfaces/KeyCloakUserInfo"
 
@@ -45,18 +46,18 @@ export const KeycloakProvider: React.FC<Props> = ({ children }) => {
                         void keycloakConfig.login()
                     } else {
                         keycloakConfig?.loadUserInfo().then(
-                            (val) =>
+                            (val: any) =>
                                 setKeycloakState({
                                     keycloak: keycloakConfig,
                                     authenticated,
                                     token: keycloakConfig.token,
-                                    userInfo: val as any
+                                    userInfo: val
                                 }),
-                            (e) => console.log(e)
+                            (e: any) => console.log(e)
                         )
                     }
                 })
-                .catch((error) => {
+                .catch((error: any) => {
                     console.log(error)
                 })
         }

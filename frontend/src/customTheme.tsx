@@ -1,4 +1,4 @@
-import { themeQuartz } from "@ag-grid-community/theming"
+import { themeQuartz } from "ag-grid-community"
 
 // to use myTheme in an application, pass it to the theme grid option
 export const customTheme = themeQuartz.withParams({

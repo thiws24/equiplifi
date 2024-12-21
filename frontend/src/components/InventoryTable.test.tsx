@@ -48,11 +48,7 @@ describe("InventoryTable Tests", () => {
     ]
     test("renders data correctly", () => {
         const { container } = render(
-            <BrowserRouter
-                future={{
-                    v7_startTransition: true,
-                    v7_relativeSplatPath: true
-                }}>
+            <BrowserRouter>
                 <InventoryTable
                     colDefs={colDefs}
                     inventoryItems={rowData}
@@ -71,12 +67,7 @@ describe("InventoryTable Tests", () => {
 
     test("should have expected column headers", () => {
         const { container } = render(
-            <BrowserRouter
-                future={{
-                    v7_startTransition: true,
-                    v7_relativeSplatPath: true
-                }}
-            >
+            <BrowserRouter>
                 <InventoryTable
                     colDefs={colDefs}
                     inventoryItems={rowData}

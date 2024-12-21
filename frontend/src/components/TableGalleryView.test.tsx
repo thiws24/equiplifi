@@ -16,11 +16,7 @@ const colDefs: ColDef<InventoryItemProps, any>[] = [
 describe("TableGalleryView", () => {
     test("shows table as default", () => {
         const { container } = render(
-            <BrowserRouter
-                future={{
-                    v7_startTransition: true,
-                    v7_relativeSplatPath: true
-                }}>
+            <BrowserRouter>
                 <TableGalleryView colDefs={colDefs} data={[]} loading={false} />
             </BrowserRouter>
         )
@@ -28,11 +24,7 @@ describe("TableGalleryView", () => {
     })
     test("shows gallery on switch", async () => {
         const { container } = render(
-            <BrowserRouter
-                future={{
-                    v7_startTransition: true,
-                    v7_relativeSplatPath: true
-                }}>
+            <BrowserRouter>
                 <TableGalleryView colDefs={colDefs} data={[]} loading={false} />
             </BrowserRouter>
         )
