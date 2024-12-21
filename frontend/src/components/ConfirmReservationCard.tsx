@@ -28,6 +28,10 @@ export const ConfirmReservationCard: React.FC<Props> = ({
         await onCancelReservation(processId, guid)
     }
 
+    const handleConfirm = async () => {
+        await onConfirmReservation(processId, guid)
+    }
+
     return (
         <div
             className="mb-6 text-sm border p-5 rounded shadow-md flex flex-col md:flex-row justify-start items-start md:items-center">
