@@ -1,6 +1,7 @@
 import { fetchDataObjectFromProcess } from "./fetchDataObject"
 import { TaskProps } from "../interfaces/TaskProps"
 import { Process } from "../interfaces/Process"
+import axios from "axios"
 
 export async function fetchOpenTasksByTaskName(
     taskName: string,
@@ -32,9 +33,14 @@ export async function fetchOpenTasksByTaskName(
                         token,
                         'reservationrequests'
                     )
+
+                    const userName = await getUsername(dataRes?.userId, token)
                     filteredTasks.push({
                         ...pItem,
-                        dataObject: dataRes
+                        dataObject: {
+                            ...dataRes,
+                            userName
+                        }
                     })
                 })
             )
@@ -45,4 +51,22 @@ export async function fetchOpenTasksByTaskName(
     }
 
     return []
+}
+
+async function getUsername(userId?: string, accessToken?: string): Promise<string> {
+    if (!userId || !accessToken) return "Unbekannt"
+    try {
+        const response = await axios.get(
+            `https://id.equipli.de/admin/realms/master/users/${userId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            }
+        )
+        return response.data.username
+    } catch (error) {
+        console.error("Fehler beim Abrufen des Benutzernamens:", error)
+        return ""
+    }
 }
