@@ -58,7 +58,44 @@ export const InventoryManagerReservationsList: React.FC = () => {
 
             if (response.ok) {
                 CustomToasts.success({
-                    message: "Reservierung erfolgreich bestätigt.",
+                    message: "Reservierung bestätigt.",
+                    duration: 1000,
+                    onClose: () => window.location.reload()
+                })
+            } else {
+                CustomToasts.error({
+                    message: "Es ist ein Fehler aufgetreten."
+                })
+            }
+        } catch (error) {
+            CustomToasts.error({
+                message: "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+            })
+        }
+    }
+
+    const handleCancelReservation = async (
+        processId: number,
+        guid: string
+    ) => {
+        try {
+            const response = await fetch(
+                `${import.meta.env.VITE_SPIFF}/api/v1.0/tasks/${processId}/${guid}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        reservation_confirmation: "not confirmed"
+                    })
+                }
+            )
+
+            if (response.ok) {
+                CustomToasts.success({
+                    message: "Reservierung abgelehnt.",
                     duration: 1000,
                     onClose: () => window.location.reload()
                 })
@@ -135,6 +172,7 @@ export const InventoryManagerReservationsList: React.FC = () => {
                                 guid={cp.task_guid}
                                 data={cp.dataObject}
                                 onConfirmReservation={handleConfirmReservation}
+                                onCancelReservation={handleCancelReservation}
                             />
                         ))}
                     </div>
