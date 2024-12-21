@@ -183,7 +183,7 @@ function Lend() {
             if (response.ok) {
                 CustomToasts.success({
                     message: "Reservierung erfolgreich! Sie werden nun weitergeleitet.",
-                    onClose: () => navigate(`/`)
+                    onClose: () => navigate(`/reservations`)
                 })
             } else {
                 const data = await response.json()
