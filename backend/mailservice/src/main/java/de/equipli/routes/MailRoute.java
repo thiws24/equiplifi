@@ -53,6 +53,14 @@ public class MailRoute extends RouteBuilder {
         JacksonDataFormat mailDtoFormat = new JacksonDataFormat(MailCreateDto[].class);
 
 
+// Request Confirmation Route
+        from("activemq:queue:request-confirmation")
+                .routeId("sendRequestConfirmation-Route")
+                .unmarshal(mailDtoFormat)
+                .setProperty("mailTemplate", simple("request-confirmation-mail.html"))
+                .to("direct:sendMail");
+
+
 // Reservation Confirmation Route
         from("activemq:queue:reservation-confirmation")
                 .routeId("sendReservationConfirmation-Route")
