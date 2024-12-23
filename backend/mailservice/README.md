@@ -19,6 +19,9 @@ Queue: ```return-reminder```
 ### 5. Bestätigung des Lagerwartes
 Queue: ```storekeeper-confirmation```
 
+### 6. Bestätigung über erhalt der Anfrage
+Queue: ```request-confirmation```
+
 ## Verwendung
 Der Mail-Service wird von anderen Services verwendet, um E-Mails zu versenden. Dazu wird ein POST-Request an den ActiveMQ-Server gesendet.
 
@@ -62,3 +65,4 @@ Die möglichen Queues sind:
 - return-confirmation
 - return-reminder
 - storekeeper-confirmation
+- request-confirmation
