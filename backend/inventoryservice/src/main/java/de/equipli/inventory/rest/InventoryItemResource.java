@@ -4,11 +4,9 @@ import de.equipli.inventory.jpa.Category;
 import de.equipli.inventory.jpa.CategoryRepository;
 import de.equipli.inventory.jpa.InventoryItem;
 import de.equipli.inventory.jpa.InventoryRepository;
-import de.equipli.inventory.rest.dto.CreateInventoryItemRequest;
 import io.minio.GetObjectArgs;
 import io.minio.GetObjectResponse;
 import io.minio.MinioClient;
-import io.minio.errors.ErrorResponseException;
 import io.minio.PutObjectArgs;
 import java.io.InputStream;
 import jakarta.inject.Inject;
@@ -79,13 +77,13 @@ public class InventoryItemResource {
     @Produces("image/png")
     @Path("/{id}/image")
     public Response getInventoryItemImage(@PathParam("categoryId") Long categoryId, @PathParam("id") Long itemId) {
-         try {
         try {
             if (categoryId <= 0 || itemId <= 0) {
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("Invalid category or item ID.")
                         .build();
             }
+
             String objectName = categoryId + "/" + itemId;
             GetObjectResponse object = minioClient.getObject(
                     GetObjectArgs.builder()
@@ -93,12 +91,9 @@ public class InventoryItemResource {
                             .object(objectName)
                             .build()
             );
+
             return Response.ok(object.readAllBytes())
                     .type("image/png")
-                    .build();
-        } catch (io.minio.errors.ErrorResponseException e) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("Image not found: " + e.getMessage())
                     .build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -106,6 +101,7 @@ public class InventoryItemResource {
                     .build();
         }
     }
+
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
