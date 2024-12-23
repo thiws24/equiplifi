@@ -10,6 +10,7 @@ import io.minio.GetObjectResponse;
 import io.minio.MinioClient;
 import io.minio.errors.ErrorResponseException;
 import io.minio.PutObjectArgs;
+import java.io.InputStream;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
@@ -20,6 +21,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.jboss.resteasy.reactive.RestForm;
 
 @Path("/categories/{categoryId}/items")
 public class InventoryItemResource {
@@ -84,26 +86,27 @@ public class InventoryItemResource {
                         .entity("Invalid category or item ID.")
                         .build();
             }
-
-            GetObjectArgs args = GetObjectArgs.builder()
-                    .bucket("category-pictures")
-                    .object(categoryId + "/" + itemId)
-                    .build();
-            GetObjectResponse object = minioClient.getObject(args);
-
+            String objectName = categoryId + "/" + itemId;
+            GetObjectResponse object = minioClient.getObject(
+                    GetObjectArgs.builder()
+                            .bucket("category-pictures")
+                            .object(objectName)
+                            .build()
+            );
             return Response.ok(object.readAllBytes())
                     .type("image/png")
                     .build();
         } catch (io.minio.errors.ErrorResponseException e) {
             return Response.status(Response.Status.NOT_FOUND)
-                    .entity("Error retrieving image: " + e.getMessage())
+                    .entity("Image not found: " + e.getMessage())
                     .build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(e.getMessage())
+                    .entity("Error retrieving image: " + e.getMessage())
                     .build();
         }
     }
+
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -111,48 +114,33 @@ public class InventoryItemResource {
     public Response uploadInventoryItemImage(
             @PathParam("categoryId") Long categoryId,
             @PathParam("id") Long itemId,
-            @FormDataParam("file") InputStream uploadedInputStream,
-            @FormDataParam("file") FormDataContentDisposition fileDetail) {
+            @RestForm("file") InputStream fileInputStream) {
         try {
             if (categoryId <= 0 || itemId <= 0) {
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("Invalid category or item ID.")
                         .build();
             }
-
-            if (!fileDetail.getFileName().endsWith(".png")) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("Only PNG files are supported.")
-                        .build();
-            }
+            String fileName = "default.png";
 
             String bucketName = "category-pictures";
             String objectName = categoryId + "/" + itemId;
 
-            boolean bucketExists = minioClient.bucketExists(
-                    BucketExistsArgs.builder().bucket(bucketName).build()
+            minioClient.putObject(
+                    PutObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .stream(fileInputStream, fileInputStream.available(), -1)
+                            .contentType("image/png")
+                            .build()
             );
-            if (!bucketExists) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity("Bucket '" + bucketName + "' does not exist.")
-                        .build();
-            }
-
-            PutObjectArgs args = PutObjectArgs.builder()
-                    .bucket(bucketName)
-                    .object(objectName)
-                    .stream(uploadedInputStream, uploadedInputStream.available(), -1)
-                    .contentType("image/png")
-                    .build();
-
-            minioClient.putObject(args);
 
             return Response.status(Response.Status.CREATED)
                     .entity("Image uploaded successfully.")
                     .build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Unexpected error: " + e.getMessage())
+                    .entity("Error uploading image: " + e.getMessage())
                     .build();
         }
     }
