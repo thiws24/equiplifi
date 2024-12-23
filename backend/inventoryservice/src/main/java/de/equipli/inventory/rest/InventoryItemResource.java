@@ -107,7 +107,6 @@ public class InventoryItemResource {
         }
     }
 
-
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Path("/{id}/upload")
@@ -121,7 +120,6 @@ public class InventoryItemResource {
                         .entity("Invalid category or item ID.")
                         .build();
             }
-            String fileName = "default.png";
 
             String bucketName = "category-pictures";
             String objectName = categoryId + "/" + itemId;
