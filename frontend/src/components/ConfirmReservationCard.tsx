@@ -33,12 +33,19 @@ export const ConfirmReservationCard: React.FC<Props> = ({
             <p>Kategorie-ID: {data?.categoryId}</p>
             <p>Anzahl: {data?.count}</p>
             <p>Startddatum: {formatDate(data?.startDate)}</p>
-            <p>Enddatum: {formatDate(data?.endDate)}</p> <br/>
+            <p>Enddatum: {formatDate(data?.endDate)}</p> <br />
             <button
                 className="bg-customBlue text-customBeige text-sm px-4 py-2 rounded hover:bg-customRed"
                 onClick={handleConfirm}
             >
                 Reservierung bestätigen
+            </button>
+
+            <button
+                className="bg-customOrange text-customBeige text-sm px-4 py-2 rounded hover:bg-customRed"
+                onClick={handleConfirm}
+            >
+                Reservierung ablehnen
             </button>
         </div>
     )
