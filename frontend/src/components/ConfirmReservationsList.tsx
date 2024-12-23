@@ -14,7 +14,7 @@ export const ConfirmReservationsList: React.FC = () => {
 
     async function fetchToConfirmProcesses() {
         try {
-            const tasks: TaskProps[] = await fetchOpenTasksByTaskName("Receive Inventory Manager confirmation", token ?? "")
+            const tasks: TaskProps[] = await fetchOpenTasksByTaskName(["Receive Inventory Manager confirmation"], token ?? "")
             setConfirmTasks(tasks)
         } catch (e) {
             CustomToasts.error({

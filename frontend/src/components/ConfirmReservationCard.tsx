@@ -45,6 +45,13 @@ export const ConfirmReservationCard: React.FC<Props> = ({
             >
                 Reservierung bestätigen
             </button>
+
+            <button
+                className="bg-customOrange text-customBeige text-sm px-4 py-2 rounded hover:bg-customRed"
+                onClick={handleConfirm}
+            >
+                Reservierung ablehnen
+            </button>
         </div>
     )
 }

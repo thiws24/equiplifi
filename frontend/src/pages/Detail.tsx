@@ -26,6 +26,41 @@ function Detail() {
     const { id } = useParams()
     const { token } = useKeycloak()
 
+    const handleDownload = async (name: string, id: number | undefined) => {
+        try {
+            const response = await fetch(
+                `${import.meta.env.VITE_QR_HOST}/qr?name=${name} - ${id}&id=${id}`,
+                {
+                    method: "GET",
+                    headers: {
+                        Accept: "application/pdf",
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                console.log("... Fehler beim Download des QR-Codes:")
+            }
+
+            // Convert response to Blob
+            const blob = await response.blob();
+
+            // Create a temporary link to download the file
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `${name}-${id}-QRCode.pdf`;
+
+            // Programmatically click the link to trigger the download
+            document.body.appendChild(link);
+            link.click();
+
+            // Clean up
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error("Error downloading QR code PDF:", error);
+        }
+    };
+
     const fetchItem = async () => {
         try {
             const response = await fetch(
@@ -59,7 +94,7 @@ function Detail() {
                 {
                     method: "GET",
                     headers: {
-                        "Accept": "image/png"
+                        Accept: "image/png"
                     }
                 }
             )
@@ -241,6 +276,13 @@ function Detail() {
                                 ) : (
                                     "Laden..."
                                 )}
+                                <div
+                                    onClick={() => handleDownload(inventoryItem?.name as string, inventoryItem?.id)}
+
+                                    className="cursor-pointer text-customBlue hover:text-customOrange mt-4 flex"
+                                >
+                                    QR Code herunterladen
+                                </div>
                             </KeyValueRow>
                         </dl>
 
