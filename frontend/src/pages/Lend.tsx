@@ -151,7 +151,7 @@ function Lend() {
 
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_SPIFF}/api/v1.0/messages/Reservation-request-start`,
+                `${import.meta.env.VITE_SPIFF}/api/v1.0/messages/Reservation_request_start`,
                 {
                     method: "POST",
                     headers: {
