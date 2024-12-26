@@ -14,22 +14,19 @@ function Home() {
             field: "id",
             headerName: "ID",
             flex: 1,
-            minWidth: 150,
-            filter: "agSetColumnFilter"
+            minWidth: 150
         },
         {
             field: "name",
             headerName: "Name",
             flex: 1,
-            minWidth: 150,
-            filter: "agSetColumnFilter"
+            minWidth: 150
         },
         {
             field: "icon",
             headerName: "ICON",
             flex: 1,
-            minWidth: 100,
-            filter: "agSetColumnFilter"
+            minWidth: 100
         },
         {
             field: "photoUrl",

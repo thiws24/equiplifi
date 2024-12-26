@@ -22,21 +22,18 @@ export const categoryColDefs: ColDef<CategoryDetailsProps>[] = [
         headerName: "ID",
         field: "id",
         sortable: true,
-        filter: "agNumberColumnFilter",
         flex: 1
     },
     {
         headerName: "Status",
         field: "status",
         sortable: true,
-        filter: "agNumberColumnFilter",
         flex: 1
     },
     {
         headerName: "Lagerort",
         field: "location",
         sortable: true,
-        filter: "agNumberColumnFilter",
         flex: 1
     }
 ]

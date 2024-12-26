@@ -8,6 +8,10 @@ import React from "react"
 import Home from "./pages/Home"
 import Reservations from "./pages/Reservations"
 import NoPage from "./pages/NoPage"
+import { ModuleRegistry, AllCommunityModule } from "ag-grid-community"
+
+// Register all community features
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 const App = () => {
     return (
