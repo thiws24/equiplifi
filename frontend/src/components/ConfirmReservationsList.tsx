@@ -76,10 +76,10 @@ export const ConfirmReservationsList: React.FC = () => {
     }
 
     const handleConfirmReturn = async (
-        processId: number,
-        guid: string
+        reservationId: number
     ) => {
         try {
+            // TODO: Use correct call in spiff
             const response = await fetch(
                 `${import.meta.env.VITE_SPIFF}/api/v1.0/tasks/${processId}/${guid}`,
                 {
@@ -89,9 +89,8 @@ export const ConfirmReservationsList: React.FC = () => {
                         Authorization: `Bearer ${token}`
                     },
                     body: JSON.stringify({
-                        //TODO: reservation_id übergeben (id) - Für jedes Item einzeln??
-                        reservation_id:2348,
-                        check_in_status:"OK"
+                        reservation_id: reservationId,
+                        check_in_status: "OK"
                     })
                 }
             )
@@ -153,8 +152,7 @@ export const ConfirmReservationsList: React.FC = () => {
                         <ConfirmReturnCard
                             key={cp.process_instance_id}
                             processId={cp.process_instance_id}
-                            guid={cp.task_guid}
-                            id={cp.id}
+                            data={cp.dataObject}
                             onConfirmReturn={handleConfirmReturn}
                         />
                     ))}

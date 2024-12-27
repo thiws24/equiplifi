@@ -1,4 +1,4 @@
-import { fetchDataObjectForReturn, fetchDataObjectFromProcess } from "./fetchDataObject"
+import { fetchDataObjectFromProcess } from "./fetchDataObject"
 import { TaskProps } from "../interfaces/TaskProps"
 import { Process } from "../interfaces/Process"
 
@@ -79,7 +79,7 @@ export async function fetchOpenTasksToReturn(
             // Fetch Data Object for each task
             await Promise.all(
                 results.map(async (pItem: TaskProps) => {
-                    const dataRes = await fetchDataObjectForReturn(
+                    const dataRes = await fetchDataObjectFromProcess(
                         pItem.process_instance_id,
                         token,
                         "activereservations"
@@ -119,7 +119,7 @@ export async function fetchAllTasks(token: string): Promise<TaskProps[]> {
             // Fetch Data Object for each task
             await Promise.all(
                 data.results.map(async (task: TaskProps) => {
-                    const dataRes = await fetchDataObjectForReturn(
+                    const dataRes = await fetchDataObjectFromProcess(
                         task.process_instance_id,
                         token,
                         "activereservations"

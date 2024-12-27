@@ -1,4 +1,4 @@
-import { ProcessInputProps } from "./ProcessInputProps"
+import { ProcessDataValueProps } from "./ProcessDataValueProps"
 
 export interface Process {
     id: number
@@ -6,5 +6,5 @@ export interface Process {
     task_title?: string
     last_milestone_bpmn_name?: string
     waiting_for?: string
-    dataObject?: ProcessInputProps
+    dataObject?: ProcessDataValueProps[]
 }
