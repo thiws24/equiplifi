@@ -4,6 +4,14 @@ import { AG_GRID_LOCALE_DE } from "@ag-grid-community/locale"
 import { customTheme } from "../customTheme"
 import { ReservationItemProps } from "../interfaces/ReservationItemProps"
 import { ColDef } from "ag-grid-community"
+import {
+    ModuleRegistry,
+    ClientSideRowModelModule,
+} from 'ag-grid-community';
+
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+]);
 
 interface ReservationCardProps {
     reservationItems: ReservationItemProps[]

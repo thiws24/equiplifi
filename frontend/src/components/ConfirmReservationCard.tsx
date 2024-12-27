@@ -2,18 +2,20 @@ import * as React from "react"
 import { ProcessInputProps } from "../interfaces/ProcessInputProps"
 
 interface Props {
-    processId: number
-    guid: string
-    data?: ProcessInputProps
-    onConfirmReservation: (processId: number, guid: string) => Promise<void>
+    processId: number,
+    guid: string,
+    data?: ProcessInputProps,
+    onConfirmReservation: (processId: number, guid: string) => Promise<void>,
+    reservation_id?: number
 }
 
 export const ConfirmReservationCard: React.FC<Props> = ({
-    processId,
-    guid,
-    data,
-    onConfirmReservation
-}) => {
+                                                            processId,
+                                                            guid,
+                                                            data,
+                                                            onConfirmReservation,
+                                                            reservation_id
+                                                        }) => {
     const handleConfirm = async () => {
         await onConfirmReservation(processId, guid)
     }
@@ -39,13 +41,6 @@ export const ConfirmReservationCard: React.FC<Props> = ({
                 onClick={handleConfirm}
             >
                 Reservierung bestätigen
-            </button>
-
-            <button
-                className="bg-customOrange text-customBeige text-sm px-4 py-2 rounded hover:bg-customRed"
-                onClick={handleConfirm}
-            >
-                Reservierung ablehnen
             </button>
         </div>
     )

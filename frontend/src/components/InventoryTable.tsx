@@ -5,6 +5,14 @@ import { ColDef } from "ag-grid-community"
 import { InventoryItemProps } from "../interfaces/InventoryItemProps"
 import { AG_GRID_LOCALE_DE } from "@ag-grid-community/locale"
 import { useNavigate } from "react-router-dom"
+import {
+    ModuleRegistry,
+    ClientSideRowModelModule,
+} from 'ag-grid-community';
+
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+]);
 
 interface InventoryCardProps {
     inventoryItems: InventoryItemProps[]
