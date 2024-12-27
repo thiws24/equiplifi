@@ -1,25 +1,18 @@
 import * as React from "react"
 import { useState } from "react"
-import { ReturnProps } from "../interfaces/ReturnProps"
+import { ProcessDataValueProps } from "../interfaces/ProcessDataValueProps"
+import { map } from "lodash"
 
 interface Props {
     processId: number,
-    id?: number,
-    guid: string,
-    data?: {
-        data: ReturnProps[]
-        count: number
-    },
-    onConfirmReturn: (processId: number, guid: string) => Promise<void>,
-
+    data?: ProcessDataValueProps[]
+    onConfirmReturn: (reservationId: number) => Promise<void>,
 }
 
 export const ConfirmReturnCard: React.FC<Props> = ({
                                                        processId,
-                                                       guid,
                                                        data,
-                                                       onConfirmReturn,
-                                                       id
+                                                       onConfirmReturn
                                                    }) => {
     const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -28,34 +21,30 @@ export const ConfirmReturnCard: React.FC<Props> = ({
     }
 
     const handleConfirmModal = async () => {
-        await onConfirmReturn(processId, guid)
-        setIsModalOpen(false)
+        // TODO: Toasts einfügen
+        try {
+            await Promise.all(map(data, (reservation) => {
+                return onConfirmReturn(reservation.id)
+            }))
+
+            setIsModalOpen(false)
+        } catch (error) {
+            console.error('Error confirming return', error)
+        }
     }
 
     const handleCloseModal = () => {
         setIsModalOpen(false)
     }
 
-    const formatDate = (date: string | undefined): string => {
-        if (!date) return ""
-        const parsedDate = new Date(date)
-        const day = String(parsedDate.getDate()).padStart(2, "0")
-        const month = String(parsedDate.getMonth() + 1).padStart(2, "0")
-        const year = parsedDate.getFullYear()
-        return `${day}.${month}.${year}`
-    }
+    const itemIds: number[] = map(data, "itemId")
 
     return (
         <div className="mb-10 text-sm border p-4 rounded shadow-md">
             <p>Prozess-ID: {processId}</p>
-            <p>Reservierungs-ID: {id}</p>
-            <ul className="list-disc pl-4">
-                {data?.data.map((reservation, index) => (
-                    <li key={index}>
-                        Item-ID: {reservation.itemId},
-                    </li>
-                ))}
-            </ul>
+            <div>
+                Item-IDs: {itemIds.join(", ")}
+            </div>
             <button
                 className="bg-customBlue text-customBeige text-sm px-4 py-2 rounded hover:bg-customRed mt-4"
                 onClick={handleReturn}
@@ -63,18 +52,16 @@ export const ConfirmReturnCard: React.FC<Props> = ({
                 Rückgabe bestätigen
             </button>
 
+            {/* TODO: Use shadcn component: Dialog */}
+
             {isModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-6 rounded shadow-lg">
                         <h2 className="text-lg font-bold mb-4">Sind Sie sicher, dass die Rückgabe erfolgreich war?</h2>
                         <p>Prozess-ID: {processId}</p>
-                        <ul className="list-disc pl-4 mb-4">
-                            {data?.data.map((reservation, index) => (
-                                <li key={index}>
-                                    Item-ID: {reservation.itemId}
-                                </li>
-                            ))}
-                        </ul>
+                        <div>
+                            Item-IDs: {itemIds.join(", ")}
+                        </div>
                         <div className="flex justify-end">
                             <button
                                 className="bg-gray-300 text-black px-4 py-2 rounded mr-2 hover:bg-gray-400"

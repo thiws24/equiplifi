@@ -6,4 +6,5 @@ export interface ProcessDataValueProps extends ReservationItemProps {
     itemId: number
     categoryId: number
     status?: string
+    lendingStatus?: string
 }

@@ -34,7 +34,7 @@ export const UserReservationCard: React.FC<Props> = ({
                 <b>Enddatum:</b>
                 <div>{data ? formatDate(data[0]?.endDate) : '-'}</div>
                 <b>Item IDs:</b>
-                <div>[{itemIds}]</div>
+                <div>{itemIds.join(', ')}</div>
             </div>
             {taskTitle === "Receive Inventory Manager confirmation" && <div className='italic mt-10'>Warten auf Bestätigung</div>}
             {taskTitle === "Receive Inventory Manager confirmation" && (

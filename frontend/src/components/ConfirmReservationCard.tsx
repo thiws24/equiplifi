@@ -14,13 +14,11 @@ export const ConfirmReservationCard: React.FC<Props> = ({
                                                             processId,
                                                             guid,
                                                             data,
-                                                            onConfirmReservation,
-                                                            reservation_id
+                                                            onConfirmReservation
                                                         }) => {
     const handleConfirm = async () => {
         await onConfirmReservation(processId, guid)
     }
-
 
     const itemIds: number[] = map(data, "itemId")
 
@@ -38,7 +36,7 @@ export const ConfirmReservationCard: React.FC<Props> = ({
                 <b>Enddatum:</b>
                 <div>{data ? formatDate(data[0]?.endDate) : '-'}</div>
                 <b>Item IDs:</b>
-                <div>[{itemIds}]</div>
+                <div>{itemIds.join(', ')}</div>
             </div>
             <button
                 className="bg-customBlue text-customBeige text-sm px-4 py-2 rounded hover:bg-customRed"
