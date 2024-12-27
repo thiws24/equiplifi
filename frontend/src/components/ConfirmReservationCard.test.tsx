@@ -1,20 +1,20 @@
 import React from "react"
 import { render, screen, fireEvent } from "@testing-library/react"
 import { ConfirmReservationCard } from "./ConfirmReservationCard"
-import { ProcessInputProps } from "../interfaces/ProcessInputProps"
+import { ProcessDataValueProps } from "../interfaces/ProcessDataValueProps"
 import { vi, describe, afterEach, test, expect } from "vitest"
 
 describe("ConfirmReservationCard", () => {
     const mockOnConfirmReservation = vi.fn()
 
-    const mockData: { endDate: string; count: number; categoryId: number; startDate: string; userId: string; itemId: number } = {
+    const mockData: ProcessDataValueProps[] = [{
         categoryId: 1,
-        count: 5,
         startDate: "2023-12-01T00:00:00Z",
         endDate: "2023-12-10T00:00:00Z",
         userId: "123456",
-        itemId: 1
-    }
+        itemId: 1,
+        id: 2345
+    }]
 
     afterEach(() => {
         vi.clearAllMocks()
@@ -32,8 +32,8 @@ describe("ConfirmReservationCard", () => {
 
         expect(screen.getByText("Prozess-ID: 123")).toBeInTheDocument()
         expect(screen.getByText("Kategorie-ID: 1")).toBeInTheDocument()
-        expect(screen.getByText("Anzahl: 5")).toBeInTheDocument()
-        expect(screen.getByText("Startddatum: 01.12.2023")).toBeInTheDocument()
+        expect(screen.getByText("Anzahl: 1")).toBeInTheDocument()
+        expect(screen.getByText("Startdatum: 01.12.2023")).toBeInTheDocument()
         expect(screen.getByText("Enddatum: 10.12.2023")).toBeInTheDocument()
     })
 
@@ -80,7 +80,7 @@ describe("ConfirmReservationCard", () => {
             />
         )
 
-        expect(screen.getByText("Startddatum: 01.12.2023")).toBeInTheDocument()
+        expect(screen.getByText("Startdatum: 01.12.2023")).toBeInTheDocument()
         expect(screen.getByText("Enddatum: 10.12.2023")).toBeInTheDocument()
     })
 

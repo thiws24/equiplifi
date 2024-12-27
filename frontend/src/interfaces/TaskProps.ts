@@ -1,4 +1,4 @@
-import { ProcessInputProps } from "./ProcessInputProps"
+import { ProcessDataValueProps } from "./ProcessDataValueProps"
 
 export interface TaskProps {
     id: number
@@ -10,5 +10,5 @@ export interface TaskProps {
     process_instance_status: string
     assigned_user_group_identifier: string | null
     potential_owner_usernames: string | null
-    dataObject?: ProcessInputProps
+    dataObject?: ProcessDataValueProps[]
 }

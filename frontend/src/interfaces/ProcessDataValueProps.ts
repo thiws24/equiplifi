@@ -1,8 +1,9 @@
 import { ReservationItemProps } from "./ReservationItemProps"
 
-export interface ProcessInputProps extends ReservationItemProps {
+export interface ProcessDataValueProps extends ReservationItemProps {
+    id: number
     userId: string
     itemId: number
-    count: number
     categoryId: number
+    status?: string
 }

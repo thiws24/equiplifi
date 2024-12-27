@@ -1,5 +1,4 @@
 import * as React from "react"
-import { ProcessInputProps } from "../interfaces/ProcessInputProps"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
 import { TaskProps } from "../interfaces/TaskProps"
 import { fetchOpenTasksByTaskName } from "../services/fetchTasks"

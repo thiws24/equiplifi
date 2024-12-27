@@ -19,7 +19,6 @@ export const UserReservationsList: React.FC<Props> = ({}) => {
         try {
             const processes: Process[] = await fetchAllProcessesByUser(userInfo?.sub ?? "", token ?? "")
             setUserProcesses(processes)
-            console.log(processes)
         } catch (e) {
             CustomToasts.error({
                 message: "Es ist ein Fehler beim Laden der Reservierungen aufgetreten."
@@ -43,6 +42,7 @@ export const UserReservationsList: React.FC<Props> = ({}) => {
                     key={cp.id}
                     processId={cp.id}
                     data={cp.dataObject}
+                    taskTitle={cp.task_title}
                 />)
                 }
             </CardContent>

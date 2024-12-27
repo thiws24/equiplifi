@@ -92,7 +92,7 @@ export async function fetchAllProcessesByUser(
             await Promise.all(
                 data.results.map(async (pItem: Process) => {
                     const dataRes = await fetchDataObjectFromProcess(pItem.id, token, 'reservations')
-                    if (dataRes && dataRes.userId === userId) {
+                    if (dataRes && dataRes[0].userId === userId) {
                         filteredProcesses.push({
                             ...pItem,
                             dataObject: dataRes
