@@ -79,9 +79,8 @@ export const ConfirmReservationsList: React.FC = () => {
         reservationId: number
     ) => {
         try {
-            // TODO: Use correct call in spiff
             const response = await fetch(
-                `${import.meta.env.VITE_SPIFF}/api/v1.0/tasks/${processId}/${guid}`,
+                `${import.meta.env.VITE_SPIFF}/api/v1.0/messages/check_in_inventoryitem`,
                 {
                     method: "PUT",
                     headers: {

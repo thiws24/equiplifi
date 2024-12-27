@@ -2,6 +2,16 @@ import * as React from "react"
 import { useState } from "react"
 import { ProcessDataValueProps } from "../interfaces/ProcessDataValueProps"
 import { map } from "lodash"
+import { Button } from "./ui/button"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "./ui/dialog"
 
 interface Props {
     processId: number,
@@ -12,7 +22,7 @@ interface Props {
 export const ConfirmReturnCard: React.FC<Props> = ({
                                                        processId,
                                                        data,
-                                                       onConfirmReturn
+                                                       onConfirmReturn,
                                                    }) => {
     const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -21,15 +31,16 @@ export const ConfirmReturnCard: React.FC<Props> = ({
     }
 
     const handleConfirmModal = async () => {
-        // TODO: Toasts einfügen
         try {
-            await Promise.all(map(data, (reservation) => {
-                return onConfirmReturn(reservation.id)
-            }))
+            await Promise.all(
+                map(data, (reservation) => {
+                    return onConfirmReturn(reservation.id)
+                })
+            )
 
             setIsModalOpen(false)
         } catch (error) {
-            console.error('Error confirming return', error)
+            console.error("Error confirming return", error)
         }
     }
 
@@ -42,43 +53,42 @@ export const ConfirmReturnCard: React.FC<Props> = ({
     return (
         <div className="mb-10 text-sm border p-4 rounded shadow-md">
             <p>Prozess-ID: {processId}</p>
-            <div>
-                Item-IDs: {itemIds.join(", ")}
-            </div>
-            <button
+            <div>Item-IDs: {itemIds.join(", ")}</div>
+            <Button
                 className="bg-customBlue text-customBeige text-sm px-4 py-2 rounded hover:bg-customRed mt-4"
                 onClick={handleReturn}
             >
                 Rückgabe bestätigen
-            </button>
+            </Button>
 
-            {/* TODO: Use shadcn component: Dialog */}
-
-            {isModalOpen && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-6 rounded shadow-lg">
-                        <h2 className="text-lg font-bold mb-4">Sind Sie sicher, dass die Rückgabe erfolgreich war?</h2>
+            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Rückgabe bestätigen</DialogTitle>
+                        <DialogDescription>
+                            Sind Sie sicher, dass die Rückgabe erfolgreich war?
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-2">
                         <p>Prozess-ID: {processId}</p>
-                        <div>
-                            Item-IDs: {itemIds.join(", ")}
-                        </div>
-                        <div className="flex justify-end">
-                            <button
-                                className="bg-gray-300 text-black px-4 py-2 rounded mr-2 hover:bg-gray-400"
-                                onClick={handleCloseModal}
-                            >
-                                Abbrechen
-                            </button>
-                            <button
-                                className="bg-customBlue text-customBeige px-4 py-2 rounded hover:bg-customRed"
-                                onClick={handleConfirmModal}
-                            >
-                                Bestätigen
-                            </button>
-                        </div>
+                        <p>Item-IDs: {itemIds.join(", ")}</p>
                     </div>
-                </div>
-            )}
+                    <DialogFooter>
+                        <Button
+                            className="bg-customOrange text-white hover:bg-customRed"
+                            onClick={handleCloseModal}
+                        >
+                            Abbrechen
+                        </Button>
+                        <Button
+                            className="bg-customBlue text-customBeige hover:bg-customRed"
+                            onClick={handleConfirmModal}
+                        >
+                            Bestätigen
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }
