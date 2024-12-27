@@ -16,7 +16,7 @@ export const ItemCard: React.FC<InventoryItemProps> = ({
     photoUrl,
 }) => {
     return (
-        <a href={`/item/${id}`} target="_self">
+        <a href={`/category/${id}`} target="_self">
             <Card className="h-full bg-white text-customBlack">
                 <CardHeader className="text-customBeige">
                     <CardTitle className="item-card-title text-customBlack">

@@ -16,6 +16,14 @@ import CategoryDetailsTable from "../components/CategoryDetailsTable"
 import { CustomToasts } from "../components/CustomToasts"
 import { ToastContainer } from "react-toastify"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
+import {
+    ModuleRegistry,
+    ClientSideRowModelModule,
+} from 'ag-grid-community';
+
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+]);
 
 export const categoryColDefs: ColDef<CategoryDetailsProps>[] = [
     {
