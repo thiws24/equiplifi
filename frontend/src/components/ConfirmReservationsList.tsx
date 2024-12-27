@@ -89,7 +89,9 @@ export const ConfirmReservationsList: React.FC = () => {
                         Authorization: `Bearer ${token}`
                     },
                     body: JSON.stringify({
-                        reservation_confirmation: "returned"
+                        //TODO: reservation_id übergeben (id) - Für jedes Item einzeln??
+                        reservation_id:2348,
+                        check_in_status:"OK"
                     })
                 }
             )
@@ -152,6 +154,7 @@ export const ConfirmReservationsList: React.FC = () => {
                             key={cp.process_instance_id}
                             processId={cp.process_instance_id}
                             guid={cp.task_guid}
+                            id={cp.id}
                             onConfirmReturn={handleConfirmReturn}
                         />
                     ))}
