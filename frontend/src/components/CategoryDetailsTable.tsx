@@ -16,13 +16,12 @@ interface CategoryDetailsTableProps {
 const CategoryDetailsTable: React.FC<CategoryDetailsTableProps> = ({ categoryDetails, colDefs, loading }) => {
     const navigate = useNavigate()
     return (
-        <div className='h-[550px]'>
+        <div className='h-[550px] min-w-[350px]'>
             <AgGridReact
                 rowData={categoryDetails}
                 columnDefs={colDefs}
                 pagination={true}
-                paginationPageSize={10}
-                paginationPageSizeSelector={[10, 25, 50]}
+                paginationAutoPageSize={true}
                 loading={loading}
                 localeText={AG_GRID_LOCALE_DE}
                 onRowClicked={(e) => navigate(`/item/${e?.data?.id}`)}

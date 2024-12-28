@@ -77,7 +77,7 @@ function Home() {
         void fetchInventoryItems()
     }, [])
     return (
-        <div className="m-10">
+        <div className="m-10 min-w-80">
             <ToastContainer />
             <main className="main">
                 <div className="font-semibold text-3xl text-customBlue flex justify-center w-full text-center">

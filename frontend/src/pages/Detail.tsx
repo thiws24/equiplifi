@@ -190,7 +190,7 @@ function Detail() {
                         <div className="flex justify-between items-center mt-4">
                             {isInventoryManager ? <Button
                                 onClick={() => setIsEditing(!isEditing)}
-                                className="bg-customBlue text-customBeige rounded hover:bg-customRed"
+                                className="w-[100px] bg-customBlue text-customBeige rounded hover:bg-customRed"
                             >
                                 {isEditing
                                     ? "Bearbeitung abbrechen"
@@ -202,7 +202,7 @@ function Detail() {
                                         `/item/${id}/reservation`
                                     )
                                 }
-                                className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige"
+                                className="w-[100px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige"
                             >
                                 Ausleihen
                             </Button>
@@ -298,7 +298,7 @@ function Detail() {
                             <div className="flex justify-end mt-4">
                                 <Button
                                     onClick={handleSave}
-                                    className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige"
+                                    className="w-[100px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige"
                                 >
                                     Speichern
                                 </Button>
@@ -312,7 +312,7 @@ function Detail() {
                                     `/category/${inventoryItem?.categoryId}`
                                 )
                             }
-                            className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed"
+                            className="w-[100px] bg-customBlue text-customBeige rounded hover:bg-customRed"
                         >
                             &larr; Zurück
                         </Button>

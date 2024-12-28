@@ -30,7 +30,7 @@ export const ConfirmReservationCard: React.FC<Props> = ({
 
     return (
         <div
-            className="mb-10 text-sm border p-5 rounded shadow-md flex flex-col md:flex-row justify-start items-start md:items-center">
+            className="mb-6 text-sm border p-5 rounded shadow-md flex flex-col md:flex-row justify-start items-start md:items-center">
             <div className="flex-1 min-w-[200px] grid grid-cols-[max-content_auto] gap-x-10 gap-y-2">
                 <b>Prozess-ID:</b>
                 <div>{processId}</div>

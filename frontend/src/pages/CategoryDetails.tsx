@@ -172,7 +172,7 @@ function CategoryDetails() {
                                     : "Kategorie bearbeiten"}
                             </Button> : <div/>}
                             <Button
-                                className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige"
+                                className="w-[100px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige"
                                 onClick={() =>
                                     navigate(
                                         `/category/${id}/reservation`
