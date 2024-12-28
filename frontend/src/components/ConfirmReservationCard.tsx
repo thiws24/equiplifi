@@ -28,8 +28,12 @@ export const ConfirmReservationCard: React.FC<Props> = ({
         await onCancelReservation(processId, guid)
     }
 
-    const handleConfirm = async () => {
+    const handleConfirmReservation = async () => {
         await onConfirmReservation(processId, guid)
+    }
+
+    const handleConfirmCancelation = async () => {
+        await onCancelReservation(processId, guid)
     }
 
     return (
