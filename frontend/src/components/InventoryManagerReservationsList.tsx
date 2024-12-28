@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
 import { TaskProps } from "../interfaces/TaskProps"
-import { fetchOpenTasksByLastMilestone, fetchOpenTasksByTaskName } from "../services/fetchTasks"
+import { fetchOpenTasksByTaskName } from "../services/fetchTasks"
 import CustomToasts from "./CustomToasts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 import { ToastContainer } from "react-toastify"

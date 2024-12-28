@@ -2,6 +2,7 @@ import * as React from "react"
 import { ProcessDataValueProps } from "../interfaces/ProcessDataValueProps"
 import { map } from "lodash"
 import { formatDate } from "../lib/formatDate"
+import { PickUpScan } from "./PickUpScan"
 
 interface Props {
     processId: number
@@ -17,13 +18,10 @@ export const UserReservationCard: React.FC<Props> = ({
     lastMilestone,
 }) => {
     const itemIds: number[] = map(data, "itemId")
-
-    const openPickUpModal = () => {
-
-    }
+    const [isModalOpen, setIsModalOpen] = React.useState(false)
 
     return (
-        <div className="text-sm border p-5 rounded shadow-md">
+        <div className="space-y-7 text-sm border p-5 rounded shadow-md">
             <div className="grid grid-cols-[max-content_auto] gap-x-10 gap-y-1.5">
                 <b>Prozess-ID:</b>
                 <div>{processId}</div>
@@ -38,16 +36,17 @@ export const UserReservationCard: React.FC<Props> = ({
                 <b>Item IDs:</b>
                 <div>{itemIds.join(', ')}</div>
             </div>
-            {taskTitle === "Receive Inventory Manager confirmation" && <div className='italic mt-10'>Warten auf Bestätigung</div>}
-            {lastMilestone === "InventoryItem has been returned" && <div className='italic mt-10'>Bereit für die Rückgabe</div>}
-            {lastMilestone === "Reservation successful" && (
+            {taskTitle === "Receive Inventory Manager confirmation" && <div className='italic'>Warten auf Bestätigung</div>}
+            {lastMilestone === "InventoryItem has been returned" && <div className='italic'>Bereit für die Rückgabe</div>}
+            {(lastMilestone === "Reservation successful" && !taskTitle) && (
                 <button
                     className="bg-customBlue text-customBeige text-sm px-4 py-2 rounded hover:bg-customRed"
-                    onClick={openPickUpModal}
+                    onClick={() => setIsModalOpen(true)}
                 >
                     Abholen
                 </button>
             )}
+            <PickUpScan data={data} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
         </div>
     )
 }

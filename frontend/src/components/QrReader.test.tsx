@@ -15,7 +15,7 @@ describe("QrReader Component", () => {
         )
         const { container } = render(
             <BrowserRouter>
-                <QrReader />
+                <QrReader setShowQrReader={(show: boolean) => console.log(show)} />
             </BrowserRouter>
         )
 

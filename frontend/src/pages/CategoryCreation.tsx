@@ -61,29 +61,7 @@ function CategoryCreation() {
         const { image, ...rest } = values
         let photoUrl = null
 
-        // First upload image to minIO and then get URL
-        if (image) {
-            try {
-                const formData = new FormData()
-                formData.append("file", image)
-                const createRes = await fetch(
-                    `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/picture`,
-                    {
-                        method: "POST",
-                        body: formData
-                    }
-                )
-                if (createRes.ok) {
-                    photoUrl = await createRes.json()
-                }
-            } catch (e) {
-                CustomToasts.error({
-                    message: "Fehler beim Erstellen der Kategorie."
-                })
-                return
-            }
-        }
-
+        // First create category and then upload image
         try {
             const createRes = await fetch(
                 `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories`,
@@ -101,6 +79,19 @@ function CategoryCreation() {
 
             if (createRes.ok) {
                 const data = await createRes.json()
+
+                if (image) {
+                    const formData = new FormData()
+                    formData.append("file", image)
+                    await fetch(
+                        `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories/${data.id}/image`,
+                        {
+                            method: "POST",
+                            body: formData
+                        }
+                    )
+                }
+
                 CustomToasts.success({
                     message: "Erstellung erfolgreich!",
                     onClose: () => window.open(`/category/${data.id}`, "_self")
@@ -188,7 +179,7 @@ function CategoryCreation() {
                                         <FormControl>
                                             <Input
                                                 type="file"
-                                                accept="image/png, image/jpeg"
+                                                accept="image/png, image/jpeg, image/jpg"
                                                 value={(value as any)?.filename}
                                                 onChange={(event) => {
                                                     if (event.target.files)

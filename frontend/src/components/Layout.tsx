@@ -40,17 +40,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
                 </div>
                 {/* QR Code Reader Modal */}{" "}
                 {showQrReader && (
-                    <div className="fixed inset-0 bg-customBlack bg-opacity-50 flex justify-center items-center z-10">
-                        <div className="bg-customBeige p-4 rounded-lg shadow-lg relative">
-                            <button
-                                className="absolute top-4 right-6 text-customRed text-5xl hover:text-customBlack z-20"
-                                onClick={() => setShowQrReader(false)}
-                            >
-                                &times;
-                            </button>
-                            <QrReader onSuccess={(id: number) => window.open(`/item/${id}`, "_self")} />
-                        </div>
-                    </div>
+                    <QrReader onSuccess={(id: number) => window.open(`/item/${id}`, "_self")} setShowQrReader={setShowQrReader} />
                 )}
             </div>
         </SidebarProvider>

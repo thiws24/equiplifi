@@ -49,7 +49,7 @@ export const categoryColDefs: ColDef<CategoryDetailsProps>[] = [
 function CategoryDetails() {
     const [inventoryItem, setInventoryItem] = useState<InventoryItemProps>()
     const navigate = useNavigate()
-    const { token } = useKeycloak()
+    const { token, userInfo } = useKeycloak()
     const { id } = useParams()
     const [categoryDetails, setCategoryDetails] = useState<
         CategoryDetailsProps[]
@@ -61,6 +61,8 @@ function CategoryDetails() {
         description: "",
         icon: ""
     })
+
+    const isInventoryManager = userInfo?.groups?.includes("Inventory-Manager")
 
     const fetchItems = async () => {
         try {
@@ -161,14 +163,14 @@ function CategoryDetails() {
                 <Card className="bg-white text-customBlack p-4 font-semibold">
                     <CardContent>
                         <div className="flex justify-between mt-4">
-                            <Button
+                            {isInventoryManager ? <Button
                                 className="bg-customBlue text-customBeige rounded hover:bg-customRed"
                                 onClick={() => setIsEditing(!isEditing)}
                             >
                                 {isEditing
                                     ? "Bearbeitung abbrechen"
                                     : "Kategorie bearbeiten"}
-                            </Button>
+                            </Button> : <div/>}
                             <Button
                                 className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige"
                                 onClick={() =>

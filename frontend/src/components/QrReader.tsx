@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 
 // Qr Scanner
 import QrScanner from "qr-scanner"
@@ -6,6 +6,7 @@ import QrFrame from "../assets/qr-frame.svg"
 
 interface Props {
     onSuccess?: (id: number) => void
+    setShowQrReader: (showQrReader: boolean) => void
 }
 
 const QrReader = (props: Props) => {
@@ -79,17 +80,27 @@ const QrReader = (props: Props) => {
     }, [qrOn])
 
     return (
-        <div className="w-full sm:w-[430px] h-screen mx-auto relative">
-            {/* QR */}
-            <video ref={videoEl} className="w-full h-full object-cover"></video>
-            <div ref={qrBoxEl} className="w-full left-0">
-                <img
-                    src={QrFrame}
-                    alt="Qr Frame"
-                    width={256}
-                    height={256}
-                    className="absolute left-1/2 top-1/2 transform -translate-x-[calc(50%-1px)] -translate-y-1/2 ml-[10px]"
-                />
+        <div className="fixed inset-0 bg-customBlack bg-opacity-50 flex justify-center items-center z-10">
+            <div className="bg-customBeige p-4 rounded-lg shadow-lg relative">
+                <button
+                    className="absolute top-4 right-6 text-customRed text-5xl hover:text-customBlack z-20"
+                    onClick={() => props.setShowQrReader(false)}
+                >
+                    &times;
+                </button>
+                <div className="w-full sm:w-[430px] h-screen mx-auto relative">
+                    {/* QR */}
+                    <video ref={videoEl} className="w-full h-full object-cover"></video>
+                    <div ref={qrBoxEl} className="w-full left-0">
+                        <img
+                            src={QrFrame}
+                            alt="Qr Frame"
+                            width={256}
+                            height={256}
+                            className="absolute left-1/2 top-1/2 transform -translate-x-[calc(50%-1px)] -translate-y-1/2 ml-[10px]"
+                        />
+                    </div>
+                </div>
             </div>
         </div>
     )
