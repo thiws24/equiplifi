@@ -38,13 +38,15 @@ export const UserReservationsList: React.FC<Props> = ({}) => {
                 <CardTitle>Meine Reservierungen</CardTitle>
             </CardHeader>
             <CardContent>
-                {userProcesses.map((cp) => <UserReservationCard
-                    key={cp.id}
-                    processId={cp.id}
-                    data={cp.dataObject}
-                    taskTitle={cp.task_title}
-                />)
-                }
+                <div className='space-y-7'>
+                    {userProcesses.map((cp) => <UserReservationCard
+                        key={cp.id}
+                        processId={cp.id}
+                        data={cp.dataObject}
+                        taskTitle={cp.task_title}
+                        lastMilestone={cp.last_milestone_bpmn_name}
+                    />)}
+                </div>
             </CardContent>
         </Card>
     )

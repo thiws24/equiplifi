@@ -7,12 +7,14 @@ interface Props {
     processId: number
     data?: ProcessDataValueProps[]
     taskTitle?: string
+    lastMilestone?: string
 }
 
 export const UserReservationCard: React.FC<Props> = ({
     processId,
     data,
     taskTitle,
+    lastMilestone,
 }) => {
     const itemIds: number[] = map(data, "itemId")
 
@@ -37,7 +39,8 @@ export const UserReservationCard: React.FC<Props> = ({
                 <div>{itemIds.join(', ')}</div>
             </div>
             {taskTitle === "Receive Inventory Manager confirmation" && <div className='italic mt-10'>Warten auf Bestätigung</div>}
-            {taskTitle === "Receive Inventory Manager confirmation" && (
+            {lastMilestone === "InventoryItem has been returned" && <div className='italic mt-10'>Bereit für die Rückgabe</div>}
+            {lastMilestone === "Reservation successful" && (
                 <button
                     className="bg-customBlue text-customBeige text-sm px-4 py-2 rounded hover:bg-customRed"
                     onClick={openPickUpModal}

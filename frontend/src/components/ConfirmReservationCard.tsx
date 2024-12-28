@@ -23,7 +23,7 @@ export const ConfirmReservationCard: React.FC<Props> = ({
     const itemIds: number[] = map(data, "itemId")
 
     return (
-        <div className="mb-10 text-sm border p-5 rounded shadow-md">
+        <div className="text-sm border p-5 rounded shadow-md space-y-5">
             <div className="grid grid-cols-[max-content_auto] gap-x-10 gap-y-2">
                 <b>Prozess-ID:</b>
                 <div>{processId}</div>

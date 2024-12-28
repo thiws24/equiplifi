@@ -4,7 +4,8 @@ import { Process } from "../interfaces/Process"
 
 export async function fetchOpenTasksByTaskName(
     taskName: string,
-    token: string
+    token: string,
+    dataObjectName: 'reservations' | 'reservationrequests' | 'activereservations'
 ): Promise<TaskProps[]> {
     try {
         const response = await fetch(
@@ -33,7 +34,7 @@ export async function fetchOpenTasksByTaskName(
                     const dataRes = await fetchDataObjectFromProcess(
                         pItem.process_instance_id,
                         token,
-                        "reservationrequests"
+                        dataObjectName
                     )
                     filteredTasks.push({
                         ...pItem,
@@ -51,9 +52,10 @@ export async function fetchOpenTasksByTaskName(
 }
 
 
-export async function fetchOpenTasksToReturn(
-    taskName: string,
-    token: string
+export async function fetchOpenTasksByLastMilestone(
+    lastMilestone: string,
+    token: string,
+    dataObjectName: 'reservations' | 'reservationrequests' | 'activereservations'
 ): Promise<TaskProps[]> {
     try {
         const response = await fetch(
@@ -71,7 +73,7 @@ export async function fetchOpenTasksToReturn(
             // Filter tasks by a single task name
             let results = data.results.filter(
                 (p: Process) =>
-                    p.task_title?.toLowerCase() === taskName.toLowerCase()
+                    p.last_milestone_bpmn_name?.toLowerCase() === lastMilestone.toLowerCase()
             )
 
             const filteredTasks: TaskProps[] = []
@@ -82,7 +84,7 @@ export async function fetchOpenTasksToReturn(
                     const dataRes = await fetchDataObjectFromProcess(
                         pItem.process_instance_id,
                         token,
-                        "activereservations"
+                        dataObjectName
                     )
                     filteredTasks.push({
                         ...pItem,
@@ -94,49 +96,6 @@ export async function fetchOpenTasksToReturn(
         }
     } catch (e) {
         console.log(e)
-    }
-    return []
-}
-
-//Für Testzwecke:
-export async function fetchAllTasks(token: string): Promise<TaskProps[]> {
-    try {
-        const response = await fetch(
-            `${import.meta.env.VITE_SPIFF}/api/v1.0/tasks`,
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
-                }
-            }
-        )
-
-        if (response.ok) {
-            const data = await response.json()
-
-            const allTasks: TaskProps[] = []
-
-            // Fetch Data Object for each task
-            await Promise.all(
-                data.results.map(async (task: TaskProps) => {
-                    const dataRes = await fetchDataObjectFromProcess(
-                        task.process_instance_id,
-                        token,
-                        "activereservations"
-                    )
-                    allTasks.push({
-                        ...task,
-                        dataObject: dataRes
-                    })
-                })
-            )
-
-            return allTasks
-        } else {
-            console.error(`Failed to fetch tasks: ${response.status} ${response.statusText}`)
-        }
-    } catch (error) {
-        console.error("An error occurred while fetching tasks:", error)
     }
 
     return []

@@ -4,7 +4,11 @@ import { useEffect, useRef, useState } from "react"
 import QrScanner from "qr-scanner"
 import QrFrame from "../assets/qr-frame.svg"
 
-const QrReader = () => {
+interface Props {
+    onSuccess?: (id: number) => void
+}
+
+const QrReader = (props: Props) => {
     // QR States
     const scanner = useRef<QrScanner>(null)
     const videoEl = useRef<HTMLVideoElement>(null)
@@ -14,13 +18,13 @@ const QrReader = () => {
     // Success
     const onScanSuccess = (result: QrScanner.ScanResult) => {
         const urn = result.data
-        console.log(`Scanned URN: ${urn}`)
 
         if (urn.startsWith("urn:de.equipli:item:")) {
             const id = urn.split(":").pop()
             console.log(`Extracted ID: ${id}`)
 
-            window.open(`/item/${id}`, "_self")
+            if (props.onSuccess) props?.onSuccess(Number(id))
+
         } else {
             console.error(
                 "Ungültige URN. Das Format muss 'urn:de.equipli:item:<id>' sein."

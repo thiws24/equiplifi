@@ -1,6 +1,6 @@
 import React from "react"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
-import { ConfirmReservationsList } from "../components/ConfirmReservationsList"
+import { InventoryManagerReservationsList } from "../components/InventoryManagerReservationsList"
 import { UserReservationsList } from "../components/UserReservationsList"
 
 function Reservations() {
@@ -10,7 +10,7 @@ function Reservations() {
 
     if (isInventoryManager) {
         return (
-            <ConfirmReservationsList />
+            <InventoryManagerReservationsList />
         )
     }
 

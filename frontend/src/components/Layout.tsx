@@ -48,7 +48,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
                             >
                                 &times;
                             </button>
-                            <QrReader />
+                            <QrReader onSuccess={(id: number) => window.open(`/item/${id}`, "_self")} />
                         </div>
                     </div>
                 )}

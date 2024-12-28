@@ -107,3 +107,67 @@ export async function fetchAllProcessesByUser(
     }
     return []
 }
+
+
+export async function fetchProcessesByLastMilestone(
+    lastMilestone: string,
+    token: string,
+    dataObjectName: 'reservations' | 'reservationrequests' | 'activereservations'
+): Promise<Process[]> {
+    try {
+        const response = await fetch(
+            `${import.meta.env.VITE_SPIFF}/api/v1.0/process-instances`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    report_metadata: {
+                        columns: reportMetadataColumns,
+                        filter_by: [
+                            {
+                                field_name: "process_status",
+                                field_value: "user_input_required,waiting",
+                                operator: "equals"
+                            },
+                            {
+                                field_name: "with_oldest_open_task",
+                                field_value: true,
+                                operator: "equals"
+                            }
+                        ],
+                        order_by: ["-start_in_seconds", "-id"]
+                    }
+                })
+            }
+        )
+
+        if (response.ok) {
+            const data = await response.json()
+
+            const filteredProcesses: Process[] = []
+            // Filter processes by a last milestone
+            let results = data.results.filter(
+                (p: Process) =>
+                    p.last_milestone_bpmn_name?.toLowerCase() === lastMilestone.toLowerCase()
+            )
+
+            // Add data object
+            await Promise.all(
+                results.map(async (pItem: Process) => {
+                    const dataRes = await fetchDataObjectFromProcess(pItem.id, token, dataObjectName)
+                    filteredProcesses.push({
+                        ...pItem,
+                        dataObject: dataRes
+                    })
+                })
+            )
+            return filteredProcesses
+        }
+    } catch (e) {
+        console.log(e)
+    }
+    return []
+}

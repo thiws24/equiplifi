@@ -1,21 +1,23 @@
 import * as React from "react"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
 import { TaskProps } from "../interfaces/TaskProps"
-import { fetchAllTasks, fetchOpenTasksByTaskName, fetchOpenTasksToReturn } from "../services/fetchTasks"
+import { fetchOpenTasksByLastMilestone, fetchOpenTasksByTaskName } from "../services/fetchTasks"
 import CustomToasts from "./CustomToasts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 import { ToastContainer } from "react-toastify"
 import { ConfirmReservationCard } from "./ConfirmReservationCard"
 import { ConfirmReturnCard } from "./ConfirmReturnCard"
+import { fetchProcessesByLastMilestone } from "../services/fetchProcesses"
+import { Process } from "../interfaces/Process"
 
-export const ConfirmReservationsList: React.FC = () => {
+export const InventoryManagerReservationsList: React.FC = () => {
     const [confirmTasks, setConfirmTasks] = React.useState<TaskProps[]>([])
-    const [returnTasks, setReturnTasks] = React.useState<TaskProps[]>([])
+    const [returnTasks, setReturnTasks] = React.useState<Process[]>([])
     const { token } = useKeycloak()
 
     async function fetchToConfirmProcesses() {
         try {
-            const tasks: TaskProps[] = await fetchOpenTasksByTaskName("Receive Inventory Manager confirmation", token ?? "")
+            const tasks: TaskProps[] = await fetchOpenTasksByTaskName("Receive Inventory Manager confirmation", token ?? "", "reservationrequests")
             setConfirmTasks(tasks)
         } catch (e) {
             CustomToasts.error({
@@ -26,10 +28,7 @@ export const ConfirmReservationsList: React.FC = () => {
 
     async function fetchToReturnProcesses() {
         try {
-            // TODO richtigen Task einfügen
-            //const tasks: TaskProps[] = await fetchOpenTasksToReturn("Check-in inventoryItem", token ?? "")
-            //Zum Testen: ohne Filterung auf bestimmten Task:
-            const tasks: TaskProps[] = await fetchAllTasks(token ?? "")
+            const tasks: Process[] = await fetchProcessesByLastMilestone("InventoryItem has been returned", token ?? "", "activereservations")
             setReturnTasks(tasks)
         } catch (e) {
             CustomToasts.error({
@@ -82,7 +81,7 @@ export const ConfirmReservationsList: React.FC = () => {
             const response = await fetch(
                 `${import.meta.env.VITE_SPIFF}/api/v1.0/messages/check_in_inventoryitem`,
                 {
-                    method: "PUT",
+                    method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`
@@ -118,8 +117,8 @@ export const ConfirmReservationsList: React.FC = () => {
     }, [])
 
     return (
-        <div className="flex flex-col items-center space-y-8">
-            <Card className="w-11/12 sm:w-4/5 mx-auto my-5 md:my-10 lg:my-20">
+        <div className="flex flex-col items-center space-y-8 my-5 md:my-10 lg:my-20">
+            <Card className="w-11/12 sm:w-4/5 mx-auto">
                 <ToastContainer />
                 <CardHeader>
                     <CardTitle>Anfragen</CardTitle>
@@ -128,18 +127,20 @@ export const ConfirmReservationsList: React.FC = () => {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    {confirmTasks.map((cp) => (
-                        <ConfirmReservationCard
-                            key={cp.process_instance_id}
-                            processId={cp.process_instance_id}
-                            guid={cp.task_guid}
-                            data={cp.dataObject}
-                            onConfirmReservation={handleConfirmReservation}
-                        />
-                    ))}
+                    <div className='space-y-7'>
+                        {confirmTasks.map((cp) => (
+                            <ConfirmReservationCard
+                                key={cp.process_instance_id}
+                                processId={cp.process_instance_id}
+                                guid={cp.task_guid}
+                                data={cp.dataObject}
+                                onConfirmReservation={handleConfirmReservation}
+                            />
+                        ))}
+                    </div>
                 </CardContent>
             </Card>
-            <Card className="w-11/12 sm:w-4/5 mx-auto my-5 md:my-10 lg:my-20">
+            <Card className="w-11/12 sm:w-4/5 mx-auto">
                 <CardHeader>
                     <CardTitle>Rückgaben</CardTitle>
                     <CardDescription>
@@ -149,8 +150,8 @@ export const ConfirmReservationsList: React.FC = () => {
                 <CardContent>
                     {returnTasks.map((cp) => (
                         <ConfirmReturnCard
-                            key={cp.process_instance_id}
-                            processId={cp.process_instance_id}
+                            key={cp.id}
+                            processId={cp.id}
                             data={cp.dataObject}
                             onConfirmReturn={handleConfirmReturn}
                         />

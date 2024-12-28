@@ -51,7 +51,7 @@ export const ConfirmReturnCard: React.FC<Props> = ({
     const itemIds: number[] = map(data, "itemId")
 
     return (
-        <div className="mb-10 text-sm border p-4 rounded shadow-md">
+        <div className="space-y-5 text-sm border p-4 rounded shadow-md">
             <p>Prozess-ID: {processId}</p>
             <div>Item-IDs: {itemIds.join(", ")}</div>
             <Button
