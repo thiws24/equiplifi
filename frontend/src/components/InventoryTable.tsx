@@ -32,8 +32,7 @@ const InventoryTable: React.FC<InventoryCardProps> = ({
                 rowData={inventoryItems}
                 columnDefs={colDefs}
                 pagination={true}
-                paginationPageSize={10}
-                paginationPageSizeSelector={[10, 25, 50]}
+                paginationAutoPageSize={true}
                 loading={loading}
                 onRowClicked={(e) => navigate(`/category/${e?.data?.id}`)}
                 localeText={AG_GRID_LOCALE_DE}
