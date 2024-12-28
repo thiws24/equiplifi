@@ -85,7 +85,7 @@ function Detail() {
                 if (data) await fetchQrCode(data.name)
             } else {
                 CustomToasts.error({
-                    message: "Dieses Exemplar existiert nicht. Bei Fragen melden Sie sich bei ihrem Administrator.",
+                    message: "Dieses Exemplar existiert nicht.",
                     onClose: () => navigate(`/`)
                 })
             }
