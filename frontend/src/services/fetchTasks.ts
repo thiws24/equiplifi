@@ -51,7 +51,6 @@ export async function fetchOpenTasksByTaskName(
     return []
 }
 
-
 export async function fetchOpenTasksByLastMilestone(
     lastMilestone: string,
     token: string,
