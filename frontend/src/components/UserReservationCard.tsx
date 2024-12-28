@@ -46,7 +46,7 @@ export const UserReservationCard: React.FC<Props> = ({
                     Abholen
                 </button>
             )}
-            <PickUpScan data={data} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+            <PickUpScan isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} processId={processId} />
         </div>
     )
 }

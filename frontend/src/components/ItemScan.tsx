@@ -14,7 +14,7 @@ export const ItemScan: React.FC<Props> = ({ itemId, itemStatus, reservationId, c
     const [openQrScanner, setOpenQrScanner] = React.useState<boolean>(false)
     const [status, setStatus] = React.useState<string | undefined>(itemStatus)
     async function handleSuccess(foundItemId: number) {
-        if (foundItemId === itemId) {
+        if (foundItemId === itemId && !itemStatus) {
             const confirmed = await confirmLending(reservationId)
             if (confirmed) {
                 setOpenQrScanner(false)

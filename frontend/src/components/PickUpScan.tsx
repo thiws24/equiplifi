@@ -5,15 +5,26 @@ import { ProcessDataValueProps } from "../interfaces/ProcessDataValueProps"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog"
 import { Button } from "./ui/button"
 import { ItemScan } from "./ItemScan"
+import { fetchDataObjectFromProcess } from "../services/fetchDataObject"
 
 interface Props {
-    data?: ProcessDataValueProps[]
+    processId: number
     isModalOpen: boolean
     setIsModalOpen: (isOpen: boolean) => void
 }
 
-export const PickUpScan: React.FC<Props> = ({ data, isModalOpen, setIsModalOpen }) => {
+export const PickUpScan: React.FC<Props> = ({ processId, isModalOpen, setIsModalOpen }) => {
+    const [data, setData] = React.useState<ProcessDataValueProps[]>()
     const { token } = useKeycloak()
+
+    async function getUpdatedData() {
+        const dataRes = await fetchDataObjectFromProcess(processId, token ?? "", 'activereservations')
+        if (dataRes) setData(dataRes)
+    }
+
+    React.useEffect(() => {
+        void getUpdatedData()
+    }, [])
 
     async function confirmLendingByReservation(reservationId: number): Promise<boolean> {
         try {
@@ -59,7 +70,7 @@ export const PickUpScan: React.FC<Props> = ({ data, isModalOpen, setIsModalOpen 
                         key={item.itemId}
                         itemId={item.itemId}
                         reservationId={item.id}
-                        itemStatus={item.status}
+                        itemStatus={item.lendingStatus}
                         confirmLending={confirmLendingByReservation}
                     />
                 ))}

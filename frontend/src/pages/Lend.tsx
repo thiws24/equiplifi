@@ -289,8 +289,7 @@ function Lend() {
                                                     control={form.control}
                                                     name="endDate"
                                                     render={({ field }) => {
-                                                        const startDate = new Date(form.getValues("startDate"))
-                                                        startDate.setDate(startDate.getDate() + 1)
+                                                        const startDate = form.getValues("startDate")
                                                         return (
                                                             <DatePickerField
                                                                 label="Abgabedatum"

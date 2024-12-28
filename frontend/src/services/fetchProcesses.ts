@@ -138,7 +138,7 @@ export async function fetchProcessesByLastMilestone(
                                 operator: "equals"
                             }
                         ],
-                        order_by: ["-id"]
+                        order_by: ["id"]
                     }
                 })
             }

@@ -24,7 +24,8 @@ function Detail() {
     }>({ location: "", status: "" })
     const navigate = useNavigate()
     const { id } = useParams()
-    const { token } = useKeycloak()
+    const { token, userInfo } = useKeycloak()
+    const isInventoryManager = userInfo?.groups?.includes("Inventory-Manager")
 
     const handleDownload = async (name: string, id: number | undefined) => {
         try {
@@ -180,14 +181,14 @@ function Detail() {
                 <Card className="bg-white text-customBlack p-4 font-semibold">
                     <CardContent>
                         <div className="flex justify-between items-center mt-4">
-                            <Button
+                            {isInventoryManager ? <Button
                                 onClick={() => setIsEditing(!isEditing)}
                                 className="bg-customBlue text-customBeige rounded hover:bg-customRed"
                             >
                                 {isEditing
                                     ? "Bearbeitung abbrechen"
                                     : "Item bearbeiten"}
-                            </Button>
+                            </Button> : <div/>}
                             <Button
                                 onClick={() =>
                                     navigate(
