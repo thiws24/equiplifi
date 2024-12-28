@@ -1,5 +1,6 @@
 import { Home, LogOutIcon, ScrollText, SquarePlus } from "lucide-react"
 import {
+    Sidebar,
     SidebarContent,
     SidebarFooter,
     SidebarGroup,
@@ -8,9 +9,9 @@ import {
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
-    SidebarMenuItem
+    SidebarMenuItem,
+    useSidebar
 } from "./ui/sidebar"
-import { Sidebar } from "./ui/sidebar"
 import React from "react"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
 
@@ -36,6 +37,8 @@ const itemsAllgemein = [
 
 export function AppSidebar() {
     const { keycloak, userInfo } = useKeycloak()
+    const { open } = useSidebar()
+
     async function handleLogout() {
         try {
             await keycloak?.logout()
@@ -48,13 +51,17 @@ export function AppSidebar() {
 
     return (
         <Sidebar collapsible="icon">
-            <SidebarHeader>
+            <SidebarHeader className="flex flex-row items-center mb-4 mt-1.5">
                 <img
                     src="/equipli-logo.svg"
                     className="w-12 h-auto"
                     alt="equipli logo"
                 />
+                {open && (
+                    <span className="text-2xl text-customBlue font-bold">equipli</span>
+                )}
             </SidebarHeader>
+
             <SidebarContent>
                 <SidebarGroup>
                     <SidebarGroupLabel className="text-xl text-customBlue">
