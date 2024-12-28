@@ -83,7 +83,7 @@ function CategoryDetails() {
                 setCategoryDetails(data.items || [])
             }else {
                 CustomToasts.error({
-                    message: "Diese Kategorie existiert nicht. Bei Fragen melden Sie sich bei ihrem Administrator.",
+                    message: "Diese Kategorie existiert nicht.",
                     onClose: () => navigate(`/`)
                 })
             }
