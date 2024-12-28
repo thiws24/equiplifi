@@ -67,7 +67,8 @@ function CategoryCreation() {
                 `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories`,
                 {
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
                     },
                     method: "POST",
                     body: JSON.stringify({
@@ -87,6 +88,9 @@ function CategoryCreation() {
                         `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories/${data.id}/image`,
                         {
                             method: "POST",
+                            headers: {
+                                Authorization: `Bearer ${token}`
+                            },
                             body: formData
                         }
                     )

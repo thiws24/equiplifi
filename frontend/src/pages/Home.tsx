@@ -4,6 +4,7 @@ import { InventoryItemProps } from "../interfaces/InventoryItemProps"
 import { TableGalleryView } from "../components/TableGalleryView"
 import CustomToasts from "../components/CustomToasts"
 import { ToastContainer } from "react-toastify"
+import { useKeycloak } from "../keycloak/KeycloakProvider"
 
 function Home() {
     const [inventoryItems, setInventoryItems] = React.useState<
@@ -47,11 +48,17 @@ function Home() {
         }
     ]
     const [loading, setLoading] = React.useState(true)
+    const { token } = useKeycloak()
 
     async function fetchInventoryItems() {
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories`
+                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                }
             )
             if (response.ok) {
                 const data = await response.json()

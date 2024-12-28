@@ -34,6 +34,7 @@ function Detail() {
                 {
                     method: "GET",
                     headers: {
+                        Authorization: `Bearer ${token}`,
                         Accept: "application/pdf",
                     },
                 }
@@ -65,7 +66,12 @@ function Detail() {
     const fetchItem = async () => {
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/items/${id}`
+                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/items/${id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
             )
             if (response.ok) {
                 const data = await response.json()
@@ -95,6 +101,7 @@ function Detail() {
                 {
                     method: "GET",
                     headers: {
+                        Authorization: `Bearer ${token}`,
                         Accept: "image/png"
                     }
                 }

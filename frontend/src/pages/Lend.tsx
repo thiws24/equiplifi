@@ -26,7 +26,13 @@ function Lend() {
     const fetchItem = async () => {
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/items/${id}`
+                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/items/${id}`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                }
             )
             if (response.ok) {
                 const data = await response.json()
@@ -64,7 +70,12 @@ function Lend() {
         try {
             let dateArray: any[] = []
             const response = await fetch(
-                `${import.meta.env.VITE_RESERVATION_HOST}/availability/reservations/items/${id}`
+                `${import.meta.env.VITE_RESERVATION_HOST}/availability/reservations/items/${id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                }
             )
             if (response.ok) {
                 const data = await response.json()

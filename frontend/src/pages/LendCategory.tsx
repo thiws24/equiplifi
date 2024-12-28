@@ -38,7 +38,12 @@ function LendCategory() {
     const fetchCategory = async () => {
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories/${id}`
+                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories/${id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                }
             )
             if (response.ok) {
                 const data = await response.json()
@@ -78,7 +83,12 @@ function LendCategory() {
     const fetchAvailability = async () => {
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_RESERVATION_HOST}/availability/reservations/categories/${id}`
+                `${import.meta.env.VITE_RESERVATION_HOST}/availability/reservations/categories/${id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
             )
             if (response.ok) {
                 const data: AvailabilityItemProps[] = await response.json()
