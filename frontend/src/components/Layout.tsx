@@ -80,7 +80,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
                             </Avatar>
 
                             {showDropdown && (
-                                <div className="absolute right-0 mt-0 w-48 bg-white border rounded shadow-lg">
+                                <div className="z-50 absolute right-0 mt-0 w-48 bg-white border rounded shadow-lg">
                                     <div className="border-b">
                                         <div className="p-2 text-sm text-gray-600">
                                             Angemeldet als {keycloak.tokenParsed?.preferred_username}
