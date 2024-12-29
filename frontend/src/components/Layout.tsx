@@ -12,10 +12,10 @@ interface Props {
 }
 
 export const Layout: React.FC<Props> = ({ children }) => {
-    const [showQrReader, setShowQrReader] = React.useState(false);
-    const [showDropdown, setShowDropdown] = React.useState(false);
-    const { authenticated, keycloak } = useKeycloak();
-    const dropdownRef = useRef<HTMLDivElement>(null);
+    const [showQrReader, setShowQrReader] = React.useState(false)
+    const [showDropdown, setShowDropdown] = React.useState(false)
+    const { authenticated, keycloak } = useKeycloak()
+    const dropdownRef = useRef<HTMLDivElement>(null)
 
     const handleAvatarClick = () => {
         setShowDropdown(!showDropdown)
@@ -26,37 +26,39 @@ export const Layout: React.FC<Props> = ({ children }) => {
     }
 
     const getInitials = () => {
-        const firstName = keycloak.tokenParsed?.given_name || '';
-        const lastName = keycloak.tokenParsed?.family_name || '';
-        const username = keycloak.tokenParsed?.preferred_username || '';
+        const firstName = keycloak.tokenParsed?.given_name || ""
+        const lastName = keycloak.tokenParsed?.family_name || ""
+        const username = keycloak.tokenParsed?.preferred_username || ""
 
         if (firstName && lastName) {
-            return `${firstName.charAt(0).toUpperCase()}${lastName.charAt(0).toUpperCase()}`;
+            return `${firstName.charAt(0).toUpperCase()}${lastName.charAt(0).toUpperCase()}`
         } else {
-            return username.substring(0, 2).toUpperCase();
+            return username.substring(0, 2).toUpperCase()
         }
-    };
+    }
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setShowDropdown(false);
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node)
+            ) {
+                setShowDropdown(false)
             }
-        };
+        }
 
-        document.addEventListener("mousedown", handleClickOutside);
-        console.log("Event listener added");
+        document.addEventListener("mousedown", handleClickOutside)
+        console.log("Event listener added")
 
         return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-            console.log("Event listener removed");
-        };
-    }, [dropdownRef]);
+            document.removeEventListener("mousedown", handleClickOutside)
+            console.log("Event listener removed")
+        }
+    }, [dropdownRef])
 
     if (!authenticated) {
-        return <div />;
+        return <div />
     }
-    
 
     return (
         <SidebarProvider defaultOpen={false}>
@@ -67,7 +69,10 @@ export const Layout: React.FC<Props> = ({ children }) => {
                 {/* Header Content */}
                 <div className="flex-1 flex flex-col w-full z-100">
                     <div className="bg-customBlack h-[45px] shrink-0 p-1 px-2 flex items-center justify-end shadow-md">
-                        <div className="relative inline-block" ref={dropdownRef}>
+                        <div
+                            className="relative inline-block"
+                            ref={dropdownRef}
+                        >
                             <Avatar
                                 onClick={handleAvatarClick}
                                 className="inline-flex size-[32px] select-none items-center justify-center overflow-hidden rounded-full align-middle cu"
@@ -89,7 +94,11 @@ export const Layout: React.FC<Props> = ({ children }) => {
                                 <div className="z-50 absolute right-0 mt-0 w-48 bg-white border rounded shadow-lg">
                                     <div className="border-b">
                                         <div className="p-2 text-sm text-gray-600">
-                                            Angemeldet als {keycloak.tokenParsed?.preferred_username}
+                                            Angemeldet als{" "}
+                                            {
+                                                keycloak.tokenParsed
+                                                    ?.preferred_username
+                                            }
                                         </div>
                                     </div>
 
@@ -103,8 +112,6 @@ export const Layout: React.FC<Props> = ({ children }) => {
                                 </div>
                             )}
                         </div>
-
-
                     </div>
 
                     {/* Main Content */}
@@ -122,7 +129,14 @@ export const Layout: React.FC<Props> = ({ children }) => {
                 </div>
                 {/* QR Code Reader Modal */}{" "}
                 {showQrReader && (
-                    <QrReader onSuccess={(id: number) => window.open(`/item/${id}`, "_self")} setShowQrReader={setShowQrReader} />
+                    <div className="z-[100]">
+                        <QrReader
+                            onSuccess={(id: number) =>
+                                window.open(`/item/${id}`, "_self")
+                            }
+                            setShowQrReader={setShowQrReader}
+                        />
+                    </div>
                 )}
             </div>
         </SidebarProvider>
