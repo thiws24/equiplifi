@@ -2,6 +2,7 @@ import { fetchDataObjectFromProcess } from "./fetchDataObject"
 import { TaskProps } from "../interfaces/TaskProps"
 import { Process } from "../interfaces/Process"
 import axios from "axios"
+import { orderBy } from "lodash"
 
 export async function fetchOpenTasksByTaskName(
     taskName: string,
@@ -27,7 +28,7 @@ export async function fetchOpenTasksByTaskName(
                     p.task_title?.toLowerCase() === taskName.toLowerCase()
             )
 
-            // TODO: Nach Prozess Id sortieren
+            results = orderBy(results, ['process_instance_id'], ['desc'])
 
             const filteredTasks: TaskProps[] = []
 

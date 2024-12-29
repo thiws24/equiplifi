@@ -2,14 +2,14 @@ import * as React from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faTable, faTableCells } from "@fortawesome/free-solid-svg-icons"
 import { ColDef } from "ag-grid-community"
-import { InventoryItemProps } from "../interfaces/InventoryItemProps"
+import { ItemDetailsProps } from "../interfaces/ItemDetailsProps"
 import InventoryTable from "./InventoryTable"
 import { ItemsGallery } from "./ItemsGallery"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
 
 interface Props {
-    data: InventoryItemProps[]
-    colDefs: ColDef<InventoryItemProps, any>[]
+    data: ItemDetailsProps[]
+    colDefs: ColDef<ItemDetailsProps, any>[]
     loading: boolean
 }
 

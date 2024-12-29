@@ -1,5 +1,5 @@
 import * as React from "react"
-import { InventoryItemProps } from "../interfaces/InventoryItemProps"
+import { ItemDetailsProps } from "../interfaces/ItemDetailsProps"
 import {
     Card,
     CardContent,
@@ -8,7 +8,7 @@ import {
     CardTitle
 } from "./ui/card"
 
-export const ItemCard: React.FC<InventoryItemProps> = ({
+export const ItemCard: React.FC<ItemDetailsProps> = ({
     id,
     name,
     description,

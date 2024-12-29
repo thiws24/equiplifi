@@ -1,4 +1,4 @@
-interface ItemProps {
+export interface ItemProps {
     id: number,
     status: string,
     location: string,

@@ -8,20 +8,23 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
-import { ItemProps } from "../interfaces/ItemProps"
 import DatePickerField from "../components/DatePickerField"
 import { toast, ToastContainer } from "react-toastify"
 import CustomToasts from "../components/CustomToasts"
 import { DateInterval } from "react-day-picker"
+import { ItemDetailsProps } from "../interfaces/ItemDetailsProps"
+import { fetchImage } from "../services/fetchImage"
 
 
 function Lend() {
     const navigate = useNavigate()
-    const [item, setItem] = useState<ItemProps>()
+    const [item, setItem] = useState<ItemDetailsProps>()
     const [unavailableDates, setUnavailableDates] = useState<DateInterval[]>([])
     const [endDateUnavailability, setEndDateUnavailability] = useState<any>()
     const { id } = useParams()
     const { token, userInfo } = useKeycloak()
+
+    const [photo, setPhoto] = useState<string | null>(null)
 
     const fetchItem = async () => {
         try {
@@ -36,6 +39,9 @@ function Lend() {
             )
             if (response.ok) {
                 const data = await response.json()
+                // Fetch image
+                const image = await fetchImage(data.categoryId, token ?? "")
+                setPhoto(image)
                 setItem(data)
             } else {
                 CustomToasts.error({
@@ -98,12 +104,10 @@ function Lend() {
                 )
 
                 setUnavailableDates(dateArray)
-            } else {
-                if (!toast.isActive("Die Verfügbarkeiten konnten nicht geladen werden")) {
-                    CustomToasts.error({
-                        message: "Die Verfügbarkeiten konnten nicht geladen werden",
-                    })
-                }
+            } else if (response.status !== 404 && !toast.isActive("Die Verfügbarkeiten konnten nicht geladen werden")) {
+                CustomToasts.error({
+                    message: "Die Verfügbarkeiten konnten nicht geladen werden",
+                })
             }
         } catch (e) {
             console.log(e)
@@ -246,9 +250,9 @@ function Lend() {
                                         {item?.name}
                                     </h3>
                                     <div className="flex justify-center mb-4">
-                                        {!!item?.photoUrl && (
+                                        {!!photo && (
                                             <img
-                                                src={item.photoUrl}
+                                                src={photo}
                                                 alt={item.description}
                                                 className="h-52 w-full object-contain"
                                             />

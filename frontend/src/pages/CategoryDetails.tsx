@@ -7,10 +7,8 @@ import {
     CardTitle,
     CardFooter
 } from "../components/ui/card"
-import { InventoryItemProps } from "../interfaces/InventoryItemProps"
 import { Button } from "../components/ui/button"
 import { KeyValueRow } from "../components/KeyValueRow"
-import { CategoryDetailsProps } from "../interfaces/CategoryDetailsProps"
 import { ColDef } from "ag-grid-community"
 import CategoryDetailsTable from "../components/CategoryDetailsTable"
 import { CustomToasts } from "../components/CustomToasts"
@@ -20,13 +18,16 @@ import {
     ModuleRegistry,
     ClientSideRowModelModule,
 } from 'ag-grid-community';
+import { CategoryProps, ItemProps } from "../interfaces/CategoryProps"
+import { Input } from "../components/ui/input"
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule
 ])
 import { Pencil, PencilOff, Save } from "lucide-react"
+import { fetchImage } from "../services/fetchImage"
 
-export const categoryColDefs: ColDef<CategoryDetailsProps>[] = [
+export const itemsColDefs: ColDef<ItemProps>[] = [
     {
         headerName: "ID",
         field: "id",
@@ -48,24 +49,24 @@ export const categoryColDefs: ColDef<CategoryDetailsProps>[] = [
 ]
 
 function CategoryDetails() {
-    const [inventoryItem, setInventoryItem] = useState<InventoryItemProps>()
+    const [category, setCategory] = useState<CategoryProps>()
     const navigate = useNavigate()
     const { token, userInfo } = useKeycloak()
     const { id } = useParams()
-    const [categoryDetails, setCategoryDetails] = useState<
-        CategoryDetailsProps[]
-    >([])
     const [loading, setLoading] = React.useState(true)
     const [isEditing, setIsEditing] = useState(false)
-    const [updatedData, setUpdatedData] = useState({
+    const [updatedData, setUpdatedData] = useState<{name: string, description: string, icon: string, image?: any}>({
         name: "",
         description: "",
-        icon: ""
+        icon: "",
+        image: undefined,
     })
+
+    const [currentImage, setCurrentImage] = useState<string>()
 
     const isInventoryManager = userInfo?.groups?.includes("Inventory-Manager")
 
-    const fetchItems = async () => {
+    const fetchCategory = async () => {
         try {
             const response = await fetch(
                 `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories/${id}`,
@@ -77,13 +78,18 @@ function CategoryDetails() {
             )
             if (response.ok) {
                 const data = await response.json()
-                setInventoryItem(data)
+
+                // Fetch image
+                const image = await fetchImage(data.id, token ?? "")
+
+                setCategory(data)
+                setCurrentImage(image)
                 setUpdatedData({
                     name: data.name,
                     description: data.description,
-                    icon: data.icon
+                    icon: data.icon,
+                    image: undefined
                 })
-                setCategoryDetails(data.items || [])
             } else {
                 CustomToasts.error({
                     message: "Diese Kategorie existiert nicht.",
@@ -98,13 +104,44 @@ function CategoryDetails() {
     }
 
     const handleSave = async () => {
-        if (!inventoryItem) return
+        if (!category) return
+
+        if (updatedData?.image) {
+            const formData = new FormData()
+            formData.append("fileContent", updatedData.image)
+            formData.append("contentType", updatedData.image.type)
+
+            try {
+                const res = await fetch(
+                    `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories/${category.id}/image`,
+                    {
+                        method: "POST",
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        },
+                        body: formData
+                    }
+                )
+
+                if (!res.ok) {
+                    CustomToasts.error({
+                        message: "Fehler beim Hochladen des Bildes."
+                    })
+                    return
+                }
+            } catch (e) {
+                CustomToasts.error({
+                    message: "Fehler beim Hochladen des Bildes."
+                })
+                return
+            }
+        }
 
         const updatedCategory = {
-            ...inventoryItem,
-            name: updatedData.name || inventoryItem.name,
-            description: updatedData.description || inventoryItem.description,
-            icon: updatedData.icon || inventoryItem.icon
+            ...category,
+            name: updatedData.name || category.name,
+            description: updatedData.description || category.description,
+            icon: updatedData.icon || category.icon
         }
 
         try {
@@ -122,7 +159,7 @@ function CategoryDetails() {
 
             if (response.ok) {
                 const updatedCategoryResponse = await response.json()
-                setInventoryItem(updatedCategoryResponse)
+                setCategory(updatedCategoryResponse)
                 CustomToasts.success({
                     message: "Kategorie erfolgreich aktualisiert!",
                     onClose: () => window.open(`/category/${id}`, "_self")
@@ -146,7 +183,7 @@ function CategoryDetails() {
     }
 
     React.useEffect(() => {
-        void fetchItems()
+        void fetchCategory()
     }, [])
 
     return (
@@ -154,9 +191,9 @@ function CategoryDetails() {
             <ToastContainer />
             <CardHeader className="flex justify-self-auto mt-4">
                 <CardTitle className="text-3xl text-customOrange col-span-2 flex flex-col items-center justify-center">
-                    {`${inventoryItem?.name}`}
+                    {`${category?.name}`}
                     <span className="text-lg text-customOrange font-semibold items-center mt-2">
-                        {inventoryItem?.id ? `Kategorie ${inventoryItem.id}` : ""}
+                        {category?.id ? `Kategorie ${category.id}` : ""}
                     </span>
                 </CardTitle>
             </CardHeader>
@@ -205,7 +242,7 @@ function CategoryDetails() {
                                         className="border border-gray-300 rounded px-2 py-1 w-full"
                                     />
                                 ) : (
-                                    inventoryItem?.name
+                                    category?.name
                                 )}
                             </KeyValueRow>
                             <KeyValueRow label="Beschreibung">
@@ -221,7 +258,7 @@ function CategoryDetails() {
                                         className="border border-gray-300 rounded px-2 py-1 w-full"
                                     />
                                 ) : (
-                                    inventoryItem?.description
+                                    category?.description
                                 )}
                             </KeyValueRow>
                             <KeyValueRow label="Icon">
@@ -238,16 +275,32 @@ function CategoryDetails() {
                                         className="border border-gray-300 rounded px-2 py-1 w-full text-center"
                                     />
                                 ) : (
-                                    inventoryItem?.icon
+                                    category?.icon
                                 )}
                             </KeyValueRow>
                             <KeyValueRow label="Foto">
-                                {!!inventoryItem?.photoUrl && (
+                                {!!currentImage && (
                                     <img
-                                        src={inventoryItem?.photoUrl}
-                                        alt={inventoryItem?.description}
+                                        src={currentImage}
+                                        alt={category?.description}
                                         className="w-full h-80 object-contain"
                                     />
+                                )}
+                                {isEditing ? (
+                                    <Input
+                                        type="file"
+                                        accept="image/png, image/jpeg, image/jpg"
+                                        value={updatedData.image?.filename}
+                                        onChange={(e: any) => {
+                                            if (e.target.files)
+                                                setUpdatedData({
+                                                    ...updatedData,
+                                                    image: e.target.files[0]
+                                                })
+                                        }}
+                                    />
+                                ) : (
+                                    category?.icon
                                 )}
                             </KeyValueRow>
                         </dl>
@@ -270,8 +323,8 @@ function CategoryDetails() {
                             </h2>
                             <div className="overflow-x-auto min-w-full">
                                 <CategoryDetailsTable
-                                    categoryDetails={categoryDetails}
-                                    colDefs={categoryColDefs}
+                                    categoryDetails={category?.items ?? []}
+                                    colDefs={itemsColDefs}
                                     loading={loading}
                                 />
                             </div>

@@ -1,4 +1,4 @@
-export interface InventoryItemProps {
+export interface ItemDetailsProps {
     id: number
     photoUrl: string
     name: string

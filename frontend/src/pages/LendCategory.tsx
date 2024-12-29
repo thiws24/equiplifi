@@ -22,6 +22,7 @@ import { AvailabilityItemProps } from "../interfaces/AvailabilityItemProps"
 import CustomToasts from "../components/CustomToasts"
 import _ from "lodash"
 import { Matcher } from "react-day-picker"
+import { fetchImage } from "../services/fetchImage"
 
 function LendCategory() {
     const [itemReservations, setItemReservations] = useState<AvailabilityItemProps[]>([])
@@ -30,6 +31,8 @@ function LendCategory() {
     const [occurrences, setOccurrences] = useState<_.Dictionary<number>>()
     const [unavailableDates, setUnavailableDates] = useState<Matcher[]>([])
     const [endDateUnavailability, setEndDateUnavailability] = useState<any>()
+
+    const [photo, setPhoto] = useState<string | null>(null)
 
     const navigate = useNavigate()
     const { id } = useParams()
@@ -46,7 +49,10 @@ function LendCategory() {
                 }
             )
             if (response.ok) {
-                const data = await response.json()
+                const data: CategoryProps = await response.json()
+                // Fetch image
+                const image = await fetchImage(data.id, token ?? "")
+                setPhoto(image)
                 setCategoryItem(data)
             } else {
                 CustomToasts.error({
@@ -125,12 +131,10 @@ function LendCategory() {
                     }
                 )
                 setOccurrences(_.countBy(allDays))
-            } else {
-                if (!toast.isActive("Die Verfügbarkeiten konnten nicht geladen werden")) {
-                    CustomToasts.error({
-                        message: "Die Verfügbarkeiten konnten nicht geladen werden"
-                    })
-                }
+            } else if (response.status !== 404 && !toast.isActive("Die Verfügbarkeiten konnten nicht geladen werden")) {
+                CustomToasts.error({
+                    message: "Die Verfügbarkeiten konnten nicht geladen werden"
+                })
             }
         } catch (e) {
             console.log(e)
@@ -323,9 +327,9 @@ function LendCategory() {
                                         {categoryItem?.name}
                                     </h3>
                                     <div className="flex justify-center mb-4">
-                                        {!!categoryItem?.photoUrl && (
+                                        {!!photo && (
                                             <img
-                                                src={categoryItem.photoUrl}
+                                                src={photo}
                                                 alt={categoryItem.description}
                                                 className="h-52 w-full object-contain"
                                             />

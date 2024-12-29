@@ -1,12 +1,12 @@
 import { render, screen } from "@testing-library/react"
 import React from "react"
 import InventoryTable from "./InventoryTable"
-import { InventoryItemProps } from "../interfaces/InventoryItemProps"
+import { ItemDetailsProps } from "../interfaces/ItemDetailsProps"
 import { ColDef } from "ag-grid-community"
 import { BrowserRouter } from "react-router-dom"
 import { test, describe, expect } from "vitest"
 
-const colDefs: ColDef<InventoryItemProps, any>[] = [
+const colDefs: ColDef<ItemDetailsProps, any>[] = [
     { field: "id", headerName: "Id" },
     { field: "name", headerName: "Name" },
     { field: "icon", headerName: "Icon" },

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { InventoryItemProps } from "../interfaces/InventoryItemProps"
+import { ItemDetailsProps } from "../interfaces/ItemDetailsProps"
 import { ItemCard } from "./ItemCard"
 import {
     Pagination,
@@ -10,7 +10,7 @@ import {
 } from "./ui/pagination"
 
 interface Props {
-    items: InventoryItemProps[]
+    items: ItemDetailsProps[]
 }
 
 const itemsPerPage = 10

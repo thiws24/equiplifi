@@ -7,17 +7,18 @@ import {
     CardTitle,
     CardFooter
 } from "../components/ui/card"
-import { InventoryItemProps } from "../interfaces/InventoryItemProps"
+import { ItemDetailsProps } from "../interfaces/ItemDetailsProps"
 import { Button } from "../components/ui/button"
 import { KeyValueRow } from "../components/KeyValueRow"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
 import { ToastContainer } from "react-toastify"
 import CustomToasts from "../components/CustomToasts"
 import { Pencil, PencilOff, Save } from "lucide-react"
+import { fetchImage } from "../services/fetchImage"
 
 
 function Detail() {
-    const [inventoryItem, setInventoryItem] = useState<InventoryItemProps>()
+    const [inventoryItem, setInventoryItem] = useState<ItemDetailsProps>()
     const [qrCode, setQrCode] = useState<string | null>(null)
     const [isEditing, setIsEditing] = useState(false)
     const [updatedData, setUpdatedData] = useState<{
@@ -28,6 +29,8 @@ function Detail() {
     const { id } = useParams()
     const { token, userInfo } = useKeycloak()
     const isInventoryManager = userInfo?.groups?.includes("Inventory-Manager")
+
+    const [photo, setPhoto] = useState<string | null>(null)
 
     const handleDownload = async (name: string, id: number | undefined) => {
         try {
@@ -76,7 +79,10 @@ function Detail() {
                 }
             )
             if (response.ok) {
-                const data = await response.json()
+                const data: ItemDetailsProps = await response.json()
+                // Fetch image
+                const image = await fetchImage(data.categoryId, token ?? "")
+                setPhoto(image)
                 setInventoryItem(data)
                 setUpdatedData({
                     location: data.location || "",
@@ -224,9 +230,9 @@ function Detail() {
                                 {inventoryItem?.description}{" "}
                             </KeyValueRow>
                             <KeyValueRow label="Foto">
-                                {!!inventoryItem?.photoUrl && (
+                                {!!photo && (
                                     <img
-                                        src={inventoryItem?.photoUrl}
+                                        src={photo}
                                         alt={inventoryItem?.description}
                                         className="w-full h-80 object-contain"
                                     />

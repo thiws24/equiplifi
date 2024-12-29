@@ -1,6 +1,6 @@
 import React from "react"
 import { ColDef } from "ag-grid-community"
-import { InventoryItemProps } from "../interfaces/InventoryItemProps"
+import { ItemDetailsProps } from "../interfaces/ItemDetailsProps"
 import { TableGalleryView } from "../components/TableGalleryView"
 import CustomToasts from "../components/CustomToasts"
 import { ToastContainer } from "react-toastify"
@@ -8,9 +8,9 @@ import { useKeycloak } from "../keycloak/KeycloakProvider"
 
 function Home() {
     const [inventoryItems, setInventoryItems] = React.useState<
-        InventoryItemProps[]
+        ItemDetailsProps[]
     >([])
-    const colDefs: ColDef<InventoryItemProps, any>[] = [
+    const colDefs: ColDef<ItemDetailsProps, any>[] = [
         {
             field: "id",
             headerName: "ID",

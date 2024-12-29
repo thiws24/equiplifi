@@ -56,9 +56,7 @@ function CategoryCreation() {
     }
 
     async function onSubmit(values: CategoryCreationType) {
-        console.log(values, values.image ? values.image : "")
-
-        const { image, ...rest } = values
+       const { image, ...rest } = values
         let photoUrl = null
 
         // First create category and then upload image
@@ -83,7 +81,9 @@ function CategoryCreation() {
 
                 if (image) {
                     const formData = new FormData()
-                    formData.append("file", image)
+                    formData.append("fileContent", image)
+                    formData.append("contentType", image.type)
+
                     await fetch(
                         `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories/${data.id}/image`,
                         {
@@ -188,8 +188,7 @@ function CategoryCreation() {
                                                 onChange={(event) => {
                                                     if (event.target.files)
                                                         onChange(
-                                                            event.target
-                                                                .files[0]
+                                                            event.target.files[0]
                                                         )
                                                 }}
                                                 {...field}
