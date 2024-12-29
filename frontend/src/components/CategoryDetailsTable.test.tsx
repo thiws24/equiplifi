@@ -1,10 +1,10 @@
 import React from "react"
-import { render, screen, fireEvent } from "@testing-library/react"
-import { BrowserRouter, useNavigate } from "react-router-dom"
+import { render } from "@testing-library/react"
+import { BrowserRouter } from "react-router-dom"
 import CategoryDetailsTable from "./CategoryDetailsTable"
 import { ColDef } from "ag-grid-community"
-import { CategoryDetailsProps } from "../interfaces/CategoryDetailsProps"
 import { test, describe, expect, vi } from "vitest"
+import { ItemProps } from "../interfaces/CategoryProps"
 
 // Mock für useNavigate
 vi.mock("react-router-dom", async () => {
@@ -15,13 +15,13 @@ vi.mock("react-router-dom", async () => {
     }
 })
 
-const colDefs: ColDef<CategoryDetailsProps, any>[] = [
+const colDefs: ColDef<ItemProps, any>[] = [
     { field: "id", headerName: "ID" },
     { field: "status", headerName: "Status" },
     { field: "location", headerName: "Lagerort" },
 ]
 
-const categoryDetails: CategoryDetailsProps[] = [
+const categoryDetails: ItemProps[] = [
     { id: 1, status: "Available", location: "Warehouse A", urn: "equipli:item:1" },
     { id: 2, status: "In Use", location: "Warehouse B", urn: "equipli:item:2" },
     { id: 3, status: "Maintenance", location: "Warehouse C", urn: "equipli:item:3" },

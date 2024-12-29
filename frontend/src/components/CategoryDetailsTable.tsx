@@ -2,14 +2,13 @@ import React from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { customTheme } from '../customTheme';
 import { ColDef } from "ag-grid-community";
-import { ItemDetailsProps } from "../interfaces/ItemDetailsProps";
 import { AG_GRID_LOCALE_DE } from '@ag-grid-community/locale';
 import { useNavigate } from 'react-router-dom';
-import {CategoryDetailsProps} from "../interfaces/CategoryDetailsProps";
+import { ItemProps } from "../interfaces/CategoryProps"
 
 interface CategoryDetailsTableProps {
-    categoryDetails: CategoryDetailsProps[];
-    colDefs: ColDef<CategoryDetailsProps, any>[];
+    categoryDetails: ItemProps[];
+    colDefs: ColDef<ItemProps, any>[];
     loading: boolean;
 }
 
