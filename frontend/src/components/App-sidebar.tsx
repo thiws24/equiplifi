@@ -10,10 +10,11 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarTrigger,
     useSidebar
 } from "./ui/sidebar"
-import React from "react"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
+import { Link } from "react-router-dom"
 
 const itemsLagerwart = [
     {
@@ -50,23 +51,25 @@ export function AppSidebar() {
     const isInventoryManager = userInfo?.groups?.includes("Inventory-Manager")
 
     return (
-        <Sidebar collapsible="icon">
-            <SidebarHeader className="flex flex-row items-center mb-4 mt-1.5">
+        <Sidebar collapsible="icon" className="border-none">
+            <SidebarHeader className="bg-customBlack h-[45px]">
+                <Link to="/">
+                <div className="flex items-center">
                 <img
-                    src="/equipli-logo.svg"
-                    className="w-12 h-auto"
-                    alt="equipli logo"
-                />
-                {open && (
-                    <span className="text-2xl text-customBlue font-bold">equipli</span>
-                )}
+                        src="/equipli-logo.svg"
+                        className="h-[32px] w-auto"
+                        alt="equipli Logo"
+                    />
+                    
+                    <span className="ml-2 text-xl text-customBeige pb-0.5">equipli</span>
+                </div>
+                    
+                
+                </Link>
+                
             </SidebarHeader>
-
-            <SidebarContent>
+            <SidebarContent className="bg-customBeige border-r-[1px] border-gray-600">
                 <SidebarGroup>
-                    <SidebarGroupLabel className="text-xl text-customBlue">
-                        Allgemein
-                    </SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {itemsAllgemein.map((item) => (
@@ -88,46 +91,40 @@ export function AppSidebar() {
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
-                {isInventoryManager && <SidebarGroup>
-                    <SidebarGroupLabel className="text-xl text-customBlue">
-                        Lagerwart
-                    </SidebarGroupLabel>
-                    <SidebarGroupContent>
-                        <SidebarMenu>
-                            {itemsLagerwart.map((item) => (
-                                <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton
-                                        asChild
-                                        className="bg-customBeige text-customOrange hover:bg-customRed hover:text-customBeige"
-                                    >
-                                        <a
-                                            href={item.url}
-                                            className="flex items-center gap-2"
+                {isInventoryManager && (
+                    <SidebarGroup>
+                        <SidebarGroupLabel className="text-xl text-customBlue">
+                            Lagerwart
+                        </SidebarGroupLabel>
+                        <SidebarGroupContent>
+                            <SidebarMenu>
+                                {itemsLagerwart.map((item) => (
+                                    <SidebarMenuItem key={item.title}>
+                                        <SidebarMenuButton
+                                            asChild
+                                            className="bg-customBeige text-customOrange hover:bg-customRed hover:text-customBeige"
                                         >
-                                            {item.icon && <item.icon />}
-                                            <span>{item.title}</span>
-                                        </a>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            ))}
-                        </SidebarMenu>
-                    </SidebarGroupContent>
-                </SidebarGroup>}
+                                            <a
+                                                href={item.url}
+                                                className="flex items-center gap-2"
+                                            >
+                                                {item.icon && <item.icon />}
+                                                <span>{item.title}</span>
+                                            </a>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                ))}
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                )}
             </SidebarContent>
 
             {/* Footer der Sidebar */}
-            <SidebarFooter>
-                <SidebarMenu>
-                    <SidebarMenuItem key={"abmelden"}>
-                        <SidebarMenuButton
-                            className="bg-customBeige text-customOrange hover:bg-customRed hover:text-customBeige flex items-center gap-2"
-                            onClick={handleLogout}
-                        >
-                            <LogOutIcon />
-                            <span>Abmelden</span>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
+            <SidebarFooter className="bg-customBeige border-r-[1px] border-gray-600">
+                <div className="flex justify-end w-full">
+                    <SidebarTrigger />
+                </div>
             </SidebarFooter>
         </Sidebar>
     )

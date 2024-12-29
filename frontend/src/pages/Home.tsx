@@ -42,7 +42,9 @@ function Home() {
                             src={params.data.photoUrl}
                             alt={params.data.description}
                         />
-                    ) : ""}
+                    ) : (
+                        ""
+                    )}
                 </div>
             )
         }
@@ -66,7 +68,8 @@ function Home() {
             }
         } catch (e) {
             CustomToasts.error({
-                message: "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut."
+                message:
+                    "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut."
             })
             console.log(e)
         }
@@ -76,19 +79,31 @@ function Home() {
     React.useEffect(() => {
         void fetchInventoryItems()
     }, [])
+
+    const { keycloak } = useKeycloak()
+
+    const firstName = keycloak.tokenParsed?.given_name || ""
+    const username = keycloak.tokenParsed?.preferred_username || "User"
+
     return (
-        <div className="m-10 min-w-80">
-            <ToastContainer />
-            <main className="main">
-                <div className="font-semibold text-3xl text-customBlue flex justify-center w-full text-center">
-                    Inventarverwaltung
-                </div>
-                <TableGalleryView
-                    data={inventoryItems}
-                    colDefs={colDefs}
-                    loading={loading}
-                />
-            </main>
+        <div className="max-w-[1440px] mx-auto">
+            <div className="m-8">
+                <ToastContainer />
+                <main className="main">
+                    <h1 className="text-3xl font-bold mb-20">
+                        Hallo,{" "}
+                        <span className="text-customOrange">
+                            {firstName || username}
+                        </span>
+                    </h1>
+
+                    <TableGalleryView
+                        data={inventoryItems}
+                        colDefs={colDefs}
+                        loading={loading}
+                    />
+                </main>
+            </div>
         </div>
     )
 }
