@@ -9,6 +9,7 @@ import Home from "./pages/Home"
 import Reservations from "./pages/Reservations"
 import NoPage from "./pages/NoPage"
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community"
+import Inventory from "./pages/Inventory"
 
 // Register all community features
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -18,6 +19,7 @@ const App = () => {
         <div className="bg-customBeige">
             <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/inventory" element={<Inventory />} />
                 <Route path="/item/:id" element={<Detail />} />
                 <Route path="/category/:id" element={<CategoryDetails />} />
                 <Route path="/category/create" element={<CategoryCreation />} />

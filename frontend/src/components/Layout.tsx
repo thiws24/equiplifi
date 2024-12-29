@@ -69,24 +69,23 @@ export const Layout: React.FC<Props> = ({ children }) => {
                 </div>
                 {/* Header Content */}
                 <div className="flex-1 flex flex-col w-full z-100">
-                    
                     <div className="bg-customBlack h-[45px] shrink-0 p-1 px-2 flex items-center justify-end max-[767px]:justify-between shadow-md">
-                    <div className="hidden max-[767px]:flex items-center">
-                        <SidebarTrigger />
-                        <Link to="/">
-                            <div className="flex items-center">
-                                <img
-                                    src="/equipli-logo.svg"
-                                    className="h-[32px] w-auto"
-                                    alt="equipli Logo"
-                                />
+                        <div className="hidden max-[767px]:flex items-center">
+                            <SidebarTrigger />
+                            <Link to="/">
+                                <div className="flex items-center">
+                                    <img
+                                        src="/equipli-logo.svg"
+                                        className="h-[32px] w-auto"
+                                        alt="equipli Logo"
+                                    />
 
-                                <span className="ml-2 text-xl text-customBeige pb-0.5">
-                                    equipli
-                                </span>
-                            </div>
-                        </Link>
-                    </div>
+                                    <span className="ml-2 text-xl text-customBeige pb-0.5">
+                                        equipli
+                                    </span>
+                                </div>
+                            </Link>
+                        </div>
                         <div
                             className="relative inline-block"
                             ref={dropdownRef}
@@ -95,18 +94,10 @@ export const Layout: React.FC<Props> = ({ children }) => {
                                 onClick={handleAvatarClick}
                                 className="inline-flex size-[32px] select-none items-center justify-center overflow-hidden rounded-full align-middle cu"
                             >
-                                <AvatarFallback
-                                    className="leading-1 flex size-full items-center justify-center bg-customBeige text-[15px] font-medium text-violet11">
+                                <AvatarFallback className="leading-1 flex size-full items-center justify-center bg-customBeige text-[15px] font-medium text-violet11">
                                     {getInitials()}
                                 </AvatarFallback>
                             </Avatar>
-
-                            <button
-                                className="lg:hidden text-white fixed left-0.5 top-0.5 bg-customBeige rounded shadow-md hover:bg-customOrange hover:text-customBeige"
-                            >
-                                <SidebarTrigger />
-                            </button>
-
 
                             {showDropdown && (
                                 <div className="z-50 absolute right-0 mt-0 w-48 bg-white border rounded shadow-lg">
