@@ -3,9 +3,10 @@ import { SidebarProvider, SidebarTrigger, useSidebar } from "./ui/sidebar"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
 import QrReader from "./QrReader"
 import { AppSidebar } from "./App-sidebar"
-import { LogOut, ScanQrCode, PanelRightClose } from "lucide-react"
+import { LogOut, Menu, ScanQrCode } from "lucide-react"
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar"
 import { max } from "lodash"
+import { Link } from "react-router-dom"
 
 interface Props {
     children: React.ReactNode
@@ -68,7 +69,24 @@ export const Layout: React.FC<Props> = ({ children }) => {
                 </div>
                 {/* Header Content */}
                 <div className="flex-1 flex flex-col w-full z-100">
-                    <div className="bg-customBlack h-[45px] shrink-0 p-1 px-2 flex items-center justify-end shadow-md">
+                    
+                    <div className="bg-customBlack h-[45px] shrink-0 p-1 px-2 flex items-center justify-end max-[767px]:justify-between shadow-md">
+                    <div className="hidden max-[767px]:flex items-center">
+                        <SidebarTrigger />
+                        <Link to="/">
+                            <div className="flex items-center">
+                                <img
+                                    src="/equipli-logo.svg"
+                                    className="h-[32px] w-auto"
+                                    alt="equipli Logo"
+                                />
+
+                                <span className="ml-2 text-xl text-customBeige pb-0.5">
+                                    equipli
+                                </span>
+                            </div>
+                        </Link>
+                    </div>
                         <div
                             className="relative inline-block"
                             ref={dropdownRef}

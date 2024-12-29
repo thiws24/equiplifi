@@ -1,7 +1,13 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
-import { ArrowRight, ChevronRight, PanelLeft, ChevronLeft } from "lucide-react"
+import {
+    ArrowRight,
+    ChevronRight,
+    PanelLeft,
+    ChevronLeft,
+    Menu
+} from "lucide-react"
 
 import { useIsMobile } from "../../hooks/use-mobile"
 import { cn } from "../../lib/utils"
@@ -277,6 +283,8 @@ const SidebarTrigger = React.forwardRef<
     React.ComponentProps<typeof Button>
 >(({ className, onClick, ...props }, ref) => {
     const { toggleSidebar, open } = useSidebar()
+    const isMobile = useIsMobile()
+    const openMobile = useSidebar().openMobile
 
     return (
         <Button
@@ -291,8 +299,18 @@ const SidebarTrigger = React.forwardRef<
             }}
             {...props}
         >
-            {open ? <ChevronLeft /> : <ChevronRight />}
-
+            {" "}
+            {isMobile ? (
+                openMobile ? (
+                    <ChevronLeft />
+                ) : (
+                    <Menu className="text-customBeige mr-3" />
+                )
+            ) : open ? (
+                <ChevronLeft />
+            ) : (
+                <ChevronRight />
+            )}
             <span className="sr-only">Toggle Sidebar</span>
         </Button>
     )

@@ -54,19 +54,18 @@ export function AppSidebar() {
         <Sidebar collapsible="icon" className="border-none">
             <SidebarHeader className="bg-customBlack h-[45px]">
                 <Link to="/">
-                <div className="flex items-center">
-                <img
-                        src="/equipli-logo.svg"
-                        className="h-[32px] w-auto"
-                        alt="equipli Logo"
-                    />
-                    
-                    <span className="ml-2 text-xl text-customBeige pb-0.5">equipli</span>
-                </div>
-                    
-                
+                    <div className="flex items-center">
+                        <img
+                            src="/equipli-logo.svg"
+                            className="h-[32px] w-auto"
+                            alt="equipli Logo"
+                        />
+
+                        <span className="ml-2 text-xl text-customBeige pb-0.5">
+                            equipli
+                        </span>
+                    </div>
                 </Link>
-                
             </SidebarHeader>
             <SidebarContent className="bg-customBeige border-r-[1px] border-gray-600">
                 <SidebarGroup>
