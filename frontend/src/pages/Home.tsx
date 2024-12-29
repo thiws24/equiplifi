@@ -96,12 +96,14 @@ function Home() {
                             {firstName || username}
                         </span>
                     </h1>
+                    <div className="overflow-x-auto min-w-full">
+                        <TableGalleryView
+                            data={inventoryItems}
+                            colDefs={colDefs}
+                            loading={loading}
+                        />
+                    </div>
 
-                    <TableGalleryView
-                        data={inventoryItems}
-                        colDefs={colDefs}
-                        loading={loading}
-                    />
                 </main>
             </div>
         </div>

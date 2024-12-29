@@ -1,9 +1,9 @@
 import React, { use, useEffect, useRef } from "react"
-import { SidebarProvider, SidebarTrigger } from "./ui/sidebar"
+import { SidebarProvider, SidebarTrigger, useSidebar } from "./ui/sidebar"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
 import QrReader from "./QrReader"
 import { AppSidebar } from "./App-sidebar"
-import { LogOut, ScanQrCode } from "lucide-react"
+import { LogOut, ScanQrCode, PanelRightClose } from "lucide-react"
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar"
 import { max } from "lodash"
 
@@ -16,8 +16,6 @@ export const Layout: React.FC<Props> = ({ children }) => {
     const [showDropdown, setShowDropdown] = React.useState(false);
     const { authenticated, keycloak } = useKeycloak();
     const dropdownRef = useRef<HTMLDivElement>(null);
-
-    
 
     const handleAvatarClick = () => {
         setShowDropdown(!showDropdown)
@@ -74,10 +72,18 @@ export const Layout: React.FC<Props> = ({ children }) => {
                                 onClick={handleAvatarClick}
                                 className="inline-flex size-[32px] select-none items-center justify-center overflow-hidden rounded-full align-middle cu"
                             >
-                                <AvatarFallback className="leading-1 flex size-full items-center justify-center bg-customBeige text-[15px] font-medium text-violet11">
+                                <AvatarFallback
+                                    className="leading-1 flex size-full items-center justify-center bg-customBeige text-[15px] font-medium text-violet11">
                                     {getInitials()}
                                 </AvatarFallback>
                             </Avatar>
+
+                            <button
+                                className="lg:hidden text-white fixed left-0.5 top-0.5 bg-customBeige rounded shadow-md hover:bg-customOrange hover:text-customBeige"
+                            >
+                                <SidebarTrigger />
+                            </button>
+
 
                             {showDropdown && (
                                 <div className="z-50 absolute right-0 mt-0 w-48 bg-white border rounded shadow-lg">
@@ -97,7 +103,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
                                 </div>
                             )}
                         </div>
-                    
+
 
                     </div>
 

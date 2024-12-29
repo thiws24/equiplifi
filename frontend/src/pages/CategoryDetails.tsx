@@ -268,11 +268,13 @@ function CategoryDetails() {
                             <h2 className="text-xl font-bold mb-4">
                                 Exemplare{" "}
                             </h2>
-                            <CategoryDetailsTable
-                                categoryDetails={categoryDetails}
-                                colDefs={categoryColDefs}
-                                loading={loading}
-                            />
+                            <div className="overflow-x-auto min-w-full">
+                                <CategoryDetailsTable
+                                    categoryDetails={categoryDetails}
+                                    colDefs={categoryColDefs}
+                                    loading={loading}
+                                />
+                            </div>
                         </div>
                     </CardContent>
                     <CardFooter>

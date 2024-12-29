@@ -27,7 +27,7 @@ const InventoryTable: React.FC<InventoryCardProps> = ({
 }) => {
     const navigate = useNavigate()
     return (
-        <div className="h-[550px]">
+        <div className="h-[550px] min-w-[350px]">
             <AgGridReact
                 rowData={inventoryItems}
                 columnDefs={colDefs}
