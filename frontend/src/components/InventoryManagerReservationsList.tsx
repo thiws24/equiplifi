@@ -170,6 +170,7 @@ export const InventoryManagerReservationsList: React.FC = () => {
                                 key={cp.process_instance_id}
                                 processId={cp.process_instance_id}
                                 guid={cp.task_guid}
+                                userName={cp.userName}
                                 data={cp.dataObject}
                                 onConfirmReservation={handleConfirmReservation}
                                 onCancelReservation={handleCancelReservation}
@@ -186,14 +187,16 @@ export const InventoryManagerReservationsList: React.FC = () => {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    {returnTasks.map((cp) => (
-                        <ConfirmReturnCard
-                            key={cp.id}
-                            processId={cp.id}
-                            data={cp.dataObject}
-                            onConfirmReturn={handleConfirmReturn}
-                        />
-                    ))}
+                    <div className='space-y-7'>
+                        {returnTasks.map((cp) => (
+                            <ConfirmReturnCard
+                                key={cp.id}
+                                processId={cp.id}
+                                data={cp.dataObject}
+                                onConfirmReturn={handleConfirmReturn}
+                            />
+                        ))}
+                    </div>
                 </CardContent>
             </Card>
         </div>

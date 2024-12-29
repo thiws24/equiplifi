@@ -7,6 +7,7 @@ interface Props {
     processId: number
     guid: string
     data?: ProcessDataValueProps[]
+    userName?: string
     onConfirmReservation: (processId: number, guid: string) => Promise<void>
     onCancelReservation: (processId: number, guid: string) => Promise<void>
 }
@@ -15,6 +16,7 @@ export const ConfirmReservationCard: React.FC<Props> = ({
                                                             processId,
                                                             guid,
                                                             data,
+                                                            userName,
                                                             onConfirmReservation,
                                                             onCancelReservation
                                                         }) => {
@@ -24,15 +26,7 @@ export const ConfirmReservationCard: React.FC<Props> = ({
         await onConfirmReservation(processId, guid)
     }
 
-    const handleCancelation = async () => {
-        await onCancelReservation(processId, guid)
-    }
-
-    const handleConfirmReservation = async () => {
-        await onConfirmReservation(processId, guid)
-    }
-
-    const handleConfirmCancelation = async () => {
+    const handleCancellation = async () => {
         await onCancelReservation(processId, guid)
     }
 
@@ -43,7 +37,7 @@ export const ConfirmReservationCard: React.FC<Props> = ({
                 <b>Prozess-ID:</b>
                 <div>{processId}</div>
                 <b>Benutzername:</b>
-                <div>{data ? data[0]?.userName : "-"}</div>
+                <div>{userName ?? "-"}</div>
                 <b>Kategorie-ID:</b>
                 <div>{data ? data[0]?.categoryId : "-"}</div>
                 <b>Anzahl:</b>
@@ -65,7 +59,7 @@ export const ConfirmReservationCard: React.FC<Props> = ({
                 </button>
                 <button
                     className="w-48 bg-customRed text-customBeige text-sm px-4 py-2 rounded hover:brightness-90"
-                    onClick={handleCancelation}
+                    onClick={handleCancellation}
                 >
                     Reservierung ablehnen
                 </button>

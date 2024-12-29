@@ -11,4 +11,5 @@ export interface TaskProps {
     assigned_user_group_identifier: string | null
     potential_owner_usernames: string | null
     dataObject?: ProcessDataValueProps[]
+    userName?: string
 }
