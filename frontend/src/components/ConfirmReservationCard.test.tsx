@@ -6,6 +6,7 @@ import { vi, describe, afterEach, test, expect } from "vitest"
 
 describe("ConfirmReservationCard", () => {
     const mockOnConfirmReservation = vi.fn()
+    const mockOnCancellationReservation = vi.fn()
 
     const mockData: ProcessDataValueProps[] = [{
         categoryId: 1,
@@ -13,7 +14,8 @@ describe("ConfirmReservationCard", () => {
         endDate: "2023-12-10T00:00:00Z",
         userId: "123456",
         itemId: 1,
-        id: 2345
+        id: 2345,
+        userName: "testUser",
     }]
 
     afterEach(() => {
@@ -27,6 +29,8 @@ describe("ConfirmReservationCard", () => {
                 guid="test-guid"
                 data={mockData}
                 onConfirmReservation={mockOnConfirmReservation}
+                onCancelReservation={mockOnCancellationReservation}
+                userName="testUser"
             />
         )
 
@@ -44,6 +48,8 @@ describe("ConfirmReservationCard", () => {
                 guid="test-guid"
                 data={undefined}
                 onConfirmReservation={mockOnConfirmReservation}
+                onCancelReservation={mockOnCancellationReservation}
+                userName="testUser"
             />
         )
 
@@ -60,6 +66,8 @@ describe("ConfirmReservationCard", () => {
                 guid="test-guid"
                 data={mockData}
                 onConfirmReservation={mockOnConfirmReservation}
+                onCancelReservation={mockOnCancellationReservation}
+                userName="testUser"
             />
         )
 
@@ -77,6 +85,8 @@ describe("ConfirmReservationCard", () => {
                 guid="test-guid"
                 data={mockData}
                 onConfirmReservation={mockOnConfirmReservation}
+                onCancelReservation={mockOnCancellationReservation}
+                userName="testUser"
             />
         )
 
