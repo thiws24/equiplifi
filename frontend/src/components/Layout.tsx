@@ -109,7 +109,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
                     {/* Floating Action Button */}
                     <button
                         onClick={() => setShowQrReader(true)}
-                        className="fixed bottom-4 right-4 bg-orange-500 text-white rounded-full p-4 shadow-lg hover:bg-orange-600"
+                        className="fixed bottom-5 right-5 bg-orange-500 text-white rounded-full p-4 shadow-lg hover:bg-orange-600"
                     >
                         <ScanQrCode />
                     </button>

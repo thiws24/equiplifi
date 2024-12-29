@@ -13,6 +13,8 @@ import { KeyValueRow } from "../components/KeyValueRow"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
 import { ToastContainer } from "react-toastify"
 import CustomToasts from "../components/CustomToasts"
+import { Pencil, PencilOff, Save } from "lucide-react"
+
 
 function Detail() {
     const [inventoryItem, setInventoryItem] = useState<InventoryItemProps>()
@@ -187,14 +189,14 @@ function Detail() {
             <div className="p-4">
                 <Card className="bg-white text-customBlack p-4 font-semibold">
                     <CardContent>
-                        <div className="flex justify-between items-center mt-4">
+                        <div className="flex justify-end items-center mt-4">
                             {isInventoryManager ? <Button
                                 onClick={() => setIsEditing(!isEditing)}
-                                className="w-[100px] bg-customBlue text-customBeige rounded hover:bg-customRed"
+                                className="fixed top-16 right-5 w-[55px] h-[55px] z-10 bg-customOrange text-customBeige rounded-full hover:bg-customRed"
                             >
                                 {isEditing
-                                    ? "Bearbeitung abbrechen"
-                                    : "Item bearbeiten"}
+                                    ? <PencilOff size={24}/>
+                                    : <Pencil size={24}/>}
                             </Button> : <div/>}
                             <Button
                                 onClick={() =>
@@ -298,9 +300,9 @@ function Detail() {
                             <div className="flex justify-end mt-4">
                                 <Button
                                     onClick={handleSave}
-                                    className="w-[100px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige"
+                                    className="fixed top-32 right-5 w-[55px] h-[55px] z-10 bg-customBlue text-customBeige rounded-full hover:bg-customBlue hover:brightness-90"
                                 >
-                                    Speichern
+                                    <Save/>
                                 </Button>
                             </div>
                         )}

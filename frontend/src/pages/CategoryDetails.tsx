@@ -22,8 +22,9 @@ import {
 } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-]);
+    ClientSideRowModelModule
+])
+import { Pencil, PencilOff, Save } from "lucide-react"
 
 export const categoryColDefs: ColDef<CategoryDetailsProps>[] = [
     {
@@ -83,7 +84,7 @@ function CategoryDetails() {
                     icon: data.icon
                 })
                 setCategoryDetails(data.items || [])
-            }else {
+            } else {
                 CustomToasts.error({
                     message: "Diese Kategorie existiert nicht.",
                     onClose: () => navigate(`/`)
@@ -94,7 +95,7 @@ function CategoryDetails() {
         } finally {
             setLoading(false)
         }
-    };
+    }
 
     const handleSave = async () => {
         if (!inventoryItem) return
@@ -162,15 +163,16 @@ function CategoryDetails() {
             <div className="p-4">
                 <Card className="bg-white text-customBlack p-4 font-semibold">
                     <CardContent>
-                        <div className="flex justify-between mt-4">
-                            {isInventoryManager ? <Button
-                                className="bg-customBlue text-customBeige rounded hover:bg-customRed"
-                                onClick={() => setIsEditing(!isEditing)}
-                            >
-                                {isEditing
-                                    ? "Bearbeitung abbrechen"
-                                    : "Kategorie bearbeiten"}
-                            </Button> : <div/>}
+                        <div className="flex justify-end mt-4">
+                            {isInventoryManager ?
+                                <Button
+                                    className="fixed top-16 right-5 w-[55px] h-[55px] z-10 bg-customOrange text-customBeige rounded-full hover:bg-customRed"
+                                    onClick={() => setIsEditing(!isEditing)}
+                                >
+                                    {isEditing
+                                        ? <PencilOff size={24} />
+                                        : <Pencil size={24} />}
+                                </Button> : <div />}
                             <Button
                                 className="w-[100px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige"
                                 onClick={() =>
@@ -255,9 +257,9 @@ function CategoryDetails() {
                             <div className="flex justify-end mt-4">
                                 <Button
                                     onClick={handleSave}
-                                    className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige"
+                                    className="fixed top-32 right-5 w-[55px] h-[55px] z-10 bg-customBlue text-customBeige rounded-full hover:bg-customBlue hover:brightness-90"
                                 >
-                                    Speichern
+                                    <Save/>
                                 </Button>
                             </div>
                         )}
@@ -276,7 +278,7 @@ function CategoryDetails() {
                     <CardFooter>
                         <Button
                             onClick={() => navigate("/")}
-                            className="w-[130px] bg-customBlue text-customBeige rounded hover:bg-customRed"
+                            className="w-[100px] bg-customBlue text-customBeige rounded hover:bg-customRed"
                         >
                             &larr; Zurück
                         </Button>
