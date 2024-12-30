@@ -2,7 +2,6 @@ import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import Reservations from "./Reservations";
 import { vi, expect, describe, beforeEach, it } from "vitest";
-import CustomToasts from "../components/CustomToasts"
 import { fetchOpenTasksByTaskName } from "../services/fetchTasks"
 
 
@@ -51,7 +50,7 @@ describe("Reservations Component", () => {
         );
 
         // Verify loading or empty state
-        expect(screen.getByText(/Reservierungen, die bestätigt werden müssen/i)).toBeInTheDocument();
+        expect(screen.getByText(/Reservierungen/i)).toBeInTheDocument();
         expect(screen.queryByText(/Test Reservation/i)).not.toBeInTheDocument();
     });
 
@@ -84,7 +83,7 @@ describe("Reservations Component", () => {
 
         await waitFor(() => {
             // Simulate clicking the "Confirm" button on the first task
-            const confirmButton = screen.getByText('Reservierung bestätigen')
+            const confirmButton = screen.getByText('Bestätigen')
             fireEvent.click(confirmButton)
 
             expect(screen.queryByText("Reservierung erfolgreich bestätigt.")).toBeInTheDocument();

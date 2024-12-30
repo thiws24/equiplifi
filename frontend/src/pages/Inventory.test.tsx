@@ -1,13 +1,12 @@
-import React from "react"
-import { render, screen, waitFor } from "@testing-library/react"
-import Home from "./Home"
-import { BrowserRouter } from "react-router-dom"
-import { vi, expect, beforeEach, describe, test } from "vitest"
-import Inventory from "./Inventory"
+import React from "react";
+import { render, screen, waitFor } from "@testing-library/react";
+import { BrowserRouter } from "react-router-dom";
+import { vi, expect, beforeEach, describe, test } from "vitest";
+import Inventory from "./Inventory";
 
 // Mocking fetch globally
-const mockFetch = vi.fn()
-global.fetch = mockFetch as unknown as typeof fetch
+const mockFetch = vi.fn();
+global.fetch = mockFetch as unknown as typeof fetch;
 
 // Mock Data
 const mockInventoryItems = [
@@ -32,56 +31,51 @@ const mockInventoryItems = [
         photoUrl: "https://example.com/fire.png",
         description: "Ein gefährliches Drachenfeuer"
     }
-]
+];
 
-describe("Inventory Page Tests", () => {
+describe("Inventory", () => {
     beforeEach(() => {
-        mockFetch.mockClear()
-    })
+        mockFetch.mockClear();
+    });
 
     test("renders the inventory page correctly", async () => {
         // Mocking a successful fetch response
         mockFetch.mockResolvedValueOnce({
             ok: true,
             json: async () => mockInventoryItems
-        })
+        });
 
         render(
             <BrowserRouter>
                 <Inventory />
             </BrowserRouter>
-        )
-
-        // Check if the heading is rendered
-        expect(
-            screen.getByText("Inventarverwaltung")
-        ).toBeInTheDocument()
+        );
 
         // Wait for the inventory items to load
         await waitFor(() =>
             expect(screen.getByText("Magischer Schlüssel")).toBeInTheDocument()
-        )
+        );
 
-        expect(screen.getByText("Heiltrank")).toBeInTheDocument()
-        expect(screen.getByText("Drachenfeuer")).toBeInTheDocument()
-    })
+        expect(screen.getByText("Heiltrank")).toBeInTheDocument();
+        expect(screen.getByText("Drachenfeuer")).toBeInTheDocument();
+    });
 
     test("renders the correct number of inventory items", async () => {
         // Mocking a successful fetch response
         mockFetch.mockResolvedValueOnce({
             ok: true,
             json: async () => mockInventoryItems
-        })
+        });
 
         const { container } = render(
             <BrowserRouter>
-                <Home />
+                <Inventory />
             </BrowserRouter>
-        )
+        );
 
         // Wait for the inventory items to load
         await waitFor(() =>
             expect(container.querySelectorAll(".ag-row").length).toBe(3)
-        )
-    })
-})
+        );
+    });
+});

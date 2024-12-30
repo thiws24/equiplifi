@@ -9,7 +9,6 @@ vi.mock("../hooks/use-mobile", () => {
     }
 })
 
-
 vi.mock("./QrReader", () => {
     return {
         default: vi.fn(() => <div>QrReader Mock</div>) // Mock the default export
