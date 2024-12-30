@@ -15,12 +15,14 @@ const QrReader = (props: Props) => {
     const videoEl = useRef<HTMLVideoElement>(null)
     const qrBoxEl = useRef<HTMLDivElement>(null)
     const [qrOn, setQrOn] = useState<boolean>(true)
-
+    let loading: boolean = false
     // Success
     const onScanSuccess = (result: QrScanner.ScanResult) => {
+        if (loading) return
         const urn = result.data
 
         if (urn.startsWith("urn:de.equipli:item:")) {
+            loading = true
             const id = urn.split(":").pop()
             console.log(`Extracted ID: ${id}`)
 
@@ -31,6 +33,8 @@ const QrReader = (props: Props) => {
                 "Ungültige URN. Das Format muss 'urn:de.equipli:item:<id>' sein."
             )
         }
+
+        setTimeout(() => loading = false, 2000)
     }
 
     // Fail

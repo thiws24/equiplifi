@@ -31,7 +31,7 @@ export const ItemScan: React.FC<Props> = ({ itemId, alreadyScanned, reservationI
         <div>
             <div className="flex items-center gap-2">
                 <div>Item <b>{itemId}</b>:</div>
-                {!alreadyScanned ? <div onClick={() => setOpenQrScanner(true)}
+                {!scanned ? <div onClick={() => setOpenQrScanner(true)}
                                      className="cursor-pointer text-sm text-customBlue underline underline-offset-4">Scanner öffnen</div> :
                     <CheckCircleIcon />}
             </div>
