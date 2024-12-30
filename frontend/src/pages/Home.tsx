@@ -132,7 +132,7 @@ function Home() {
                                             navigate("/reservations")
                                         }
                                     >
-                                        <Info className="mr-3 text-customOrange" />
+                                        <Info className="mr-3 text-customOrange h-5 w-5" />
                                         <p>
                                             <span className="font-bold">
                                                 {confirmTasks.length}{" "}
@@ -161,7 +161,7 @@ function Home() {
                                             navigate("/reservations")
                                         }
                                     >
-                                        <Info className="mr-3 text-customOrange" />
+                                        <Info className="mr-3 text-customOrange h-5 w-5" />
                                         <p>
                                             <span className="font-bold">
                                                 {returnTasks.length}{" "}

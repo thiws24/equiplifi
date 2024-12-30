@@ -75,7 +75,7 @@ export const InventoryPreview: React.FC<Props> = ({ items }) => {
             <CardContent>
                 <div
                     id="items-gallery"
-                    className="font-sans text-customBlack relative"
+                    className="font-sans text-customBlack relative shrink-0 scroll-pr-0"
                 >
                     {showLeftButton && (
                         <button
@@ -85,24 +85,26 @@ export const InventoryPreview: React.FC<Props> = ({ items }) => {
                             <ChevronLeft />
                         </button>
                     )}
-                    <div
-                        className="flex overflow-x-auto space-x-4 no-scrollbar p-4"
-                        ref={scrollContainerRef}
-                        style={{ scrollBehavior: "smooth" }}
-                    >
-                        {itemsToShow.map((item) => (
-                            <InventoryPreviewCard {...item} key={item.id} />
-                        ))}
-                        <div className="flex items-center justify-center">
-                            <button
-                                className="text-customOrange text-sm px-4 py-2 rounded hover:text-orange-600 flex items-center"
-                                onClick={() => navigate("/inventory")}
-                            >
-                                Alle anzeigen
-                                <ArrowRight className="h-8 ml-2" />
-                            </button>
+                    <div className="relative flex overflow-hidden">
+                        <div
+                            className="flex overflow-x-auto space-x-4 no-scrollbar p-4 scroll-smooth"
+                            ref={scrollContainerRef}
+                        >
+                            {itemsToShow.map((item) => (
+                                <InventoryPreviewCard {...item} key={item.id} />
+                            ))}
+                            <div className="flex items-center justify-center">
+                                <button
+                                    className="text-customOrange text-sm px-4 py-2 rounded hover:text-orange-600 flex items-center"
+                                    onClick={() => navigate("/inventory")}
+                                >
+                                    Alle anzeigen
+                                    <ArrowRight className="h-8 ml-2" />
+                                </button>
+                            </div>
                         </div>
                     </div>
+
                     {showRightButton && (
                         <button
                             className="absolute right-[-10px] top-1/2 transform -translate-y-1/2 bg-customOrange text-white text-sm p-2 rounded-full hover:bg-orange-600 z-[100]"

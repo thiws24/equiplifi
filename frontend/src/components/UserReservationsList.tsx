@@ -43,11 +43,13 @@ export const UserReservationsList: React.FC<Props> = ({}) => {
                 <div className="flex justify-between items-center">
                     <CardTitle>Meine Reservierungen</CardTitle>
                     <button
-                        className="bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded inline-flex items-center text-sm"
+                        className="bg-orange-500 hover:bg-orange-600 text-sm px-4 py-2 text-white ml-4 rounded inline-flex items-center"
                         onClick={() => navigate("/inventory")}
                     >
-                        <Plus className="w-4 h-4 mr-2" />
-                        <span className="">Reservierung hinzufügen</span>
+                        <Plus className="w-4 h-4" />
+                        <span className="ml-2 whitespace-nowrap hidden sm:flex">
+                            Reservierung hinzufügen
+                        </span>
                     </button>
                 </div>
             </CardHeader>

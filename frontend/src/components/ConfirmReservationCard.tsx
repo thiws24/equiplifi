@@ -50,7 +50,7 @@ export const ConfirmReservationCard: React.FC<Props> = ({
                 <b className="mb-4 md:mb-0">Item IDs:</b>
                 <div>{itemIds.join(", ")}</div>
             </div>
-            <div className="flex flex-row gap-2 justify-center items-center self-end">
+            <div className="flex flex-row gap-2 justify-center items-center self-end flex-wrap">
                 <Button
                     className="w-32 bg-customBlack text-customBeige text-sm px-4 py-2 rounded hover:bg-customBlack hover:text-customOrange flex items-center justify-center"
                     onClick={handleCancellation}
