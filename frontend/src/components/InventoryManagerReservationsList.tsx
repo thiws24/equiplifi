@@ -3,37 +3,59 @@ import { useKeycloak } from "../keycloak/KeycloakProvider"
 import { TaskProps } from "../interfaces/TaskProps"
 import { fetchOpenTasksByTaskName } from "../services/fetchTasks"
 import CustomToasts from "./CustomToasts"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle
+} from "./ui/card"
 import { ConfirmReservationCard } from "./ConfirmReservationCard"
 import { ConfirmReturnCard } from "./ConfirmReturnCard"
 import { fetchProcessesByLastMilestone } from "../services/fetchProcesses"
 import { Process } from "../interfaces/Process"
+import { Skeleton } from "./ui/skeleton"
 
 export const InventoryManagerReservationsList: React.FC = () => {
     const [confirmTasks, setConfirmTasks] = React.useState<TaskProps[]>([])
     const [returnTasks, setReturnTasks] = React.useState<Process[]>([])
     const { token } = useKeycloak()
 
+    const [loadingToConfirm, setLoadingToConfirm] = React.useState(true)
+    const [loadingToReturn, setLoadingToReturn] = React.useState(true)
+
     async function fetchToConfirmProcesses() {
         try {
-            const tasks: TaskProps[] = await fetchOpenTasksByTaskName("Receive Inventory Manager confirmation", token ?? "", "reservationrequests")
+            const tasks: TaskProps[] = await fetchOpenTasksByTaskName(
+                "Receive Inventory Manager confirmation",
+                token ?? "",
+                "reservationrequests"
+            )
             setConfirmTasks(tasks)
         } catch (e) {
             CustomToasts.error({
-                message: "Es ist ein Fehler beim Laden der Reservierungen aufgetreten."
+                message:
+                    "Es ist ein Fehler beim Laden der Reservierungen aufgetreten."
             })
         }
+        setLoadingToConfirm(false)
     }
 
     async function fetchToReturnProcesses() {
         try {
-            const tasks: Process[] = await fetchProcessesByLastMilestone("InventoryItem has been returned", token ?? "", "activereservations")
+            const tasks: Process[] = await fetchProcessesByLastMilestone(
+                "InventoryItem has been returned",
+                token ?? "",
+                "activereservations"
+            )
             setReturnTasks(tasks)
         } catch (e) {
             CustomToasts.error({
-                message: "Es ist ein Fehler beim Laden der Rückgaben aufgetreten."
+                message:
+                    "Es ist ein Fehler beim Laden der Rückgaben aufgetreten."
             })
         }
+        setLoadingToReturn(false)
     }
 
     const handleConfirmReservation = async (
@@ -68,15 +90,13 @@ export const InventoryManagerReservationsList: React.FC = () => {
             }
         } catch (error) {
             CustomToasts.error({
-                message: "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+                message:
+                    "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
             })
         }
     }
 
-    const handleCancelReservation = async (
-        processId: number,
-        guid: string
-    ) => {
+    const handleCancelReservation = async (processId: number, guid: string) => {
         try {
             const response = await fetch(
                 `${import.meta.env.VITE_SPIFF}/api/v1.0/tasks/${processId}/${guid}`,
@@ -105,14 +125,13 @@ export const InventoryManagerReservationsList: React.FC = () => {
             }
         } catch (error) {
             CustomToasts.error({
-                message: "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+                message:
+                    "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
             })
         }
     }
 
-    const handleConfirmReturn = async (
-        reservationId: number
-    ) => {
+    const handleConfirmReturn = async (reservationId: number) => {
         try {
             const response = await fetch(
                 `${import.meta.env.VITE_SPIFF}/api/v1.0/messages/check_in_inventoryitem`,
@@ -142,7 +161,8 @@ export const InventoryManagerReservationsList: React.FC = () => {
             }
         } catch (error) {
             CustomToasts.error({
-                message: "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+                message:
+                    "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
             })
         }
     }
@@ -158,11 +178,44 @@ export const InventoryManagerReservationsList: React.FC = () => {
                 <CardHeader>
                     <CardTitle>Reserveriungsanfragen</CardTitle>
                     <CardDescription>
-                        {confirmTasks.length} Reserveriungsanfragen ausstehend
+                        {loadingToConfirm ? (
+                            <Skeleton className="h-2 bg-gray-200 w-2/4 mt-2" />
+                        ) : (
+                            <span>
+                                {confirmTasks.length} Reservierungsanfragen
+                                ausstehend
+                            </span>
+                        )}
                     </CardDescription>
                 </CardHeader>
+
+                {loadingToConfirm && (
+                    <CardContent>
+                        <div className="space-y-4">
+                            <Card className="flex flex-col space-y-4 p-4">
+                                <Skeleton className="h-4 bg-gray-200 w-3/4" />
+                                <Skeleton className="h-3 bg-gray-200 w-2/4" />
+                                <Skeleton className="h-3 bg-gray-200 w-1/4" />
+                                <Skeleton className="h-3 bg-gray-200 w-1/4" />
+                            </Card>
+                            <Card className="flex flex-col space-y-4 p-4">
+                                <Skeleton className="h-4 bg-gray-200 w-3/4" />
+                                <Skeleton className="h-3 bg-gray-200 w-2/4" />
+                                <Skeleton className="h-3 bg-gray-200 w-1/4" />
+                                <Skeleton className="h-3 bg-gray-200 w-1/4" />
+                            </Card>
+                        </div>
+                    </CardContent>
+                )}
+
                 <CardContent>
-                    <div>
+                    <div className="space-y-5">
+                        {confirmTasks.length === 0 && !loadingToConfirm && (
+                            <div className="text-center text-gray-500">
+                                Keine Reservierungsanfragen
+                            </div>
+                        )}
+
                         {confirmTasks.map((cp) => (
                             <ConfirmReservationCard
                                 key={cp.process_instance_id}
@@ -181,11 +234,42 @@ export const InventoryManagerReservationsList: React.FC = () => {
                 <CardHeader>
                     <CardTitle>Rückgaben</CardTitle>
                     <CardDescription>
-                        {returnTasks.length} Rückgaben ausstehend
+                        {loadingToReturn ? (
+                            <Skeleton className="h-2 bg-gray-200 w-2/4 mt-2" />
+                        ) : (
+                            <span>
+                                {returnTasks.length} Rückgaben ausstehend
+                            </span>
+                        )}
                     </CardDescription>
                 </CardHeader>
+
+                {loadingToConfirm && (
+                    <CardContent>
+                        <div className="space-y-4">
+                            <Card className="flex flex-col space-y-4 p-4">
+                                <Skeleton className="h-4 bg-gray-200 w-3/4" />
+                                <Skeleton className="h-3 bg-gray-200 w-2/4" />
+                                <Skeleton className="h-3 bg-gray-200 w-1/4" />
+                                <Skeleton className="h-3 bg-gray-200 w-1/4" />
+                            </Card>
+                            <Card className="flex flex-col space-y-4 p-4">
+                                <Skeleton className="h-4 bg-gray-200 w-3/4" />
+                                <Skeleton className="h-3 bg-gray-200 w-2/4" />
+                                <Skeleton className="h-3 bg-gray-200 w-1/4" />
+                                <Skeleton className="h-3 bg-gray-200 w-1/4" />
+                            </Card>
+                        </div>
+                    </CardContent>
+                )}
+
                 <CardContent>
-                    <div className='space-y-7'>
+                    <div className="space-y-5">
+                        {confirmTasks.length === 0 && !loadingToConfirm && (
+                            <div className="text-center text-gray-500">
+                                Keine Reservierungsanfragen
+                            </div>
+                        )}
                         {returnTasks.map((cp) => (
                             <ConfirmReturnCard
                                 key={cp.id}
