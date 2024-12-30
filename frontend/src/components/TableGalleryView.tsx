@@ -6,6 +6,7 @@ import { ItemDetailsProps } from "../interfaces/ItemDetailsProps"
 import InventoryTable from "./InventoryTable"
 import { ItemsGallery } from "./ItemsGallery"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
+import { Table } from "lucide-react"
 
 interface Props {
     data: ItemDetailsProps[]
@@ -20,11 +21,11 @@ export const TableGalleryView: React.FC<Props> = ({
 }) => {
     return (
         <Tabs defaultValue="table-view" className="w-full">
-            <TabsList className="grid grid-cols-2 justify-end w-[200px] ml-auto mb-4">
-                <TabsTrigger value="table-view" className="tabs-trigger">
+            <TabsList className="grid grid-cols-2 justify-end w-[50px] ml-auto mb-4">
+                <TabsTrigger value="table-view" className="tabs-trigger m-1">
                     <FontAwesomeIcon icon={faTable} />
                 </TabsTrigger>
-                <TabsTrigger value="gallery-view" className="tabs-trigger">
+                <TabsTrigger value="gallery-view" className="tabs-trigger m-1">
                     <FontAwesomeIcon icon={faTableCells} />
                 </TabsTrigger>
             </TabsList>

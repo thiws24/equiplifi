@@ -1,18 +1,13 @@
 import React from "react"
 import { AgGridReact } from "ag-grid-react"
-import { customTheme } from "../customTheme"
+import { inventoryTheme } from "../customTheme"
 import { ColDef } from "ag-grid-community"
 import { ItemDetailsProps } from "../interfaces/ItemDetailsProps"
 import { AG_GRID_LOCALE_DE } from "@ag-grid-community/locale"
 import { useNavigate } from "react-router-dom"
-import {
-    ModuleRegistry,
-    ClientSideRowModelModule,
-} from 'ag-grid-community';
+import { ModuleRegistry, ClientSideRowModelModule } from "ag-grid-community"
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule])
 
 interface InventoryCardProps {
     inventoryItems: ItemDetailsProps[]
@@ -27,7 +22,7 @@ const InventoryTable: React.FC<InventoryCardProps> = ({
 }) => {
     const navigate = useNavigate()
     return (
-        <div className="h-[550px] min-w-[350px]">
+        <div className="h-[550px]">
             <AgGridReact
                 rowData={inventoryItems}
                 columnDefs={colDefs}
@@ -36,7 +31,7 @@ const InventoryTable: React.FC<InventoryCardProps> = ({
                 loading={loading}
                 onRowClicked={(e) => navigate(`/category/${e?.data?.id}`)}
                 localeText={AG_GRID_LOCALE_DE}
-                theme={customTheme}
+                theme={inventoryTheme}
             />
         </div>
     )

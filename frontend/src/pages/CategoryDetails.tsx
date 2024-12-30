@@ -12,18 +12,12 @@ import { KeyValueRow } from "../components/KeyValueRow"
 import { ColDef } from "ag-grid-community"
 import CategoryDetailsTable from "../components/CategoryDetailsTable"
 import { CustomToasts } from "../components/CustomToasts"
-import { ToastContainer } from "react-toastify"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
-import {
-    ModuleRegistry,
-    ClientSideRowModelModule,
-} from 'ag-grid-community';
+import { ModuleRegistry, ClientSideRowModelModule } from "ag-grid-community"
 import { CategoryProps, ItemProps } from "../interfaces/CategoryProps"
 import { Input } from "../components/ui/input"
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule
-])
+ModuleRegistry.registerModules([ClientSideRowModelModule])
 import { Pencil, PencilOff, Save } from "lucide-react"
 import { fetchImage } from "../services/fetchImage"
 
@@ -55,11 +49,16 @@ function CategoryDetails() {
     const { id } = useParams()
     const [loading, setLoading] = React.useState(true)
     const [isEditing, setIsEditing] = useState(false)
-    const [updatedData, setUpdatedData] = useState<{name: string, description: string, icon: string, image?: any}>({
+    const [updatedData, setUpdatedData] = useState<{
+        name: string
+        description: string
+        icon: string
+        image?: any
+    }>({
         name: "",
         description: "",
         icon: "",
-        image: undefined,
+        image: undefined
     })
 
     const [currentImage, setCurrentImage] = useState<string>()
@@ -188,7 +187,6 @@ function CategoryDetails() {
 
     return (
         <div className="max-w-[1000px] mx-auto">
-            <ToastContainer />
             <CardHeader className="flex justify-self-auto mt-4">
                 <CardTitle className="text-3xl text-customOrange col-span-2 flex flex-col items-center justify-center">
                     {`${category?.name}`}
@@ -201,21 +199,24 @@ function CategoryDetails() {
                 <Card className="bg-white text-customBlack p-4 font-semibold">
                     <CardContent>
                         <div className="flex justify-end mt-4">
-                            {isInventoryManager ?
+                            {isInventoryManager ? (
                                 <Button
                                     className="fixed top-16 right-5 w-[55px] h-[55px] z-10 bg-customOrange text-customBeige rounded-full hover:bg-customRed"
                                     onClick={() => setIsEditing(!isEditing)}
                                 >
-                                    {isEditing
-                                        ? <PencilOff size={24} />
-                                        : <Pencil size={24} />}
-                                </Button> : <div />}
+                                    {isEditing ? (
+                                        <PencilOff size={24} />
+                                    ) : (
+                                        <Pencil size={24} />
+                                    )}
+                                </Button>
+                            ) : (
+                                <div />
+                            )}
                             <Button
                                 className="w-[100px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige"
                                 onClick={() =>
-                                    navigate(
-                                        `/category/${id}/reservation`
-                                    )
+                                    navigate(`/category/${id}/reservation`)
                                 }
                             >
                                 Ausleihen
@@ -299,9 +300,7 @@ function CategoryDetails() {
                                                 })
                                         }}
                                     />
-                                ) : (
-                                    category?.icon
-                                )}
+                                ) : null}
                             </KeyValueRow>
                         </dl>
 
@@ -312,7 +311,7 @@ function CategoryDetails() {
                                     onClick={handleSave}
                                     className="fixed top-32 right-5 w-[55px] h-[55px] z-10 bg-customBlue text-customBeige rounded-full hover:bg-customBlue hover:brightness-90"
                                 >
-                                    <Save/>
+                                    <Save />
                                 </Button>
                             </div>
                         )}
