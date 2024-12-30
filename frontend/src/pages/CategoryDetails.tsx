@@ -185,6 +185,9 @@ function CategoryDetails() {
         void fetchCategory()
     }, [])
 
+    const editButtonTooltipText = isEditing
+        ? "Bearbeiten beenden"
+        : "Bearbeiten"
     return (
         <div className="max-w-[1000px] mx-auto">
             <CardHeader className="flex justify-self-auto mt-4">
@@ -201,6 +204,7 @@ function CategoryDetails() {
                         <div className="flex justify-end mt-4">
                             {isInventoryManager ? (
                                 <Button
+                                    tooltip={editButtonTooltipText}
                                     className="fixed top-16 right-5 w-[55px] h-[55px] z-10 bg-customOrange text-customBeige rounded-full hover:bg-customRed"
                                     onClick={() => setIsEditing(!isEditing)}
                                 >
@@ -308,6 +312,7 @@ function CategoryDetails() {
                         {isEditing && (
                             <div className="flex justify-end mt-4">
                                 <Button
+                                    tooltip="Speichern"
                                     onClick={handleSave}
                                     className="fixed top-32 right-5 w-[55px] h-[55px] z-10 bg-customBlue text-customBeige rounded-full hover:bg-customBlue hover:brightness-90"
                                 >

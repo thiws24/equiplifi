@@ -9,6 +9,7 @@ import { max } from "lodash"
 import { Link } from "react-router-dom"
 import { Toast } from "@radix-ui/react-toast"
 import { ToastContainer } from "react-toastify"
+import { Button } from "../components/ui/button"
 
 interface Props {
     children: React.ReactNode
@@ -132,12 +133,13 @@ export const Layout: React.FC<Props> = ({ children }) => {
                     </main>
 
                     {/* Floating Action Button */}
-                    <button
+                    <Button
+                        tooltip="QR-Code scannen"
                         onClick={() => setShowQrReader(true)}
                         className="fixed bottom-5 right-5 bg-orange-500 text-white rounded-full p-4 shadow-lg hover:bg-orange-600"
                     >
                         <ScanQrCode />
-                    </button>
+                    </Button>
                 </div>
                 {/* QR Code Reader Modal */}{" "}
                 {showQrReader && (
