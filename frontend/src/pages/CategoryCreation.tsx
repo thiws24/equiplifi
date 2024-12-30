@@ -21,7 +21,8 @@ import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
 import { CustomToasts } from "../components/CustomToasts"
-import { ToastContainer } from "react-toastify"
+import { Plus } from "lucide-react"
+import { Navigate, useNavigate } from "react-router-dom"
 
 const a = z.instanceof(File)
 
@@ -38,6 +39,7 @@ type CategoryCreationType = z.infer<typeof CategoryCreationSchema>
 
 function CategoryCreation() {
     const { userInfo, token } = useKeycloak()
+    const navigate = useNavigate()
 
     if (!userInfo?.groups?.includes("Inventory-Manager")) {
         window.open("/", "_self")
@@ -56,7 +58,7 @@ function CategoryCreation() {
     }
 
     async function onSubmit(values: CategoryCreationType) {
-       const { image, ...rest } = values
+        const { image, ...rest } = values
         let photoUrl = null
 
         // First create category and then upload image
@@ -96,9 +98,12 @@ function CategoryCreation() {
                     )
                 }
 
+                setTimeout(() => {
+                    navigate(`/category/${data.id}`)
+                }, 2000)
+
                 CustomToasts.success({
-                    message: "Erstellung erfolgreich!",
-                    onClose: () => window.open(`/category/${data.id}`, "_self")
+                    message: "Erstellung erfolgreich!"
                 })
             } else {
                 CustomToasts.error({
@@ -114,8 +119,7 @@ function CategoryCreation() {
     }
 
     return (
-        <Card className="w-11/12 sm:w-4/5 mx-auto my-5 md:my-10 lg:my-20">
-            <ToastContainer />
+        <Card className="w-11/12 sm:w-4/5 mx-auto my-5 md:my-10 lg:my-20 border-none drop-shadow-2xl">
             <CardHeader>
                 <CardTitle>Inventarisierung</CardTitle>
                 <CardDescription>
@@ -188,7 +192,8 @@ function CategoryCreation() {
                                                 onChange={(event) => {
                                                     if (event.target.files)
                                                         onChange(
-                                                            event.target.files[0]
+                                                            event.target
+                                                                .files[0]
                                                         )
                                                 }}
                                                 {...field}
@@ -207,7 +212,7 @@ function CategoryCreation() {
                                     name="itemLocation"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Location</FormLabel>
+                                            <FormLabel>Lagerort</FormLabel>
                                             <FormControl>
                                                 <Input {...field} />
                                             </FormControl>
@@ -216,13 +221,15 @@ function CategoryCreation() {
                                     )}
                                 />
                             </div>
-                            <div className="w-[95px]">
+                            <div className="w-[150px]">
                                 <FormField
                                     control={form.control}
                                     name="itemCount"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Anzahl Items*</FormLabel>
+                                            <FormLabel>
+                                                Anzahl der Exemplare*
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     {...form.register(
@@ -249,8 +256,9 @@ function CategoryCreation() {
                             <Button
                                 disabled={disableButton()}
                                 type="submit"
-                                className="text-customBeige bg-customBlue hover:bg-customRed"
+                                className="text-customBeige bg-customOrange hover:bg-customRed"
                             >
+                                <Plus className="w-4 h-4 mr-2" />
                                 Erstellen
                             </Button>
                         </div>
