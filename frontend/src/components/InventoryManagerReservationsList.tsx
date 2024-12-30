@@ -174,10 +174,10 @@ export const InventoryManagerReservationsList: React.FC = () => {
     }, [])
 
     return (
-        <div >
+        <div>
             <Card className="bg-white border-none drop-shadow-2xl my-10">
                 <CardHeader>
-                    <CardTitle>Reserveriungsanfragen</CardTitle>
+                    <CardTitle>Reservierungsanfragen</CardTitle>
                     <CardDescription>
                         {loadingToConfirm ? (
                             <Skeleton className="h-2 bg-gray-200 w-2/4 mt-2" />
