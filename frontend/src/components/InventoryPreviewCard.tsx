@@ -56,7 +56,6 @@ export const InventoryPreviewCard: React.FC<ItemDetailsProps> = ({
                 ) : (
                     <img
                         src={image || "/image-placeholder.jpg"}
-                        alt={name}
                         className="inset-0 w-full h-full rounded-lg object-cover"
                     />
                 )}

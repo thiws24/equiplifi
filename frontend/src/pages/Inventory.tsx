@@ -50,7 +50,7 @@ function Inventory() {
                             <Skeleton className="h-[60px] w-[60px] rounded-lg bg-gray-200" />
                         ) : (
                             <img
-                                className="rounded-lg"
+                                className="rounded-lg object-cover"
                                 style={{ height: 60, width: 60 }}
                                 src={image || "/image-placeholder.jpg"}
                                 alt={params.data.name}
