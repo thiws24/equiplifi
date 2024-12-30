@@ -4,7 +4,6 @@ import { TaskProps } from "../interfaces/TaskProps"
 import { fetchOpenTasksByTaskName } from "../services/fetchTasks"
 import CustomToasts from "./CustomToasts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
-import { ToastContainer } from "react-toastify"
 import { ConfirmReservationCard } from "./ConfirmReservationCard"
 import { ConfirmReturnCard } from "./ConfirmReturnCard"
 import { fetchProcessesByLastMilestone } from "../services/fetchProcesses"
@@ -154,17 +153,16 @@ export const InventoryManagerReservationsList: React.FC = () => {
     }, [])
 
     return (
-        <div className="flex flex-col items-center space-y-8 my-5 md:my-10 lg:my-20">
-            <Card className="w-11/12 sm:w-4/5 mx-auto">
-                <ToastContainer />
+        <div>
+            <Card className="bg-white border-none drop-shadow-2xl my-10">
                 <CardHeader>
-                    <CardTitle>Anfragen</CardTitle>
+                    <CardTitle>Reserveriungsanfragen</CardTitle>
                     <CardDescription>
-                        Reservierungen, die bestätigt werden müssen.
+                        {confirmTasks.length} Reserveriungsanfragen ausstehend
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className='space-y-7'>
+                    <div>
                         {confirmTasks.map((cp) => (
                             <ConfirmReservationCard
                                 key={cp.process_instance_id}
@@ -179,11 +177,11 @@ export const InventoryManagerReservationsList: React.FC = () => {
                     </div>
                 </CardContent>
             </Card>
-            <Card className="w-11/12 sm:w-4/5 mx-auto">
+            <Card className="bg-white border-none drop-shadow-2xl my-10">
                 <CardHeader>
                     <CardTitle>Rückgaben</CardTitle>
                     <CardDescription>
-                        Reservierungen, die zurückgegeben werden müssen.
+                        {returnTasks.length} Rückgaben ausstehend
                     </CardDescription>
                 </CardHeader>
                 <CardContent>

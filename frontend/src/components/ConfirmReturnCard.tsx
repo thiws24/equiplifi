@@ -10,20 +10,21 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
+    DialogTrigger
 } from "./ui/dialog"
+import { CalendarCheck } from "lucide-react"
 
 interface Props {
-    processId: number,
+    processId: number
     data?: ProcessDataValueProps[]
-    onConfirmReturn: (reservationId: number) => Promise<void>,
+    onConfirmReturn: (reservationId: number) => Promise<void>
 }
 
 export const ConfirmReturnCard: React.FC<Props> = ({
-                                                       processId,
-                                                       data,
-                                                       onConfirmReturn,
-                                                   }) => {
+    processId,
+    data,
+    onConfirmReturn
+}) => {
     const [isModalOpen, setIsModalOpen] = useState(false)
 
     const handleReturn = () => {
@@ -55,10 +56,11 @@ export const ConfirmReturnCard: React.FC<Props> = ({
             <p>Prozess-ID: {processId}</p>
             <div>Item-IDs: {itemIds.join(", ")}</div>
             <Button
-                className="bg-customBlue text-customBeige text-sm px-4 py-2 rounded hover:bg-customRed mt-4"
+                className="w-32 bg-customOrange text-white text-sm px-4 py-2 rounded hover:bg-orange-600 flex items-center justify-self-end"
                 onClick={handleReturn}
             >
-                Rückgabe bestätigen
+                <CalendarCheck className="w-4 h-4 mr-2" />
+                Bestätigen
             </Button>
 
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>

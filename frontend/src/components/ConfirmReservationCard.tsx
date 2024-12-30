@@ -2,6 +2,8 @@ import * as React from "react"
 import { ProcessDataValueProps } from "../interfaces/ProcessDataValueProps"
 import { formatDate } from "../lib/formatDate"
 import { map } from "lodash"
+import { CalendarCheck, CalendarX, CalendarX2, User } from "lucide-react"
+import { Button } from "./ui/button"
 
 interface Props {
     processId: number
@@ -13,13 +15,13 @@ interface Props {
 }
 
 export const ConfirmReservationCard: React.FC<Props> = ({
-                                                            processId,
-                                                            guid,
-                                                            data,
-                                                            userName,
-                                                            onConfirmReservation,
-                                                            onCancelReservation
-                                                        }) => {
+    processId,
+    guid,
+    data,
+    userName,
+    onConfirmReservation,
+    onCancelReservation
+}) => {
     const itemIds: number[] = map(data, "itemId")
 
     const handleConfirmation = async () => {
@@ -31,8 +33,7 @@ export const ConfirmReservationCard: React.FC<Props> = ({
     }
 
     return (
-        <div
-            className="mb-6 text-sm border p-5 rounded shadow-md flex flex-col md:flex-row justify-start items-start md:items-center">
+        <div className="mb-6 text-sm border p-5 rounded shadow-md flex flex-col md:flex-row justify-start items-start md:items-center">
             <div className="flex-1 min-w-[200px] grid grid-cols-[max-content_auto] gap-x-10 gap-y-2">
                 <b>Prozess-ID:</b>
                 <div>{processId}</div>
@@ -49,22 +50,22 @@ export const ConfirmReservationCard: React.FC<Props> = ({
                 <b className="mb-4 md:mb-0">Item IDs:</b>
                 <div>{itemIds.join(", ")}</div>
             </div>
-            <div
-                className="flex flex-col gap-2 justify-center items-start md:justify-center md:items-center">
-                <button
-                    className="w-48 bg-customBlue text-customBeige text-sm px-4 py-2 rounded hover:brightness-90"
-                    onClick={handleConfirmation}
-                >
-                    Reservierung bestätigen
-                </button>
-                <button
-                    className="w-48 bg-customRed text-customBeige text-sm px-4 py-2 rounded hover:brightness-90"
+            <div className="flex flex-row gap-2 justify-center items-center self-end">
+                <Button
+                    className="w-32 bg-customBlack text-customBeige text-sm px-4 py-2 rounded hover:bg-customBlack hover:text-customOrange flex items-center justify-center"
                     onClick={handleCancellation}
                 >
-                    Reservierung ablehnen
-                </button>
+                    <CalendarX className="w-4 h-4 mr-2" />
+                    Ablehnen
+                </Button>
+                <Button
+                    className="w-32 bg-customOrange text-white text-sm px-4 py-2 rounded hover:bg-orange-600 flex items-center justify-center"
+                    onClick={handleConfirmation}
+                >
+                    <CalendarCheck className="w-4 h-4 mr-2" />
+                    Bestätigen
+                </Button>
             </div>
         </div>
-
     )
 }
