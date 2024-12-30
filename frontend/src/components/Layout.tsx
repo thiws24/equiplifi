@@ -3,10 +3,12 @@ import { SidebarProvider, SidebarTrigger, useSidebar } from "./ui/sidebar"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
 import QrReader from "./QrReader"
 import { AppSidebar } from "./App-sidebar"
-import { LogOut, Menu, ScanQrCode } from "lucide-react"
+import { LogOut, ScanQrCode } from "lucide-react"
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar"
 import { max } from "lodash"
 import { Link } from "react-router-dom"
+import { Toast } from "@radix-ui/react-toast"
+import { ToastContainer } from "react-toastify"
 
 interface Props {
     children: React.ReactNode
@@ -125,6 +127,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
 
                     {/* Main Content */}
                     <main className="flex flex-col h-screen overflow-auto">
+                        <ToastContainer />
                         {children}
                     </main>
 

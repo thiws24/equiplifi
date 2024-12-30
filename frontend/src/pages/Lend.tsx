@@ -9,7 +9,7 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
 import DatePickerField from "../components/DatePickerField"
-import { toast, ToastContainer } from "react-toastify"
+import { toast } from "react-toastify"
 import CustomToasts from "../components/CustomToasts"
 import { DateInterval } from "react-day-picker"
 import { ItemDetailsProps } from "../interfaces/ItemDetailsProps"
@@ -234,7 +234,6 @@ function Lend() {
 
     return (
         <div>
-            <ToastContainer />
             {!!item && (
                 <div className="max-w-[600px] mx-auto">
                     <div className="p-4">

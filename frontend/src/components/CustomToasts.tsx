@@ -20,7 +20,7 @@ export const CustomToasts = {
             {
                 className: "custom-toast success-toast",
                 pauseOnFocusLoss: false,
-                position: "top-center",
+                position: "top-right",
                 icon: false,
                 onClose: onClose || undefined,
                 autoClose: duration || 5000,
@@ -37,7 +37,7 @@ export const CustomToasts = {
             {
                 className: "custom-toast",
                 pauseOnFocusLoss: false,
-                position: "top-center",
+                position: "top-right",
                 icon: false,
                 onClose: onClose || undefined,
                 autoClose: duration || 5000,

@@ -15,7 +15,7 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
 import { Input } from "../components/ui/input"
-import { toast, ToastContainer } from "react-toastify"
+import { toast } from "react-toastify"
 import { CategoryProps } from "../interfaces/CategoryProps"
 import DatePickerField from "../components/DatePickerField"
 import { AvailabilityItemProps } from "../interfaces/AvailabilityItemProps"
@@ -311,7 +311,6 @@ function LendCategory() {
 
     return (
         <div>
-            <ToastContainer />
             {!!categoryItem && (
                 <div className="max-w-[600px] mx-auto">
                     <div className="p-4">

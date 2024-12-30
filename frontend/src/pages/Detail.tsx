@@ -11,7 +11,6 @@ import { ItemDetailsProps } from "../interfaces/ItemDetailsProps"
 import { Button } from "../components/ui/button"
 import { KeyValueRow } from "../components/KeyValueRow"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
-import { ToastContainer } from "react-toastify"
 import CustomToasts from "../components/CustomToasts"
 import { Pencil, PencilOff, Save } from "lucide-react"
 import { fetchImage } from "../services/fetchImage"
@@ -183,7 +182,6 @@ function Detail() {
 
     return (
         <div className="max-w-[1000px] mx-auto">
-            <ToastContainer />
             <CardHeader className="flex justify-self-auto mt-4">
                 <CardTitle className="text-3xl text-customOrange col-span-2 flex flex-col items-center justify-center">
                     {`${inventoryItem?.icon ?? ""} ${inventoryItem?.name}`}
