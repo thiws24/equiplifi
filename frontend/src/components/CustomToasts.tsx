@@ -23,7 +23,7 @@ export const CustomToasts = {
                 position: "top-right",
                 icon: false,
                 onClose: onClose || undefined,
-                autoClose: duration || 5000,
+                autoClose: duration || 2000,
                 style: { color: "#333", fontFamily: "sans-serif, Arial" }
             }
         )
@@ -40,7 +40,7 @@ export const CustomToasts = {
                 position: "top-right",
                 icon: false,
                 onClose: onClose || undefined,
-                autoClose: duration || 5000,
+                autoClose: duration || 2000,
                 style: { color: "#333", fontFamily: "sans-serif, Arial" }
             }
         )

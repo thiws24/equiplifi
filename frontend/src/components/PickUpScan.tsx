@@ -6,20 +6,22 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from "./ui/button"
 import { ItemScan } from "./ItemScan"
 import { fetchDataObjectFromProcess } from "../services/fetchDataObject"
+import { map } from "lodash"
 
 interface Props {
     processId: number
     isModalOpen: boolean
     setIsModalOpen: (isOpen: boolean) => void
+    data?: ProcessDataValueProps[]
 }
 
-export const PickUpScan: React.FC<Props> = ({ processId, isModalOpen, setIsModalOpen }) => {
-    const [data, setData] = React.useState<ProcessDataValueProps[]>()
+export const PickUpScan: React.FC<Props> = ({ processId, isModalOpen, setIsModalOpen, data }) => {
+    const [alreadyScannedIds, setAlreadyScannedIds] = React.useState<number[]>()
     const { token } = useKeycloak()
 
     async function getUpdatedData() {
-        const dataRes = await fetchDataObjectFromProcess(processId, token ?? "", 'activereservations')
-        if (dataRes) setData(dataRes)
+        const dataRes: ProcessDataValueProps[] | undefined = await fetchDataObjectFromProcess(processId, token ?? "", 'activereservations')
+        if (dataRes) setAlreadyScannedIds(map(dataRes, 'itemId'))
     }
 
     React.useEffect(() => {
@@ -70,16 +72,16 @@ export const PickUpScan: React.FC<Props> = ({ processId, isModalOpen, setIsModal
                         key={item.itemId}
                         itemId={item.itemId}
                         reservationId={item.id}
-                        itemStatus={item.lendingStatus}
+                        alreadyScanned={alreadyScannedIds?.indexOf(item.id) !== -1}
                         confirmLending={confirmLendingByReservation}
                     />
                 ))}
                 <DialogFooter>
                     <Button
-                        className="bg-customOrange text-white hover:bg-customRed"
-                        onClick={() => setIsModalOpen(false)}
+                        className="bg-customBlue text-white hover:bg-customRed"
+                        onClick={() => window.location.reload()}
                     >
-                        Abbrechen
+                        Bestätigen
                     </Button>
                 </DialogFooter>
             </DialogContent>

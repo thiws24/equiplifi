@@ -54,6 +54,7 @@ export const UserReservationCard: React.FC<Props> = ({
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
                 processId={processId}
+                data={data}
             />
         </div>
     )
