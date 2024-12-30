@@ -113,7 +113,7 @@ function Home() {
 
     return (
         <div className="max-w-[1440px] mx-auto">
-            <div className="m-8 xl:mt-16">
+            <div className="m-8 lg:m-20">
                 <main className="main">
                     <h1 className="text-3xl font-bold mb-16">
                         Hallo,{" "}

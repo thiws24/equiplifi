@@ -94,7 +94,7 @@ function Inventory() {
 
     return (
         <div className="max-w-[1440px] mx-auto">
-            <div className="m-8 xl:mt-16">
+            <div className="m-8 lg:m-20">
                 <main className="main">
                     <div className="mb-10">
                         <h1 className="text-3xl font-bold">Inventar</h1>
