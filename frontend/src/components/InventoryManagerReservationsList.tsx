@@ -15,6 +15,7 @@ import { ConfirmReturnCard } from "./ConfirmReturnCard"
 import { fetchProcessesByLastMilestone } from "../services/fetchProcesses"
 import { Process } from "../interfaces/Process"
 import { Skeleton } from "./ui/skeleton"
+import { CalendarOff, MessageCircleQuestion, Undo2 } from "lucide-react"
 
 export const InventoryManagerReservationsList: React.FC = () => {
     const [confirmTasks, setConfirmTasks] = React.useState<TaskProps[]>([])
@@ -173,7 +174,7 @@ export const InventoryManagerReservationsList: React.FC = () => {
     }, [])
 
     return (
-        <div>
+        <div >
             <Card className="bg-white border-none drop-shadow-2xl my-10">
                 <CardHeader>
                     <CardTitle>Reserveriungsanfragen</CardTitle>
@@ -211,8 +212,11 @@ export const InventoryManagerReservationsList: React.FC = () => {
                 <CardContent>
                     <div className="space-y-5">
                         {confirmTasks.length === 0 && !loadingToConfirm && (
-                            <div className="text-center text-gray-500">
-                                Keine Reservierungsanfragen
+                            <div className="text-center mt-20 mb-20">
+                                <MessageCircleQuestion className="w-8 h-8 text-gray-800 mx-auto mb-4" />
+                                <p className="text-lg text-gray-800 mb-4">
+                                    Keine Reservierungsanfragen offen
+                                </p>
                             </div>
                         )}
 
@@ -265,9 +269,12 @@ export const InventoryManagerReservationsList: React.FC = () => {
 
                 <CardContent>
                     <div className="space-y-5">
-                        {confirmTasks.length === 0 && !loadingToConfirm && (
-                            <div className="text-center text-gray-500">
-                                Keine Reservierungsanfragen
+                        {returnTasks.length === 0 && !loadingToReturn && (
+                            <div className="text-center mt-20 mb-20">
+                                <Undo2 className="w-8 h-8 text-gray-800 mx-auto mb-4" />
+                                <p className="text-lg text-gray-800 mb-4">
+                                    Keine Rückgaben offen
+                                </p>
                             </div>
                         )}
                         {returnTasks.map((cp) => (

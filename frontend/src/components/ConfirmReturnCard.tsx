@@ -12,7 +12,7 @@ import {
     DialogTitle,
     DialogTrigger
 } from "./ui/dialog"
-import { CalendarCheck } from "lucide-react"
+import { CalendarCheck, CalendarX, ClipboardList, List, PackageCheck } from "lucide-react"
 
 interface Props {
     processId: number
@@ -52,16 +52,38 @@ export const ConfirmReturnCard: React.FC<Props> = ({
     const itemIds: number[] = map(data, "itemId")
 
     return (
-        <div className="space-y-5 text-sm border p-4 rounded shadow-md">
-            <p>Prozess-ID: {processId}</p>
-            <div>Item-IDs: {itemIds.join(", ")}</div>
-            <button
-                className="w-32 bg-customOrange text-white text-sm px-4 py-2 rounded hover:bg-orange-600 flex items-center justify-self-end"
-                onClick={handleReturn}
-            >
-                <CalendarCheck className="w-4 h-4 mr-2" />
-                Bestätigen
-            </button>
+        <div className="mb-6 text-sm border p-5 rounded shadow-md flex flex-col md:flex-row justify-start items-start md:items-center bg-white relative">
+            <div className="flex-1 min-w-[200px] grid grid-cols-[max-content_auto] gap-x-4 gap-y-2">
+                <div className="flex items-center">
+                    <b className="text-base mb-2">Rückgabe #{processId}</b>
+                </div>
+                <div></div>
+                <div className="flex items-center">
+                    <List className="w-4 h-4 mr-2 text-customOrange" />
+                    <b>Anzahl Items:</b>
+                </div>
+                <div>{itemIds.length}</div>
+                <div className="flex items-center">
+                    <ClipboardList className="w-4 h-4 mr-2 text-customOrange" />
+                    <b>Prozess-ID:</b>
+                </div>
+                <div>{processId}</div>
+
+                <div className="flex items-center">
+                    <ClipboardList className="w-4 h-4 mr-2 text-customOrange" />
+                    <b>Item IDs:</b>
+                </div>
+                <div>{itemIds.join(", ")}</div>
+            </div>
+            <div className="flex flex-row gap-2 justify-center items-center self-end flex-wrap mt-4 md:mt-0">
+                <button
+                    className="bg-customOrange text-white text-sm px-4 py-2 rounded hover:bg-orange-600 flex items-center justify-center"
+                    onClick={() => setIsModalOpen(true)}
+                >
+                    <PackageCheck className="w-4 h-4 mr-2" />
+                    Bestätigen
+                </button>
+            </div>
 
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                 <DialogContent>
@@ -72,18 +94,24 @@ export const ConfirmReturnCard: React.FC<Props> = ({
                         </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-2">
-                        <p>Prozess-ID: {processId}</p>
-                        <p>Item-IDs: {itemIds.join(", ")}</p>
+                        <div className="flex items-center">
+                            <ClipboardList className="w-4 h-4 mr-2 text-customOrange" />
+                            <p>Prozess-ID: {processId}</p>
+                        </div>
+                        <div className="flex items-center">
+                            <ClipboardList className="w-4 h-4 mr-2 text-customOrange" />
+                            <p>Item-IDs: {itemIds.join(", ")}</p>
+                        </div>
                     </div>
                     <DialogFooter>
                         <button
-                            className="bg-customOrange text-white hover:bg-customRed"
+                            className="bg-customBlack text-white text-sm px-4 py-2 rounded hover:text-customOrange flex items-center"
                             onClick={handleCloseModal}
                         >
                             Abbrechen
                         </button>
                         <button
-                            className="bg-customBlue text-customBeige hover:bg-customRed"
+                            className="bg-customOrange text-white text-sm px-4 py-2 rounded hover:bg-orange-600 flex items-center"
                             onClick={handleConfirmModal}
                         >
                             Bestätigen
