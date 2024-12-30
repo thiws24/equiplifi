@@ -25,7 +25,7 @@ export const ItemsGallery: React.FC<Props> = ({ items }) => {
 
     return (
         <div id="items-gallery" className="font-sans text-customBlack p-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
                 {items
                     .slice(
                         itemsPerPage * (currentPage - 1),
