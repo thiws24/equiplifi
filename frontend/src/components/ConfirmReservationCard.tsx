@@ -51,20 +51,20 @@ export const ConfirmReservationCard: React.FC<Props> = ({
                 <div>{itemIds.join(", ")}</div>
             </div>
             <div className="flex flex-row gap-2 justify-center items-center self-end flex-wrap">
-                <Button
-                    className="w-32 bg-customBlack text-customBeige text-sm px-4 py-2 rounded hover:bg-customBlack hover:text-customOrange flex items-center justify-center"
+                <button
+                    className="bg-customBlack text-customBeige text-sm px-4 py-2 rounded hover:bg-customBlack hover:text-customOrange flex items-center justify-center"
                     onClick={handleCancellation}
                 >
                     <CalendarX className="w-4 h-4 mr-2" />
                     Ablehnen
-                </Button>
-                <Button
-                    className="w-32 bg-customOrange text-white text-sm px-4 py-2 rounded hover:bg-orange-600 flex items-center justify-center"
+                </button>
+                <button
+                    className="bg-customOrange text-white text-sm px-4 py-2 rounded hover:bg-orange-600 flex items-center justify-center"
                     onClick={handleConfirmation}
                 >
                     <CalendarCheck className="w-4 h-4 mr-2" />
                     Bestätigen
-                </Button>
+                </button>
             </div>
         </div>
     )

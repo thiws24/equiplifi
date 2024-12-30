@@ -43,7 +43,7 @@ export const UserReservationsList: React.FC<Props> = ({}) => {
                 <div className="flex justify-between items-center">
                     <CardTitle>Meine Reservierungen</CardTitle>
                     <button
-                        className="bg-orange-500 hover:bg-orange-600 text-sm px-4 py-2 text-white ml-4 rounded inline-flex items-center"
+                        className="bg-customOrange hover:bg-orange-600 text-sm px-4 py-2 text-white ml-4 rounded inline-flex items-center"
                         onClick={() => navigate("/inventory")}
                     >
                         <Plus className="w-4 h-4" />

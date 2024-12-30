@@ -55,13 +55,13 @@ export const ConfirmReturnCard: React.FC<Props> = ({
         <div className="space-y-5 text-sm border p-4 rounded shadow-md">
             <p>Prozess-ID: {processId}</p>
             <div>Item-IDs: {itemIds.join(", ")}</div>
-            <Button
+            <button
                 className="w-32 bg-customOrange text-white text-sm px-4 py-2 rounded hover:bg-orange-600 flex items-center justify-self-end"
                 onClick={handleReturn}
             >
                 <CalendarCheck className="w-4 h-4 mr-2" />
                 Bestätigen
-            </Button>
+            </button>
 
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                 <DialogContent>
@@ -76,18 +76,18 @@ export const ConfirmReturnCard: React.FC<Props> = ({
                         <p>Item-IDs: {itemIds.join(", ")}</p>
                     </div>
                     <DialogFooter>
-                        <Button
+                        <button
                             className="bg-customOrange text-white hover:bg-customRed"
                             onClick={handleCloseModal}
                         >
                             Abbrechen
-                        </Button>
-                        <Button
+                        </button>
+                        <button
                             className="bg-customBlue text-customBeige hover:bg-customRed"
                             onClick={handleConfirmModal}
                         >
                             Bestätigen
-                        </Button>
+                        </button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
