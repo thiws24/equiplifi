@@ -95,7 +95,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
                         >
                             <Avatar
                                 onClick={handleAvatarClick}
-                                className="inline-flex size-[32px] select-none items-center justify-center overflow-hidden rounded-full align-middle cu"
+                                className="inline-flex size-[32px] select-none items-center justify-center overflow-hidden rounded-full align-middle cu cursor-pointer"
                             >
                                 <AvatarFallback className="leading-1 flex size-full items-center justify-center bg-customBeige text-[15px] font-medium text-violet11">
                                     {getInitials()}

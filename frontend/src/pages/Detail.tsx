@@ -15,7 +15,6 @@ import CustomToasts from "../components/CustomToasts"
 import { Pencil, PencilOff, Save } from "lucide-react"
 import { fetchImage } from "../services/fetchImage"
 
-
 function Detail() {
     const [inventoryItem, setInventoryItem] = useState<ItemDetailsProps>()
     const [qrCode, setQrCode] = useState<string | null>(null)
@@ -39,33 +38,33 @@ function Detail() {
                     method: "GET",
                     headers: {
                         Authorization: `Bearer ${token}`,
-                        Accept: "application/pdf",
-                    },
+                        Accept: "application/pdf"
+                    }
                 }
-            );
+            )
 
             if (!response.ok) {
                 console.log("... Fehler beim Download des QR-Codes:")
             }
 
             // Convert response to Blob
-            const blob = await response.blob();
+            const blob = await response.blob()
 
             // Create a temporary link to download the file
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = `${name}-${id}-QRCode.pdf`;
+            const link = document.createElement("a")
+            link.href = URL.createObjectURL(blob)
+            link.download = `${name}-${id}-QRCode.pdf`
 
             // Programmatically click the link to trigger the download
-            document.body.appendChild(link);
-            link.click();
+            document.body.appendChild(link)
+            link.click()
 
             // Clean up
-            document.body.removeChild(link);
+            document.body.removeChild(link)
         } catch (error) {
-            console.error("Error downloading QR code PDF:", error);
+            console.error("Error downloading QR code PDF:", error)
         }
-    };
+    }
 
     const fetchItem = async () => {
         try {
@@ -161,17 +160,17 @@ function Detail() {
                 })
             } else if (response.status === 404) {
                 CustomToasts.error({
-                    message: "Gegenstand nicht gefunden.",
+                    message: "Gegenstand nicht gefunden."
                 })
             } else {
                 CustomToasts.error({
-                    message: "Fehler beim Aktualisieren des Gegenstands.",
+                    message: "Fehler beim Aktualisieren des Gegenstands."
                 })
             }
         } catch (error) {
             console.error("Fehler beim Speichern:", error)
             CustomToasts.error({
-                message: "Fehler beim Aktualisieren des Gegenstands.",
+                message: "Fehler beim Aktualisieren des Gegenstands."
             })
         }
     }
@@ -180,6 +179,9 @@ function Detail() {
         void fetchItem()
     }, [id])
 
+    const editButtonTooltipText = isEditing
+        ? "Bearbeiten beenden"
+        : "Bearbeiten"
     return (
         <div className="max-w-[1000px] mx-auto">
             <CardHeader className="flex justify-self-auto mt-4">
@@ -194,19 +196,24 @@ function Detail() {
                 <Card className="bg-white text-customBlack p-4 font-semibold">
                     <CardContent>
                         <div className="flex justify-end items-center mt-4">
-                            {isInventoryManager ? <Button
-                                onClick={() => setIsEditing(!isEditing)}
-                                className="fixed top-16 right-5 w-[55px] h-[55px] z-10 bg-customOrange text-customBeige rounded-full hover:bg-customRed"
-                            >
-                                {isEditing
-                                    ? <PencilOff size={24}/>
-                                    : <Pencil size={24}/>}
-                            </Button> : <div/>}
+                            {isInventoryManager ? (
+                                <Button
+                                    tooltip={editButtonTooltipText}
+                                    onClick={() => setIsEditing(!isEditing)}
+                                    className="fixed top-16 right-5 w-[55px] h-[55px] z-10 bg-customOrange text-customBeige rounded-full hover:bg-customRed"
+                                >
+                                    {isEditing ? (
+                                        <PencilOff size={24} />
+                                    ) : (
+                                        <Pencil size={24} />
+                                    )}
+                                </Button>
+                            ) : (
+                                <div />
+                            )}
                             <Button
                                 onClick={() =>
-                                    navigate(
-                                        `/item/${id}/reservation`
-                                    )
+                                    navigate(`/item/${id}/reservation`)
                                 }
                                 className="w-[100px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige"
                             >
@@ -291,8 +298,12 @@ function Detail() {
                                     "Laden..."
                                 )}
                                 <div
-                                    onClick={() => handleDownload(inventoryItem?.name as string, inventoryItem?.id)}
-
+                                    onClick={() =>
+                                        handleDownload(
+                                            inventoryItem?.name as string,
+                                            inventoryItem?.id
+                                        )
+                                    }
                                     className="cursor-pointer text-customBlue hover:text-customOrange mt-4 flex"
                                 >
                                     QR Code herunterladen
@@ -303,10 +314,11 @@ function Detail() {
                         {isEditing && (
                             <div className="flex justify-end mt-4">
                                 <Button
+                                    tooltip="Speichern"
                                     onClick={handleSave}
                                     className="fixed top-32 right-5 w-[55px] h-[55px] z-10 bg-customBlue text-customBeige rounded-full hover:bg-customBlue hover:brightness-90"
                                 >
-                                    <Save/>
+                                    <Save />
                                 </Button>
                             </div>
                         )}
