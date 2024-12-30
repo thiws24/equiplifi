@@ -39,16 +39,18 @@ export const InventoryPreviewCard: React.FC<ItemDetailsProps> = ({
     return (
         <a href={`/category/${id}`} target="_self">
             <Card className="h-60 w-60 bg-white text-customBlack border-none drop-shadow-xl flex flex-col justify-between">
-                <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent rounded-lg"></div>
-                <div className="absolute bottom-0 p-2 text-white">
-                    <CardHeader className="text-white">
-                        <CardTitle className="item-card-title text-lg flex items-center">
-                            {name}
-                        </CardTitle>
-                        <CardDescription className="text-white line-clamp-2">
-                            {description}
-                        </CardDescription>
-                    </CardHeader>
+                <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent rounded-lg z-10"></div>
+                    <div className="relative z-20">
+                        <CardHeader className="text-white">
+                            <CardTitle className="item-card-title text-lg flex items-center">
+                                {name}
+                            </CardTitle>
+                            <CardDescription className="text-white line-clamp-2">
+                                {description}
+                            </CardDescription>
+                        </CardHeader>
+                    </div>
                 </div>
 
                 {loading ? (
