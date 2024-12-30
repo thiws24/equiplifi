@@ -38,12 +38,14 @@ export const InventoryPreviewCard: React.FC<ItemDetailsProps> = ({
 
     return (
         <a href={`/category/${id}`} target="_self">
-            <Card className="h-60 w-60 bg-white text-customBlack border-none drop-shadow-xl flex flex-col justify-between">
-                <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent rounded-lg z-10"></div>
-                    <div className="relative z-20">
-                        <CardHeader className="text-white">
-                            <CardTitle className="item-card-title text-lg flex items-center">
+            {loading ? (
+                <Skeleton className="h-60 w-60 rounded-lg bg-gray-200 bg-gradient-to-b from-transparent to-black" />
+            ) : (
+                <Card className="h-60 w-60 relative bg-cover bg-center bg-no-repeat border-none flex flex-col justify-end rounded-lg" style={{ backgroundImage: `url(${image || "/image-placeholder.jpg"})` }}>
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black rounded-lg" />
+                    <div className="relative z-10">
+                        <CardHeader className="text-white mt-auto">
+                            <CardTitle className="text-lg flex items-center">
                                 {name}
                             </CardTitle>
                             <CardDescription className="text-white line-clamp-2">
@@ -51,17 +53,8 @@ export const InventoryPreviewCard: React.FC<ItemDetailsProps> = ({
                             </CardDescription>
                         </CardHeader>
                     </div>
-                </div>
-
-                {loading ? (
-                    <Skeleton className="w-full h-full rounded-lg bg-gray-200" />
-                ) : (
-                    <img
-                        src={image || "/image-placeholder.jpg"}
-                        className="inset-0 w-full h-full rounded-lg object-cover"
-                    />
-                )}
-            </Card>
+                </Card>
+            )}
         </a>
     )
 }
