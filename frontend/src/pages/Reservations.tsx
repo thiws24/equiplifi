@@ -23,7 +23,7 @@ function Reservations() {
                     </div>
                 </main>
             </div>
-            <div className="m-8">
+            <div className="m-8 lg:m-20">
                 {isInventoryManager && <InventoryManagerReservationsList />}
                 <UserReservationsList />
             </div>
