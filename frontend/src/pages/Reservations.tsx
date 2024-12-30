@@ -3,7 +3,6 @@ import { useKeycloak } from "../keycloak/KeycloakProvider"
 import { InventoryManagerReservationsList } from "../components/InventoryManagerReservationsList"
 import { UserReservationsList } from "../components/UserReservationsList"
 
-
 function Reservations() {
     useEffect(() => {
         document.title = "Reservierungen | equipli"
@@ -24,7 +23,7 @@ function Reservations() {
                 </main>
             </div>
             <div className="m-8 lg:m-20">
-                {isInventoryManager && <InventoryManagerReservationsList />}
+                {!isInventoryManager && <InventoryManagerReservationsList />}
                 <UserReservationsList />
             </div>
         </div>

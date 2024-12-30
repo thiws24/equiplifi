@@ -187,7 +187,7 @@ function Home() {
 
                     <InventoryPreview items={inventoryItems} />
 
-                    <UserReservationsList />
+                    {!isInventoryManager && <UserReservationsList />}
                 </main>
             </div>
         </div>
