@@ -71,6 +71,7 @@ export function AppSidebar() {
                             {itemsAllgemein.map((item) => (
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton
+                                        tooltip={item.title}
                                         asChild
                                         className="text-customBlack hover:bg-customBeige hover:text-customOrange"
                                     >
@@ -97,6 +98,7 @@ export function AppSidebar() {
                                 {itemsLagerwart.map((item) => (
                                     <SidebarMenuItem key={item.title}>
                                         <SidebarMenuButton
+                                            tooltip={item.title}
                                             asChild
                                             className="text-customBlack hover:bg-customBeige hover:text-customOrange"
                                         >
