@@ -93,13 +93,26 @@
     color: #0e0e0e;
 }
 
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .pagination-content {
     color: #0e0e0e;
     font-size: 20px;
 }
 
-.tabs-trigger svg {
-    color: #f2e9d7 !important;
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }
 
 .item-card-title {

@@ -3,6 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react"
 import Home from "./Home"
 import { BrowserRouter } from "react-router-dom"
 import { vi, expect, beforeEach, describe, test } from "vitest"
+import Inventory from "./Inventory"
 
 // Mocking fetch globally
 const mockFetch = vi.fn()
@@ -33,12 +34,12 @@ const mockInventoryItems = [
     }
 ]
 
-describe("Home Page Tests", () => {
+describe("Inventory Page Tests", () => {
     beforeEach(() => {
         mockFetch.mockClear()
     })
 
-    test("renders the home page correctly", async () => {
+    test("renders the inventory page correctly", async () => {
         // Mocking a successful fetch response
         mockFetch.mockResolvedValueOnce({
             ok: true,
@@ -47,7 +48,7 @@ describe("Home Page Tests", () => {
 
         render(
             <BrowserRouter>
-                <Home />
+                <Inventory />
             </BrowserRouter>
         )
 

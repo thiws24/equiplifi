@@ -1,4 +1,4 @@
-import { Home, LogOutIcon, ScrollText, SquarePlus } from "lucide-react"
+import { CalendarDays, Home, Package, SquarePlus } from "lucide-react"
 import {
     Sidebar,
     SidebarContent,
@@ -30,23 +30,20 @@ const itemsAllgemein = [
         icon: Home
     },
     {
+        title: "Inventar",
+        url: "/inventory",
+        icon: Package
+    },
+    {
         title: "Reservierungen",
         url: "/reservations",
-        icon: ScrollText
+        icon: CalendarDays
     }
 ]
 
 export function AppSidebar() {
     const { keycloak, userInfo } = useKeycloak()
     const { open } = useSidebar()
-
-    async function handleLogout() {
-        try {
-            await keycloak?.logout()
-        } catch (e) {
-            console.log(e)
-        }
-    }
 
     const isInventoryManager = userInfo?.groups?.includes("Inventory-Manager")
 
@@ -67,7 +64,7 @@ export function AppSidebar() {
                     </div>
                 </Link>
             </SidebarHeader>
-            <SidebarContent className="bg-customBeige border-r-[1px] border-gray-600">
+            <SidebarContent className="bg-customBeige border-r-2 border-[#B8AC9C]">
                 <SidebarGroup>
                     <SidebarGroupContent>
                         <SidebarMenu>
@@ -75,7 +72,7 @@ export function AppSidebar() {
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton
                                         asChild
-                                        className="bg-customBeige text-customOrange hover:bg-customRed hover:text-customBeige"
+                                        className="text-customBlack hover:bg-customBeige hover:text-customOrange"
                                     >
                                         <a
                                             href={item.url}
@@ -92,7 +89,7 @@ export function AppSidebar() {
                 </SidebarGroup>
                 {isInventoryManager && (
                     <SidebarGroup>
-                        <SidebarGroupLabel className="text-xl text-customBlue">
+                        <SidebarGroupLabel className="text-customBlack font-bold">
                             Lagerwart
                         </SidebarGroupLabel>
                         <SidebarGroupContent>
@@ -101,7 +98,7 @@ export function AppSidebar() {
                                     <SidebarMenuItem key={item.title}>
                                         <SidebarMenuButton
                                             asChild
-                                            className="bg-customBeige text-customOrange hover:bg-customRed hover:text-customBeige"
+                                            className="text-customBlack hover:bg-customBeige hover:text-customOrange"
                                         >
                                             <a
                                                 href={item.url}
@@ -120,7 +117,7 @@ export function AppSidebar() {
             </SidebarContent>
 
             {/* Footer der Sidebar */}
-            <SidebarFooter className="bg-customBeige border-r-[1px] border-gray-600">
+            <SidebarFooter className="bg-customBeige border-r-2 border-[#B8AC9C]">
                 <div className="flex justify-end w-full">
                     <SidebarTrigger />
                 </div>

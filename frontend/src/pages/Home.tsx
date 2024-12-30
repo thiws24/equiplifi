@@ -1,66 +1,101 @@
 import React from "react"
-import { ColDef } from "ag-grid-community"
-import { ItemDetailsProps } from "../interfaces/ItemDetailsProps"
-import { TableGalleryView } from "../components/TableGalleryView"
 import CustomToasts from "../components/CustomToasts"
-import { ToastContainer } from "react-toastify"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
+import { Process } from "../interfaces/Process"
+import {
+    fetchAllProcessesByUser,
+    fetchProcessesByLastMilestone
+} from "../services/fetchProcesses"
+import { ArrowRight, Info } from "lucide-react"
+import { Card } from "../components/ui/card"
+import { TaskProps } from "../interfaces/TaskProps"
+import { fetchOpenTasksByTaskName } from "../services/fetchTasks"
+import { useNavigate } from "react-router-dom"
+import { UserReservationsList } from "../components/UserReservationsList"
+import InventoryPreview from "../components/InventoryPreview"
+import { ItemDetailsProps } from "../interfaces/ItemDetailsProps"
 
 function Home() {
+    const [loading, setLoading] = React.useState(true)
+    const [reservations, setReservations] = React.useState<Process[]>([])
+
+    const { keycloak, token, userInfo } = useKeycloak()
+
+    const isInventoryManager = userInfo?.groups?.includes("Inventory-Manager")
+
+    async function fetchReservations() {
+        try {
+            const processes: Process[] = await fetchAllProcessesByUser(
+                userInfo?.sub ?? "",
+                token ?? ""
+            )
+            setReservations(processes)
+        } catch (e) {
+            CustomToasts.error({
+                message:
+                    "Es ist ein Fehler beim Laden der Reservierungen aufgetreten."
+            })
+        }
+        setLoading(false)
+    }
+
+    React.useEffect(() => {
+        void fetchReservations()
+        void fetchToConfirmProcesses()
+        void fetchToReturnProcesses()
+        void fetchInventoryItems()
+    }, [])
+
+    const [confirmTasks, setConfirmTasks] = React.useState<TaskProps[]>([])
+    const [returnTasks, setReturnTasks] = React.useState<Process[]>([])
+
+    async function fetchToConfirmProcesses() {
+        try {
+            const tasks: TaskProps[] = await fetchOpenTasksByTaskName(
+                "Receive Inventory Manager confirmation",
+                token ?? "",
+                "reservationrequests"
+            )
+            setConfirmTasks(tasks)
+        } catch (e) {
+            CustomToasts.error({
+                message:
+                    "Es ist ein Fehler beim Laden der Reservierungen aufgetreten."
+            })
+        }
+    }
+
+    async function fetchToReturnProcesses() {
+        try {
+            const tasks: Process[] = await fetchProcessesByLastMilestone(
+                "InventoryItem has been returned",
+                token ?? "",
+                "activereservations"
+            )
+            setReturnTasks(tasks)
+        } catch (e) {
+            CustomToasts.error({
+                message:
+                    "Es ist ein Fehler beim Laden der Rückgaben aufgetreten."
+            })
+        }
+    }
+
+    const firstName = keycloak.tokenParsed?.given_name || ""
+    const username = keycloak.tokenParsed?.preferred_username || "User"
+
+    const navigate = useNavigate()
+
     const [inventoryItems, setInventoryItems] = React.useState<
         ItemDetailsProps[]
     >([])
-    const colDefs: ColDef<ItemDetailsProps, any>[] = [
-        {
-            field: "id",
-            headerName: "ID",
-            flex: 1,
-            minWidth: 150
-        },
-        {
-            field: "name",
-            headerName: "Name",
-            flex: 1,
-            minWidth: 150
-        },
-        {
-            field: "icon",
-            headerName: "ICON",
-            flex: 1,
-            minWidth: 100
-        },
-        {
-            field: "photoUrl",
-            headerName: "Foto",
-            flex: 1,
-            minWidth: 150,
-            cellRenderer: (params: any) => (
-                <div>
-                    {params.data.photoUrl ? (
-                        <img
-                            style={{ height: 40 }}
-                            src={params.data.photoUrl}
-                            alt={params.data.description}
-                        />
-                    ) : (
-                        ""
-                    )}
-                </div>
-            )
-        }
-    ]
-    const [loading, setLoading] = React.useState(true)
-    const { token } = useKeycloak()
+
+    const [inventoryLoading, setInventoryLoading] = React.useState(true)
 
     async function fetchInventoryItems() {
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    },
-                }
+                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories`
             )
             if (response.ok) {
                 const data = await response.json()
@@ -73,37 +108,86 @@ function Home() {
             })
             console.log(e)
         }
-        setLoading(false)
+        setInventoryLoading(false)
     }
-
-    React.useEffect(() => {
-        void fetchInventoryItems()
-    }, [])
-
-    const { keycloak } = useKeycloak()
-
-    const firstName = keycloak.tokenParsed?.given_name || ""
-    const username = keycloak.tokenParsed?.preferred_username || "User"
 
     return (
         <div className="max-w-[1440px] mx-auto">
-            <div className="m-8">
-                <ToastContainer />
+            <div className="m-8 xl:mt-16">
                 <main className="main">
-                    <h1 className="text-3xl font-bold mb-20">
+                    <h1 className="text-3xl font-bold mb-16">
                         Hallo,{" "}
                         <span className="text-customOrange">
                             {firstName || username}
                         </span>
                     </h1>
-                    <div className="overflow-x-auto min-w-full">
-                        <TableGalleryView
-                            data={inventoryItems}
-                            colDefs={colDefs}
-                            loading={loading}
-                        />
-                    </div>
 
+                    {isInventoryManager &&
+                        (confirmTasks.length > 0 || returnTasks.length > 0) && (
+                            <div className="mb-20">
+                                {confirmTasks.length > 0 && (
+                                    <Card
+                                        className="p-2 flex items-center -mt-8 mb-4 bg-orange-400 bg-opacity-30 border-none cursor-pointer"
+                                        onClick={() =>
+                                            navigate("/reservations")
+                                        }
+                                    >
+                                        <Info className="mr-3 text-customOrange" />
+                                        <p>
+                                            <span className="font-bold">
+                                                {confirmTasks.length}{" "}
+                                                {confirmTasks.length > 1
+                                                    ? "Reservierungsanfragen"
+                                                    : "Reservierungsanfrage"}
+                                            </span>{" "}
+                                            {confirmTasks.length > 1
+                                                ? "warten"
+                                                : "wartet"}{" "}
+                                            auf Überprüfung
+                                        </p>
+                                        <button className="ml-auto flex items-center text-customOrange">
+                                            <span className="mr-2">
+                                                Ansehen
+                                            </span>
+                                            <ArrowRight />
+                                        </button>
+                                    </Card>
+                                )}
+
+                                {returnTasks.length > 0 && (
+                                    <Card
+                                        className="p-2 flex items-center mb-4 bg-orange-400 bg-opacity-30 border-none cursor-pointer"
+                                        onClick={() =>
+                                            navigate("/reservations")
+                                        }
+                                    >
+                                        <Info className="mr-3 text-customOrange" />
+                                        <p>
+                                            <span className="font-bold">
+                                                {returnTasks.length}{" "}
+                                                {returnTasks.length > 1
+                                                    ? "Rückgaben"
+                                                    : "Rückgabe"}
+                                            </span>{" "}
+                                            {returnTasks.length > 1
+                                                ? "warten"
+                                                : "wartet"}{" "}
+                                            auf Bestätigung
+                                        </p>
+                                        <button className="ml-auto flex items-center text-customOrange">
+                                            <span className="mr-2">
+                                                Ansehen
+                                            </span>
+                                            <ArrowRight />
+                                        </button>
+                                    </Card>
+                                )}
+                            </div>
+                        )}
+
+                    <InventoryPreview items={inventoryItems} />
+
+                    <UserReservationsList />
                 </main>
             </div>
         </div>
