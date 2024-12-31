@@ -135,7 +135,7 @@ export const InventoryManagerReservationsList: React.FC = () => {
     const handleConfirmReturn = async (reservationId: number) => {
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_SPIFF}/api/v1.0/messages/check_in_inventoryitem`,
+                `${import.meta.env.VITE_SPIFF}/api/v1.0/messages/check_in_inventoryitem_1`,
                 {
                     method: "POST",
                     headers: {
