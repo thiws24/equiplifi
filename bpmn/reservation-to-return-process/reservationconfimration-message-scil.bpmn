@@ -1,35 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
   <bpmn:collaboration id="Collaboration_156phxw">
-    <bpmn:participant id="Participant_1746qll" name="Reservationconfimration Message SCIL" processRef="Process_reservationconfimration_message_scil_47j4py4" />
-    <bpmn:correlationKey id="CorrelationKey_0xrxxi3" name="MainCorrelationKey" />
+    <bpmn:participant id="Participant_1746qll" name="Reservation-confirmation Message SCIL" processRef="Process_reservationconfimration_message_scil_47j4py4" />
+    <bpmn:participant id="Participant_090t41t" name="Member" />
+    <bpmn:messageFlow id="Flow_1jlz107" name="reservation-confirmation" sourceRef="Activity_0rueauz" targetRef="Participant_090t41t" />
+    <bpmn:correlationKey id="CorrelationKey_040yulo" name="MainCorrelationKey" />
   </bpmn:collaboration>
   <bpmn:process id="Process_reservationconfimration_message_scil_47j4py4" isExecutable="true">
     <bpmn:sequenceFlow id="Flow_0x3uacn" sourceRef="Event_0va52h7" targetRef="Activity_0rueauz" />
     <bpmn:sequenceFlow id="Flow_1lqgg6d" sourceRef="Activity_0rueauz" targetRef="Gateway_0pspdsp" />
-    <bpmn:serviceTask id="Activity_0rueauz" name="send Reservationconfimration">
+    <bpmn:serviceTask id="Activity_0rueauz" name="Send reservation-confirmation">
       <bpmn:extensionElements>
-        <spiffworkflow:serviceTaskOperator id="http/PostRequestV2">
+        <spiffworkflow:serviceTaskOperator id="http/PostRequestV2" resultVariable="messageResult">
           <spiffworkflow:parameters>
-            <spiffworkflow:parameter id="url" type="str" value="&#34;http://Page 36:8161/api/message/storekeeper-confirmation?type=queue&#34;" />
+            <spiffworkflow:parameter id="url" type="str" value="&#34;http://activemq:8161/api/message/reservation-confirmation?type=queue&#34;" />
             <spiffworkflow:parameter id="headers" type="any" value="{&#34;Content-Type&#34;:&#34;application/json&#34;, &#34;Authorization&#34;:&#34;Basic YWRtaW46d0JQZDJYWUpwQjhq&#34;}" />
-            <spiffworkflow:parameter id="data" type="any" value="reservations" />
+            <spiffworkflow:parameter id="data" type="any" value="message" />
             <spiffworkflow:parameter id="basic_auth_username" type="str" />
             <spiffworkflow:parameter id="basic_auth_password" type="str" />
           </spiffworkflow:parameters>
         </spiffworkflow:serviceTaskOperator>
         <spiffworkflow:preScript>#Adjust the object for the message service
+
+message = [
+    {
+        "itemId": reservation["itemId"],
+        "startDate": reservation["startDate"],
+        "endDate": reservation["endDate"],
+        "userId": reservation["userId"],
+        "reservationId": reservation["id"]
+    }
+    for reservation in reservations
+]
+
+"""
 for reservation in reservations:
     reservation["reservationId"] = reservation.pop("id")
     reservation.pop("categoryId")
-    reservation.pop("status")</spiffworkflow:preScript>
+    reservation.pop("status")
+"""</spiffworkflow:preScript>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0x3uacn</bpmn:incoming>
       <bpmn:outgoing>Flow_1lqgg6d</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:startEvent id="Event_0va52h7" name="Reservationconfimration received">
+    <bpmn:startEvent id="Event_0va52h7" name="Reservation-confirmation received">
       <bpmn:outgoing>Flow_0x3uacn</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_0562ipn" messageRef="reservation-confirmation">
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0562ipn" messageRef="reservation_confirmation">
         <bpmn:extensionElements>
           <spiffworkflow:messageVariable>reservations</spiffworkflow:messageVariable>
         </bpmn:extensionElements>
@@ -41,30 +57,31 @@ for reservation in reservations:
       <bpmn:outgoing>Flow_0a158ph</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_05xk2a0" name="Yes" sourceRef="Gateway_0pspdsp" targetRef="Event_1e01ip1" />
-    <bpmn:endEvent id="Event_1e01ip1" name="Reservationconfimration sent">
+    <bpmn:endEvent id="Event_1e01ip1" name="Reservation-confirmation sent">
       <bpmn:incoming>Flow_05xk2a0</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:endEvent id="Event_09kclok" name="Reservationconfimration not sent">
+    <bpmn:endEvent id="Event_09kclok" name="Reservation-confirmation not sent">
       <bpmn:incoming>Flow_0a158ph</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_0a158ph" name="No" sourceRef="Gateway_0pspdsp" targetRef="Event_09kclok">
       <bpmn:conditionExpression>messageResult["http_status"] != 200</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
   </bpmn:process>
-  <bpmn:message id="reservation-confirmation" name="reservation-confirmation" />
+  <bpmn:message id="reservation_confirmation" name="reservation_confirmation" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_156phxw">
       <bpmndi:BPMNShape id="Participant_1746qll_di" bpmnElement="Participant_1746qll" isHorizontal="true">
-        <dc:Bounds x="70" y="170" width="580" height="240" />
+        <dc:Bounds x="70" y="170" width="580" height="270" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1hlz52f_di" bpmnElement="Activity_0rueauz">
         <dc:Bounds x="220" y="250" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_00bktlq_di" bpmnElement="Event_0va52h7">
         <dc:Bounds x="132" y="272" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="109" y="315" width="82" height="27" />
+          <dc:Bounds x="119" y="315" width="63" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0pspdsp_di" bpmnElement="Gateway_0pspdsp" isMarkerVisible="true">
@@ -76,13 +93,13 @@ for reservation in reservations:
       <bpmndi:BPMNShape id="Event_1e01ip1_di" bpmnElement="Event_1e01ip1">
         <dc:Bounds x="522" y="202" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="499" y="245" width="82" height="27" />
+          <dc:Bounds x="498" y="245" width="85" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_09kclok_di" bpmnElement="Event_09kclok">
         <dc:Bounds x="522" y="332" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="499" y="375" width="82" height="27" />
+          <dc:Bounds x="501" y="375" width="80" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0x3uacn_di" bpmnElement="Flow_0x3uacn">
@@ -107,6 +124,17 @@ for reservation in reservations:
         <di:waypoint x="522" y="350" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="418" y="330" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_128g9xf_di" bpmnElement="Participant_090t41t" isHorizontal="true">
+        <dc:Bounds x="70" y="470" width="580" height="60" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1jlz107_di" bpmnElement="Flow_1jlz107">
+        <di:waypoint x="270" y="330" />
+        <di:waypoint x="270" y="470" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="280" y="397" width="60" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

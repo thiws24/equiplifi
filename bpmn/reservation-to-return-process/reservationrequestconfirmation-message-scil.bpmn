@@ -2,12 +2,12 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
   <bpmn:collaboration id="Collaboration_1o1zm8f">
     <bpmn:participant id="Participant_1svo226" name="ReservationRequestconfirmation Message SCIL" processRef="Process_reservationrequestconfirmation_message_scil_bkpkt7n" />
-    <bpmn:correlationKey id="CorrelationKey_0mrwxuf" name="MainCorrelationKey" />
+    <bpmn:correlationKey id="CorrelationKey_0k4utq5" name="MainCorrelationKey" />
   </bpmn:collaboration>
   <bpmn:process id="Process_reservationrequestconfirmation_message_scil_bkpkt7n" isExecutable="true">
     <bpmn:startEvent id="Event_16pyzmc" name="Reservationrequest confimration received">
       <bpmn:outgoing>Flow_03lt7zf</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_1t9phe5" messageRef="reservation-request-confirmation">
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1t9phe5" messageRef="reservation_request_confirmation">
         <bpmn:extensionElements>
           <spiffworkflow:messageVariable>reservations</spiffworkflow:messageVariable>
         </bpmn:extensionElements>
@@ -19,18 +19,24 @@
       <bpmn:extensionElements>
         <spiffworkflow:serviceTaskOperator id="http/PostRequestV2" resultVariable="messageResult">
           <spiffworkflow:parameters>
-            <spiffworkflow:parameter id="url" type="str" value="&#34;http://activemq:8161/api/message/send-reservation-confirmation?type=queue&#34;" />
+            <spiffworkflow:parameter id="url" type="str" value="&#34;http://activemq:8161/api/message/request-confirmation?type=queue&#34;" />
             <spiffworkflow:parameter id="headers" type="any" value="{&#34;Content-Type&#34;:&#34;application/json&#34;, &#34;Authorization&#34;:&#34;Basic YWRtaW46d0JQZDJYWUpwQjhq&#34;}" />
-            <spiffworkflow:parameter id="data" type="any" value="reservations" />
+            <spiffworkflow:parameter id="data" type="any" value="message" />
             <spiffworkflow:parameter id="basic_auth_username" type="str" />
             <spiffworkflow:parameter id="basic_auth_password" type="str" />
           </spiffworkflow:parameters>
         </spiffworkflow:serviceTaskOperator>
-        <spiffworkflow:preScript>#Adjust the object for the message service
-for reservation in reservations:
-    reservation["reservationId"] = reservation.pop("id")
-    reservation.pop("categoryId")
-    reservation.pop("status")</spiffworkflow:preScript>
+        <spiffworkflow:preScript>message = [
+    {
+        "itemId": reservation["itemId"],
+        "startDate": reservation["startDate"],
+        "endDate": reservation["endDate"],
+        "userId": reservation["userId"],
+        "reservationId": reservation["id"]
+    }
+    for reservation in reservations
+]
+</spiffworkflow:preScript>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_03lt7zf</bpmn:incoming>
       <bpmn:outgoing>Flow_1teo5jn</bpmn:outgoing>
@@ -51,7 +57,7 @@ for reservation in reservations:
       <bpmn:incoming>Flow_1uqwtfe</bpmn:incoming>
     </bpmn:endEvent>
   </bpmn:process>
-  <bpmn:message id="reservation-request-confirmation" name="reservation-request-confirmation" />
+  <bpmn:message id="reservation_request_confirmation" name="reservation_request_confirmation" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1o1zm8f">
       <bpmndi:BPMNShape id="Participant_1svo226_di" bpmnElement="Participant_1svo226" isHorizontal="true">

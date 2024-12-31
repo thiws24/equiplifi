@@ -1,45 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
   <bpmn:collaboration id="Collaboration_1wa9lgc">
-    <bpmn:participant id="Participant_0sxwgmx" name="Lendingconfirmation Message SCIL" processRef="Process_returnconfirmation_message_scil_fdceze2" />
-    <bpmn:textAnnotation id="TextAnnotation_0werw23">
-      <bpmn:text>Endpoint mit Hubertus besprechen</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:association id="Association_0y08x6g" associationDirection="None" sourceRef="Activity_01z7wbe" targetRef="TextAnnotation_0werw23" />
-    <bpmn:correlationKey id="CorrelationKey_1yji7jn" name="MainCorrelationKey" />
+    <bpmn:participant id="Participant_0sxwgmx" name="Return-confirmation Message SCIL" processRef="Process_returnconfirmation_message_scil_fdceze2" />
+    <bpmn:correlationKey id="CorrelationKey_03j50uy" name="MainCorrelationKey" />
   </bpmn:collaboration>
   <bpmn:process id="Process_returnconfirmation_message_scil_fdceze2" isExecutable="true">
     <bpmn:sequenceFlow id="Flow_1qiseko" sourceRef="Event_1vid8x8" targetRef="Activity_01z7wbe" />
-    <bpmn:serviceTask id="Activity_01z7wbe" name="send Returnconfrimation">
+    <bpmn:serviceTask id="Activity_01z7wbe" name="Send return-confirmation">
       <bpmn:extensionElements>
         <spiffworkflow:serviceTaskOperator id="http/PostRequestV2" resultVariable="messageResult">
           <spiffworkflow:parameters>
-            <spiffworkflow:parameter id="url" type="str" value="&#34;http://activemq:8161/api/message/send-reservation-confirmation?type=queue&#34;" />
+            <spiffworkflow:parameter id="url" type="str" value="&#34;http://activemq:8161/api/message/return-confirmation?type=queue&#34;" />
             <spiffworkflow:parameter id="headers" type="any" value="{&#34;Content-Type&#34;:&#34;application/json&#34;, &#34;Authorization&#34;:&#34;Basic YWRtaW46d0JQZDJYWUpwQjhq&#34;}" />
-            <spiffworkflow:parameter id="data" type="any" value="returnedreservations" />
+            <spiffworkflow:parameter id="data" type="any" value="message" />
             <spiffworkflow:parameter id="basic_auth_username" type="str" />
             <spiffworkflow:parameter id="basic_auth_password" type="str" />
           </spiffworkflow:parameters>
         </spiffworkflow:serviceTaskOperator>
-        <spiffworkflow:preScript>
-#Adjust the object for the message service
-for reservation in returnedreservations:
-    reservation["reservationId"] = reservation.pop("id")
-    reservation.pop("categoryId")
-    reservation.pop("status")</spiffworkflow:preScript>
+        <spiffworkflow:preScript>message = [
+    {
+        "itemId": reservation["itemId"],
+        "startDate": reservation["startDate"],
+        "endDate": reservation["endDate"],
+        "userId": reservation["userId"],
+        "reservationId": reservation["id"]
+    }
+    for reservation in returnedreservations
+]
+</spiffworkflow:preScript>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1qiseko</bpmn:incoming>
       <bpmn:outgoing>Flow_10vfr5g</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:startEvent id="Event_1vid8x8" name="Returnconfirmation received">
+    <bpmn:startEvent id="Event_1vid8x8" name="Return-confirmation received">
       <bpmn:outgoing>Flow_1qiseko</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_0hcrb5a" messageRef="return-confirmation">
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0hcrb5a" messageRef="return_confirmation">
         <bpmn:extensionElements>
           <spiffworkflow:messageVariable>returnedreservations</spiffworkflow:messageVariable>
         </bpmn:extensionElements>
       </bpmn:messageEventDefinition>
     </bpmn:startEvent>
-    <bpmn:endEvent id="Event_06t2348" name="Returnconfirmation sent">
+    <bpmn:endEvent id="Event_06t2348" name="Return-confirmation sent">
       <bpmn:incoming>Flow_00h6624</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:exclusiveGateway id="Gateway_00b6p70" name="Message sent successfully?" default="Flow_00h6624">
@@ -52,11 +53,11 @@ for reservation in returnedreservations:
     <bpmn:sequenceFlow id="Flow_1v77k03" name="No" sourceRef="Gateway_00b6p70" targetRef="Event_12tu4bm">
       <bpmn:conditionExpression>messageResult["http_status"] != 200</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:endEvent id="Event_12tu4bm" name="Returnconfirmation not sent">
+    <bpmn:endEvent id="Event_12tu4bm" name="Return-confirmation not sent">
       <bpmn:incoming>Flow_1v77k03</bpmn:incoming>
     </bpmn:endEvent>
   </bpmn:process>
-  <bpmn:message id="return-confirmation" name="return-confirmation" />
+  <bpmn:message id="return_confirmation" name="return_confirmation" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1wa9lgc">
       <bpmndi:BPMNShape id="Participant_0sxwgmx_di" bpmnElement="Participant_0sxwgmx" isHorizontal="true">
@@ -70,13 +71,13 @@ for reservation in returnedreservations:
       <bpmndi:BPMNShape id="Event_0w2wpa8_di" bpmnElement="Event_1vid8x8">
         <dc:Bounds x="162" y="282" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="136" y="325" width="88" height="27" />
+          <dc:Bounds x="151" y="325" width="60" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_06t2348_di" bpmnElement="Event_06t2348">
         <dc:Bounds x="562" y="212" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="536" y="255" width="88" height="27" />
+          <dc:Bounds x="538" y="255" width="85" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_00b6p70_di" bpmnElement="Gateway_00b6p70" isMarkerVisible="true">
@@ -88,7 +89,7 @@ for reservation in returnedreservations:
       <bpmndi:BPMNShape id="Event_12tu4bm_di" bpmnElement="Event_12tu4bm">
         <dc:Bounds x="572" y="332" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="546" y="375" width="88" height="27" />
+          <dc:Bounds x="551" y="375" width="80" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1qiseko_di" bpmnElement="Flow_1qiseko">
@@ -114,14 +115,6 @@ for reservation in returnedreservations:
         <bpmndi:BPMNLabel>
           <dc:Bounds x="449" y="335" width="15" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_0werw23_di" bpmnElement="TextAnnotation_0werw23">
-        <dc:Bounds x="330" y="370" width="100" height="55" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_0y08x6g_di" bpmnElement="Association_0y08x6g">
-        <di:waypoint x="338" y="340" />
-        <di:waypoint x="366" y="370" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

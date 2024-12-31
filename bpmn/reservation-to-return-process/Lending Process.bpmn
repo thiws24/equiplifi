@@ -2,7 +2,11 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
   <bpmn:collaboration id="Collaboration_1fk2m93">
     <bpmn:participant id="Participant_1xx4y8n" name="Lending" processRef="lending_process_59k0hpx" />
-    <bpmn:correlationKey id="CorrelationKey_0obh7ex" name="MainCorrelationKey" />
+    <bpmn:textAnnotation id="TextAnnotation_1k1ll1q">
+      <bpmn:text>This is a workaround until Message Correlation is supported by Spiff</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_05e9cmm" associationDirection="None" sourceRef="Activity_0fsjegl" targetRef="TextAnnotation_1k1ll1q" />
+    <bpmn:correlationKey id="CorrelationKey_1at9sjz" name="MainCorrelationKey" />
   </bpmn:collaboration>
   <bpmn:process id="lending_process_59k0hpx" name="Lending Process" isExecutable="true">
     <bpmn:ioSpecification>
@@ -20,10 +24,9 @@
         <bpmn:flowNodeRef>Event_10hbojy</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1ht8e1q</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_09nxqwp</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_1uhn2xx</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1vdiy0m</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1ikmzjd</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_0fnvxyx</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0fsjegl</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:sequenceFlow id="Flow_1xjtylu" sourceRef="Activity_1ikmzjd" targetRef="Event_1vdiy0m" />
@@ -32,30 +35,22 @@
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_1609vhl" sourceRef="Event_10hbojy" targetRef="Gateway_09nxqwp" />
     <bpmn:exclusiveGateway id="Gateway_1ht8e1q" name="Was the correct message received?">
-      <bpmn:incoming>Flow_1q77og7</bpmn:incoming>
+      <bpmn:incoming>Flow_1vyu5v3</bpmn:incoming>
       <bpmn:outgoing>Flow_0c4a1lt</bpmn:outgoing>
       <bpmn:outgoing>Flow_0zf4p1o</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_0c4a1lt" name="Yes" sourceRef="Gateway_1ht8e1q" targetRef="Activity_1ikmzjd">
-      <bpmn:conditionExpression>reservation["id"] == user_lending_confirmation["reservation_id"]</bpmn:conditionExpression>
+      <bpmn:conditionExpression>reservation["id"] == check_out_inventoryitem["reservation_id"]</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_18wnt8b" sourceRef="Gateway_09nxqwp" targetRef="Activity_1uhn2xx" />
+    <bpmn:sequenceFlow id="Flow_18wnt8b" sourceRef="Gateway_09nxqwp" targetRef="Activity_0fsjegl" />
     <bpmn:exclusiveGateway id="Gateway_09nxqwp">
       <bpmn:incoming>Flow_1609vhl</bpmn:incoming>
       <bpmn:incoming>Flow_0zf4p1o</bpmn:incoming>
       <bpmn:outgoing>Flow_18wnt8b</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_0zf4p1o" name="No" sourceRef="Gateway_1ht8e1q" targetRef="Gateway_09nxqwp">
-      <bpmn:conditionExpression>reservation["id"] != user_lending_confirmation["reservation_id"]</bpmn:conditionExpression>
+      <bpmn:conditionExpression>reservation["id"] != check_out_inventoryitem["reservation_id"]</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1q77og7" sourceRef="Activity_1uhn2xx" targetRef="Gateway_1ht8e1q" />
-    <bpmn:receiveTask id="Activity_1uhn2xx" name="Check-out InventoryItem" messageRef="check_out_inventoryitem">
-      <bpmn:extensionElements>
-        <spiffworkflow:messageVariable>user_lending_confirmation</spiffworkflow:messageVariable>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_18wnt8b</bpmn:incoming>
-      <bpmn:outgoing>Flow_1q77og7</bpmn:outgoing>
-    </bpmn:receiveTask>
     <bpmn:endEvent id="Event_1vdiy0m" name="Lending successful">
       <bpmn:incoming>Flow_1xjtylu</bpmn:incoming>
     </bpmn:endEvent>
@@ -65,35 +60,43 @@
           <spiffworkflow:parameters>
             <spiffworkflow:parameter id="url" type="str" value="&#34;https://inventory.equipli.de/categories/&#34;+str(reservation[&#34;categoryId&#34;])+&#34;/items/&#34;+str(reservation[&#34;itemId&#34;])" />
             <spiffworkflow:parameter id="headers" type="any" value="{&#34;Accept&#34;:&#34;application/json&#34;}" />
-            <spiffworkflow:parameter id="data" type="any" value="{&#34;status&#34;: &#34;LENT&#34;}" />
+            <spiffworkflow:parameter id="data" type="any" value="{&#34;status&#34;: varInventoryItemStatus}" />
             <spiffworkflow:parameter id="basic_auth_username" type="str" />
             <spiffworkflow:parameter id="basic_auth_password" type="str" />
           </spiffworkflow:parameters>
         </spiffworkflow:serviceTaskOperator>
-        <spiffworkflow:postScript>activereservation = reservation
-activereservation["lendingStatus"]= "confirmed"</spiffworkflow:postScript>
+        <spiffworkflow:postScript>if varInventoryItemStatus == "LENT":
+    activereservation = reservation
+    activereservation["lendingStatus"] = "LENT"
+else:
+    activereservation = None
+    </spiffworkflow:postScript>
+        <spiffworkflow:preScript>if check_out_inventoryitem["user_lending_confirmation"] =="confirmed":
+    varInventoryItemStatus = "LENT"
+else:
+    varInventoryItemStatus = "OK"</spiffworkflow:preScript>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0c4a1lt</bpmn:incoming>
-      <bpmn:incoming>Flow_0vnm2oy</bpmn:incoming>
       <bpmn:outgoing>Flow_1xjtylu</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:boundaryEvent id="Event_0fnvxyx" name="End of reservation" attachedToRef="Activity_1uhn2xx">
-      <bpmn:outgoing>Flow_0vnm2oy</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_1aozy7x">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">"P1D"</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_0vnm2oy" sourceRef="Event_0fnvxyx" targetRef="Activity_1ikmzjd" />
+    <bpmn:sequenceFlow id="Flow_1vyu5v3" sourceRef="Activity_0fsjegl" targetRef="Gateway_1ht8e1q" />
+    <bpmn:receiveTask id="Activity_0fsjegl" name="Receive user lending confirmation" messageRef="Check_out_inventoryitem_4">
+      <bpmn:extensionElements>
+        <spiffworkflow:messageVariable>check_out_inventoryitem</spiffworkflow:messageVariable>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_18wnt8b</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vyu5v3</bpmn:outgoing>
+    </bpmn:receiveTask>
   </bpmn:process>
-  <bpmn:message id="check_out_inventoryitem" name="check_out_inventoryitem" />
+  <bpmn:message id="Check_out_inventoryitem_4" name="Check_out_inventoryitem_4" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1fk2m93">
       <bpmndi:BPMNShape id="Participant_1xx4y8n_di" bpmnElement="Participant_1xx4y8n" isHorizontal="true">
-        <dc:Bounds x="-270" y="190" width="920" height="420" />
+        <dc:Bounds x="-270" y="190" width="770" height="420" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_085nnlm_di" bpmnElement="Inventory-Manager" isHorizontal="true">
-        <dc:Bounds x="-240" y="190" width="890" height="420" />
+        <dc:Bounds x="-240" y="190" width="740" height="420" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_10hbojy_di" bpmnElement="Event_10hbojy">
@@ -108,18 +111,18 @@ activereservation["lendingStatus"]= "confirmed"</spiffworkflow:postScript>
       <bpmndi:BPMNShape id="Gateway_09nxqwp_di" bpmnElement="Gateway_09nxqwp" isMarkerVisible="true">
         <dc:Bounds x="-135" y="375" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_193x4os_di" bpmnElement="Activity_1uhn2xx">
-        <dc:Bounds x="-60" y="360" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1vdiy0m_di" bpmnElement="Event_1vdiy0m">
-        <dc:Bounds x="552" y="382" width="36" height="36" />
+        <dc:Bounds x="402" y="382" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="545" y="425" width="52" height="27" />
+          <dc:Bounds x="395" y="425" width="52" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_15ta2q8_di" bpmnElement="Activity_1ikmzjd">
-        <dc:Bounds x="380" y="360" width="100" height="80" />
+        <dc:Bounds x="230" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1g8aikp_di" bpmnElement="Activity_0fsjegl">
+        <dc:Bounds x="-60" y="360" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="DataInput-388263309-1DI" bpmnElement="reservation">
         <dc:Bounds x="-198" y="215" width="36" height="50" />
@@ -128,20 +131,14 @@ activereservation["lendingStatus"]= "confirmed"</spiffworkflow:postScript>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="DataOutput-731653660-1DI" bpmnElement="activereservation">
-        <dc:Bounds x="552" y="215" width="36" height="50" />
+        <dc:Bounds x="402" y="215" width="36" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="544" y="272" width="59" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_13inyxq_di" bpmnElement="Event_0fnvxyx">
-        <dc:Bounds x="-28" y="342" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="-105" y="323" width="90" height="14" />
+          <dc:Bounds x="394" y="272" width="59" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1xjtylu_di" bpmnElement="Flow_1xjtylu">
-        <di:waypoint x="480" y="400" />
-        <di:waypoint x="552" y="400" />
+        <di:waypoint x="330" y="400" />
+        <di:waypoint x="402" y="400" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1609vhl_di" bpmnElement="Flow_1609vhl">
         <di:waypoint x="-162" y="400" />
@@ -149,9 +146,9 @@ activereservation["lendingStatus"]= "confirmed"</spiffworkflow:postScript>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0c4a1lt_di" bpmnElement="Flow_0c4a1lt">
         <di:waypoint x="125" y="400" />
-        <di:waypoint x="380" y="400" />
+        <di:waypoint x="230" y="400" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="178" y="382" width="18" height="14" />
+          <dc:Bounds x="142" y="382" width="18" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_18wnt8b_di" bpmnElement="Flow_18wnt8b">
@@ -167,15 +164,17 @@ activereservation["lendingStatus"]= "confirmed"</spiffworkflow:postScript>
           <dc:Bounds x="82" y="446" width="15" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1q77og7_di" bpmnElement="Flow_1q77og7">
+      <bpmndi:BPMNEdge id="Flow_1vyu5v3_di" bpmnElement="Flow_1vyu5v3">
         <di:waypoint x="40" y="400" />
         <di:waypoint x="75" y="400" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0vnm2oy_di" bpmnElement="Flow_0vnm2oy">
-        <di:waypoint x="-10" y="342" />
-        <di:waypoint x="-10" y="310" />
-        <di:waypoint x="430" y="310" />
-        <di:waypoint x="430" y="360" />
+      <bpmndi:BPMNShape id="TextAnnotation_1k1ll1q_di" bpmnElement="TextAnnotation_1k1ll1q">
+        <dc:Bounds x="-40" y="220" width="100" height="98" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_05e9cmm_di" bpmnElement="Association_05e9cmm">
+        <di:waypoint x="-5" y="360" />
+        <di:waypoint x="0" y="318" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

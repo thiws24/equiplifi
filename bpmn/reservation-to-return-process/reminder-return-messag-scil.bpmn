@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
   <bpmn:collaboration id="Collaboration_08x4nmd">
-    <bpmn:participant id="Participant_0g921zh" name="rReturn Reminder Messag SCIL" processRef="Process_reminder_return_messag_scil_1gtk4sq" />
-    <bpmn:textAnnotation id="TextAnnotation_03pavn6">
-      <bpmn:text>Endpoint mit Hubertus besprechen</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:association id="Association_0hrwsun" associationDirection="None" sourceRef="Activity_07jjtsf" targetRef="TextAnnotation_03pavn6" />
-    <bpmn:correlationKey id="CorrelationKey_0uzlln7" name="MainCorrelationKey" />
+    <bpmn:participant id="Participant_0g921zh" name="Return-reminder Message SCIL" processRef="Process_reminder_return_message_scil_1gtk4sq" />
+    <bpmn:correlationKey id="CorrelationKey_1agllf2" name="MainCorrelationKey" />
   </bpmn:collaboration>
-  <bpmn:process id="Process_reminder_return_messag_scil_1gtk4sq" isExecutable="true">
-    <bpmn:startEvent id="Event_0awpxdz" name="Return Reminder received">
+  <bpmn:process id="Process_reminder_return_message_scil_1gtk4sq" isExecutable="true">
+    <bpmn:startEvent id="Event_0awpxdz" name="Return-reminder received">
       <bpmn:outgoing>Flow_02751sf</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_1966j7h" messageRef="reminder">
         <bpmn:extensionElements>
@@ -18,23 +14,27 @@
       </bpmn:messageEventDefinition>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_02751sf" sourceRef="Event_0awpxdz" targetRef="Activity_07jjtsf" />
-    <bpmn:serviceTask id="Activity_07jjtsf" name="send Return Reminder">
+    <bpmn:serviceTask id="Activity_07jjtsf" name="Send return- reminder">
       <bpmn:extensionElements>
         <spiffworkflow:serviceTaskOperator id="http/PostRequestV2">
           <spiffworkflow:parameters>
-            <spiffworkflow:parameter id="url" type="str" value="&#34;http://activemq:8161/api/message/send-reservation-confirmation?type=queue&#34;" />
+            <spiffworkflow:parameter id="url" type="str" value="&#34;http://activemq:8161/api/message/return-reminder?type=queue&#34;" />
             <spiffworkflow:parameter id="headers" type="any" value="{&#34;Content-Type&#34;:&#34;application/json&#34;, &#34;Authorization&#34;:&#34;Basic YWRtaW46d0JQZDJYWUpwQjhq&#34;}" />
-            <spiffworkflow:parameter id="data" type="any" value="activereservations" />
+            <spiffworkflow:parameter id="data" type="any" value="message" />
             <spiffworkflow:parameter id="basic_auth_username" type="str" />
             <spiffworkflow:parameter id="basic_auth_password" type="str" />
           </spiffworkflow:parameters>
         </spiffworkflow:serviceTaskOperator>
-        <spiffworkflow:preScript>
-#Adjust the object for the message service
-for reservation in activereservations:
-    reservation["reservationId"] = reservation.pop("id")
-    reservation.pop("categoryId")
-    reservation.pop("status")</spiffworkflow:preScript>
+        <spiffworkflow:preScript>message = [
+    {
+        "itemId": reservation["itemId"],
+        "startDate": reservation["startDate"],
+        "endDate": reservation["endDate"],
+        "userId": reservation["userId"],
+        "reservationId": reservation["id"]
+    }
+    for reservation in activereservations
+]</spiffworkflow:preScript>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_02751sf</bpmn:incoming>
       <bpmn:outgoing>Flow_1fgv2xl</bpmn:outgoing>
@@ -46,10 +46,10 @@ for reservation in activereservations:
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_1fgv2xl" sourceRef="Activity_07jjtsf" targetRef="Gateway_1n6tnsr" />
     <bpmn:sequenceFlow id="Flow_1d1bvsa" name="Yes" sourceRef="Gateway_1n6tnsr" targetRef="Event_025jr0k" />
-    <bpmn:endEvent id="Event_025jr0k" name="Return Reminder sent">
+    <bpmn:endEvent id="Event_025jr0k" name="Return-reminder sent">
       <bpmn:incoming>Flow_1d1bvsa</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:endEvent id="Event_1ee1htw" name="Return Reminder not sent">
+    <bpmn:endEvent id="Event_1ee1htw" name="Return-reminder not sent">
       <bpmn:incoming>Flow_086aosw</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_086aosw" name="No" sourceRef="Gateway_1n6tnsr" targetRef="Event_1ee1htw">
@@ -66,7 +66,7 @@ for reservation in activereservations:
       <bpmndi:BPMNShape id="Event_0cbfznv_di" bpmnElement="Event_0awpxdz">
         <dc:Bounds x="132" y="262" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="108" y="305" width="85" height="27" />
+          <dc:Bounds x="110" y="305" width="82" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_12ndtji_di" bpmnElement="Activity_07jjtsf">
@@ -79,13 +79,13 @@ for reservation in activereservations:
       <bpmndi:BPMNShape id="Event_025jr0k_di" bpmnElement="Event_025jr0k">
         <dc:Bounds x="502" y="212" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="478" y="255" width="85" height="27" />
+          <dc:Bounds x="480" y="255" width="82" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1ee1htw_di" bpmnElement="Event_1ee1htw">
         <dc:Bounds x="502" y="312" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="478" y="355" width="85" height="27" />
+          <dc:Bounds x="480" y="355" width="82" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_02751sf_di" bpmnElement="Flow_02751sf">
@@ -111,14 +111,6 @@ for reservation in activereservations:
         <bpmndi:BPMNLabel>
           <dc:Bounds x="408" y="315" width="15" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_03pavn6_di" bpmnElement="TextAnnotation_03pavn6">
-        <dc:Bounds x="340" y="350" width="100" height="55" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_0hrwsun_di" bpmnElement="Association_0hrwsun">
-        <di:waypoint x="319" y="315" />
-        <di:waypoint x="369" y="350" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
