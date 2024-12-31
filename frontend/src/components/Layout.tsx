@@ -136,7 +136,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
                     <Button
                         tooltip="QR-Code scannen"
                         onClick={() => setShowQrReader(true)}
-                        className="fixed bottom-5 right-5 bg-orange-500 text-white rounded-full p-4 shadow-lg hover:bg-orange-600"
+                        className="fixed bottom-5 right-5 bg-orange-500 text-white rounded-full w-[55px] h-[55px] p-4 shadow-lg hover:bg-orange-600"
                     >
                         <ScanQrCode />
                     </Button>
