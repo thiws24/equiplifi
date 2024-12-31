@@ -25,7 +25,9 @@ import { Matcher } from "react-day-picker"
 import { fetchImage } from "../services/fetchImage"
 
 function LendCategory() {
-    const [itemReservations, setItemReservations] = useState<AvailabilityItemProps[]>([])
+    const [itemReservations, setItemReservations] = useState<
+        AvailabilityItemProps[]
+    >([])
     const [categoryItem, setCategoryItem] = useState<CategoryProps>()
 
     const [occurrences, setOccurrences] = useState<_.Dictionary<number>>()
@@ -45,7 +47,7 @@ function LendCategory() {
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
-                    },
+                    }
                 }
             )
             if (response.ok) {
@@ -62,7 +64,8 @@ function LendCategory() {
             }
         } catch (e) {
             CustomToasts.error({
-                message: "Es ist etwas schiefgelaufen. Versuchen Sie es später erneut."
+                message:
+                    "Es ist etwas schiefgelaufen. Versuchen Sie es später erneut."
             })
         }
     }
@@ -99,7 +102,7 @@ function LendCategory() {
             if (response.ok) {
                 const data: AvailabilityItemProps[] = await response.json()
                 setItemReservations(data)
-                const getDaysArray = function(
+                const getDaysArray = function (
                     start: string | Date,
                     end: string | Date
                 ) {
@@ -109,7 +112,7 @@ function LendCategory() {
                         dt <= new Date(end);
                         dt.setDate(dt.getDate() + 1)
                     ) {
-                        arr.push((new Date(dt)))
+                        arr.push(new Date(dt))
                     }
                     return arr
                 }
@@ -131,7 +134,12 @@ function LendCategory() {
                     }
                 )
                 setOccurrences(_.countBy(allDays))
-            } else if (response.status !== 404 && !toast.isActive("Die Verfügbarkeiten konnten nicht geladen werden")) {
+            } else if (
+                response.status !== 404 &&
+                !toast.isActive(
+                    "Die Verfügbarkeiten konnten nicht geladen werden"
+                )
+            ) {
                 CustomToasts.error({
                     message: "Die Verfügbarkeiten konnten nicht geladen werden"
                 })
@@ -146,10 +154,12 @@ function LendCategory() {
 
     // Unavailability of end date is calculated depending on chosen start date
     const updateEndDateUnavailability = () => {
-        const selectedStartDate = new Date(form.getValues('startDate').getTime())
+        const selectedStartDate = new Date(
+            form.getValues("startDate").getTime()
+        )
 
         let possibleEndDate: Matcher = new Date()
-        possibleEndDate.setDate(possibleEndDate.getDate()+365)
+        possibleEndDate.setDate(possibleEndDate.getDate() + 365)
 
         unavailableDates.forEach((d) => {
             const date = d as Date
@@ -158,12 +168,11 @@ function LendCategory() {
             }
         })
 
-
-        selectedStartDate.setDate(form.getValues('startDate').getDate() + 1)
+        selectedStartDate.setDate(form.getValues("startDate").getDate() + 1)
         possibleEndDate.setDate(possibleEndDate.getDate() - 1)
 
         // @ts-ignore
-        if ((possibleEndDate - selectedStartDate) === 0) {
+        if (possibleEndDate - selectedStartDate === 0) {
             setEndDateUnavailability(true)
         } else {
             setEndDateUnavailability({
@@ -171,13 +180,17 @@ function LendCategory() {
                 after: possibleEndDate
             })
         }
-
     }
 
     const getUnavailableDatesByOccurrences = () => {
         const quantity = form.getValues("quantity")
-        let filterByQuantityLogic = _.pickBy(occurrences, (v, k) => v > ((categoryItem?.items.length ?? quantity) - quantity))
-        setUnavailableDates(Object.keys(filterByQuantityLogic).map((el) => new Date(el)))
+        let filterByQuantityLogic = _.pickBy(
+            occurrences,
+            (v, k) => v > (categoryItem?.items.length ?? quantity) - quantity
+        )
+        setUnavailableDates(
+            Object.keys(filterByQuantityLogic).map((el) => new Date(el))
+        )
     }
 
     useEffect(() => {
@@ -190,21 +203,15 @@ function LendCategory() {
     }, [form.getValues("quantity"), occurrences])
 
     useEffect(() => {
-        if (form.getValues('startDate')) {
+        if (form.getValues("startDate")) {
             updateEndDateUnavailability()
         }
-    }, [form.getValues('startDate')])
+    }, [form.getValues("startDate")])
 
     const onSubmit = async (values: FormschemaType) => {
         const { startDate, endDate, quantity } = values
-        const formattedStartDate = format(
-            startDate,
-            "yyyy-MM-dd'T'HH:mm:ss'Z'"
-        )
-        const formattedEndDate = format(
-            endDate,
-            "yyyy-MM-dd'T'HH:mm:ss'Z'"
-        )
+        const formattedStartDate = format(startDate, "yyyy-MM-dd'T'HH:mm:ss'Z'")
+        const formattedEndDate = format(endDate, "yyyy-MM-dd'T'HH:mm:ss'Z'")
         const jsonArray: Array<{
             startDate: string
             endDate: string
@@ -227,11 +234,22 @@ function LendCategory() {
                     categoryId: categoryItem!.id
                 })
             } else {
-                for (let j = 0; j < itemReservations[i].reservations.length; j++) {
-                    const resStart = new Date(itemReservations[i].reservations[j].startDate)
-                    const resEnd = new Date(itemReservations[i].reservations[j].endDate)
+                for (
+                    let j = 0;
+                    j < itemReservations[i].reservations.length;
+                    j++
+                ) {
+                    const resStart = new Date(
+                        itemReservations[i].reservations[j].startDate
+                    )
+                    const resEnd = new Date(
+                        itemReservations[i].reservations[j].endDate
+                    )
                     // Stop if unavailability of item found
-                    if ((resStart <= startDate && resEnd >= startDate) || (resStart <= endDate && resEnd >= endDate)) {
+                    if (
+                        (resStart <= startDate && resEnd >= startDate) ||
+                        (resStart <= endDate && resEnd >= endDate)
+                    ) {
                         break
                     }
 
@@ -263,7 +281,8 @@ function LendCategory() {
 
             if (response.ok) {
                 CustomToasts.success({
-                    message: "Reservierung erfolgreich! Sie werden nun weitergeleitet.",
+                    message:
+                        "Reservierung erfolgreich! Sie werden nun weitergeleitet.",
                     onClose: () => window.open(`/reservations`, "_self")
                 })
             } else {
@@ -293,7 +312,8 @@ function LendCategory() {
                         ) {
                             errorMessage = `Zu diesem Zeitpunkt sind keine ${form.getValues("quantity")} Gegenstände verfügbar.`
                         } else {
-                            errorMessage = "Unerwarteter Fehler. Bitte versuchen Sie es erneut."
+                            errorMessage =
+                                "Unerwarteter Fehler. Bitte versuchen Sie es erneut."
                         }
                         break
                 }
@@ -355,18 +375,31 @@ function LendCategory() {
                                                                 <label className="text-sm pb-2">
                                                                     Anzahl
                                                                 </label>
-                                                                <FormControl
-                                                                    className="text-left font-sans w-[80px] pl-3">
+                                                                <FormControl className="text-left font-sans w-[80px] pl-3">
                                                                     <Input
                                                                         type="number"
                                                                         {...field}
-                                                                        onChange={(e) => {
-                                                                            field.onChange(e.target.valueAsNumber)
-                                                                            form.resetField('startDate')
-                                                                            form.resetField('endDate')
+                                                                        onChange={(
+                                                                            e
+                                                                        ) => {
+                                                                            field.onChange(
+                                                                                e
+                                                                                    .target
+                                                                                    .valueAsNumber
+                                                                            )
+                                                                            form.resetField(
+                                                                                "startDate"
+                                                                            )
+                                                                            form.resetField(
+                                                                                "endDate"
+                                                                            )
                                                                         }}
                                                                         min={1}
-                                                                        max={categoryItem?.items.length}
+                                                                        max={
+                                                                            categoryItem
+                                                                                ?.items
+                                                                                .length
+                                                                        }
                                                                     />
                                                                 </FormControl>
                                                                 <FormMessage />
@@ -387,11 +420,15 @@ function LendCategory() {
                                                         <DatePickerField
                                                             label="Ausleihdatum"
                                                             field={field}
-                                                            disabledDays={([
-                                                                {
-                                                                    before: new Date()
-                                                                }
-                                                            ] as Matcher[]).concat(unavailableDates)}
+                                                            disabledDays={(
+                                                                [
+                                                                    {
+                                                                        before: new Date()
+                                                                    }
+                                                                ] as Matcher[]
+                                                            ).concat(
+                                                                unavailableDates
+                                                            )}
                                                             defaultMonth={
                                                                 field.value ||
                                                                 (() => {
@@ -399,13 +436,15 @@ function LendCategory() {
                                                                         new Date()
                                                                     tomorrow.setDate(
                                                                         tomorrow.getDate() +
-                                                                        1
+                                                                            1
                                                                     )
                                                                     return tomorrow
                                                                 })()
                                                             }
                                                             onDayClick={() => {
-                                                                form.resetField('endDate')
+                                                                form.resetField(
+                                                                    "endDate"
+                                                                )
                                                             }}
                                                         />
                                                     )}
@@ -414,20 +453,29 @@ function LendCategory() {
                                                     control={form.control}
                                                     name="endDate"
                                                     render={({ field }) => {
-                                                        const startDate = form.getValues("startDate")
+                                                        const startDate =
+                                                            form.getValues(
+                                                                "startDate"
+                                                            )
                                                         return (
                                                             <DatePickerField
                                                                 label="Abgabedatum"
                                                                 field={field}
-                                                                disabledDays={endDateUnavailability}
+                                                                disabledDays={
+                                                                    endDateUnavailability
+                                                                }
                                                                 defaultMonth={
                                                                     form.getValues(
                                                                         "endDate"
                                                                     ) ||
                                                                     startDate ||
                                                                     (() => {
-                                                                        const tomorrow = new Date()
-                                                                        tomorrow.setDate(tomorrow.getDate() + 1)
+                                                                        const tomorrow =
+                                                                            new Date()
+                                                                        tomorrow.setDate(
+                                                                            tomorrow.getDate() +
+                                                                                1
+                                                                        )
                                                                         return tomorrow
                                                                     })()
                                                                 }
@@ -463,21 +511,25 @@ function LendCategory() {
                                                             "endDate"
                                                         ) ||
                                                         0 ===
-                                                        form.getValues(
-                                                            "quantity"
-                                                        ) ||
+                                                            form.getValues(
+                                                                "quantity"
+                                                            ) ||
                                                         form.getValues(
                                                             "endDate"
                                                         ) <
-                                                        form.getValues(
-                                                            "startDate"
-                                                        ) ||
-                                                        (categoryItem?.items.length || 9999) < form.getValues("quantity")
+                                                            form.getValues(
+                                                                "startDate"
+                                                            ) ||
+                                                        (categoryItem?.items
+                                                            .length || 9999) <
+                                                            form.getValues(
+                                                                "quantity"
+                                                            )
                                                         // TODO: Hier noch wenn anzahl > gesamtmenge
                                                     }
                                                     className="text-customBeige bg-customBlue mr-8 hover:bg-customRed hover:text-customBeige"
                                                 >
-                                                    Submit
+                                                    Absenden
                                                 </Button>
                                             </div>
                                         </form>

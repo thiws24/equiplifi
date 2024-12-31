@@ -15,7 +15,6 @@ import { DateInterval } from "react-day-picker"
 import { ItemDetailsProps } from "../interfaces/ItemDetailsProps"
 import { fetchImage } from "../services/fetchImage"
 
-
 function Lend() {
     const navigate = useNavigate()
     const [item, setItem] = useState<ItemDetailsProps>()
@@ -34,7 +33,7 @@ function Lend() {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`
-                    },
+                    }
                 }
             )
             if (response.ok) {
@@ -51,7 +50,8 @@ function Lend() {
             }
         } catch (e) {
             CustomToasts.error({
-                message: "Es ist etwas schiefgelaufen. Versuchen Sie es später erneut."
+                message:
+                    "Es ist etwas schiefgelaufen. Versuchen Sie es später erneut."
             })
             console.log(e)
         }
@@ -80,7 +80,7 @@ function Lend() {
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
-                    },
+                    }
                 }
             )
             if (response.ok) {
@@ -89,24 +89,29 @@ function Lend() {
                 data.reservations.forEach(
                     (reservation: { startDate: Date; endDate: Date }) => {
                         // Date Start yesterday
-                        const ds = new Date(reservation.startDate);
+                        const ds = new Date(reservation.startDate)
                         ds.setDate(ds.getDate() - 1)
 
                         // Day End + 1
-                        const de = new Date(reservation.endDate);
+                        const de = new Date(reservation.endDate)
                         de.setDate(de.getDate() + 1)
 
                         dateArray.push({
                             after: ds,
-                            before: de,
+                            before: de
                         })
                     }
                 )
 
                 setUnavailableDates(dateArray)
-            } else if (response.status !== 404 && !toast.isActive("Die Verfügbarkeiten konnten nicht geladen werden")) {
+            } else if (
+                response.status !== 404 &&
+                !toast.isActive(
+                    "Die Verfügbarkeiten konnten nicht geladen werden"
+                )
+            ) {
                 CustomToasts.error({
-                    message: "Die Verfügbarkeiten konnten nicht geladen werden",
+                    message: "Die Verfügbarkeiten konnten nicht geladen werden"
                 })
             }
         } catch (e) {
@@ -118,10 +123,12 @@ function Lend() {
     }
 
     const updateEndDateUnavailability = () => {
-        const selectedStartDate = new Date(form.getValues('startDate').getTime())
+        const selectedStartDate = new Date(
+            form.getValues("startDate").getTime()
+        )
 
         let possibleEndDate = new Date()
-        possibleEndDate.setDate(possibleEndDate.getDate()+365)
+        possibleEndDate.setDate(possibleEndDate.getDate() + 365)
 
         unavailableDates.forEach((d) => {
             if (d.after < possibleEndDate && d.after >= selectedStartDate) {
@@ -132,7 +139,7 @@ function Lend() {
         selectedStartDate.setDate(selectedStartDate.getDate() + 1)
 
         // @ts-ignore
-        if ((possibleEndDate - form.getValues('startDate')) === 0) {
+        if (possibleEndDate - form.getValues("startDate") === 0) {
             setEndDateUnavailability(true)
         } else {
             setEndDateUnavailability({
@@ -140,7 +147,6 @@ function Lend() {
                 after: possibleEndDate
             })
         }
-
     }
 
     useEffect(() => {
@@ -149,10 +155,10 @@ function Lend() {
     }, [])
 
     useEffect(() => {
-       if (form.getValues('startDate')) {
-           updateEndDateUnavailability()
-       }
-    }, [form.getValues('startDate')])
+        if (form.getValues("startDate")) {
+            updateEndDateUnavailability()
+        }
+    }, [form.getValues("startDate")])
 
     const onSubmit = async (values: FormschemaType) => {
         const formattedStartDate = format(
@@ -186,7 +192,8 @@ function Lend() {
             )
             if (response.ok) {
                 CustomToasts.success({
-                    message: "Reservierung erfolgreich! Sie werden nun weitergeleitet.",
+                    message:
+                        "Reservierung erfolgreich! Sie werden nun weitergeleitet.",
                     onClose: () => window.open(`/reservations`, "_self")
                 })
             } else {
@@ -216,7 +223,8 @@ function Lend() {
                         ) {
                             errorMessage = `${item?.name} zu diesem Zeitpunkt nicht verfügbar`
                         } else {
-                            errorMessage = "Unerwarteter Fehler. Bitte versuchen Sie es erneut."
+                            errorMessage =
+                                "Unerwarteter Fehler. Bitte versuchen Sie es erneut."
                         }
                         break
                 }
@@ -280,7 +288,9 @@ function Lend() {
                                                                 {
                                                                     before: new Date()
                                                                 }
-                                                            ].concat(unavailableDates)}
+                                                            ].concat(
+                                                                unavailableDates
+                                                            )}
                                                             defaultMonth={
                                                                 field.value ||
                                                                 (() => {
@@ -294,7 +304,9 @@ function Lend() {
                                                                 })()
                                                             }
                                                             onDayClick={() => {
-                                                                form.resetField('endDate')
+                                                                form.resetField(
+                                                                    "endDate"
+                                                                )
                                                             }}
                                                         />
                                                     )}
@@ -303,20 +315,29 @@ function Lend() {
                                                     control={form.control}
                                                     name="endDate"
                                                     render={({ field }) => {
-                                                        const startDate = form.getValues("startDate")
+                                                        const startDate =
+                                                            form.getValues(
+                                                                "startDate"
+                                                            )
                                                         return (
                                                             <DatePickerField
                                                                 label="Abgabedatum"
                                                                 field={field}
-                                                                disabledDays={endDateUnavailability}
+                                                                disabledDays={
+                                                                    endDateUnavailability
+                                                                }
                                                                 defaultMonth={
                                                                     form.getValues(
                                                                         "endDate"
                                                                     ) ||
                                                                     startDate ||
                                                                     (() => {
-                                                                        const tomorrow = new Date()
-                                                                        tomorrow.setDate(tomorrow.getDate() + 1)
+                                                                        const tomorrow =
+                                                                            new Date()
+                                                                        tomorrow.setDate(
+                                                                            tomorrow.getDate() +
+                                                                                1
+                                                                        )
                                                                         return tomorrow
                                                                     })()
                                                                 }
@@ -344,15 +365,15 @@ function Lend() {
                                                     type="submit"
                                                     disabled={
                                                         !form.getValues(
-                                                                "startDate"
-                                                            ) ||
+                                                            "startDate"
+                                                        ) ||
                                                         !form.getValues(
-                                                                "endDate"
-                                                            )
+                                                            "endDate"
+                                                        )
                                                     }
                                                     className="text-customBeige bg-customBlue mr-8 hover:bg-customRed hover:text-customBeige"
                                                 >
-                                                    Submit
+                                                    Absenden
                                                 </Button>
                                             </div>
                                         </form>
