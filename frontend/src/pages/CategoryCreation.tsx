@@ -183,7 +183,7 @@ function CategoryCreation() {
                                     field: { value, onChange, ...field }
                                 }) => (
                                     <FormItem>
-                                        <FormLabel>Bild</FormLabel>
+                                        <FormLabel>Foto</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="file"

@@ -288,7 +288,7 @@ function CategoryDetails() {
                                     <img
                                         src={currentImage}
                                         alt={category?.description}
-                                        className="w-full h-80 object-contain"
+                                        className="w-full h-80 object-contain object-left"
                                     />
                                 )}
                                 {isEditing ? (
@@ -303,6 +303,7 @@ function CategoryDetails() {
                                                     image: e.target.files[0]
                                                 })
                                         }}
+                                        className="mt-4"
                                     />
                                 ) : null}
                             </KeyValueRow>
