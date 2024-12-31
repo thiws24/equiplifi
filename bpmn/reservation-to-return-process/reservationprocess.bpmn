@@ -2,7 +2,11 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
   <bpmn:collaboration id="Collaboration_18hgrt9">
     <bpmn:participant id="Participant_02v7qtl" name="Reservationprocess" processRef="Process_reservation_lz0tjs5" />
-    <bpmn:correlationKey id="CorrelationKey_11edq64" name="MainCorrelationKey" />
+    <bpmn:participant id="Participant_19ma5dp" name="Member" />
+    <bpmn:participant id="Participant_04fevw5" name="InventoryManager" />
+    <bpmn:messageFlow id="Flow_1o8fvmv" name="unsuccessful-reservation-notification" sourceRef="Activity_0ft83xr" targetRef="Participant_19ma5dp" />
+    <bpmn:messageFlow id="Flow_14enlj1" name="unsuccessful-reservation-notification" sourceRef="Activity_0ft83xr" targetRef="Participant_04fevw5" />
+    <bpmn:correlationKey id="CorrelationKey_1pigs2o" name="MainCorrelationKey" />
   </bpmn:collaboration>
   <bpmn:process id="Process_reservation_lz0tjs5" isExecutable="true">
     <bpmn:ioSpecification>
@@ -18,22 +22,14 @@
     <bpmn:sequenceFlow id="Flow_17db3yp" sourceRef="StartEvent_1" targetRef="Activity_0rp26o1" />
     <bpmn:sequenceFlow id="Flow_0gmlxmd" sourceRef="Activity_0rp26o1" targetRef="Gateway_1vc0dml" />
     <bpmn:dataObjectReference id="DataObjectReference_0u8ozvv" />
-    <bpmn:sequenceFlow id="Flow_058bqqc" name="No" sourceRef="Gateway_1vc0dml" targetRef="Event_0vdxgjm">
+    <bpmn:sequenceFlow id="Flow_058bqqc" name="No" sourceRef="Gateway_1vc0dml" targetRef="Activity_0ft83xr">
       <bpmn:conditionExpression>http_status_reservation != 201</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_17db3yp</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:serviceTask id="Activity_0rp26o1" name="Check and create Reservation">
+    <bpmn:serviceTask id="Activity_0rp26o1" name="Check and create reservation">
       <bpmn:extensionElements>
-        <spiffworkflow:postScript>import json
-http_status_reservation = reservationresponse.get("http_status")
-reservationstatus = ""
-
-reservation = reservationresponse.get("body")
-
-#Temporary fix until Reservation service returns not null for itemID
-#reservation["itemId"] = reservationrequest["itemId"]</spiffworkflow:postScript>
         <spiffworkflow:instructionsForEndUser />
         <spiffworkflow:serviceTaskOperator id="http/PostRequestV2" resultVariable="reservationresponse">
           <spiffworkflow:parameters>
@@ -44,10 +40,9 @@ reservation = reservationresponse.get("body")
             <spiffworkflow:parameter id="basic_auth_password" type="str" />
           </spiffworkflow:parameters>
         </spiffworkflow:serviceTaskOperator>
-        <spiffworkflow:preScript>#TemporaryFix due to bugs in Reservation Serivce
-
-#reservationrequest["reservationStatus"] = None
-#reservationrequest.pop("userId")</spiffworkflow:preScript>
+        <spiffworkflow:postScript>import json
+http_status_reservation = reservationresponse.get("http_status")
+reservationstatus = ""</spiffworkflow:postScript>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_17db3yp</bpmn:incoming>
       <bpmn:outgoing>Flow_0gmlxmd</bpmn:outgoing>
@@ -55,25 +50,37 @@ reservation = reservationresponse.get("body")
         <bpmn:inputSet />
       </bpmn:ioSpecification>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_19mx8y0" name="Yes" sourceRef="Gateway_1vc0dml" targetRef="EndEvent_1">
+    <bpmn:sequenceFlow id="Flow_19mx8y0" name="Yes" sourceRef="Gateway_1vc0dml" targetRef="Activity_0kx3v2x">
       <bpmn:conditionExpression>http_status_reservation == 201</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:exclusiveGateway id="Gateway_1vc0dml" name="Reservation Process successful?">
+    <bpmn:endEvent id="EndEvent_1" name="Reservation successful">
+      <bpmn:incoming>Flow_0zmft9s</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0zmft9s" sourceRef="Activity_0kx3v2x" targetRef="EndEvent_1" />
+    <bpmn:sequenceFlow id="Flow_1n51vlv" sourceRef="Activity_0ft83xr" targetRef="Event_0vdxgjm" />
+    <bpmn:endEvent id="Event_0vdxgjm" name="Reservation unsuccessful">
+      <bpmn:incoming>Flow_1n51vlv</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:scriptTask id="Activity_0kx3v2x" name="Add reservation to Reservation list">
+      <bpmn:incoming>Flow_19mx8y0</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zmft9s</bpmn:outgoing>
+      <bpmn:script>import json
+reservation = reservationresponse.get("body")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sendTask id="Activity_0ft83xr" name="Send notification about unsuccessful reservation">
+      <bpmn:incoming>Flow_058bqqc</bpmn:incoming>
+      <bpmn:outgoing>Flow_1n51vlv</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:exclusiveGateway id="Gateway_1vc0dml" name="Reservation successful?">
       <bpmn:incoming>Flow_0gmlxmd</bpmn:incoming>
       <bpmn:outgoing>Flow_19mx8y0</bpmn:outgoing>
       <bpmn:outgoing>Flow_058bqqc</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:endEvent id="EndEvent_1" name="Reservation successful">
-      <bpmn:incoming>Flow_19mx8y0</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:endEvent id="Event_0vdxgjm" name="Reservation unsuccessful">
-      <bpmn:incoming>Flow_058bqqc</bpmn:incoming>
-    </bpmn:endEvent>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_18hgrt9">
       <bpmndi:BPMNShape id="Participant_02v7qtl_di" bpmnElement="Participant_02v7qtl" isHorizontal="true">
-        <dc:Bounds x="10" y="130" width="670" height="408" />
+        <dc:Bounds x="10" y="130" width="830" height="408" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
@@ -83,22 +90,30 @@ reservation = reservationresponse.get("body")
         <dc:Bounds x="240" y="310" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1vc0dml_di" bpmnElement="Gateway_1vc0dml" isMarkerVisible="true">
-        <dc:Bounds x="445" y="325" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="440" y="282" width="59" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_14za570_di" bpmnElement="EndEvent_1">
-        <dc:Bounds x="552" y="332" width="36" height="36" />
+        <dc:Bounds x="712" y="332" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="541" y="375" width="59" height="27" />
+          <dc:Bounds x="701" y="375" width="59" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0vdxgjm_di" bpmnElement="Event_0vdxgjm">
-        <dc:Bounds x="552" y="432" width="36" height="36" />
+        <dc:Bounds x="712" y="452" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="540" y="475" width="64" height="27" />
+          <dc:Bounds x="700" y="495" width="64" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0zcyxdo_di" bpmnElement="Activity_0kx3v2x">
+        <dc:Bounds x="570" y="310" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0eczuo1_di" bpmnElement="Activity_0ft83xr">
+        <dc:Bounds x="570" y="430" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1vc0dml_di" bpmnElement="Gateway_1vc0dml" isMarkerVisible="true">
+        <dc:Bounds x="365" y="325" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="360" y="282" width="59" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="DataInput-388263309-1DI" bpmnElement="reservationrequest">
@@ -108,9 +123,9 @@ reservation = reservationresponse.get("body")
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="DataOutput-731653660-1DI" bpmnElement="reservation">
-        <dc:Bounds x="602" y="155" width="36" height="50" />
+        <dc:Bounds x="762" y="155" width="36" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="593" y="212" width="59" height="14" />
+          <dc:Bounds x="753" y="212" width="59" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_17db3yp_di" bpmnElement="Flow_17db3yp">
@@ -119,21 +134,51 @@ reservation = reservationresponse.get("body")
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0gmlxmd_di" bpmnElement="Flow_0gmlxmd">
         <di:waypoint x="340" y="350" />
-        <di:waypoint x="445" y="350" />
+        <di:waypoint x="365" y="350" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_058bqqc_di" bpmnElement="Flow_058bqqc">
-        <di:waypoint x="470" y="375" />
-        <di:waypoint x="470" y="450" />
-        <di:waypoint x="552" y="450" />
+        <di:waypoint x="390" y="375" />
+        <di:waypoint x="390" y="470" />
+        <di:waypoint x="570" y="470" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="511" y="427" width="15" height="14" />
+          <dc:Bounds x="417" y="453" width="15" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_19mx8y0_di" bpmnElement="Flow_19mx8y0">
-        <di:waypoint x="495" y="350" />
-        <di:waypoint x="552" y="350" />
+        <di:waypoint x="415" y="350" />
+        <di:waypoint x="570" y="350" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="515" y="332" width="18" height="14" />
+          <dc:Bounds x="425" y="327" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zmft9s_di" bpmnElement="Flow_0zmft9s">
+        <di:waypoint x="670" y="350" />
+        <di:waypoint x="712" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1n51vlv_di" bpmnElement="Flow_1n51vlv">
+        <di:waypoint x="670" y="470" />
+        <di:waypoint x="712" y="470" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_0b38lz4_di" bpmnElement="Participant_19ma5dp" isHorizontal="true">
+        <dc:Bounds x="10" y="670" width="830" height="60" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1y2uy45" bpmnElement="Participant_04fevw5" isHorizontal="true">
+        <dc:Bounds x="10" y="760" width="830" height="60" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1o8fvmv_di" bpmnElement="Flow_1o8fvmv">
+        <di:waypoint x="650" y="510" />
+        <di:waypoint x="650" y="670" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="666" y="587" width="68" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14enlj1_di" bpmnElement="Flow_14enlj1">
+        <di:waypoint x="590" y="510" />
+        <di:waypoint x="590" y="760" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="516" y="587" width="68" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

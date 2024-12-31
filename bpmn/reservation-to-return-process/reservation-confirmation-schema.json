@@ -9,6 +9,7 @@
     "reservation_confirmation": {
       "type": "string",
       "title": "Confirmation",
+      "enum": ["confirmed", "not confirmed"],
       "default": "confirmed"
     }
   }

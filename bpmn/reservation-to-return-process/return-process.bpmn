@@ -2,25 +2,16 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
   <bpmn:collaboration id="Collaboration_163032b">
     <bpmn:participant id="Participant_1jwbijs" name="Return process" processRef="Process_return_process_xydodk3" />
-    <bpmn:textAnnotation id="TextAnnotation_08dwimb">
-      <bpmn:text>Status: OK</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_00gl9yk">
-      <bpmn:text>Status: BROKEN</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_11qih5o">
-      <bpmn:text>Currently not implemented in frontend</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:association id="Association_0xtfl53" associationDirection="None" sourceRef="Activity_0eb35c2" targetRef="TextAnnotation_11qih5o" />
-    <bpmn:association id="Association_0ctuddm" associationDirection="None" sourceRef="Activity_0sxsqek" targetRef="TextAnnotation_08dwimb" />
-    <bpmn:correlationKey id="CorrelationKey_1kd11vf" name="MainCorrelationKey" />
+    <bpmn:participant id="Participant_02iicni" name="Manage Damage process" />
+    <bpmn:messageFlow id="Flow_0uofie5" name="damaged-InventoryItem" sourceRef="Activity_0eb35c2" targetRef="Participant_02iicni" />
+    <bpmn:correlationKey id="CorrelationKey_0yt1iu2" name="MainCorrelationKey" />
   </bpmn:collaboration>
   <bpmn:process id="Process_return_process_xydodk3" isExecutable="true">
     <bpmn:ioSpecification>
-      <bpmn:dataInput id="activereservation" name="Active Reservation" />
+      <bpmn:dataInput id="activereservationbug" name="Active Reservation" />
       <bpmn:dataOutput id="returnedreservation" name="Returned Reservation" />
       <bpmn:inputSet>
-        <bpmn:dataInputRefs>activereservation</bpmn:dataInputRefs>
+        <bpmn:dataInputRefs>activereservationbug</bpmn:dataInputRefs>
       </bpmn:inputSet>
       <bpmn:outputSet>
         <bpmn:dataOutputRefs>returnedreservation</bpmn:dataOutputRefs>
@@ -34,35 +25,23 @@
         <bpmn:flowNodeRef>Activity_18fa7mp</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0iuhw7s</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0c9vx7c</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_06mtkp2</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_0yrihhd</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_0kbk1bt</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_0802k87</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0sxsqek</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_1ywnznl</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0eb35c2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1dm4hfs</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0yrihhd</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:sequenceFlow id="Flow_03tcjtu" sourceRef="Event_02afkrd" targetRef="Gateway_0bcudvy" />
-    <bpmn:sequenceFlow id="Flow_1n8470h" name="Yes" sourceRef="Gateway_0c9vx7c" targetRef="Gateway_06mtkp2">
+    <bpmn:sequenceFlow id="Flow_1n8470h" name="Yes" sourceRef="Gateway_0c9vx7c" targetRef="Activity_0sxsqek">
       <bpmn:conditionExpression>check_in_inventoryitem["check_in_status"] == "OK"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0sbdq6f" name="No" sourceRef="Gateway_0c9vx7c" targetRef="Activity_0eb35c2">
       <bpmn:conditionExpression>check_in_inventoryitem["check_in_status"] != "OK"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1mfmfog" sourceRef="Activity_0eb35c2" targetRef="Gateway_0kbk1bt" />
-    <bpmn:sequenceFlow id="Flow_0v3pnb0" sourceRef="Gateway_06mtkp2" targetRef="Activity_0sxsqek" />
-    <bpmn:sequenceFlow id="Flow_13czzal" name="Yes" sourceRef="Gateway_0kbk1bt" targetRef="Gateway_06mtkp2">
-      <bpmn:conditionExpression>varRepairStatus == "repaired"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1y1740d" name="No" sourceRef="Gateway_0kbk1bt" targetRef="Activity_1ywnznl">
-      <bpmn:conditionExpression>varRepairStatus != "repaired"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:startEvent id="Event_02afkrd" name="Item has been returned">
+    <bpmn:startEvent id="Event_02afkrd" name="InventoryItem has been returned">
       <bpmn:outgoing>Flow_03tcjtu</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:sequenceFlow id="Flow_1ru85hw" sourceRef="Activity_0sxsqek" targetRef="Event_0yrihhd" />
-    <bpmn:sequenceFlow id="Flow_0jobzzx" sourceRef="Activity_1ywnznl" targetRef="Event_0802k87" />
+    <bpmn:sequenceFlow id="Flow_1ru85hw" sourceRef="Activity_0sxsqek" targetRef="Gateway_1dm4hfs" />
     <bpmn:exclusiveGateway id="Gateway_0bcudvy">
       <bpmn:incoming>Flow_03tcjtu</bpmn:incoming>
       <bpmn:incoming>Flow_1vcgk9p</bpmn:incoming>
@@ -70,7 +49,7 @@
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_0zz8gyy" sourceRef="Gateway_0bcudvy" targetRef="Activity_18fa7mp" />
     <bpmn:sequenceFlow id="Flow_0vaac8a" sourceRef="Activity_18fa7mp" targetRef="Gateway_0iuhw7s" />
-    <bpmn:receiveTask id="Activity_18fa7mp" name="Check-in InventoryItem" messageRef="check_in_inventoryitem">
+    <bpmn:receiveTask id="Activity_18fa7mp" name="Check-in InventoryItem" messageRef="check_in_inventoryitem_1">
       <bpmn:extensionElements>
         <spiffworkflow:messageVariable>check_in_inventoryitem</spiffworkflow:messageVariable>
       </bpmn:extensionElements>
@@ -83,94 +62,71 @@
       <bpmn:outgoing>Flow_04x3ddv</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_1vcgk9p" name="No" sourceRef="Gateway_0iuhw7s" targetRef="Gateway_0bcudvy">
-      <bpmn:conditionExpression>activereservation["id"] != check_in_inventoryitem["reservation_id"]</bpmn:conditionExpression>
+      <bpmn:conditionExpression>activereservationbug["id"] != check_in_inventoryitem["reservation_id"]</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_04x3ddv" sourceRef="Gateway_0iuhw7s" targetRef="Gateway_0c9vx7c">
-      <bpmn:conditionExpression>activereservation["id"] == check_in_inventoryitem["reservation_id"]</bpmn:conditionExpression>
+      <bpmn:conditionExpression>activereservationbug["id"] == check_in_inventoryitem["reservation_id"]</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:exclusiveGateway id="Gateway_0c9vx7c" name="Condition okay?">
       <bpmn:incoming>Flow_04x3ddv</bpmn:incoming>
       <bpmn:outgoing>Flow_1n8470h</bpmn:outgoing>
       <bpmn:outgoing>Flow_0sbdq6f</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="Gateway_06mtkp2">
-      <bpmn:incoming>Flow_1n8470h</bpmn:incoming>
-      <bpmn:incoming>Flow_13czzal</bpmn:incoming>
-      <bpmn:outgoing>Flow_0v3pnb0</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:endEvent id="Event_0yrihhd" name="Return has been successfull">
-      <bpmn:incoming>Flow_1ru85hw</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:exclusiveGateway id="Gateway_0kbk1bt" name="Damage repaired?">
-      <bpmn:incoming>Flow_1mfmfog</bpmn:incoming>
-      <bpmn:outgoing>Flow_13czzal</bpmn:outgoing>
-      <bpmn:outgoing>Flow_1y1740d</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:endEvent id="Event_0802k87" name="Return has been successful with broken InventoryItem">
-      <bpmn:incoming>Flow_0jobzzx</bpmn:incoming>
-    </bpmn:endEvent>
     <bpmn:serviceTask id="Activity_0sxsqek" name="Update InventoryItem">
       <bpmn:extensionElements>
         <spiffworkflow:serviceTaskOperator id="http/PutRequestV2" resultVariable="putResult">
           <spiffworkflow:parameters>
-            <spiffworkflow:parameter id="url" type="str" value="&#34;https://inventory.equipli.de/categories/&#34;+str(reservation[&#34;categoryId&#34;])+&#34;/items/&#34;+str(activereservation[&#34;itemId&#34;])" />
+            <spiffworkflow:parameter id="url" type="str" value="&#34;https://inventory.equipli.de/categories/&#34;+str(activereservationbug[&#34;categoryId&#34;])+&#34;/items/&#34;+str(activereservationbug[&#34;itemId&#34;])" />
             <spiffworkflow:parameter id="headers" type="any" value="{&#34;Accept&#34;:&#34;application/json&#34;}" />
             <spiffworkflow:parameter id="data" type="any" value="{&#34;status&#34;: &#34;OK&#34;}" />
             <spiffworkflow:parameter id="basic_auth_username" type="str" />
             <spiffworkflow:parameter id="basic_auth_password" type="str" />
           </spiffworkflow:parameters>
         </spiffworkflow:serviceTaskOperator>
-        <spiffworkflow:postScript>returnedreservation = activereservation
+        <spiffworkflow:postScript>returnedreservation = activereservationbug
 returnedreservation["inventoryItemStatus"]= "OK"
 returnedreservation["lendingStatus"]= "returned"</spiffworkflow:postScript>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0v3pnb0</bpmn:incoming>
+      <bpmn:incoming>Flow_1n8470h</bpmn:incoming>
       <bpmn:outgoing>Flow_1ru85hw</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_1ywnznl" name="Update InventoryItem as Broken">
+    <bpmn:sendTask id="Activity_0eb35c2" name="Handle damaged InventoryItem" messageRef="inventory-item-damaged">
       <bpmn:extensionElements>
-        <spiffworkflow:serviceTaskOperator id="http/PutRequestV2" resultVariable="putResult">
-          <spiffworkflow:parameters>
-            <spiffworkflow:parameter id="url" type="str" value="&#34;https://inventory.equipli.de/categories/&#34;+str(reservation[&#34;categoryId&#34;])+&#34;/items/&#34;+str(activereservation[&#34;itemId&#34;])" />
-            <spiffworkflow:parameter id="headers" type="any" value="{&#34;Accept&#34;:&#34;application/json&#34;}" />
-            <spiffworkflow:parameter id="data" type="any" value="{&#34;status&#34;: &#34;BROKEN&#34;}" />
-            <spiffworkflow:parameter id="basic_auth_username" type="str" />
-            <spiffworkflow:parameter id="basic_auth_password" type="str" />
-          </spiffworkflow:parameters>
-        </spiffworkflow:serviceTaskOperator>
-        <spiffworkflow:postScript>returnedreservation = activereservation
+        <spiffworkflow:messagePayload>activereservationbug</spiffworkflow:messagePayload>
+        <spiffworkflow:postScript>returnedreservation = activereservationbug
 returnedreservation["inventoryItemStatus"]= "BROKEN"
 returnedreservation["lendingStatus"]= "returned"</spiffworkflow:postScript>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1y1740d</bpmn:incoming>
-      <bpmn:outgoing>Flow_0jobzzx</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:callActivity id="Activity_0eb35c2" name="Manage Damage" calledElement="Process_manage_damage_z24p3su">
-      <bpmn:extensionElements>
-        <spiffworkflow:postScript># Static value until this function is implemented in frontend
-
-varRepairStatus = "repaired"</spiffworkflow:postScript>
-      </bpmn:extensionElements>
       <bpmn:incoming>Flow_0sbdq6f</bpmn:incoming>
-      <bpmn:outgoing>Flow_1mfmfog</bpmn:outgoing>
-    </bpmn:callActivity>
-    <bpmn:association id="Association_1nh2rd1" associationDirection="None" sourceRef="Activity_1ywnznl" targetRef="TextAnnotation_00gl9yk" />
+      <bpmn:outgoing>Flow_0au1f1c</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:exclusiveGateway id="Gateway_1dm4hfs">
+      <bpmn:incoming>Flow_1ru85hw</bpmn:incoming>
+      <bpmn:incoming>Flow_0au1f1c</bpmn:incoming>
+      <bpmn:outgoing>Flow_1d0wudz</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1d0wudz" sourceRef="Gateway_1dm4hfs" targetRef="Event_0yrihhd" />
+    <bpmn:sequenceFlow id="Flow_0au1f1c" sourceRef="Activity_0eb35c2" targetRef="Gateway_1dm4hfs" />
+    <bpmn:endEvent id="Event_0yrihhd" name="Return successful">
+      <bpmn:incoming>Flow_1d0wudz</bpmn:incoming>
+    </bpmn:endEvent>
   </bpmn:process>
-  <bpmn:message id="check_in_inventoryitem" name="check_in_inventoryitem" />
+  <bpmn:message id="inventory-item-damaged" name="inventory-item-damaged" />
+  <bpmn:message id="check_in_inventoryitem_1" name="check_in_inventoryitem_1" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_163032b">
       <bpmndi:BPMNShape id="Participant_1jwbijs_di" bpmnElement="Participant_1jwbijs" isHorizontal="true">
-        <dc:Bounds x="20" y="-70" width="1380" height="480" />
+        <dc:Bounds x="20" y="-70" width="1230" height="480" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_16qdnax_di" bpmnElement="Lane_16qdnax" isHorizontal="true">
-        <dc:Bounds x="50" y="-70" width="1350" height="480" />
+        <dc:Bounds x="50" y="-70" width="1200" height="480" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1izrr1o_di" bpmnElement="Event_02afkrd">
         <dc:Bounds x="102" y="122" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="85" y="165" width="70" height="27" />
+          <dc:Bounds x="76" y="165" width="88" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0bcudvy_di" bpmnElement="Gateway_0bcudvy" isMarkerVisible="true">
@@ -192,48 +148,33 @@ varRepairStatus = "repaired"</spiffworkflow:postScript>
           <dc:Bounds x="590" y="91" width="80" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_06mtkp2_di" bpmnElement="Gateway_06mtkp2" isMarkerVisible="true">
-        <dc:Bounds x="905" y="115" width="50" height="50" />
+      <bpmndi:BPMNShape id="Activity_0xg1k3q_di" bpmnElement="Activity_0sxsqek">
+        <dc:Bounds x="750" y="100" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0h54bmt_di" bpmnElement="Activity_0eb35c2">
+        <dc:Bounds x="750" y="240" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1dm4hfs_di" bpmnElement="Gateway_1dm4hfs" isMarkerVisible="true">
+        <dc:Bounds x="985" y="115" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0yrihhd_di" bpmnElement="Event_0yrihhd">
-        <dc:Bounds x="1312" y="122" width="36" height="36" />
+        <dc:Bounds x="1162" y="122" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1289" y="165" width="82" height="27" />
+          <dc:Bounds x="1136" y="165" width="88" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0kbk1bt_di" bpmnElement="Gateway_0kbk1bt" isMarkerVisible="true">
-        <dc:Bounds x="905" y="255" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="907" y="312" width="47" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0802k87_di" bpmnElement="Event_0802k87">
-        <dc:Bounds x="1312" y="262" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1290" y="305" width="82" height="53" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0xg1k3q_di" bpmnElement="Activity_0sxsqek">
-        <dc:Bounds x="1050" y="100" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_11sus03_di" bpmnElement="Activity_1ywnznl">
-        <dc:Bounds x="1050" y="240" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1vsl1vy_di" bpmnElement="Activity_0eb35c2">
-        <dc:Bounds x="710" y="240" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="DataInput-388263309-1DI" bpmnElement="activereservation">
+      <bpmndi:BPMNShape id="DataInput-388263309-1DI" bpmnElement="activereservationbug">
         <dc:Bounds x="112" y="-35" width="36" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="102" y="22" width="59" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="DataOutput-731653660-1DI" bpmnElement="returnedreservation">
-        <dc:Bounds x="1272" y="-35" width="36" height="50" />
+        <dc:Bounds x="1122" y="-35" width="36" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1260" y="26" width="59" height="27" />
+          <dc:Bounds x="1110" y="26" width="59" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_03tcjtu_di" bpmnElement="Flow_03tcjtu">
@@ -242,48 +183,22 @@ varRepairStatus = "repaired"</spiffworkflow:postScript>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1n8470h_di" bpmnElement="Flow_1n8470h">
         <di:waypoint x="655" y="140" />
-        <di:waypoint x="905" y="140" />
+        <di:waypoint x="750" y="140" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="806" y="122" width="18" height="14" />
+          <dc:Bounds x="683" y="122" width="18" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0sbdq6f_di" bpmnElement="Flow_0sbdq6f">
         <di:waypoint x="630" y="165" />
         <di:waypoint x="630" y="280" />
-        <di:waypoint x="710" y="280" />
+        <di:waypoint x="750" y="280" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="638" y="220" width="15" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1mfmfog_di" bpmnElement="Flow_1mfmfog">
-        <di:waypoint x="810" y="280" />
-        <di:waypoint x="905" y="280" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0v3pnb0_di" bpmnElement="Flow_0v3pnb0">
-        <di:waypoint x="955" y="140" />
-        <di:waypoint x="1050" y="140" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_13czzal_di" bpmnElement="Flow_13czzal">
-        <di:waypoint x="930" y="255" />
-        <di:waypoint x="930" y="165" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="904" y="203" width="18" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1y1740d_di" bpmnElement="Flow_1y1740d">
-        <di:waypoint x="955" y="280" />
-        <di:waypoint x="1050" y="280" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1002" y="262" width="15" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1ru85hw_di" bpmnElement="Flow_1ru85hw">
-        <di:waypoint x="1150" y="140" />
-        <di:waypoint x="1312" y="140" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0jobzzx_di" bpmnElement="Flow_0jobzzx">
-        <di:waypoint x="1150" y="280" />
-        <di:waypoint x="1312" y="280" />
+        <di:waypoint x="850" y="140" />
+        <di:waypoint x="985" y="140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0zz8gyy_di" bpmnElement="Flow_0zz8gyy">
         <di:waypoint x="235" y="140" />
@@ -295,40 +210,36 @@ varRepairStatus = "repaired"</spiffworkflow:postScript>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1vcgk9p_di" bpmnElement="Flow_1vcgk9p">
         <di:waypoint x="480" y="165" />
-        <di:waypoint x="480" y="250" />
-        <di:waypoint x="210" y="250" />
+        <di:waypoint x="480" y="280" />
+        <di:waypoint x="210" y="280" />
         <di:waypoint x="210" y="165" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="462" y="193" width="15" height="14" />
+          <dc:Bounds x="462" y="205" width="15" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_04x3ddv_di" bpmnElement="Flow_04x3ddv">
         <di:waypoint x="505" y="140" />
         <di:waypoint x="605" y="140" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1nh2rd1_di" bpmnElement="Association_1nh2rd1">
-        <di:waypoint x="1149" y="314" />
-        <di:waypoint x="1186" y="340" />
+      <bpmndi:BPMNEdge id="Flow_1d0wudz_di" bpmnElement="Flow_1d0wudz">
+        <di:waypoint x="1035" y="140" />
+        <di:waypoint x="1162" y="140" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_08dwimb_di" bpmnElement="TextAnnotation_08dwimb">
-        <dc:Bounds x="970" y="60" width="100" height="26" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_00gl9yk_di" bpmnElement="TextAnnotation_00gl9yk">
-        <dc:Bounds x="1170" y="340" width="100" height="41" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_11qih5o_di" bpmnElement="TextAnnotation_11qih5o">
-        <dc:Bounds x="800" y="340" width="100.00000629661172" height="55.020632737276486" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_0xtfl53_di" bpmnElement="Association_0xtfl53">
-        <di:waypoint x="806" y="318" />
-        <di:waypoint x="832" y="340" />
+      <bpmndi:BPMNEdge id="Flow_0au1f1c_di" bpmnElement="Flow_0au1f1c">
+        <di:waypoint x="850" y="280" />
+        <di:waypoint x="1010" y="280" />
+        <di:waypoint x="1010" y="165" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0ctuddm_di" bpmnElement="Association_0ctuddm">
-        <di:waypoint x="1051" y="105" />
-        <di:waypoint x="1028" y="86" />
+      <bpmndi:BPMNShape id="Participant_0831im1_di" bpmnElement="Participant_02iicni" isHorizontal="true">
+        <dc:Bounds x="20" y="510" width="1230" height="60" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0uofie5_di" bpmnElement="Flow_0uofie5">
+        <di:waypoint x="800" y="320" />
+        <di:waypoint x="800" y="510" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="806" y="436" width="67" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

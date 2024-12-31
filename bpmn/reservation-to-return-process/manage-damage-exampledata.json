@@ -7,6 +7,10 @@
     {
       "value": "BROKEN",
       "label": "BROKEN"
+    },
+     {
+      "value": "LOST",
+      "label": "LOST"
     }
   ]
 }
