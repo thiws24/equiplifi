@@ -185,19 +185,44 @@ function CategoryCreation() {
                                     <FormItem>
                                         <FormLabel>Foto</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                type="file"
-                                                accept="image/png, image/jpeg, image/jpg"
-                                                value={(value as any)?.filename}
-                                                onChange={(event) => {
-                                                    if (event.target.files)
-                                                        onChange(
-                                                            event.target
-                                                                .files[0]
-                                                        )
-                                                }}
-                                                {...field}
-                                            />
+                                            <>
+                                                <div className="flex items-center gap-4">
+                                                    <Button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            document
+                                                                .getElementById(
+                                                                    "file-upload"
+                                                                )
+                                                                ?.click()
+                                                        }
+                                                        className="text-white bg-customOrange hover:bg-customRed"
+                                                    >
+                                                        Bild hochladen
+                                                    </Button>
+
+                                                    <div className="text-sm text-gray-500 border rounded px-3 py-2 w-full">
+                                                        {value
+                                                            ? (value as File)
+                                                                  .name
+                                                            : "Keine Datei ausgewählt"}
+                                                    </div>
+                                                </div>
+
+                                                <input
+                                                    type="file"
+                                                    id="file-upload"
+                                                    accept="image/png, image/jpeg, image/jpg"
+                                                    style={{ display: "none" }}
+                                                    onChange={(event) => {
+                                                        if (event.target.files)
+                                                            onChange(
+                                                                event.target
+                                                                    .files[0]
+                                                            )
+                                                    }}
+                                                />
+                                            </>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

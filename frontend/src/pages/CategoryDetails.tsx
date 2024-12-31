@@ -292,19 +292,49 @@ function CategoryDetails() {
                                     />
                                 )}
                                 {isEditing ? (
-                                    <Input
-                                        type="file"
-                                        accept="image/png, image/jpeg, image/jpg"
-                                        value={updatedData.image?.filename}
-                                        onChange={(e: any) => {
-                                            if (e.target.files)
-                                                setUpdatedData({
-                                                    ...updatedData,
-                                                    image: e.target.files[0]
-                                                })
-                                        }}
-                                        className="mt-4"
-                                    />
+                                    <>
+                                        <div className="flex items-center gap-4 mt-4">
+                                            {/* Button zum Öffnen des File-Browsers */}
+                                            <Button
+                                                type="button"
+                                                onClick={() =>
+                                                    document
+                                                        .getElementById(
+                                                            "file-upload"
+                                                        )
+                                                        ?.click()
+                                                }
+                                                className="text-white bg-customOrange hover:bg-customRed"
+                                            >
+                                                Bild hochladen
+                                            </Button>
+
+                                            {/* Textfeld zur Anzeige des Dateinamens */}
+                                            <div className="text-sm text-gray-500 border rounded px-3 py-2 w-full">
+                                                {updatedData.image
+                                                    ? updatedData.image.name
+                                                    : "Keine Datei ausgewählt"}
+                                            </div>
+                                        </div>
+
+                                        {/* Unsichtbares Input-Feld */}
+                                        <input
+                                            type="file"
+                                            id="file-upload"
+                                            accept="image/png, image/jpeg, image/jpg"
+                                            style={{ display: "none" }}
+                                            onChange={(
+                                                e: React.ChangeEvent<HTMLInputElement>
+                                            ) => {
+                                                if (e.target.files?.[0]) {
+                                                    setUpdatedData({
+                                                        ...updatedData,
+                                                        image: e.target.files[0]
+                                                    })
+                                                }
+                                            }}
+                                        />
+                                    </>
                                 ) : null}
                             </KeyValueRow>
                         </dl>
