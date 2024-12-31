@@ -4,7 +4,11 @@ import de.equipli.inventory.jpa.Category;
 import de.equipli.inventory.jpa.CategoryRepository;
 import de.equipli.inventory.jpa.InventoryItem;
 import de.equipli.inventory.jpa.InventoryRepository;
-import de.equipli.inventory.rest.dto.CreateInventoryItemRequest;
+import io.minio.GetObjectArgs;
+import io.minio.GetObjectResponse;
+import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
+import java.io.InputStream;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
@@ -15,10 +19,12 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.jboss.resteasy.reactive.RestForm;
 
 @Path("/categories/{categoryId}/items")
 public class InventoryItemResource {
 
+    MinioClient minioClient;
     private final CategoryRepository categoryRepository;
     private final InventoryRepository inventoryRepository;
 
@@ -33,7 +39,7 @@ public class InventoryItemResource {
     @Transactional
     @Operation(summary = "Create a new InventoryItem", description = "Creates a new InventoryItem and persists it to the database.")
     @APIResponses(value = {
-            @APIResponse(responseCode = "201", description = "Inventory item created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateInventoryItemRequest.class))),
+            @APIResponse(responseCode = "201", description = "Inventory item created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InventoryItem.class))),
             @APIResponse(responseCode = "404", description = "Category not found", content = @Content(mediaType = "application/json"))
     })
     public Response createInventoryItem(@PathParam("categoryId") Long categoryId, InventoryItem item) {
@@ -68,6 +74,73 @@ public class InventoryItemResource {
     }
 
     @GET
+    @Produces("image/png")
+    @Path("/{id}/image")
+    public Response getInventoryItemImage(@PathParam("categoryId") Long categoryId, @PathParam("id") Long itemId) {
+        try {
+            if (categoryId <= 0 || itemId <= 0) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("Invalid category or item ID.")
+                        .build();
+            }
+
+            String objectName = categoryId + "/" + itemId;
+            GetObjectResponse object = minioClient.getObject(
+                    GetObjectArgs.builder()
+                            .bucket("category-pictures")
+                            .object(objectName)
+                            .build()
+            );
+
+            return Response.ok(object.readAllBytes())
+                    .type("image/png")
+                    .build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Error retrieving image: " + e.getMessage())
+                    .build();
+        }
+    }
+
+
+    @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Path("/{id}/upload")
+    public Response uploadInventoryItemImage(
+            @PathParam("categoryId") Long categoryId,
+            @PathParam("id") Long itemId,
+            @RestForm("file") InputStream fileInputStream) {
+        try {
+            if (categoryId <= 0 || itemId <= 0) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("Invalid category or item ID.")
+                        .build();
+            }
+
+            String bucketName = "category-pictures";
+            String objectName = categoryId + "/" + itemId;
+
+            minioClient.putObject(
+                    PutObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .stream(fileInputStream, fileInputStream.available(), -1)
+                            .contentType("image/png")
+                            .build()
+            );
+
+            return Response.status(Response.Status.CREATED)
+                    .entity("Image uploaded successfully.")
+                    .build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Error uploading image: " + e.getMessage())
+                    .build();
+        }
+    }
+
+
+    @GET
     @Path("/{id}")
     @Operation(summary = "Get an InventoryItem by ID", description = "Returns an InventoryItem by its ID.")
     @APIResponses(value = {
@@ -97,7 +170,7 @@ public class InventoryItemResource {
     @Transactional
     @Operation(summary = "Update an InventoryItem by ID", description = "Updates an InventoryItem by its ID.")
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Inventory item updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateInventoryItemRequest.class))),
+            @APIResponse(responseCode = "200", description = "Inventory item updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InventoryItem.class))),
             @APIResponse(responseCode = "404", description = "Category not found", content = @Content(mediaType = "application/json")),
             @APIResponse(responseCode = "404", description = "Item not found", content = @Content(mediaType = "application/json"))
     })
