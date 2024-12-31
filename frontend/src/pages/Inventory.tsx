@@ -22,6 +22,7 @@ function Inventory() {
         {
             field: "name",
             headerName: "Inventargegenstand",
+            minWidth: 250,
             cellRenderer: (params: any) => {
                 const [image, setImage] = React.useState<string | null>(null)
                 const [loading, setLoading] = React.useState(true)
@@ -59,8 +60,7 @@ function Inventory() {
                     </div>
                 )
             },
-            flex: 1,
-            minWidth: 100
+            flex: 1
         },
         {
             field: "description",
