@@ -53,7 +53,6 @@ function Inventory() {
                                 className="rounded-lg object-cover"
                                 style={{ height: 60, width: 60 }}
                                 src={image || "/image-placeholder.jpg"}
-                                alt={params.data.name}
                             />
                         )}
                         <div className="ml-4 font-bold">{params.data.name}</div>
