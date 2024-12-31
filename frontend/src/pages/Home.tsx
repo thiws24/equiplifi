@@ -132,18 +132,21 @@ function Home() {
                                             navigate("/reservations")
                                         }
                                     >
-                                        <Info className="mr-3 text-customOrange h-5 w-5" />
+                                        <Info className="mr-3 text-customOrange h-5 w-5 shrink-0" />
                                         <p>
                                             <span className="font-bold">
                                                 {confirmTasks.length}{" "}
-                                                {confirmTasks.length > 1
-                                                    ? "Reservierungsanfragen"
-                                                    : "Reservierungsanfrage"}
+                                                <span
+                                                    dangerouslySetInnerHTML={{
+                                                        __html:
+                                                            confirmTasks.length >
+                                                            1
+                                                                ? "Reservierungs&shy;anfragen"
+                                                                : "Reservierungs&shy;anfrage"
+                                                    }}
+                                                />
                                             </span>{" "}
-                                            {confirmTasks.length > 1
-                                                ? "warten"
-                                                : "wartet"}{" "}
-                                            auf Überprüfung
+                                            ausstehend
                                         </p>
                                         <button className="ml-auto flex items-center text-customOrange">
                                             <span className="mr-2">
@@ -161,7 +164,7 @@ function Home() {
                                             navigate("/reservations")
                                         }
                                     >
-                                        <Info className="mr-3 text-customOrange h-5 w-5" />
+                                        <Info className="mr-3 text-customOrange h-5 w-5 shrink-0" />
                                         <p>
                                             <span className="font-bold">
                                                 {returnTasks.length}{" "}
@@ -169,10 +172,7 @@ function Home() {
                                                     ? "Rückgaben"
                                                     : "Rückgabe"}
                                             </span>{" "}
-                                            {returnTasks.length > 1
-                                                ? "warten"
-                                                : "wartet"}{" "}
-                                            auf Bestätigung
+                                            ausstehend
                                         </p>
                                         <button className="ml-auto flex items-center text-customOrange">
                                             <span className="mr-2">
