@@ -98,7 +98,13 @@ function Inventory() {
                     <div className="mb-10">
                         <h1 className="text-3xl font-bold">Inventar</h1>
                         <p className="text-sm text-muted-foreground">
-                            {inventoryItems.length} Kategorien
+                            {loading ? (
+                                <Skeleton className="h-2 bg-gray-200 w-[250px] mt-2" />
+                            ) : (
+                                <span>
+                                    {inventoryItems.length} {inventoryItems.length === 1 ? "Inventargegenstand" : "Inventargegenstände"}
+                                </span>
+                            )}
                         </p>
                     </div>
 
