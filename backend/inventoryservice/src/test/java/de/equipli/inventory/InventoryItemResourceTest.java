@@ -5,6 +5,7 @@ import de.equipli.inventory.jpa.InventoryItem;
 import de.equipli.inventory.rest.dto.CreateCategoryRequest;
 import de.equipli.inventory.rest.dto.UpdateCategoryRequest;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +19,7 @@ import static org.hamcrest.CoreMatchers.is;
 class InventoryItemResourceTest {
 
     @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testAddCategory() {
         String name = "Test Category";
         String description = "This is a test category";
@@ -44,6 +46,7 @@ class InventoryItemResourceTest {
     }
 
     @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testGetCategories() {
         given()
                 .when()
@@ -53,6 +56,7 @@ class InventoryItemResourceTest {
     }
 
     @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testUpdateCategory() {
         CreateCategoryRequest request = new CreateCategoryRequest();
         request.setName("Test Category Update");
@@ -87,6 +91,7 @@ class InventoryItemResourceTest {
     }
 
     @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testDeleteCategory() {
         Category category = new Category();
         category.setName("Test Category Delete");
@@ -137,6 +142,7 @@ class InventoryItemResourceTest {
     }
 
     @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testAddInventoryItem() {
         Category category = new Category();
         category.setName("Test Category Add Item");
@@ -171,6 +177,7 @@ class InventoryItemResourceTest {
     }
 
     @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testGetInventoryItems() {
         Category category = new Category();
         category.setName("Test Category Get Items");
@@ -203,6 +210,7 @@ class InventoryItemResourceTest {
     }
 
     @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testUpdateInventoryItem() {
         Category category = new Category();
         category.setName("Test Category Update Item");
@@ -241,6 +249,7 @@ class InventoryItemResourceTest {
     }
 
     @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testDeleteInventoryItem() {
         Category category = new Category();
         category.setName("Test Category Delete Item");
