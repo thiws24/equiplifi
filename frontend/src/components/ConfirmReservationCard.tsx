@@ -175,7 +175,7 @@ export const ConfirmReservationCard: React.FC<Props> = ({
                 </CardHeader>
                 <CardContent className="p-0 text-sm">
                     <div className="flex flex-col md:flex-row justify-between mb-2">
-                        <div className="flex flex-col md:flex-row items-center space-x-0 md:space-x-6">
+                        <div className="flex flex-col md:flex-row items-start md:items-center space-x-0 md:space-x-6">
                             <div className="flex items-center justify-center self-center mb-4 md:mb-0">
                                 {loadingImage ? (
                                     <Skeleton className="w-24 h-24 rounded-full bg-gray-200" />
