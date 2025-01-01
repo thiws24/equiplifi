@@ -11,7 +11,7 @@ export async function fetchOpenTasksByTaskName(
 ): Promise<TaskProps[]> {
     try {
         const response = await fetch(
-            `${import.meta.env.VITE_SPIFF}/api/v1.0/tasks`,
+            `${import.meta.env.VITE_SPIFF}/api/v1.0/tasks/for-my-groups`,
             {
                 headers: {
                     "Content-Type": "application/json",

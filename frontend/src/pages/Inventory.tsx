@@ -75,7 +75,12 @@ function Inventory() {
     async function fetchInventoryItems() {
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories`
+                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                }
             )
             if (response.ok) {
                 const data = await response.json()
