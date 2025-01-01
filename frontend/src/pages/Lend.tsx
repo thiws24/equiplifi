@@ -179,15 +179,18 @@ function Lend() {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`
                     },
-                    body: JSON.stringify([
-                        {
-                            startDate: formattedStartDate,
-                            endDate: formattedEndDate,
-                            itemId: Number(id),
-                            userId: userInfo?.sub,
-                            categoryId: item?.categoryId
-                        }
-                    ])
+                    body: JSON.stringify({
+                        reservationrequests: [
+                            {
+                                startDate: formattedStartDate,
+                                endDate: formattedEndDate,
+                                itemId: Number(id),
+                                userId: userInfo?.sub,
+                                categoryId: item?.categoryId
+                            }
+                        ],
+                        authentication: `Bearer ${token}`
+                    })
                 }
             )
             if (response.ok) {

@@ -275,7 +275,10 @@ function LendCategory() {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`
                     },
-                    body: JSON.stringify(jsonArray)
+                    body: JSON.stringify({
+                        reservationrequests: jsonArray,
+                        authentication: `Bearer ${token}`
+                    })
                 }
             )
 
