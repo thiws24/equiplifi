@@ -47,6 +47,23 @@ export const ConfirmReservationCard: React.FC<Props> = ({
     const itemIds: number[] = map(data, "itemId")
     const [loading, setLoading] = React.useState(true)
     const [loadingImage, setLoadingImage] = React.useState(true)
+    const [image, setImage] = React.useState<string | null>(null)
+
+    const categoryId = data ? (data[0]?.categoryId ?? null) : null
+
+    const { token } = useKeycloak()
+
+    const calculateDays = (startDate: string, endDate: string): number => {
+        const start = new Date(startDate)
+        const end = new Date(endDate)
+        const diffTime = Math.abs(end.getTime() - start.getTime())
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+        return diffDays
+    }
+
+    const startDate = data ? data[0]?.startDate : null
+    const endDate = data ? data[0]?.endDate : null
+    const days = startDate && endDate ? calculateDays(startDate, endDate) : 0
 
     const handleConfirmation = async () => {
         await onConfirmReservation(processId, guid)
@@ -65,9 +82,6 @@ export const ConfirmReservationCard: React.FC<Props> = ({
         description: "",
         icon: ""
     })
-
-    const categoryId = data ? (data[0]?.categoryId ?? null) : null
-    const { token } = useKeycloak()
 
     const fetchCategory = async () => {
         try {
@@ -121,20 +135,6 @@ export const ConfirmReservationCard: React.FC<Props> = ({
         void fetchItemImage()
     }, [])
 
-    const calculateDays = (startDate: string, endDate: string): number => {
-        const start = new Date(startDate)
-        const end = new Date(endDate)
-        const diffTime = Math.abs(end.getTime() - start.getTime())
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-        return diffDays
-    }
-
-    const startDate = data ? data[0]?.startDate : null
-    const endDate = data ? data[0]?.endDate : null
-    const days = startDate && endDate ? calculateDays(startDate, endDate) : 0
-
-    const [image, setImage] = React.useState<string | null>(null)
-
     return (
         <div>
             <Card className="p-4 relative">
@@ -143,7 +143,6 @@ export const ConfirmReservationCard: React.FC<Props> = ({
                         <h3 className="text-lg font-bold">
                             Reservierung #{processId}
                         </h3>
-
                         <TooltipProvider>
                             <Tooltip delayDuration={0}>
                                 <TooltipTrigger asChild>
@@ -176,7 +175,7 @@ export const ConfirmReservationCard: React.FC<Props> = ({
                 </CardHeader>
                 <CardContent className="p-0 text-sm">
                     <div className="flex flex-col md:flex-row justify-between mb-2">
-                        <div className="flex flex-col md:flex-row items-start space-x-0 md:space-x-6">
+                        <div className="flex flex-col md:flex-row items-center space-x-0 md:space-x-6">
                             <div className="flex items-center justify-center self-center mb-4 md:mb-0">
                                 {loadingImage ? (
                                     <Skeleton className="w-24 h-24 rounded-full bg-gray-200" />
@@ -233,7 +232,7 @@ export const ConfirmReservationCard: React.FC<Props> = ({
                                         {data
                                             ? formatDate(data[0]?.endDate)
                                             : "-"}{" "}
-                                        ({days} Tage)
+                                        ({days} {days === 1 ? "Tag" : "Tage"})
                                     </span>
                                 </div>
                             </div>
