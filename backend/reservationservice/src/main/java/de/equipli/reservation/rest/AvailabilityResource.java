@@ -4,6 +4,8 @@ import de.equipli.reservation.jpa.Reservation;
 import de.equipli.reservation.jpa.ReservationRepository;
 import de.equipli.reservation.services.InventoryItem;
 import de.equipli.reservation.services.InventoryService;
+import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -19,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+@Authenticated
 @Path("/availability")
 public class AvailabilityResource {
 
@@ -39,6 +42,7 @@ public class AvailabilityResource {
             @APIResponse(responseCode = "200", description = "Reservations found", content = @Content(mediaType = "application/json")),
             @APIResponse(responseCode = "404", description = "No reservations found", content = @Content(mediaType = "application/json"))
     })
+    @RolesAllowed("user")
     public Map<String, Object> getReservationTimeSlotsByItem(@PathParam("itemId") Long itemId) {
         List<Reservation> reservations = reservationRepository.findByItemId(itemId);
 
@@ -65,9 +69,10 @@ public class AvailabilityResource {
             @APIResponse(responseCode = "200", description = "Reservations found", content = @Content(mediaType = "application/json")),
             @APIResponse(responseCode = "404", description = "Category not found", content = @Content(mediaType = "application/json"))
     })
-    public Response getReservationTimeSlotsByCategory(@PathParam("categoryId") Long categoryId) {
+    @RolesAllowed("user")
+    public Response getReservationTimeSlotsByCategory(@PathParam("categoryId") Long categoryId, @HeaderParam("Authorization") String authorizationHeader) {
         try {
-            List<InventoryItem> items = inventoryService.getInventoryItems(categoryId);
+            List<InventoryItem> items = inventoryService.getInventoryItems(categoryId, authorizationHeader);
 
             List<Long> itemIds = items.stream()
                     .map(InventoryItem::id)
@@ -101,11 +106,13 @@ public class AvailabilityResource {
             @APIResponse(responseCode = "200", description = "Available items found", content = @Content(mediaType = "application/json")),
             @APIResponse(responseCode = "404", description = "Category not found", content = @Content(mediaType = "application/json"))
     })
+    @RolesAllowed("user")
     public Response getAvailableItemsByCategoryAndDateRange(@PathParam("categoryId") Long categoryId,
                                                             @QueryParam("startDate") String startDate,
-                                                            @QueryParam("endDate") String endDate) {
+                                                            @QueryParam("endDate") String endDate,
+                                                            @HeaderParam("Authorization") String authorizationHeader) {
         try {
-            List<InventoryItem> items = inventoryService.getInventoryItems(categoryId);
+            List<InventoryItem> items = inventoryService.getInventoryItems(categoryId, authorizationHeader);
 
             List<Long> itemIds = items.stream()
                     .map(InventoryItem::id)
