@@ -71,7 +71,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
                     <AppSidebar />
                 </div>
                 {/* Header Content */}
-                <div className="flex-1 flex flex-col w-full z-100">
+                <div className="flex-1 flex flex-col w-[calc(100vw-16rem)] z-100">
                     <div className="bg-customBlack h-[45px] shrink-0 p-1 px-2 flex items-center justify-end max-[767px]:justify-between shadow-md">
                         <div className="hidden max-[767px]:flex items-center">
                             <SidebarTrigger />
