@@ -301,7 +301,7 @@ function Lend() {
                                                             "endDate"
                                                         )
                                                     }
-                                                    className="text-customBeige bg-customOrange mr-8 hover:bg-orange-600 hover:text-customBeige"
+                                                    className="text-customBeige bg-customOrange mr-2 hover:bg-orange-600 hover:text-customBeige"
                                                 >
                                                     <Package
                                                         size={16}
