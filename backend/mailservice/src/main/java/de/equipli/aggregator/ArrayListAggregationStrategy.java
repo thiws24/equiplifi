@@ -13,7 +13,7 @@ public class ArrayListAggregationStrategy implements AggregationStrategy {
         Object newBody = newExchange.getIn().getBody();
         ArrayList<Object> list = null;
         if (oldExchange == null) {
-            list = new ArrayList<Object>();
+            list = new ArrayList<>();
             list.add(newBody);
             newExchange.getIn().setBody(list);
             return newExchange;

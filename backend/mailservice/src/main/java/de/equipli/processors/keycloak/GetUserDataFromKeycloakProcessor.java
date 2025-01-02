@@ -1,5 +1,6 @@
 package de.equipli.processors.keycloak;
 
+import de.equipli.MailServiceException;
 import de.equipli.dto.mail.MailCreateDto;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.apache.camel.Exchange;
@@ -61,23 +62,21 @@ public class GetUserDataFromKeycloakProcessor implements Processor {
 
         if(user.getEmail() == null){
             logger.error("E-Mail from Keycloak is null");
-            throw new RuntimeException("E-Mail from Keycloak is null");
+            throw new MailServiceException("E-Mail from Keycloak is null");
         }
 
-        logger.info("E-Mail from Keycloak: " + user.getEmail());
+        logger.info("E-Mail from Keycloak: {} ", user.getEmail());
         exchange.setProperty("receiverMail", user.getEmail());
 
         String firstName = user.getFirstName();
         String lastName = user.getLastName();
-        logger.info("Name of User: " + firstName + " " + lastName);
+        logger.info("Name of User: {} {}", firstName, lastName);
 
         if (user.getFirstName() == null || user.getLastName() == null) {
             logger.error("Name of User is null");
-            throw new RuntimeException("Name of User is null");
+            throw new MailServiceException("Name of User is null");
         }
         exchange.setProperty("firstName", firstName);
         exchange.setProperty("lastName", lastName);
-
-        Object obj =  exchange.getAllProperties();
     }
 }

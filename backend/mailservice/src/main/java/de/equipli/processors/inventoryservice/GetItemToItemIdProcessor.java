@@ -1,5 +1,6 @@
 package de.equipli.processors.inventoryservice;
 
+import de.equipli.MailServiceException;
 import de.equipli.dto.inventoryservice.InventoryItemDto;
 import de.equipli.dto.mail.MailCreateDto;
 import de.equipli.restclient.inventoryservice.InventoryService;
@@ -14,15 +15,17 @@ import org.slf4j.LoggerFactory;
 @ApplicationScoped
 public class GetItemToItemIdProcessor implements Processor {
 
-    Logger logger = LoggerFactory.getLogger(GetItemToItemIdProcessor.class);
+    private final Logger logger;
+    private final InventoryService inventoryService;
 
     @Inject
-    @RestClient
-    InventoryService inventoryService;
+    public GetItemToItemIdProcessor(@RestClient InventoryService inventoryService) {
+        this.logger = LoggerFactory.getLogger(GetItemToItemIdProcessor.class);
+        this.inventoryService = inventoryService;
+    }
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        MailCreateDto mailCreateDto = exchange.getMessage().getBody(MailCreateDto.class);
 
         logger.debug("Get item from inventory service");
         String itemId = exchange.getMessage().getBody(MailCreateDto.class).getItemId();
@@ -32,15 +35,13 @@ public class GetItemToItemIdProcessor implements Processor {
             item = inventoryService.getInventoryItem(itemId);
         }
         catch (Exception e) {
-            throw new RuntimeException("Could not get item 'itemId="+ itemId  +"' from inventory service");
+            throw new MailServiceException("Could not get item 'itemId="+ itemId  +"' from inventory service");
         }
         if (item == null) {
-            throw new RuntimeException("Item 'itemId="+ itemId  +"' not found in inventory service");
+            throw new MailServiceException("Item 'itemId="+ itemId  +"' not found in inventory service");
         }
-
-        logger.info("Item 'itemId="+ itemId  +"' found in inventory service", item.toString());
-        exchange.setProperty("item", item);
-
-        Object obj =  exchange.getAllProperties();
+        if (logger.isInfoEnabled()) {
+            logger.info("Item 'itemId={} found in inventory service: {}", itemId, item);
+        }exchange.setProperty("item", item);
     }
 }

@@ -18,33 +18,37 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @ApplicationScoped
 public class MailRoute extends RouteBuilder {
 
-    @Inject
-    MailProcessor mailProcessor;
+    private final MailProcessor mailProcessor;
+    private final ValidationProcessor validationProcessor;
+    private final GetUserDataFromKeycloakProcessor getUserDataFromKeycloakProcessor;
+    private final GetItemToItemIdProcessor getItemToItemIdProcessor;
+    private final String activeProfile;
+    private final String smtpHost;
+    private final String smtpPort;
+    private final String username;
+    private final String password;
 
     @Inject
-    @ConfigProperty(name = "quarkus.profile")
-    String activeProfile;
-
-    @ConfigProperty(name = "smtp.config.host", defaultValue = "localhost")
-    String smtpHost;
-
-    @ConfigProperty(name = "smtp.config.port", defaultValue = "2525")
-    String smtpPort;
-
-    @ConfigProperty(name = "smtp.config.username", defaultValue = "user")
-    String username;
-
-    @ConfigProperty(name = "smtp.config.password", defaultValue = "password")
-    String password;
-
-    @Inject
-    ValidationProcessor validationProcessor;
-
-    @Inject
-    GetUserDataFromKeycloakProcessor getUserDataFromKeycloakProcessor;
-
-    @Inject
-    GetItemToItemIdProcessor getItemToItemIdProcessor;
+    public MailRoute(
+            MailProcessor mailProcessor,
+            ValidationProcessor validationProcessor,
+            GetUserDataFromKeycloakProcessor getUserDataFromKeycloakProcessor,
+            GetItemToItemIdProcessor getItemToItemIdProcessor,
+            @ConfigProperty(name = "quarkus.profile") String activeProfile,
+            @ConfigProperty(name = "smtp.config.host", defaultValue = "localhost") String smtpHost,
+            @ConfigProperty(name = "smtp.config.port", defaultValue = "2525") String smtpPort,
+            @ConfigProperty(name = "smtp.config.username", defaultValue = "user") String username,
+            @ConfigProperty(name = "smtp.config.password", defaultValue = "password") String password) {
+        this.mailProcessor = mailProcessor;
+        this.validationProcessor = validationProcessor;
+        this.getUserDataFromKeycloakProcessor = getUserDataFromKeycloakProcessor;
+        this.getItemToItemIdProcessor = getItemToItemIdProcessor;
+        this.activeProfile = activeProfile;
+        this.smtpHost = smtpHost;
+        this.smtpPort = smtpPort;
+        this.username = username;
+        this.password = password;
+    }
 
 
     @Override
