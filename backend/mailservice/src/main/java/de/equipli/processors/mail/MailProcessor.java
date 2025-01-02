@@ -44,9 +44,9 @@ public class MailProcessor implements Processor {
 
         // create mail
         //TODO: Make Subject dynamic
-        exchange.getIn().setHeader("Subject", "Eine Nachricht von Equipli.de!");
+        exchange.getIn().setHeader("Subject", "Eine Nachricht von equipli.de!");
         exchange.getIn().setHeader("To", receiverMail);
-        exchange.getIn().setHeader("From", "info.equipli@gmail.com");
+        exchange.getIn().setHeader("From", "equipli <info.equipli@gmail.com>");
         exchange.getIn().setHeader("Content-Type", "text/html");
         exchange.getIn().setBody(htmlTemplate);
     }
