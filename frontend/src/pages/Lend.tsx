@@ -42,7 +42,9 @@ function Lend() {
             if (response.ok) {
                 const data = await response.json()
                 // Fetch image
-                const image = await fetchImage(data.categoryId, token ?? "").catch(() => "/image-placeholder.jpg").finally(() => setLoadingImage(false))
+                const image = await fetchImage(data.categoryId, token ?? "")
+                    .catch(() => "/image-placeholder.jpg")
+                    .finally(() => setLoadingImage(false))
                 setPhoto(image ?? "/image-placeholder.jpg")
                 setItem(data)
             } else {
@@ -435,6 +437,18 @@ function Lend() {
                                                     </div>
                                                 </form>
                                             </Form>
+                                            <Button
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/category/${item?.categoryId}/reservation`
+                                                    )
+                                                }
+                                                className="mt-8 text-customOrange hover:text-orange-300"
+                                            >
+                                                Weitere Inventargegenstände dieser
+                                                Art ausleihen
+                                                <ArrowRight className="w-4 h-4 ml-2" />
+                                            </Button>
                                         </div>
                                         <div className="flex justify-center md:w-1/2 flex-wrap p-8 md:p-16">
                                             <div className="max-w-[400px]">
