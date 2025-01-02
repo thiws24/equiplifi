@@ -15,6 +15,8 @@ public class CreateCategoryRequest {
     private String itemLocation;
 
     public CreateCategoryRequest() {
+        // This constructor is intentionally left empty.
+        // It is required for deserialization purposes.
     }
 
     public String getName() {
