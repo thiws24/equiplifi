@@ -372,8 +372,15 @@ function LendCategory() {
                                         >
                                             <ArrowLeft size={16} />
                                         </Button>
-                                        <CardTitle className="ml-6 text-2xl font-bold">
-                                            {categoryItem.name} ausleihen
+
+                                        <CardTitle className="ml-4 text-2xl font-bold flex items-center flex-wrap">
+                                            <div className="mr-2">
+                                                {categoryItem.icon}
+                                            </div>
+                                            <div className="flex-1">
+                                                {categoryItem.name}
+                                            </div>
+                                            <p className="ml-2">ausleihen</p>
                                         </CardTitle>
                                     </div>
                                     <div className="hidden md:flex">
