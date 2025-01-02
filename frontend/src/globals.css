@@ -101,6 +101,15 @@
     text-overflow: ellipsis;
 }
 
+#quantity {
+    appearance: textfield;
+}
+
+#quantity::-webkit-outer-spin-button,
+#quantity::-webkit-inner-spin-button {
+    appearance: none;
+}
+
 .pagination-content {
     color: #0e0e0e;
     font-size: 20px;

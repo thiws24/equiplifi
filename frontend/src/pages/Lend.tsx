@@ -14,6 +14,8 @@ import CustomToasts from "../components/CustomToasts"
 import { DateInterval } from "react-day-picker"
 import { ItemDetailsProps } from "../interfaces/ItemDetailsProps"
 import { fetchImage } from "../services/fetchImage"
+import { ArrowLeft, ArrowRight, Package } from "lucide-react"
+import { Skeleton } from "../components/ui/skeleton"
 
 function Lend() {
     const navigate = useNavigate()
@@ -24,6 +26,7 @@ function Lend() {
     const { token, userInfo } = useKeycloak()
 
     const [photo, setPhoto] = useState<string | null>(null)
+    const [loadingImage, setLoadingImage] = useState(true)
 
     const fetchItem = async () => {
         try {
@@ -39,8 +42,8 @@ function Lend() {
             if (response.ok) {
                 const data = await response.json()
                 // Fetch image
-                const image = await fetchImage(data.categoryId, token ?? "")
-                setPhoto(image)
+                const image = await fetchImage(data.categoryId, token ?? "").catch(() => "/image-placeholder.jpg").finally(() => setLoadingImage(false))
+                setPhoto(image ?? "/image-placeholder.jpg")
                 setItem(data)
             } else {
                 CustomToasts.error({
@@ -53,7 +56,6 @@ function Lend() {
                 message:
                     "Es ist etwas schiefgelaufen. Versuchen Sie es später erneut."
             })
-            console.log(e)
         }
     }
 
@@ -246,124 +248,40 @@ function Lend() {
     return (
         <div>
             {!!item && (
-                <div className="max-w-[600px] mx-auto">
-                    <div className="p-4">
-                        <CardHeader className="flex items-center text-customBlue">
-                            <CardTitle className="mb-4">
-                                Ausleihformular
-                            </CardTitle>
-                        </CardHeader>
-                        <div className="max-w-[600px] mx-auto">
-                            <Card>
-                                <CardContent className="mt-4">
-                                    <h3 className="text-center mb-4">
-                                        {item?.name}
-                                    </h3>
-                                    <div className="flex justify-center mb-4">
-                                        {!!photo && (
-                                            <img
-                                                src={photo}
-                                                alt={item.description}
-                                                className="h-52 w-full object-contain"
-                                            />
-                                        )}
-                                    </div>
-                                    <Form {...form}>
-                                        <form
-                                            onSubmit={form.handleSubmit(
-                                                onSubmit
-                                            )}
-                                            className="space-y-8"
+                <div className="max-w-[1440px] mx-auto">
+                    <div className="m-8 lg:m-20">
+                        <div className="mb-10">
+                            <h1 className="text-3xl font-bold">
+                                Reservierung anfragen
+                            </h1>
+                            <p className="text-sm text-muted-foreground">
+                                Inventargegenstand {item.id}
+                            </p>
+                        </div>
+                        <div>
+                            <Card className="bg-white border-none drop-shadow-2xl">
+                                <CardHeader className="mb-2 flex flex-row justify-between flex-wrap">
+                                    <div className="flex items-center">
+                                        <Button
+                                            className="bg-customBlack text-white rounded-full hover:bg-customRed flex items-center justify-center w-[45px] h-[45px] p-0 shrink-0"
+                                            onClick={() =>
+                                                navigate(`/item/${id}`)
+                                            }
                                         >
-                                            <div className="text-sm text-gray-500 flex justify-center text-center">
-                                                Bitte geben Sie die Anzahl, ein
-                                                Ausleih- und Abgabedatum ein.
-                                            </div>
-                                            <div className="flex flex-wrap justify-evenly gap-y-8">
-                                                <FormField
-                                                    control={form.control}
-                                                    name="startDate"
-                                                    render={({ field }) => (
-                                                        <DatePickerField
-                                                            label="Ausleihdatum"
-                                                            field={field}
-                                                            disabledDays={[
-                                                                {
-                                                                    before: new Date()
-                                                                }
-                                                            ].concat(
-                                                                unavailableDates
-                                                            )}
-                                                            defaultMonth={
-                                                                field.value ||
-                                                                (() => {
-                                                                    const tomorrow =
-                                                                        new Date()
-                                                                    tomorrow.setDate(
-                                                                        tomorrow.getDate() +
-                                                                            1
-                                                                    )
-                                                                    return tomorrow
-                                                                })()
-                                                            }
-                                                            onDayClick={() => {
-                                                                form.resetField(
-                                                                    "endDate"
-                                                                )
-                                                            }}
-                                                        />
-                                                    )}
-                                                />
-                                                <FormField
-                                                    control={form.control}
-                                                    name="endDate"
-                                                    render={({ field }) => {
-                                                        const startDate =
-                                                            form.getValues(
-                                                                "startDate"
-                                                            )
-                                                        return (
-                                                            <DatePickerField
-                                                                label="Abgabedatum"
-                                                                field={field}
-                                                                disabledDays={
-                                                                    endDateUnavailability
-                                                                }
-                                                                defaultMonth={
-                                                                    form.getValues(
-                                                                        "endDate"
-                                                                    ) ||
-                                                                    startDate ||
-                                                                    (() => {
-                                                                        const tomorrow =
-                                                                            new Date()
-                                                                        tomorrow.setDate(
-                                                                            tomorrow.getDate() +
-                                                                                1
-                                                                        )
-                                                                        return tomorrow
-                                                                    })()
-                                                                }
-                                                                required={
-                                                                    !!startDate
-                                                                }
-                                                                isDisabled={
-                                                                    !startDate
-                                                                }
-                                                            />
-                                                        )
-                                                    }}
-                                                />
-                                            </div>
-                                            <div className="flex justify-between items-center mt-4">
-                                                <Button
-                                                    onClick={() =>
-                                                        navigate(`/item/${id}`)
-                                                    }
-                                                    className="flex bg-customBlue text-customBeige hover:bg-customRed hover:text-customBeige ml-8"
-                                                >
-                                                    &larr; Zurück
-                                                </Button>
+                                            <ArrowLeft size={16} />
+                                        </Button>
+                                        <CardTitle className="ml-6 text-2xl font-bold">
+                                            {item.name} ausleihen
+                                        </CardTitle>
+                                    </div>
+                                    <div className="hidden md:flex">
+                                        <Form {...form}>
+                                            <form
+                                                onSubmit={form.handleSubmit(
+                                                    onSubmit
+                                                )}
+                                                className="space-y-8"
+                                            >
                                                 <Button
                                                     type="submit"
                                                     disabled={
@@ -374,22 +292,166 @@ function Lend() {
                                                             "endDate"
                                                         )
                                                     }
-                                                    className="text-customBeige bg-customBlue mr-8 hover:bg-customRed hover:text-customBeige"
+                                                    className="text-customBeige bg-customOrange mr-8 hover:bg-orange-600 hover:text-customBeige"
                                                 >
-                                                    Absenden
+                                                    <Package
+                                                        size={16}
+                                                        className="mr-2"
+                                                    />
+                                                    Anfrage stellen
+                                                    <ArrowRight
+                                                        size={16}
+                                                        className="ml-2"
+                                                    />
                                                 </Button>
+                                            </form>
+                                        </Form>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="mt-0">
+                                    <div className="flex flex-col-reverse md:flex-row items-start space-x-0 md:space-x-6 items-center my-2">
+                                        <div className="flex flex-col items-center md:w-1/2">
+                                            <Form {...form}>
+                                                <form
+                                                    onSubmit={form.handleSubmit(
+                                                        onSubmit
+                                                    )}
+                                                    className="space-y-8"
+                                                >
+                                                    <h4 className="text-2xl text-center font-bold -mb-2 mt-4">
+                                                        Zeitraum auswählen
+                                                    </h4>
+                                                    <div className="flex flex-wrap justify-center gap-y-8 pt-4 md:pt-8 pb-8">
+                                                        <FormField
+                                                            control={
+                                                                form.control
+                                                            }
+                                                            name="startDate"
+                                                            render={({
+                                                                field
+                                                            }) => (
+                                                                <DatePickerField
+                                                                    label="Ausleihdatum"
+                                                                    field={
+                                                                        field
+                                                                    }
+                                                                    disabledDays={[
+                                                                        {
+                                                                            before: new Date()
+                                                                        }
+                                                                    ].concat(
+                                                                        unavailableDates
+                                                                    )}
+                                                                    defaultMonth={
+                                                                        field.value ||
+                                                                        (() => {
+                                                                            const tomorrow =
+                                                                                new Date()
+                                                                            tomorrow.setDate(
+                                                                                tomorrow.getDate() +
+                                                                                    1
+                                                                            )
+                                                                            return tomorrow
+                                                                        })()
+                                                                    }
+                                                                    onDayClick={() => {
+                                                                        form.resetField(
+                                                                            "endDate"
+                                                                        )
+                                                                    }}
+                                                                />
+                                                            )}
+                                                        />
+                                                        <FormField
+                                                            control={
+                                                                form.control
+                                                            }
+                                                            name="endDate"
+                                                            render={({
+                                                                field
+                                                            }) => {
+                                                                const startDate =
+                                                                    form.getValues(
+                                                                        "startDate"
+                                                                    )
+                                                                return (
+                                                                    <DatePickerField
+                                                                        label="Rückgabedatum"
+                                                                        field={
+                                                                            field
+                                                                        }
+                                                                        disabledDays={
+                                                                            endDateUnavailability
+                                                                        }
+                                                                        defaultMonth={
+                                                                            form.getValues(
+                                                                                "endDate"
+                                                                            ) ||
+                                                                            startDate ||
+                                                                            (() => {
+                                                                                const tomorrow =
+                                                                                    new Date()
+                                                                                tomorrow.setDate(
+                                                                                    tomorrow.getDate() +
+                                                                                        1
+                                                                                )
+                                                                                return tomorrow
+                                                                            })()
+                                                                        }
+                                                                        required={
+                                                                            !!startDate
+                                                                        }
+                                                                        isDisabled={
+                                                                            !startDate
+                                                                        }
+                                                                    />
+                                                                )
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    <div className="flex justify-center pt-8 md:hidden">
+                                                        <Button
+                                                            type="submit"
+                                                            disabled={
+                                                                !form.getValues(
+                                                                    "startDate"
+                                                                ) ||
+                                                                !form.getValues(
+                                                                    "endDate"
+                                                                )
+                                                            }
+                                                            className="text-customBeige bg-customOrange hover:bg-orange-600 hover:text-customBeige"
+                                                        >
+                                                            <Package
+                                                                size={16}
+                                                                className="mr-2"
+                                                            />
+                                                            Anfrage stellen
+                                                            <ArrowRight
+                                                                size={16}
+                                                                className="ml-2"
+                                                            />
+                                                        </Button>
+                                                    </div>
+                                                </form>
+                                            </Form>
+                                        </div>
+                                        <div className="flex justify-center md:w-1/2 flex-wrap p-8 md:p-16">
+                                            <div className="max-w-[400px]">
+                                                {loadingImage ? (
+                                                    <Skeleton className="h-[400px] w-[400px] rounded-lg bg-gray-200" />
+                                                ) : (
+                                                    <img
+                                                        src={
+                                                            photo ||
+                                                            "/image-placeholder.jpg"
+                                                        }
+                                                        alt={item.name}
+                                                        className=" object-cover rounded-lg"
+                                                    />
+                                                )}
                                             </div>
-                                        </form>
-                                    </Form>
-                                    <div
-                                        onClick={() =>
-                                            navigate(
-                                                `/category/${item?.categoryId}/reservation`
-                                            )
-                                        }
-                                        className="cursor-pointer text-customBlue hover:text-customOrange mt-4 flex justify-center"
-                                    >
-                                        Hier mehr ausleihen
+                                        </div>
                                     </div>
                                 </CardContent>
                             </Card>

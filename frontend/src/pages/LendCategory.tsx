@@ -23,6 +23,16 @@ import CustomToasts from "../components/CustomToasts"
 import _ from "lodash"
 import { Matcher } from "react-day-picker"
 import { fetchImage } from "../services/fetchImage"
+import {
+    ArrowLeft,
+    ArrowRight,
+    Minus,
+    Package,
+    Plus,
+    Tally5
+} from "lucide-react"
+import { Arrow } from "@radix-ui/react-tooltip"
+import { Skeleton } from "../components/ui/skeleton"
 
 function LendCategory() {
     const [itemReservations, setItemReservations] = useState<
@@ -40,6 +50,8 @@ function LendCategory() {
     const { id } = useParams()
     const { userInfo, token } = useKeycloak()
 
+    const [loadingImage, setLoadingImage] = useState(true)
+
     const fetchCategory = async () => {
         try {
             const response = await fetch(
@@ -54,7 +66,9 @@ function LendCategory() {
                 const data: CategoryProps = await response.json()
                 // Fetch image
                 const image = await fetchImage(data.id, token ?? "")
-                setPhoto(image)
+                    .catch(() => "/image-placeholder.jpg")
+                    .finally(() => setLoadingImage(false))
+                setPhoto(image ?? "/image-placeholder.jpg")
                 setCategoryItem(data)
             } else {
                 CustomToasts.error({
@@ -335,175 +349,40 @@ function LendCategory() {
     return (
         <div>
             {!!categoryItem && (
-                <div className="max-w-[600px] mx-auto">
-                    <div className="p-4">
-                        <CardHeader className="flex items-center text-customBlue">
-                            <CardTitle className="mb-4">
-                                Ausleihformular
-                            </CardTitle>
-                        </CardHeader>
-                        <div className="max-w-[600px] mx-auto">
-                            <Card>
-                                <CardContent className="mt-4">
-                                    <h3 className="text-center mb-4">
-                                        {categoryItem?.name}
-                                    </h3>
-                                    <div className="flex justify-center mb-4">
-                                        {!!photo && (
-                                            <img
-                                                src={photo}
-                                                alt={categoryItem.description}
-                                                className="h-52 w-full object-contain"
-                                            />
-                                        )}
-                                    </div>
-                                    <Form {...form}>
-                                        <form
-                                            onSubmit={form.handleSubmit(
-                                                onSubmit
-                                            )}
-                                            className="space-y-8"
+                <div className="max-w-[1440px] mx-auto">
+                    <div className="m-8 lg:m-20">
+                        <div className="mb-10">
+                            <h1 className="text-3xl font-bold">
+                                Reservierung anfragen
+                            </h1>
+                            <p className="text-sm text-muted-foreground">
+                                Kategorie {categoryItem.id}
+                            </p>
+                        </div>
+                        <div>
+                            <Card className="bg-white border-none drop-shadow-2xl">
+                                <CardHeader className="mb-2 flex flex-row justify-between flex-wrap">
+                                    <div className="flex items-center">
+                                        <Button
+                                            className="bg-customBlack text-white rounded-full hover:bg-customRed flex items-center justify-center w-[45px] h-[45px] p-0 shrink-0"
+                                            onClick={() =>
+                                                navigate(`/category/${id}`)
+                                            }
                                         >
-                                            <div className="text-sm text-gray-500 flex justify-center text-center">
-                                                Bitte geben Sie zuerst die
-                                                Anzahl ein.
-                                            </div>
-                                            <div className="flex flex-wrap justify-evenly">
-                                                <FormField
-                                                    control={form.control}
-                                                    name="quantity"
-                                                    render={({ field }) => (
-                                                        <FormItem className="flex flex-col">
-                                                            <div className="flex flex-col sm:justify-center ml-8 mr-8">
-                                                                <label className="text-sm pb-2">
-                                                                    Anzahl
-                                                                </label>
-                                                                <FormControl className="text-left font-sans w-[80px] pl-3">
-                                                                    <Input
-                                                                        type="number"
-                                                                        {...field}
-                                                                        onChange={(
-                                                                            e
-                                                                        ) => {
-                                                                            field.onChange(
-                                                                                e
-                                                                                    .target
-                                                                                    .valueAsNumber
-                                                                            )
-                                                                            form.resetField(
-                                                                                "startDate"
-                                                                            )
-                                                                            form.resetField(
-                                                                                "endDate"
-                                                                            )
-                                                                        }}
-                                                                        min={1}
-                                                                        max={
-                                                                            categoryItem
-                                                                                ?.items
-                                                                                .length
-                                                                        }
-                                                                    />
-                                                                </FormControl>
-                                                                <FormMessage />
-                                                            </div>
-                                                        </FormItem>
-                                                    )}
-                                                />
-                                            </div>
-                                            <div className="text-sm text-gray-500 flex justify-center text-center">
-                                                Bitte geben Sie das Ausleih- und
-                                                Abgabedatum ein.
-                                            </div>
-                                            <div className="flex flex-wrap justify-evenly gap-y-8">
-                                                <FormField
-                                                    control={form.control}
-                                                    name="startDate"
-                                                    render={({ field }) => (
-                                                        <DatePickerField
-                                                            label="Ausleihdatum"
-                                                            field={field}
-                                                            disabledDays={(
-                                                                [
-                                                                    {
-                                                                        before: new Date()
-                                                                    }
-                                                                ] as Matcher[]
-                                                            ).concat(
-                                                                unavailableDates
-                                                            )}
-                                                            defaultMonth={
-                                                                field.value ||
-                                                                (() => {
-                                                                    const tomorrow =
-                                                                        new Date()
-                                                                    tomorrow.setDate(
-                                                                        tomorrow.getDate() +
-                                                                            1
-                                                                    )
-                                                                    return tomorrow
-                                                                })()
-                                                            }
-                                                            onDayClick={() => {
-                                                                form.resetField(
-                                                                    "endDate"
-                                                                )
-                                                            }}
-                                                        />
-                                                    )}
-                                                />
-                                                <FormField
-                                                    control={form.control}
-                                                    name="endDate"
-                                                    render={({ field }) => {
-                                                        const startDate =
-                                                            form.getValues(
-                                                                "startDate"
-                                                            )
-                                                        return (
-                                                            <DatePickerField
-                                                                label="Abgabedatum"
-                                                                field={field}
-                                                                disabledDays={
-                                                                    endDateUnavailability
-                                                                }
-                                                                defaultMonth={
-                                                                    form.getValues(
-                                                                        "endDate"
-                                                                    ) ||
-                                                                    startDate ||
-                                                                    (() => {
-                                                                        const tomorrow =
-                                                                            new Date()
-                                                                        tomorrow.setDate(
-                                                                            tomorrow.getDate() +
-                                                                                1
-                                                                        )
-                                                                        return tomorrow
-                                                                    })()
-                                                                }
-                                                                required={
-                                                                    !!startDate
-                                                                }
-                                                                isDisabled={
-                                                                    !startDate
-                                                                }
-                                                            />
-                                                        )
-                                                    }}
-                                                />
-                                            </div>
-                                            <div className="flex justify-between items-center mt-4">
-                                                <Button
-                                                    onClick={() =>
-                                                        navigate(
-                                                            `/category/${id}`
-                                                        )
-                                                    }
-                                                    className="flex bg-customBlue text-customBeige hover:bg-customRed hover:text-customBeige ml-8"
-                                                >
-                                                    &larr; Detail
-                                                </Button>
+                                            <ArrowLeft size={16} />
+                                        </Button>
+                                        <CardTitle className="ml-6 text-2xl font-bold">
+                                            {categoryItem.name} ausleihen
+                                        </CardTitle>
+                                    </div>
+                                    <div className="hidden md:flex">
+                                        <Form {...form}>
+                                            <form
+                                                onSubmit={form.handleSubmit(
+                                                    onSubmit
+                                                )}
+                                                className="space-y-8"
+                                            >
                                                 <Button
                                                     type="submit"
                                                     disabled={
@@ -530,13 +409,296 @@ function LendCategory() {
                                                             )
                                                         // TODO: Hier noch wenn anzahl > gesamtmenge
                                                     }
-                                                    className="text-customBeige bg-customBlue mr-8 hover:bg-customRed hover:text-customBeige"
+                                                    className="text-customBeige bg-customOrange mr-8 hover:bg-orange-600 hover:text-customBeige"
                                                 >
-                                                    Absenden
+                                                    <Package
+                                                        size={16}
+                                                        className="mr-2"
+                                                    />
+                                                    Anfrage stellen
+                                                    <ArrowRight
+                                                        size={16}
+                                                        className="ml-2"
+                                                    />
                                                 </Button>
+                                            </form>
+                                        </Form>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="mt-0">
+                                    <div className="flex flex-col-reverse md:flex-row items-start space-x-0 md:space-x-6 items-center my-2">
+                                        <div className="flex flex-col items-center md:w-1/2">
+                                            <Form {...form}>
+                                                <form
+                                                    onSubmit={form.handleSubmit(
+                                                        onSubmit
+                                                    )}
+                                                    className="space-y-8"
+                                                >
+                                                    <h4 className="text-2xl text-center font-bold -mb-2 mt-4">
+                                                        Anzahl
+                                                    </h4>
+                                                    <div className="flex flex-wrap items-center justify-center">
+                                                        <FormField
+                                                            control={
+                                                                form.control
+                                                            }
+                                                            name="quantity"
+                                                            render={({
+                                                                field
+                                                            }) => (
+                                                                <FormItem className="flex flex-col">
+                                                                    <div className="flex items-center sm:justify-center ml-8 mr-8">
+                                                                        <button
+                                                                            type="button"
+                                                                            className="w-8 h-8 bg-customOrange text-white rounded-full flex items-center justify-center mr-2 disabled:opacity-35"
+                                                                            onClick={() => {
+                                                                                field.onChange(
+                                                                                    Math.max(
+                                                                                        1,
+                                                                                        field.value -
+                                                                                            1
+                                                                                    )
+                                                                                )
+                                                                                form.resetField(
+                                                                                    "startDate"
+                                                                                )
+                                                                                form.resetField(
+                                                                                    "endDate"
+                                                                                )
+                                                                            }}
+                                                                            disabled={
+                                                                                field.value <=
+                                                                                1
+                                                                            }
+                                                                        >
+                                                                            <Minus
+                                                                                size={
+                                                                                    16
+                                                                                }
+                                                                            />
+                                                                        </button>
+                                                                        <div className="flex flex-col items-center">
+                                                                            <FormControl className="text-center font-sans w-[80px] pl-3 border-none">
+                                                                                <Input
+                                                                                    type="number"
+                                                                                    id="quantity"
+                                                                                    className="!text-center !text-3xl"
+                                                                                    {...field}
+                                                                                    onChange={(
+                                                                                        e
+                                                                                    ) => {
+                                                                                        field.onChange(
+                                                                                            e
+                                                                                                .target
+                                                                                                .valueAsNumber
+                                                                                        )
+                                                                                        form.resetField(
+                                                                                            "startDate"
+                                                                                        )
+                                                                                        form.resetField(
+                                                                                            "endDate"
+                                                                                        )
+                                                                                    }}
+                                                                                    min={
+                                                                                        1
+                                                                                    }
+                                                                                    max={
+                                                                                        categoryItem
+                                                                                            ?.items
+                                                                                            .length
+                                                                                    }
+                                                                                />
+                                                                            </FormControl>
+                                                                        </div>
+                                                                        <button
+                                                                            type="button"
+                                                                            className="w-8 h-8 bg-customOrange text-white rounded-full flex items-center justify-center ml-2 disabled:opacity-35"
+                                                                            onClick={() => {
+                                                                                field.onChange(
+                                                                                    field.value +
+                                                                                        1
+                                                                                )
+                                                                                form.resetField(
+                                                                                    "startDate"
+                                                                                )
+                                                                                form.resetField(
+                                                                                    "endDate"
+                                                                                )
+                                                                            }}
+                                                                            disabled={
+                                                                                field.value >=
+                                                                                categoryItem
+                                                                                    ?.items
+                                                                                    .length
+                                                                            }
+                                                                        >
+                                                                            <Plus
+                                                                                size={
+                                                                                    16
+                                                                                }
+                                                                            />
+                                                                        </button>
+                                                                    </div>
+                                                                </FormItem>
+                                                            )}
+                                                        />
+                                                    </div>
+                                                    <h4 className="text-2xl text-center font-bold -mb-2 pt-12">
+                                                        Zeitraum auswählen
+                                                    </h4>
+                                                    <div className="flex flex-wrap justify-center gap-y-8 pb-8">
+                                                        <FormField
+                                                            control={
+                                                                form.control
+                                                            }
+                                                            name="startDate"
+                                                            render={({
+                                                                field
+                                                            }) => (
+                                                                <DatePickerField
+                                                                    label="Ausleihdatum"
+                                                                    field={
+                                                                        field
+                                                                    }
+                                                                    disabledDays={(
+                                                                        [
+                                                                            {
+                                                                                before: new Date()
+                                                                            }
+                                                                        ] as Matcher[]
+                                                                    ).concat(
+                                                                        unavailableDates
+                                                                    )}
+                                                                    defaultMonth={
+                                                                        field.value ||
+                                                                        (() => {
+                                                                            const tomorrow =
+                                                                                new Date()
+                                                                            tomorrow.setDate(
+                                                                                tomorrow.getDate() +
+                                                                                    1
+                                                                            )
+                                                                            return tomorrow
+                                                                        })()
+                                                                    }
+                                                                    onDayClick={() => {
+                                                                        form.resetField(
+                                                                            "endDate"
+                                                                        )
+                                                                    }}
+                                                                />
+                                                            )}
+                                                        />
+                                                        <FormField
+                                                            control={
+                                                                form.control
+                                                            }
+                                                            name="endDate"
+                                                            render={({
+                                                                field
+                                                            }) => {
+                                                                const startDate =
+                                                                    form.getValues(
+                                                                        "startDate"
+                                                                    )
+                                                                return (
+                                                                    <DatePickerField
+                                                                        label="Rückgabedatum"
+                                                                        field={
+                                                                            field
+                                                                        }
+                                                                        disabledDays={
+                                                                            endDateUnavailability
+                                                                        }
+                                                                        defaultMonth={
+                                                                            form.getValues(
+                                                                                "endDate"
+                                                                            ) ||
+                                                                            startDate ||
+                                                                            (() => {
+                                                                                const tomorrow =
+                                                                                    new Date()
+                                                                                tomorrow.setDate(
+                                                                                    tomorrow.getDate() +
+                                                                                        1
+                                                                                )
+                                                                                return tomorrow
+                                                                            })()
+                                                                        }
+                                                                        required={
+                                                                            !!startDate
+                                                                        }
+                                                                        isDisabled={
+                                                                            !startDate
+                                                                        }
+                                                                    />
+                                                                )
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    <div className="flex justify-center pt-8 md:hidden">
+                                                        <Button
+                                                            type="submit"
+                                                            disabled={
+                                                                !form.getValues(
+                                                                    "startDate"
+                                                                ) ||
+                                                                !form.getValues(
+                                                                    "endDate"
+                                                                ) ||
+                                                                0 ===
+                                                                    form.getValues(
+                                                                        "quantity"
+                                                                    ) ||
+                                                                form.getValues(
+                                                                    "endDate"
+                                                                ) <
+                                                                    form.getValues(
+                                                                        "startDate"
+                                                                    ) ||
+                                                                (categoryItem
+                                                                    ?.items
+                                                                    .length ||
+                                                                    9999) <
+                                                                    form.getValues(
+                                                                        "quantity"
+                                                                    )
+                                                                // TODO: Hier noch wenn anzahl > gesamtmenge
+                                                            }
+                                                            className="text-customBeige bg-customOrange hover:bg-orange-600 hover:text-customBeige"
+                                                        >
+                                                            <Package
+                                                                size={16}
+                                                                className="mr-2"
+                                                            />
+                                                            Anfrage stellen
+                                                            <ArrowRight
+                                                                size={16}
+                                                                className="ml-2"
+                                                            />
+                                                        </Button>
+                                                    </div>
+                                                </form>
+                                            </Form>
+                                        </div>
+                                        <div className="flex justify-center md:w-1/2 flex-wrap p-8 md:p-16">
+                                            <div className="max-w-[400px]">
+                                                {loadingImage ? (
+                                                    <Skeleton className="h-[400px] w-[400px] rounded-lg bg-gray-200" />
+                                                ) : (
+                                                    <img
+                                                        src={
+                                                            photo ||
+                                                            "/image-placeholder.jpg"
+                                                        }
+                                                        alt={categoryItem.name}
+                                                        className=" object-cover rounded-lg"
+                                                    />
+                                                )}
                                             </div>
-                                        </form>
-                                    </Form>
+                                        </div>
+                                    </div>
                                 </CardContent>
                             </Card>
                         </div>

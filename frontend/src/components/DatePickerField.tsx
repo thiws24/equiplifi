@@ -2,7 +2,7 @@ import { FormControl, FormItem, FormMessage, FormDescription } from "./ui/form"
 import { Button } from "./ui/button"
 import { Calendar } from "./ui/calendar"
 import { Popover, PopoverTrigger, PopoverContent } from "./ui/popover"
-import { CalendarIcon } from "lucide-react"
+import { CalendarDays, CalendarIcon, CalendarX } from "lucide-react"
 import { cn } from "../lib/utils"
 import { format } from "date-fns"
 import React, { useState } from "react"
@@ -33,11 +33,13 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
         <FormItem className="flex flex-col">
             <div className="flex flex-col sm:justify-center ml-8 mr-8">
                 {description && (
-                    <FormDescription>
-                        {description}
-                    </FormDescription>
+                    <FormDescription>{description}</FormDescription>
                 )}
-                <label className="text-sm pb-2">{label}</label>
+                <div className="flex items-center pb-2 ">
+                    <CalendarDays className="w-4 h-4 mr-2 text-customOrange" />
+                    <label className="text-sm font-bold">{label}</label>
+                </div>
+
                 <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
                     <PopoverTrigger asChild>
                         <FormControl>
