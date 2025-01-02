@@ -1,5 +1,14 @@
 package de.equipli.dto.mail;
 
+
+//{
+//  "itemId": "1",
+//  "startDate": "2024-11-28",
+//  "endDate": "2024-11-30",
+//  "userId": "user_1",
+//  "reservationId": "123"
+//}
+
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped

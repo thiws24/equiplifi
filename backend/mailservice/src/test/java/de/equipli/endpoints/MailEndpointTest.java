@@ -17,7 +17,7 @@ import static org.hamcrest.core.Is.is;
 @QuarkusTest
 @Testcontainers
 @Disabled
-class MailEndpointTest {
+public class MailEndpointTest {
 
     @ConfigProperty(name = "keycloak.image")
     String keycloakImage;
@@ -71,6 +71,7 @@ class MailEndpointTest {
 
         // why is this not working?
         // Idea: Testcontainer where the Test is running is not able to reach the inventory service
+        String inventoryServiceUriForPost = inventoryServiceUri + "/inventoryitems"; ;
 
         given()
                 .contentType("application/json")

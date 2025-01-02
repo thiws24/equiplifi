@@ -2,6 +2,13 @@ package de.equipli.dto.inventoryservice;
 
 public class InventoryItemCreateDto {
 
+    //{
+    //  "name": "Volleyball",
+    //  "photoUrl": "https://example.com/photo.jpg",
+    //  "icon": "🏐",
+    //  "urn": "example-urn"
+    //}
+
     private String name;
     private String photoUrl;
     private String icon;

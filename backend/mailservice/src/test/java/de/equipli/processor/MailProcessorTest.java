@@ -13,11 +13,14 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 
 @QuarkusTest
 @Disabled
-class MailProcessorTest {
+public class MailProcessorTest {
 
     @Inject
     Template mail;
