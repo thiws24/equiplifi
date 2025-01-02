@@ -12,7 +12,7 @@ import { Button } from "../components/ui/button"
 import { KeyValueRow } from "../components/KeyValueRow"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
 import CustomToasts from "../components/CustomToasts"
-import { Pencil, PencilOff, Save } from "lucide-react"
+import { Pencil, PencilOff, Save, ArrowLeft } from "lucide-react"
 import { fetchImage } from "../services/fetchImage"
 
 function Detail() {
@@ -195,22 +195,31 @@ function Detail() {
             <div className="p-4">
                 <Card className="bg-white text-customBlack p-4 font-semibold">
                     <CardContent>
-                        <div className="flex justify-end items-center mt-4">
-                            {isInventoryManager ? (
-                                <Button
-                                    tooltip={editButtonTooltipText}
-                                    onClick={() => setIsEditing(!isEditing)}
-                                    className="fixed top-16 right-5 w-[55px] h-[55px] z-10 bg-customOrange text-customBeige rounded-full hover:bg-customRed"
-                                >
-                                    {isEditing ? (
-                                        <PencilOff size={24} />
-                                    ) : (
-                                        <Pencil size={24} />
-                                    )}
-                                </Button>
-                            ) : (
-                                <div />
-                            )}
+                        <div className="flex justify-end items-center mt-4"></div>
+                        {isInventoryManager ? (
+                            <Button
+                                tooltip={editButtonTooltipText}
+                                onClick={() => setIsEditing(!isEditing)}
+                                className="fixed top-16 right-5 w-[55px] h-[55px] z-10 bg-customOrange text-customBeige rounded-full hover:bg-customRed"
+                            >
+                                {isEditing ? (
+                                    <PencilOff size={24} />
+                                ) : (
+                                    <Pencil size={24} />
+                                )}
+                            </Button>
+                        ) : (
+                            <div />
+                        )}
+                        <div className="flex items-center justify-between">
+                            <Button
+                                tooltip="Zurück"
+                                className="bg-customBlack text-white rounded-full hover:bg-customRed flex items-center justify-center w-[45px] h-[45px] p-0 shrink-0"
+                                onClick={() => navigate("/")}
+                            >
+                                <ArrowLeft size={16} />
+                            </Button>
+
                             <Button
                                 onClick={() =>
                                     navigate(`/item/${id}/reservation`)
@@ -220,6 +229,7 @@ function Detail() {
                                 Ausleihen
                             </Button>
                         </div>
+                        <div className="mb-8"></div>
 
                         <dl className="divide-y divide-customBeige">
                             <KeyValueRow label="Kategorie ID">
@@ -323,18 +333,6 @@ function Detail() {
                             </div>
                         )}
                     </CardContent>
-                    <CardFooter>
-                        <Button
-                            onClick={() =>
-                                navigate(
-                                    `/category/${inventoryItem?.categoryId}`
-                                )
-                            }
-                            className="w-[100px] bg-customBlue text-customBeige rounded hover:bg-customRed"
-                        >
-                            &larr; Zurück
-                        </Button>
-                    </CardFooter>
                 </Card>
             </div>
         </div>

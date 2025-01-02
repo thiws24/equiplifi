@@ -265,6 +265,7 @@ function Lend() {
                                 <CardHeader className="mb-2 flex flex-row justify-between flex-wrap">
                                     <div className="flex items-center">
                                         <Button
+                                            tooltip="Zurück"
                                             className="bg-customBlack text-white rounded-full hover:bg-customRed flex items-center justify-center w-[45px] h-[45px] p-0 shrink-0"
                                             onClick={() =>
                                                 navigate(`/item/${id}`)
@@ -445,8 +446,8 @@ function Lend() {
                                                 }
                                                 className="mt-8 text-customOrange hover:text-orange-300"
                                             >
-                                                Weitere Inventargegenstände dieser
-                                                Art ausleihen
+                                                Weitere Inventargegenstände
+                                                dieser Art ausleihen
                                                 <ArrowRight className="w-4 h-4 ml-2" />
                                             </Button>
                                         </div>

@@ -16,6 +16,7 @@ import { useKeycloak } from "../keycloak/KeycloakProvider"
 import { ModuleRegistry, ClientSideRowModelModule } from "ag-grid-community"
 import { CategoryProps, ItemProps } from "../interfaces/CategoryProps"
 import { Input } from "../components/ui/input"
+import { ArrowLeft } from "lucide-react"
 
 ModuleRegistry.registerModules([ClientSideRowModelModule])
 import { Pencil, PencilOff, Save } from "lucide-react"
@@ -201,22 +202,30 @@ function CategoryDetails() {
             <div className="p-4">
                 <Card className="bg-white text-customBlack p-4 font-semibold">
                     <CardContent>
-                        <div className="flex justify-end mt-4">
-                            {isInventoryManager ? (
-                                <Button
-                                    tooltip={editButtonTooltipText}
-                                    className="fixed top-16 right-5 w-[55px] h-[55px] z-10 bg-customOrange text-customBeige rounded-full hover:bg-customRed"
-                                    onClick={() => setIsEditing(!isEditing)}
-                                >
-                                    {isEditing ? (
-                                        <PencilOff size={24} />
-                                    ) : (
-                                        <Pencil size={24} />
-                                    )}
-                                </Button>
-                            ) : (
-                                <div />
-                            )}
+                        <div className="flex justify-end mt-4"></div>
+                        {isInventoryManager ? (
+                            <Button
+                                tooltip={editButtonTooltipText}
+                                className="fixed top-16 right-5 w-[55px] h-[55px] z-10 bg-customOrange text-customBeige rounded-full hover:bg-customRed"
+                                onClick={() => setIsEditing(!isEditing)}
+                            >
+                                {isEditing ? (
+                                    <PencilOff size={24} />
+                                ) : (
+                                    <Pencil size={24} />
+                                )}
+                            </Button>
+                        ) : (
+                            <div />
+                        )}
+                        <div className="flex items-center justify-between">
+                            <Button
+                                tooltip="Zurück"
+                                className="bg-customBlack text-white rounded-full hover:bg-customRed flex items-center justify-center w-[45px] h-[45px] p-0 shrink-0"
+                                onClick={() => navigate("/")}
+                            >
+                                <ArrowLeft size={16} />
+                            </Button>
                             <Button
                                 className="w-[100px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige"
                                 onClick={() =>
@@ -226,6 +235,7 @@ function CategoryDetails() {
                                 Ausleihen
                             </Button>
                         </div>
+                        <div className="mb-8"></div>
 
                         {/* Editable Fields */}
                         <dl className="divide-y divide-customBeige">
@@ -365,14 +375,6 @@ function CategoryDetails() {
                             </div>
                         </div>
                     </CardContent>
-                    <CardFooter>
-                        <Button
-                            onClick={() => navigate("/")}
-                            className="w-[100px] bg-customBlue text-customBeige rounded hover:bg-customRed"
-                        >
-                            &larr; Zurück
-                        </Button>
-                    </CardFooter>
                 </Card>
             </div>
         </div>
