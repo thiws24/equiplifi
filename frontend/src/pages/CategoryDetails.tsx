@@ -238,7 +238,7 @@ function CategoryDetails() {
                                 <Button
                                     tooltip="Zurück"
                                     className="bg-customBlack text-white rounded-full hover:bg-customRed flex items-center justify-center w-[45px] h-[45px] p-0 shrink-0"
-                                    onClick={() => navigate("/")}
+                                    onClick={() => navigate("/inventory")}
                                 >
                                     <ArrowLeft size={16} />
                                 </Button>
