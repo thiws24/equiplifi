@@ -431,6 +431,18 @@ function Detail() {
                                     )}
                                 </div>
                             </div>
+                            <div className="flex md:hidden mr-2">
+                                <Button
+                                    className="text-customBeige bg-customOrange hover:bg-orange-600 hover:text-customBeige"
+                                    onClick={() =>
+                                        navigate(`/item/${id}/reservation`)
+                                    }
+                                >
+                                    <CalendarPlus size={16} className="mr-2" />
+                                    Ausleihen
+                                    <ArrowRight size={16} className="ml-2" />
+                                </Button>
+                            </div>
                         </CardContent>
                     </Card>
                 </div>
