@@ -1,7 +1,7 @@
 import React from "react"
 import { AgGridReact } from "ag-grid-react"
 import { AG_GRID_LOCALE_DE } from "@ag-grid-community/locale"
-import { customTheme } from "../customTheme"
+import { detailsTheme } from "../customTheme"
 import { ReservationItemProps } from "../interfaces/ReservationItemProps"
 import { ColDef } from "ag-grid-community"
 import {
@@ -34,7 +34,7 @@ const ReservationTable: React.FC<ReservationCardProps> = ({
                 paginationPageSizeSelector={[10, 25, 50]}
                 loading={loading}
                 localeText={AG_GRID_LOCALE_DE}
-                theme={customTheme}
+                theme={detailsTheme}
             />
         </div>
     )
