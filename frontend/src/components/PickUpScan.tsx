@@ -58,6 +58,7 @@ export const PickUpScan: React.FC<Props> = ({ processId, isModalOpen, setIsModal
         }
         return false
     }
+
     return (
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
             <DialogContent>
@@ -72,7 +73,7 @@ export const PickUpScan: React.FC<Props> = ({ processId, isModalOpen, setIsModal
                         key={item.itemId}
                         itemId={item.itemId}
                         reservationId={item.id}
-                        alreadyScanned={alreadyScannedIds?.indexOf(item.id) !== -1}
+                        alreadyScanned={Boolean(alreadyScannedIds && alreadyScannedIds.indexOf(item.id) !== -1)}
                         confirmLending={confirmLendingByReservation}
                     />
                 ))}
