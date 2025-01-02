@@ -16,7 +16,7 @@ import { useKeycloak } from "../keycloak/KeycloakProvider"
 import { ModuleRegistry, ClientSideRowModelModule } from "ag-grid-community"
 import { CategoryProps, ItemProps } from "../interfaces/CategoryProps"
 import { Input } from "../components/ui/input"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, ArrowRight, CalendarPlus } from "lucide-react"
 
 ModuleRegistry.registerModules([ClientSideRowModelModule])
 import { Pencil, PencilOff, Save } from "lucide-react"
@@ -226,13 +226,16 @@ function CategoryDetails() {
                             >
                                 <ArrowLeft size={16} />
                             </Button>
+
                             <Button
-                                className="w-[100px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige"
                                 onClick={() =>
                                     navigate(`/category/${id}/reservation`)
                                 }
+                                className="text-customBeige bg-customOrange hover:bg-orange-600 hover:text-customBeige"
                             >
+                                <CalendarPlus size={16} className="mr-2" />
                                 Ausleihen
+                                <ArrowRight size={16} className="ml-2" />
                             </Button>
                         </div>
                         <div className="mb-8"></div>

@@ -12,7 +12,14 @@ import { Button } from "../components/ui/button"
 import { KeyValueRow } from "../components/KeyValueRow"
 import { useKeycloak } from "../keycloak/KeycloakProvider"
 import CustomToasts from "../components/CustomToasts"
-import { Pencil, PencilOff, Save, ArrowLeft } from "lucide-react"
+import {
+    Pencil,
+    PencilOff,
+    Save,
+    ArrowLeft,
+    ArrowRight,
+    CalendarPlus
+} from "lucide-react"
 import { fetchImage } from "../services/fetchImage"
 
 function Detail() {
@@ -224,9 +231,11 @@ function Detail() {
                                 onClick={() =>
                                     navigate(`/item/${id}/reservation`)
                                 }
-                                className="w-[100px] bg-customBlue text-customBeige rounded hover:bg-customRed hover:text-customBeige"
+                                className="text-customBeige bg-customOrange hover:bg-orange-600 hover:text-customBeige"
                             >
+                                <CalendarPlus size={16} className="mr-2" />
                                 Ausleihen
+                                <ArrowRight size={16} className="ml-2" />
                             </Button>
                         </div>
                         <div className="mb-8"></div>
