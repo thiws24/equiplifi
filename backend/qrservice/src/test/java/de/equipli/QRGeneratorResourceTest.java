@@ -1,6 +1,7 @@
 package de.equipli;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.security.TestSecurity;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -11,6 +12,7 @@ import static org.hamcrest.Matchers.equalTo;
 class QRGeneratorResourceTest {
 
     @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testGenerateQR_PNG() {
         given()
                 .queryParam("name", "TestName")
@@ -25,6 +27,7 @@ class QRGeneratorResourceTest {
     }
 
     @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testGenerateQR_PDF() {
         given()
                 .queryParam("name", "TestName")
@@ -39,6 +42,7 @@ class QRGeneratorResourceTest {
     }
 
     @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testGenerateQR_MissingParameters() {
         given()
                 .queryParam("name", "TestName")
