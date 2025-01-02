@@ -118,8 +118,12 @@ public class InventoryItemResource {
             throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Item " + itemId + " not found").build());
         }
 
-        existingItem.setStatus(item.getStatus());
-        existingItem.setLocation(item.getLocation());
+        if(item.getStatus() != null) {
+            existingItem.setStatus(item.getStatus());
+        }
+        if(item.getLocation() != null) {
+            existingItem.setLocation(item.getLocation());
+        }
 
         inventoryRepository.persist(existingItem);
 
