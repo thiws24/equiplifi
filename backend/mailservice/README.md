@@ -60,7 +60,7 @@ Das Beispiel zeigt einen Request für die Bestätigung einer Reservierung. Die a
 Dazu muss die Queue im Request, hier ``send-reservation-confirmation`` entsprechend angepasst werden.
 
 Die möglichen Queues sind:
-- send-reservation-confirmation
+- reservation-confirmation
 - cancellation-confirmation
 - return-confirmation
 - return-reminder
