@@ -1,7 +1,7 @@
 ### Reservierung bestätigen
 POST http://localhost:8161/api/message/reservation-confirmation?type=queue
 Content-Type: application/json
-Authorization: Basic YWRtaW46YWRtaW4xMjM=
+Authorization: Basic YWRtaW46YWRtaW4=
 
 [
   {
@@ -20,32 +20,10 @@ Authorization: Basic YWRtaW46YWRtaW4xMjM=
   }
 ]
 
-### Lagerwart bestätigt Reservierung
-POST http://localhost:8161/api/message/storekeeper-confirmation?type=queue
-Content-Type: application/json
-Authorization: Basic YWRtaW46YWRtaW4xMjM=
-
-[
-{
-"itemId": "1",
-"startDate": "2024-11-28",
-"endDate": "2024-11-30",
-"userId": "26d7ee63-43f1-4deb-9d2f-41e297c9953a",
-"reservationId": "123"
-},
-{
-"itemId": "2",
-"startDate": "2024-12-28",
-"endDate": "2024-12-30",
-"userId": "26d7ee63-43f1-4deb-9d2f-41e297c9953a",
-"reservationId": "456"
-}
-]
-
 ### Ablehnung der Reservierung
 POST http://localhost:8161/api/message/cancellation-confirmation?type=queue
 Content-Type: application/json
-Authorization: Basic YWRtaW46YWRtaW4xMjM=
+Authorization: Basic YWRtaW46YWRtaW4=
 
 [
   {
@@ -67,7 +45,7 @@ Authorization: Basic YWRtaW46YWRtaW4xMjM=
 ### Rückgabe bestätigen
 POST http://localhost:8161/api/message/return-confirmation?type=queue
 Content-Type: application/json
-Authorization: Basic YWRtaW46YWRtaW4xMjM=
+Authorization: Basic YWRtaW46YWRtaW4=
 
 [
   {
@@ -89,7 +67,7 @@ Authorization: Basic YWRtaW46YWRtaW4xMjM=
 ### Erinnerung an Rückgabe
 POST http://localhost:8161/api/message/return-reminder?type=queue
 Content-Type: application/json
-Authorization: Basic YWRtaW46YWRtaW4xMjM=
+Authorization: Basic YWRtaW46YWRtaW4=
 
 [
   {
@@ -107,3 +85,52 @@ Authorization: Basic YWRtaW46YWRtaW4xMjM=
     "reservationId": "456"
   }
 ]
+
+### Lagerwart bestätigt Reservierung
+POST http://localhost:8161/api/message/storekeeper-confirmation?type=queue
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4=
+
+[
+{
+"itemId": "1",
+"startDate": "2024-11-28",
+"endDate": "2024-11-30",
+"userId": "26d7ee63-43f1-4deb-9d2f-41e297c9953a",
+"reservationId": "123"
+},
+{
+"itemId": "2",
+"startDate": "2024-12-28",
+"endDate": "2024-12-30",
+"userId": "26d7ee63-43f1-4deb-9d2f-41e297c9953a",
+"reservationId": "456"
+}
+]
+
+### Bestätigung der Anfrage
+POST http://localhost:8161/api/message/request-confirmation?type=queue
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4=
+
+[
+  {
+    "itemId": "1",
+    "startDate": "2024-11-28",
+    "endDate": "2024-11-30",
+    "userId": "26d7ee63-43f1-4deb-9d2f-41e297c9953a",
+    "reservationId": "123"
+  },
+  {
+    "itemId": "2",
+    "startDate": "2024-12-28",
+    "endDate": "2024-12-30",
+    "userId": "26d7ee63-43f1-4deb-9d2f-41e297c9953a",
+    "reservationId": "456"
+  }
+]
+
+
+
+
+
