@@ -15,6 +15,7 @@ public class CreateCategoryRequest {
     private String itemLocation;
 
     public CreateCategoryRequest() {
+        // no args
     }
 
     public String getName() {
