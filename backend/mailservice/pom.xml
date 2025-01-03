@@ -17,7 +17,7 @@
         <!--Version 3.16.1 hides Endpoints?-->
         <quarkus.platform.version>3.17.5</quarkus.platform.version>
         <skipITs>true</skipITs>
-        <surefire-plugin.version>3.5.0</surefire-plugin.version>
+        <surefire-plugin.version>3.5.2</surefire-plugin.version>
     </properties>
 
     <dependencyManagement>
