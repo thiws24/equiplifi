@@ -86,7 +86,7 @@ public class CategoryResource {
     @RolesAllowed("user")
     public Response getCategories() {
         return Response.ok(categoryRepository.listAll())
-                .header("Cache-Control", "max-age=300")
+                .header("Cache-Control", "no-cache, no-store, must-revalidate")
                 .build();
     }
 
@@ -104,7 +104,7 @@ public class CategoryResource {
             throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Category " + id + " not found").build());
         }
         return Response.ok(category)
-                .header("Cache-Control", "max-age=300")
+                .header("Cache-Control", "no-cache, no-store, must-revalidate")
                 .build();
     }
 

@@ -68,7 +68,7 @@ public class InventoryItemResource {
         }
 
         return Response.ok(category.getItems())
-                .header("Cache-Control", "max-age=300")
+                .header("Cache-Control", "no-cache, no-store, must-revalidate")
                 .build();
     }
 
@@ -93,7 +93,7 @@ public class InventoryItemResource {
         }
 
         return Response.ok(item)
-                .header("Cache-Control", "max-age=300")
+                .header("Cache-Control", "no-cache, no-store, must-revalidate")
                 .build();
     }
 
