@@ -3,6 +3,9 @@ package de.equipli.inventory.rest;
 import de.equipli.inventory.jpa.*;
 import de.equipli.inventory.rest.dto.CreateCategoryRequest;
 import de.equipli.inventory.rest.dto.UpdateCategoryRequest;
+import io.minio.GetObjectArgs;
+import io.minio.MinioClient;
+import io.minio.errors.MinioException;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -10,13 +13,21 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.jboss.resteasy.reactive.RestForm;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Base64;
 
 @Authenticated
 @Path("/categories")
@@ -24,11 +35,16 @@ public class CategoryResource {
 
     private final CategoryRepository categoryRepository;
     private final InventoryRepository inventoryRepository;
+    private final MinioClient minioClient;
+
+    @ConfigProperty(name = "minio.bucket-name")
+    String bucketName;
 
     @Inject
-    public CategoryResource(CategoryRepository categoryRepository, InventoryRepository inventoryRepository) {
+    public CategoryResource(CategoryRepository categoryRepository, InventoryRepository inventoryRepository, MinioClient minioClient) {
         this.categoryRepository = categoryRepository;
         this.inventoryRepository = inventoryRepository;
+        this.minioClient = minioClient;
     }
 
     @POST
@@ -165,6 +181,81 @@ public class CategoryResource {
         return Response.noContent()
                 .header("Cache-Control", "no-cache, no-store, must-revalidate")
                 .build();
+    }
+
+    // Image upload/download endpoints
+
+    @GET
+    @Path("/{id}/image")
+    @Produces(MediaType.TEXT_PLAIN)
+    @Operation(summary = "Get a category image by ID", description = "Returns a category image by its ID as a Base64 string.")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Category image returned successfully", content = @Content(mediaType = "text/plain")),
+            @APIResponse(responseCode = "404", description = "Category not found", content = @Content(mediaType = "application/json"))
+    })
+    @RolesAllowed("user")
+    public Response getCategoryImage(@PathParam("id") Long id) {
+        Category category = categoryRepository.findById(id);
+        if (category == null) {
+            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Category " + id + " not found").build());
+        }
+
+        try (InputStream photo = minioClient.getObject(
+                GetObjectArgs.builder()
+                        .bucket(bucketName)
+                        .object("category-" + id + ".jpg")
+                        .build());
+             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = photo.read(buffer)) != -1) {
+                baos.write(buffer, 0, bytesRead);
+            }
+
+            String base64Image = Base64.getEncoder().encodeToString(baos.toByteArray());
+            return Response.ok(base64Image)
+                    .header("Cache-Control", "max-age=300")
+                    .build();
+        } catch (MinioException | IOException | NoSuchAlgorithmException | InvalidKeyException e) {
+            throw new InternalServerErrorException(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error retrieving category photo").build());
+        }
+    }
+
+    @POST
+    @Path("/{id}/image")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Transactional
+    @Operation(summary = "Upload a category image by ID", description = "Uploads a category image by its ID as a file.")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "201", description = "Category image uploaded successfully"),
+            @APIResponse(responseCode = "404", description = "Category not found", content = @Content(mediaType = "application/json"))
+    })
+    public Response uploadCategoryImage(@PathParam("id") Long id, @RestForm InputStream fileContent, @RestForm String contentType) {
+        Category category = categoryRepository.findById(id);
+        if (category == null) {
+            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Category " + id + " not found").build());
+        }
+
+        if (fileContent == null) {
+            throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity("File content cannot be null").build());
+        }
+
+        try (InputStream image = fileContent) {
+            minioClient.putObject(
+                    io.minio.PutObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object("category-" + id + ".jpg")
+                            .stream(image, image.available(), -1)
+                            .contentType(contentType)
+                            .build()
+            );
+            return Response.ok()
+                    .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                    .build();
+        } catch (MinioException | IOException | NoSuchAlgorithmException | InvalidKeyException e) {
+            throw new InternalServerErrorException(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error uploading category image").build());
+        }
     }
 
 }
