@@ -5,7 +5,7 @@ import de.equipli.inventory.rest.dto.CreateCategoryRequest;
 import de.equipli.inventory.rest.dto.UpdateCategoryRequest;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
-import io.minio.errors.MinioException;
+import io.minio.PutObjectArgs;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -21,13 +21,8 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.jboss.resteasy.reactive.RestForm;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Base64;
 
 @Authenticated
 @Path("/categories")
@@ -187,10 +182,9 @@ public class CategoryResource {
 
     @GET
     @Path("/{id}/image")
-    @Produces(MediaType.TEXT_PLAIN)
-    @Operation(summary = "Get a category image by ID", description = "Returns a category image by its ID as a Base64 string.")
+    @Operation(summary = "Get a category image by ID", description = "Returns a category image by its ID.")
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Category image returned successfully", content = @Content(mediaType = "text/plain")),
+            @APIResponse(responseCode = "200", description = "Category image returned successfully"),
             @APIResponse(responseCode = "404", description = "Category not found", content = @Content(mediaType = "application/json"))
     })
     @RolesAllowed("user")
@@ -204,20 +198,15 @@ public class CategoryResource {
                 GetObjectArgs.builder()
                         .bucket(bucketName)
                         .object("category-" + id + ".jpg")
-                        .build());
-             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                        .build())) {
 
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = photo.read(buffer)) != -1) {
-                baos.write(buffer, 0, bytesRead);
-            }
+            byte[] imageBytes = photo.readAllBytes();
 
-            String base64Image = Base64.getEncoder().encodeToString(baos.toByteArray());
-            return Response.ok(base64Image)
-                    .header("Cache-Control", "max-age=300")
+            return Response.ok(imageBytes)
+                    .header("Content-Type", "image/jpeg")
+                    .header("Cache-Control", "no-cache, no-store, must-revalidate")
                     .build();
-        } catch (MinioException | IOException | NoSuchAlgorithmException | InvalidKeyException e) {
+        } catch (Exception e) {
             throw new InternalServerErrorException(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error retrieving category photo").build());
         }
     }
@@ -243,7 +232,7 @@ public class CategoryResource {
 
         try (InputStream image = fileContent) {
             minioClient.putObject(
-                    io.minio.PutObjectArgs.builder()
+                    PutObjectArgs.builder()
                             .bucket(bucketName)
                             .object("category-" + id + ".jpg")
                             .stream(image, image.available(), -1)
@@ -253,7 +242,7 @@ public class CategoryResource {
             return Response.ok()
                     .header("Cache-Control", "no-cache, no-store, must-revalidate")
                     .build();
-        } catch (MinioException | IOException | NoSuchAlgorithmException | InvalidKeyException e) {
+        } catch (Exception e) {
             throw new InternalServerErrorException(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error uploading category image").build());
         }
     }
