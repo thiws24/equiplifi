@@ -9,6 +9,7 @@ import java.util.List;
 public class Category extends PanacheEntity {
 
     private String name;
+    @Column(columnDefinition = "text")
     private String description;
     private String icon;
     private String photoUrl;
