@@ -416,22 +416,24 @@ function Detail() {
                                     </div>
                                 </div>
 
-                                <div className="flex flex-col justify-center md:w-1/2 p-8 md:p-16 self-center w-full">
-                                    {loading ? (
-                                        <Skeleton className="h-[400px] bg-gray-200 w-full max-w-[400px]" />
-                                    ) : (
-                                        <img
-                                            src={
-                                                photo ||
-                                                "/image-placeholder.jpg"
-                                            }
-                                            alt={inventoryItem?.name}
-                                            className="object-cover rounded-lg w-full"
-                                        />
-                                    )}
+                                <div className="flex justify-center md:w-1/2 flex-wrap p-8 md:p-16">
+                                    <div className="max-w-[400px]">
+                                        {loading ? (
+                                            <Skeleton className="h-[400px] w-[400px] rounded-lg bg-gray-200" />
+                                        ) : (
+                                            <img
+                                                src={
+                                                    photo ||
+                                                    "/image-placeholder.jpg"
+                                                }
+                                                alt={inventoryItem?.name}
+                                                className=" object-cover rounded-lg"
+                                            />
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                            <div className="flex md:hidden mr-2">
+                            <div className="flex md:hidden items-center justify-center mt-10">
                                 <Button
                                     className="text-customBeige bg-customOrange hover:bg-orange-600 hover:text-customBeige"
                                     onClick={() =>

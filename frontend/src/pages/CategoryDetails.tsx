@@ -357,68 +357,73 @@ function CategoryDetails() {
                                     </div>
                                 </div>
 
-                                <div className="flex flex-col justify-center md:w-1/2 p-8 md:p-16 self-center w-full">
-                                    {loading ? (
-                                        <Skeleton className="h-[400px] bg-gray-200 w-full max-w-[400px]" />
-                                    ) : (
-                                        <img
-                                            src={
-                                                currentImage ||
-                                                "/image-placeholder.jpg"
-                                            }
-                                            alt={category?.name}
-                                            className="object-cover rounded-lg w-full"
-                                        />
-                                    )}
-                                    {isEditing ? (
-                                        <>
-                                            <div className="flex items-center gap-4 mt-4">
-                                                {/* Button to open the file browser */}
-                                                <Button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        document
-                                                            .getElementById(
-                                                                "file-upload"
-                                                            )
-                                                            ?.click()
-                                                    }
-                                                    className="text-white bg-customOrange hover:bg-customRed"
-                                                >
-                                                    Bild hochladen
-                                                </Button>
-                                                {/* Text field to display the file name */}
-                                                <div className="text-sm text-gray-500 border rounded px-3 py-2 w-full">
-                                                    {updatedData.image
-                                                        ? updatedData.image.name
-                                                        : "Keine Datei ausgewählt"}
-                                                </div>
-                                            </div>
-                                            {/* Hidden input field */}
-                                            <input
-                                                type="file"
-                                                id="file-upload"
-                                                accept="image/png, image/jpeg, image/jpg"
-                                                style={{
-                                                    display: "none"
-                                                }}
-                                                onChange={(
-                                                    e: React.ChangeEvent<HTMLInputElement>
-                                                ) => {
-                                                    if (e.target.files?.[0]) {
-                                                        setUpdatedData({
-                                                            ...updatedData,
-                                                            image: e.target
-                                                                .files[0]
-                                                        })
-                                                    }
-                                                }}
+                                <div className="flex justify-center md:w-1/2 flex-wrap p-8 md:p-16">
+                                    <div className="max-w-[400px]">
+                                        {loading ? (
+                                            <Skeleton className="h-[400px] w-[400px] rounded-lg bg-gray-200" />
+                                        ) : (
+                                            <img
+                                                src={
+                                                    currentImage ||
+                                                    "/image-placeholder.jpg"
+                                                }
+                                                alt={category?.name}
+                                                className=" object-cover rounded-lg"
                                             />
-                                        </>
-                                    ) : null}
+                                        )}
+                                        {isEditing ? (
+                                            <>
+                                                <div className="flex items-center gap-4 mt-4">
+                                                    {/* Button to open the file browser */}
+                                                    <Button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            document
+                                                                .getElementById(
+                                                                    "file-upload"
+                                                                )
+                                                                ?.click()
+                                                        }
+                                                        className="text-white bg-customOrange hover:bg-customRed"
+                                                    >
+                                                        Bild hochladen
+                                                    </Button>
+                                                    {/* Text field to display the file name */}
+                                                    <div className="text-sm text-gray-500 border rounded px-3 py-2 w-full">
+                                                        {updatedData.image
+                                                            ? updatedData.image
+                                                                  .name
+                                                            : "Keine Datei ausgewählt"}
+                                                    </div>
+                                                </div>
+                                                {/* Hidden input field */}
+                                                <input
+                                                    type="file"
+                                                    id="file-upload"
+                                                    accept="image/png, image/jpeg, image/jpg"
+                                                    style={{
+                                                        display: "none"
+                                                    }}
+                                                    onChange={(
+                                                        e: React.ChangeEvent<HTMLInputElement>
+                                                    ) => {
+                                                        if (
+                                                            e.target.files?.[0]
+                                                        ) {
+                                                            setUpdatedData({
+                                                                ...updatedData,
+                                                                image: e.target
+                                                                    .files[0]
+                                                            })
+                                                        }
+                                                    }}
+                                                />
+                                            </>
+                                        ) : null}
+                                    </div>
                                 </div>
                             </div>
-                            <div className="flex md:hidden">
+                            <div className="flex md:hidden items-center justify-center mt-10">
                                 <Button
                                     className="text-customBeige bg-customOrange hover:bg-orange-600 hover:text-customBeige"
                                     onClick={() =>
