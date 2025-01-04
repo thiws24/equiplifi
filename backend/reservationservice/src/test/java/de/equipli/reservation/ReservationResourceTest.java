@@ -110,6 +110,7 @@ private ReservationRepository reservationRepository;
         existingReservation.setStartDate(LocalDate.now().plusDays(20));
         existingReservation.setEndDate(LocalDate.now().plusDays(25));
         existingReservation.setItemId(1L);
+        existingReservation.setStatus(ReservationStatus.ACTIVE);
         existingReservation.setUserId("user1");
 
         given()
@@ -125,6 +126,7 @@ private ReservationRepository reservationRepository;
         newReservation.setStartDate(LocalDate.now().plusDays(23));
         newReservation.setEndDate(LocalDate.now().plusDays(27));
         newReservation.setItemId(1L);
+        newReservation.setStatus(ReservationStatus.ACTIVE);
         newReservation.setUserId("user1");
 
         given()

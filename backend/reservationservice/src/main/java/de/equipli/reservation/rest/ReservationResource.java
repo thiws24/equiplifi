@@ -92,6 +92,10 @@ public class ReservationResource {
             }
         }
 
+        if (reservation.getStatus() == null) {
+            reservation.setStatus(ReservationStatus.ACTIVE); // Set default status to ACTIVE
+        }
+
         reservationRepository.persist(reservation);
         return Response.status(Response.Status.CREATED).entity(reservation).build();
     }
