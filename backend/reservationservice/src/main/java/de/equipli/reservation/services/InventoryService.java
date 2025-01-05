@@ -13,7 +13,6 @@ public interface InventoryService {
 
     @GET
     @Path("/categories/{categoryId}/items")
-
     List<InventoryItem> getInventoryItems(@PathParam("categoryId") Long id, @HeaderParam("Authorization") String token);
 
 }
