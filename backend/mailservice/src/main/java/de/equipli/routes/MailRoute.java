@@ -97,6 +97,13 @@ public class MailRoute extends RouteBuilder {
                 .setProperty("mailTemplate", simple("return-reminder-mail.html"))
                 .to("direct:sendMail");
 
+// reservation-rejection Route
+        from("activemq:queue:reservation-rejection")
+                .routeId("reservationRejection-Route")
+                .unmarshal(mailDtoFormat)
+                .setProperty("mailTemplate", simple("reservation-rejection.html"))
+                .to("direct:sendMail");
+
 // Main E-Mail Route
         from("direct:sendMail")
                 // Validate Input
