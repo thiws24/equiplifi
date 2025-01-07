@@ -452,10 +452,15 @@ function Lend() {
                                                 }
                                                 className="mt-8 text-customOrange hover:text-orange-300"
                                             >
-                                                Weitere Inventargegenstände
-                                                dieser Art ausleihen
+                                                <span className="hidden sm:inline">
+                                                    Weitere Inventargegenstände dieser Art ausleihen
+                                                </span>
+                                                <span className="inline sm:hidden">
+                                                    Weitere Gegenstände dieser Art
+                                                </span>
                                                 <ArrowRight className="w-4 h-4 ml-2" />
                                             </Button>
+
                                         </div>
                                         <div className="flex justify-center md:w-1/2 flex-wrap p-8 md:p-16">
                                             <div className="max-w-[400px]">
