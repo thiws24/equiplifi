@@ -2,18 +2,18 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
   <bpmn:collaboration id="Collaboration_0zj0gy2">
     <bpmn:participant id="Participant_0p4cnch" name="Reservationcancellationprocess" processRef="Process_cancellation_of_reservation_cdasmg0" />
-    <bpmn:textAnnotation id="TextAnnotation_0i3oc2h">
-      <bpmn:text>status:cancelled</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:association id="Association_0bl293d" associationDirection="None" sourceRef="Activity_0qpzdpu" targetRef="TextAnnotation_0i3oc2h" />
     <bpmn:correlationKey id="CorrelationKey_1l4sfmk" name="MainCorrelationKey" />
   </bpmn:collaboration>
   <bpmn:process id="Process_cancellation_of_reservation_cdasmg0" isExecutable="true">
     <bpmn:ioSpecification>
       <bpmn:dataInput id="reservation_to_cancel" name="Reservation to Cancel" />
+      <bpmn:dataInput id="AuthenticationToken" name="AuthenticationToken" />
       <bpmn:dataOutput id="cancelledreservation" name="Cancelled Reservation" />
       <bpmn:inputSet>
         <bpmn:dataInputRefs>reservation_to_cancel</bpmn:dataInputRefs>
+      </bpmn:inputSet>
+      <bpmn:inputSet>
+        <bpmn:dataInputRefs>AuthenticationToken</bpmn:dataInputRefs>
       </bpmn:inputSet>
       <bpmn:outputSet>
         <bpmn:dataOutputRefs>cancelledreservation</bpmn:dataOutputRefs>
@@ -26,15 +26,13 @@
     <bpmn:serviceTask id="Activity_0qpzdpu" name="Set reservation to cancelled">
       <bpmn:extensionElements>
         <spiffworkflow:instructionsForEndUser />
-        <spiffworkflow:postScript>cancelledreservation =reservation_to_cancel
-cancelledreservation["inventoryItemStatus"]= "BROKEN"
-cancelledreservation["status"]= "cancelled"</spiffworkflow:postScript>
-        <spiffworkflow:preScript />
+        <spiffworkflow:postScript>cancelledreservation =reservation_to_cancel</spiffworkflow:postScript>
+        <spiffworkflow:preScript>reservation_to_cancel["status"]= "CANCELLED"</spiffworkflow:preScript>
         <spiffworkflow:serviceTaskOperator id="http/PutRequestV2" resultVariable="putResult">
           <spiffworkflow:parameters>
-            <spiffworkflow:parameter id="url" type="str" value="&#34;https://inventory.equipli.de/categories/&#34;+str(reservation_to_cancel[&#34;categoryId&#34;])+&#34;/items/&#34;+str(reservation_to_cancel[&#34;itemId&#34;])" />
-            <spiffworkflow:parameter id="headers" type="any" value="{&#34;Accept&#34;:&#34;application/json&#34;}" />
-            <spiffworkflow:parameter id="data" type="any" value="{&#34;status&#34;: &#34;BROKEN&#34;}" />
+            <spiffworkflow:parameter id="url" type="str" value="&#34;https://reservation.equipli.de/reservations/&#34;+str(reservation_to_cancel[&#34;id&#34;])" />
+            <spiffworkflow:parameter id="headers" type="any" value="{   &#34;Accept&#34;: &#34;application/json&#34;,   &#34;Authorization&#34;: AuthenticationToken}" />
+            <spiffworkflow:parameter id="data" type="any" value="reservation_to_cancel" />
             <spiffworkflow:parameter id="basic_auth_username" type="str" />
             <spiffworkflow:parameter id="basic_auth_password" type="str" />
           </spiffworkflow:parameters>
@@ -43,15 +41,32 @@ cancelledreservation["status"]= "cancelled"</spiffworkflow:postScript>
       <bpmn:incoming>Flow_17db3yp</bpmn:incoming>
       <bpmn:outgoing>Flow_1dulmur</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_1dulmur" sourceRef="Activity_0qpzdpu" targetRef="EndEvent_1" />
+    <bpmn:sequenceFlow id="Flow_1dulmur" sourceRef="Activity_0qpzdpu" targetRef="Activity_07v0ycv" />
     <bpmn:endEvent id="EndEvent_1" name="Reservation cancelled">
-      <bpmn:incoming>Flow_1dulmur</bpmn:incoming>
+      <bpmn:incoming>Flow_0vdi2gj</bpmn:incoming>
     </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0vdi2gj" sourceRef="Activity_07v0ycv" targetRef="EndEvent_1" />
+    <bpmn:serviceTask id="Activity_07v0ycv" name="Update InventoryItem">
+      <bpmn:extensionElements>
+        <spiffworkflow:serviceTaskOperator id="http/PutRequestV2" resultVariable="putResult">
+          <spiffworkflow:parameters>
+            <spiffworkflow:parameter id="url" type="str" value="&#34;https://inventory.equipli.de/categories/&#34;+str(reservation_to_cancel[&#34;categoryId&#34;])+&#34;/items/&#34;+str(reservation_to_cancel[&#34;itemId&#34;])" />
+            <spiffworkflow:parameter id="headers" type="any" value="{ &#34;Accept&#34;: &#34;application/json&#34;,   &#34;Authorization&#34;: AuthenticationToken}" />
+            <spiffworkflow:parameter id="data" type="any" value="{&#34;status&#34;: &#34;OK&#34;}" />
+            <spiffworkflow:parameter id="basic_auth_username" type="str" />
+            <spiffworkflow:parameter id="basic_auth_password" type="str" />
+          </spiffworkflow:parameters>
+        </spiffworkflow:serviceTaskOperator>
+        <spiffworkflow:postScript>cancelledreservation["inventoryItemStatus"]= "OK"</spiffworkflow:postScript>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1dulmur</bpmn:incoming>
+      <bpmn:outgoing>Flow_0vdi2gj</bpmn:outgoing>
+    </bpmn:serviceTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0zj0gy2">
       <bpmndi:BPMNShape id="Participant_0p4cnch_di" bpmnElement="Participant_0p4cnch" isHorizontal="true">
-        <dc:Bounds x="100" y="-60" width="600" height="360" />
+        <dc:Bounds x="100" y="-60" width="690" height="360" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
@@ -62,10 +77,13 @@ cancelledreservation["status"]= "cancelled"</spiffworkflow:postScript>
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_14za570_di" bpmnElement="EndEvent_1">
-        <dc:Bounds x="482" y="159" width="36" height="36" />
+        <dc:Bounds x="572" y="159" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="471" y="202" width="59" height="27" />
+          <dc:Bounds x="561" y="202" width="59" height="27" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_00w4dgw_di" bpmnElement="Activity_07v0ycv">
+        <dc:Bounds x="440" y="137" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="DataInput-388263309-1DI" bpmnElement="reservation_to_cancel">
         <dc:Bounds x="179" y="-5" width="36" height="50" />
@@ -73,10 +91,16 @@ cancelledreservation["status"]= "cancelled"</spiffworkflow:postScript>
           <dc:Bounds x="165" y="52" width="72" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="DataOutput-731653660-1DI" bpmnElement="cancelledreservation">
-        <dc:Bounds x="602" y="-5" width="36" height="50" />
+      <bpmndi:BPMNShape id="DataInput-388263369-1DI" bpmnElement="AuthenticationToken">
+        <dc:Bounds x="272" y="-5" width="36" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="594" y="52" width="59" height="27" />
+          <dc:Bounds x="254" y="52" width="81" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataOutput-731653660-1DI" bpmnElement="cancelledreservation">
+        <dc:Bounds x="692" y="-5" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="684" y="52" width="59" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_17db3yp_di" bpmnElement="Flow_17db3yp">
@@ -85,15 +109,11 @@ cancelledreservation["status"]= "cancelled"</spiffworkflow:postScript>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1dulmur_di" bpmnElement="Flow_1dulmur">
         <di:waypoint x="370" y="177" />
-        <di:waypoint x="482" y="177" />
+        <di:waypoint x="440" y="177" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_0i3oc2h_di" bpmnElement="TextAnnotation_0i3oc2h">
-        <dc:Bounds x="390" y="250" width="140" height="40" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_0bl293d_di" bpmnElement="Association_0bl293d">
-        <di:waypoint x="368" y="212" />
-        <di:waypoint x="420" y="250" />
+      <bpmndi:BPMNEdge id="Flow_0vdi2gj_di" bpmnElement="Flow_0vdi2gj">
+        <di:waypoint x="540" y="177" />
+        <di:waypoint x="572" y="177" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

@@ -6,14 +6,20 @@
       <bpmn:text>This is a workaround until Message Correlation is supported by Spiff</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_05e9cmm" associationDirection="None" sourceRef="Activity_0fsjegl" targetRef="TextAnnotation_1k1ll1q" />
-    <bpmn:correlationKey id="CorrelationKey_1at9sjz" name="MainCorrelationKey" />
+    <bpmn:correlationKey id="CorrelationKey_09pk71d" name="MainCorrelationKey">
+      <bpmn:correlationPropertyRef>reservation_id</bpmn:correlationPropertyRef>
+    </bpmn:correlationKey>
   </bpmn:collaboration>
   <bpmn:process id="lending_process_59k0hpx" name="Lending Process" isExecutable="true">
     <bpmn:ioSpecification>
       <bpmn:dataInput id="reservation" name="Reservation" />
+      <bpmn:dataInput id="AuthenticationToken" name="AuthenticationToken" />
       <bpmn:dataOutput id="activereservation" name="Active Reservation" />
       <bpmn:inputSet>
         <bpmn:dataInputRefs>reservation</bpmn:dataInputRefs>
+      </bpmn:inputSet>
+      <bpmn:inputSet>
+        <bpmn:dataInputRefs>AuthenticationToken</bpmn:dataInputRefs>
       </bpmn:inputSet>
       <bpmn:outputSet>
         <bpmn:dataOutputRefs>activereservation</bpmn:dataOutputRefs>
@@ -27,6 +33,9 @@
         <bpmn:flowNodeRef>Event_1vdiy0m</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1ikmzjd</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0fsjegl</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0mdbaj5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_04cs5ag</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0yrr497</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:sequenceFlow id="Flow_1xjtylu" sourceRef="Activity_1ikmzjd" targetRef="Event_1vdiy0m" />
@@ -59,18 +68,14 @@
         <spiffworkflow:serviceTaskOperator id="http/PutRequestV2" resultVariable="putResult">
           <spiffworkflow:parameters>
             <spiffworkflow:parameter id="url" type="str" value="&#34;https://inventory.equipli.de/categories/&#34;+str(reservation[&#34;categoryId&#34;])+&#34;/items/&#34;+str(reservation[&#34;itemId&#34;])" />
-            <spiffworkflow:parameter id="headers" type="any" value="{&#34;Accept&#34;:&#34;application/json&#34;}" />
+            <spiffworkflow:parameter id="headers" type="any" value="{   &#34;Accept&#34;: &#34;application/json&#34;,   &#34;Authorization&#34;: AuthenticationToken}" />
             <spiffworkflow:parameter id="data" type="any" value="{&#34;status&#34;: varInventoryItemStatus}" />
             <spiffworkflow:parameter id="basic_auth_username" type="str" />
             <spiffworkflow:parameter id="basic_auth_password" type="str" />
           </spiffworkflow:parameters>
         </spiffworkflow:serviceTaskOperator>
-        <spiffworkflow:postScript>if varInventoryItemStatus == "LENT":
-    activereservation = reservation
-    activereservation["lendingStatus"] = "LENT"
-else:
-    activereservation = None
-    </spiffworkflow:postScript>
+        <spiffworkflow:postScript>activereservation = reservation
+activereservation["lendingStatus"] = varInventoryItemStatus</spiffworkflow:postScript>
         <spiffworkflow:preScript>if check_out_inventoryitem["user_lending_confirmation"] =="confirmed":
     varInventoryItemStatus = "LENT"
 else:
@@ -80,15 +85,41 @@ else:
       <bpmn:outgoing>Flow_1xjtylu</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_1vyu5v3" sourceRef="Activity_0fsjegl" targetRef="Gateway_1ht8e1q" />
-    <bpmn:receiveTask id="Activity_0fsjegl" name="Receive user lending confirmation" messageRef="Check_out_inventoryitem_4">
+    <bpmn:receiveTask id="Activity_0fsjegl" name="Receive user lending confirmation" messageRef="Check_out_inventoryitem_11" spiffworkflow:isMatchingCorrelation="true">
       <bpmn:extensionElements>
         <spiffworkflow:messageVariable>check_out_inventoryitem</spiffworkflow:messageVariable>
+        <spiffworkflow:processVariableCorrelation>
+          <spiffworkflow:propertyId>reservation_id</spiffworkflow:propertyId>
+          <spiffworkflow:expression>reservation["id"]</spiffworkflow:expression>
+        </spiffworkflow:processVariableCorrelation>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_18wnt8b</bpmn:incoming>
       <bpmn:outgoing>Flow_1vyu5v3</bpmn:outgoing>
     </bpmn:receiveTask>
+    <bpmn:boundaryEvent id="Event_0mdbaj5" name="Start date is over" attachedToRef="Activity_0fsjegl">
+      <bpmn:outgoing>Flow_1euukba</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0qwrwg9">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">"PT5M"</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="Event_04cs5ag" name="Lending not successful">
+      <bpmn:incoming>Flow_04cdix8</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1euukba" sourceRef="Event_0mdbaj5" targetRef="Activity_0yrr497" />
+    <bpmn:sequenceFlow id="Flow_04cdix8" sourceRef="Activity_0yrr497" targetRef="Event_04cs5ag" />
+    <bpmn:scriptTask id="Activity_0yrr497" name="Mark reservation as not lent">
+      <bpmn:incoming>Flow_1euukba</bpmn:incoming>
+      <bpmn:outgoing>Flow_04cdix8</bpmn:outgoing>
+      <bpmn:script>activereservation = reservation
+activereservation["lendingStatus"] = "NOT LENT"</bpmn:script>
+    </bpmn:scriptTask>
   </bpmn:process>
-  <bpmn:message id="Check_out_inventoryitem_4" name="Check_out_inventoryitem_4" />
+  <bpmn:correlationProperty id="reservation_id" name="reservation_id">
+    <bpmn:correlationPropertyRetrievalExpression messageRef="Check_out_inventoryitem_11">
+      <bpmn:formalExpression>reservation_id</bpmn:formalExpression>
+    </bpmn:correlationPropertyRetrievalExpression>
+  </bpmn:correlationProperty>
+  <bpmn:message id="Check_out_inventoryitem_11" name="Check_out_inventoryitem_11" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1fk2m93">
       <bpmndi:BPMNShape id="Participant_1xx4y8n_di" bpmnElement="Participant_1xx4y8n" isHorizontal="true">
@@ -124,16 +155,37 @@ else:
         <dc:Bounds x="-60" y="360" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_04cs5ag_di" bpmnElement="Event_04cs5ag">
+        <dc:Bounds x="402" y="502" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="391" y="545" width="59" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ada99v_di" bpmnElement="Activity_0yrr497">
+        <dc:Bounds x="230" y="480" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="DataInput-388263309-1DI" bpmnElement="reservation">
         <dc:Bounds x="-198" y="215" width="36" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="-207" y="272" width="59" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataInput-388263369-1DI" bpmnElement="AuthenticationToken">
+        <dc:Bounds x="-108" y="215" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-128" y="272" width="81" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="DataOutput-731653660-1DI" bpmnElement="activereservation">
         <dc:Bounds x="402" y="215" width="36" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="394" y="272" width="59" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_038mo7k_di" bpmnElement="Event_0mdbaj5">
+        <dc:Bounds x="22" y="422" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-53.5" y="453" width="85" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1xjtylu_di" bpmnElement="Flow_1xjtylu">
@@ -167,6 +219,15 @@ else:
       <bpmndi:BPMNEdge id="Flow_1vyu5v3_di" bpmnElement="Flow_1vyu5v3">
         <di:waypoint x="40" y="400" />
         <di:waypoint x="75" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1euukba_di" bpmnElement="Flow_1euukba">
+        <di:waypoint x="40" y="458" />
+        <di:waypoint x="40" y="520" />
+        <di:waypoint x="230" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04cdix8_di" bpmnElement="Flow_04cdix8">
+        <di:waypoint x="330" y="520" />
+        <di:waypoint x="402" y="520" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="TextAnnotation_1k1ll1q_di" bpmnElement="TextAnnotation_1k1ll1q">
         <dc:Bounds x="-40" y="220" width="100" height="98" />

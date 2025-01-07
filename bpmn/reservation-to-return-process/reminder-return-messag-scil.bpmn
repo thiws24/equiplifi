@@ -16,7 +16,7 @@
     <bpmn:sequenceFlow id="Flow_02751sf" sourceRef="Event_0awpxdz" targetRef="Activity_07jjtsf" />
     <bpmn:serviceTask id="Activity_07jjtsf" name="Send return- reminder">
       <bpmn:extensionElements>
-        <spiffworkflow:serviceTaskOperator id="http/PostRequestV2">
+        <spiffworkflow:serviceTaskOperator id="http/PostRequestV2" resultVariable="messageResult">
           <spiffworkflow:parameters>
             <spiffworkflow:parameter id="url" type="str" value="&#34;http://activemq:8161/api/message/return-reminder?type=queue&#34;" />
             <spiffworkflow:parameter id="headers" type="any" value="{&#34;Content-Type&#34;:&#34;application/json&#34;, &#34;Authorization&#34;:&#34;Basic YWRtaW46d0JQZDJYWUpwQjhq&#34;}" />

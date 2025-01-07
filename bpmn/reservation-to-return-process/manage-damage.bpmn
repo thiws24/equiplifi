@@ -47,9 +47,9 @@
       <bpmn:extensionElements>
         <spiffworkflow:serviceTaskOperator id="http/PutRequestV2" resultVariable="putResult">
           <spiffworkflow:parameters>
-            <spiffworkflow:parameter id="url" type="str" />
-            <spiffworkflow:parameter id="headers" type="any" />
-            <spiffworkflow:parameter id="data" type="any" />
+            <spiffworkflow:parameter id="url" type="str" value="&#34;https://inventory.equipli.de/categories/&#34;+str(activereservationbug[&#34;categoryId&#34;])+&#34;/items/&#34;+str(activereservationbug[&#34;itemId&#34;])" />
+            <spiffworkflow:parameter id="headers" type="any" value="{&#34;Accept&#34;:&#34;application/json&#34;}" />
+            <spiffworkflow:parameter id="data" type="any" value="{&#34;status&#34;: &#34;OK&#34;}" />
             <spiffworkflow:parameter id="basic_auth_username" type="str" />
             <spiffworkflow:parameter id="basic_auth_password" type="str" />
           </spiffworkflow:parameters>
@@ -62,9 +62,9 @@
       <bpmn:extensionElements>
         <spiffworkflow:serviceTaskOperator id="http/PutRequestV2" resultVariable="putResult">
           <spiffworkflow:parameters>
-            <spiffworkflow:parameter id="url" type="str" />
-            <spiffworkflow:parameter id="headers" type="any" />
-            <spiffworkflow:parameter id="data" type="any" />
+            <spiffworkflow:parameter id="url" type="str" value="&#34;https://inventory.equipli.de/categories/&#34;+str(activereservationbug[&#34;categoryId&#34;])+&#34;/items/&#34;+str(activereservationbug[&#34;itemId&#34;])" />
+            <spiffworkflow:parameter id="headers" type="any" value="{&#34;Accept&#34;:&#34;application/json&#34;}" />
+            <spiffworkflow:parameter id="data" type="any" value="{&#34;status&#34;: &#34;BROKEN&#34;}" />
             <spiffworkflow:parameter id="basic_auth_username" type="str" />
             <spiffworkflow:parameter id="basic_auth_password" type="str" />
           </spiffworkflow:parameters>
@@ -114,9 +114,9 @@ You can also change the text you are reading here by updating the *Instructions*
       <bpmn:extensionElements>
         <spiffworkflow:serviceTaskOperator id="http/PutRequestV2">
           <spiffworkflow:parameters>
-            <spiffworkflow:parameter id="url" type="str" />
-            <spiffworkflow:parameter id="headers" type="any" />
-            <spiffworkflow:parameter id="data" type="any" />
+            <spiffworkflow:parameter id="url" type="str" value="&#34;https://inventory.equipli.de/categories/&#34;+str(activereservationbug[&#34;categoryId&#34;])+&#34;/items/&#34;+str(activereservationbug[&#34;itemId&#34;])" />
+            <spiffworkflow:parameter id="headers" type="any" value="{&#34;Accept&#34;:&#34;application/json&#34;}" />
+            <spiffworkflow:parameter id="data" type="any" value="{&#34;status&#34;: &#34;IN_MAINTENANCE&#34;}" />
             <spiffworkflow:parameter id="basic_auth_username" type="str" />
             <spiffworkflow:parameter id="basic_auth_password" type="str" />
           </spiffworkflow:parameters>
