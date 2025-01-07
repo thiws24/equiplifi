@@ -419,7 +419,9 @@ function Detail() {
                                 <div className="flex justify-center md:w-1/2 flex-wrap p-8 md:p-16">
                                     <div className="max-w-[400px]">
                                         {loading ? (
-                                            <Skeleton className="h-[400px] w-[400px] rounded-lg bg-gray-200" />
+                                            <div className="flex items-center justify-center h-[200px] w-[200px] md:h-[400px] md:w-[200px] max-w-full">
+                                                <Skeleton className="h-full w-full rounded-lg bg-gray-200 self-middle" />
+                                            </div>
                                         ) : (
                                             <img
                                                 src={

@@ -360,15 +360,14 @@ function CategoryDetails() {
                                 <div className="flex justify-center md:w-1/2 flex-wrap p-8 md:p-16">
                                     <div className="max-w-[400px]">
                                         {loading ? (
-                                            <Skeleton className="h-[400px] w-[400px] rounded-lg bg-gray-200" />
+                                            <div className="flex items-center justify-center h-[200px] w-[200px] md:h-[400px] md:w-[200px] max-w-full">
+                                                <Skeleton className="h-full w-full rounded-lg bg-gray-200 self-middle" />
+                                            </div>
                                         ) : (
                                             <img
-                                                src={
-                                                    currentImage ||
-                                                    "/image-placeholder.jpg"
-                                                }
+                                                src={currentImage || "/image-placeholder.jpg"}
                                                 alt={category?.name}
-                                                className=" object-cover rounded-lg"
+                                                className="object-cover w-full max-w-[400px] rounded-lg"
                                             />
                                         )}
                                         {isEditing ? (
@@ -392,7 +391,7 @@ function CategoryDetails() {
                                                     <div className="text-sm text-gray-500 border rounded px-3 py-2 w-full">
                                                         {updatedData.image
                                                             ? updatedData.image
-                                                                  .name
+                                                                .name
                                                             : "Keine Datei ausgewählt"}
                                                     </div>
                                                 </div>
