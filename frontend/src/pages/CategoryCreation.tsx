@@ -40,16 +40,14 @@ type CategoryCreationType = z.infer<typeof CategoryCreationSchema>
 function CategoryCreation() {
     const { userInfo, token } = useKeycloak()
     const navigate = useNavigate()
+    const [count, setCount] = React.useState<string>()
 
     if (!userInfo?.groups?.includes("Inventory-Manager")) {
         window.open("/", "_self")
     }
 
     const form = useForm<CategoryCreationType>({
-        resolver: zodResolver(CategoryCreationSchema),
-        defaultValues: {
-            itemCount: 1
-        }
+        resolver: zodResolver(CategoryCreationSchema)
     })
 
     const disableButton = () => {
@@ -262,13 +260,14 @@ function CategoryCreation() {
                                                         { valueAsNumber: true }
                                                     )}
                                                     type="number"
-                                                    min={1}
                                                     {...field}
-                                                    onChange={(event) =>
+                                                    onChange={(event) => {
                                                         field.onChange(
-                                                            +event.target.value
+                                                            event.target.value ? +event.target.value : event.target.value
                                                         )
+                                                        setCount(event.target.value)
                                                     }
+                                                }
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -279,7 +278,7 @@ function CategoryCreation() {
                         </div>
                         <div className="flex w-full justify-end">
                             <Button
-                                disabled={disableButton()}
+                                disabled={disableButton() || !count}
                                 type="submit"
                                 className="text-customBeige bg-customOrange hover:bg-customRed"
                             >

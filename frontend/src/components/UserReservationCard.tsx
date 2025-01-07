@@ -3,6 +3,9 @@ import { ProcessDataValueProps } from "../interfaces/ProcessDataValueProps"
 import { map } from "lodash"
 import { formatDate } from "../lib/formatDate"
 import { PickUpScan } from "./PickUpScan"
+import CustomToasts from "./CustomToasts";
+import { useKeycloak } from "../keycloak/KeycloakProvider";
+import { CategoryProps } from "../interfaces/CategoryProps";
 
 interface Props {
     processId: number
@@ -19,6 +22,38 @@ export const UserReservationCard: React.FC<Props> = ({
 }) => {
     const itemIds: number[] = map(data, "itemId")
     const [isModalOpen, setIsModalOpen] = React.useState(false)
+    const { token } = useKeycloak()
+    const [category, setCategory] = React.useState<CategoryProps>()
+
+    const fetchCategoryData = async () => {
+        try {
+            const response = await fetch(
+                `${import.meta.env.VITE_INVENTORY_SERVICE_HOST}/categories/${data![0]?.categoryId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            )
+            if (response.ok) {
+                const categoryDetails = await response.json()
+                setCategory(categoryDetails)
+            } else {
+                CustomToasts.error({
+                    message:
+                        "Details zu Reservierung #" +
+                        processId +
+                        " konnten nicht geladen werden."
+                })
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    React.useEffect(() => {
+        void fetchCategoryData()
+    }, [])
 
     return (
         <div className="space-y-7 text-sm border p-5 rounded shadow-md">
@@ -26,7 +61,7 @@ export const UserReservationCard: React.FC<Props> = ({
                 <b>Prozess-ID:</b>
                 <div>{processId}</div>
                 <b>Kategorie-ID:</b>
-                <div>{data ? data[0]?.categoryId : "-"}</div>
+                <div>{data ? data[0]?.categoryId : "-"}({category?.name})</div>
                 <b>Anzahl:</b>
                 <div>{data?.length}</div>
                 <b>Startdatum:</b>
