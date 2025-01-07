@@ -1,0 +1,17 @@
+{
+  "title": "InventoryItem Status",
+  "description": "Select the repair status of the InventoryItem",
+  "type": "object",
+  "required": [
+    "repairStatus"
+  ],
+  "properties": {
+    "repairStatus": {
+      "title": "Repair Status",
+      "type": "string",
+      "anyOf": [
+        "options_from_task_data_var:varRepairStatus"
+      ]
+    }
+  }
+}

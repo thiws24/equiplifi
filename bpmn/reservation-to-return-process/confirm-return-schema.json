@@ -3,10 +3,10 @@
   "description": "confirmed or not confirmed",
   "type": "object",
   "required": [
-    "lending_confirmation"
+    "return_confirmation"
   ],
   "properties": {
-    "lending_confirmation": {
+    "return_confirmation": {
       "type": "string",
       "title": "Confirmation",
       "default": "confirmed"

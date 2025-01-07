@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
+  <bpmn:collaboration id="Collaboration_0yaw4xy">
+    <bpmn:participant id="Participant_13tsh0t" name="Handle Overdue" processRef="Process_handle_overdue_7dxv4cy" />
+    <bpmn:correlationKey id="CorrelationKey_0pvmcsb" name="MainCorrelationKey" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_handle_overdue_7dxv4cy" isExecutable="true">
+    <bpmn:sequenceFlow id="Flow_187opq5" sourceRef="Event_1rlf5pd" targetRef="Event_1t2sxhw" />
+    <bpmn:startEvent id="Event_1rlf5pd" name="inventory Itema has not been returned on time has been received">
+      <bpmn:outgoing>Flow_187opq5</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1khbtae" messageRef="inventoryItem-has-not-been-returned-on-time">
+        <bpmn:extensionElements>
+          <spiffworkflow:messageVariable>activereservationbug</spiffworkflow:messageVariable>
+        </bpmn:extensionElements>
+      </bpmn:messageEventDefinition>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_1t2sxhw" name="Return has been delayed">
+      <bpmn:incoming>Flow_187opq5</bpmn:incoming>
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmn:message id="inventoryItem-has-not-been-returned-on-time" name="inventoryItem-has-not-been-returned-on-time" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0yaw4xy">
+      <bpmndi:BPMNShape id="Participant_13tsh0t_di" bpmnElement="Participant_13tsh0t" isHorizontal="true">
+        <dc:Bounds x="10" y="190" width="420" height="250" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1bn6yo3_di" bpmnElement="Event_1rlf5pd">
+        <dc:Bounds x="102" y="282" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="75" y="325" width="90" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1t2sxhw_di" bpmnElement="Event_1t2sxhw">
+        <dc:Bounds x="282" y="282" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="259" y="325" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_187opq5_di" bpmnElement="Flow_187opq5">
+        <di:waypoint x="138" y="300" />
+        <di:waypoint x="282" y="300" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,5 +1,7 @@
 package de.equipli;
 
+import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -22,6 +24,7 @@ import java.util.logging.Logger;
 
 
 @ApplicationScoped
+@Authenticated
 @Path("/qr")
 public class QRGeneratorResource {
     // Define 1400 dpi and 62mm label size
@@ -34,6 +37,7 @@ public class QRGeneratorResource {
     String fontPath;
 
     @GET
+    @RolesAllowed("user")
     @Produces({MediaType.APPLICATION_OCTET_STREAM, "application/pdf", "image/png"})
     public Response generateQR(
             @QueryParam("name") String name,

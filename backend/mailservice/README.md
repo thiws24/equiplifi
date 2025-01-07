@@ -22,6 +22,9 @@ Queue: ```storekeeper-confirmation```
 ### 6. Bestätigung über erhalt der Anfrage
 Queue: ```request-confirmation```
 
+### 7. Ablehnung der Reservierung
+Queue: ```reservation-rejection```
+
 ## Verwendung
 Der Mail-Service wird von anderen Services verwendet, um E-Mails zu versenden. Dazu wird ein POST-Request an den ActiveMQ-Server gesendet.
 
@@ -57,12 +60,13 @@ Authorization: Basic YWRtaW46YWRtaW4xMjM=
 ### Beachten:
 
 Das Beispiel zeigt einen Request für die Bestätigung einer Reservierung. Die anderen E-Mail-Typen können analog versendet werden.
-Dazu muss die Queue im Request, hier ``send-reservation-confirmation`` entsprechend angepasst werden.
+Dazu muss die Queue im Request, hier ``reservation-confirmation`` entsprechend angepasst werden.
 
 Die möglichen Queues sind:
-- send-reservation-confirmation
+- reservation-confirmation
 - cancellation-confirmation
 - return-confirmation
 - return-reminder
 - storekeeper-confirmation
 - request-confirmation
+- reservation-rejection

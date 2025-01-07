@@ -1,0 +1,16 @@
+{
+  "varRepairStatus": [
+    {
+      "value": "OK",
+      "label": "OK"
+    },
+    {
+      "value": "BROKEN",
+      "label": "BROKEN"
+    },
+     {
+      "value": "LOST",
+      "label": "LOST"
+    }
+  ]
+}

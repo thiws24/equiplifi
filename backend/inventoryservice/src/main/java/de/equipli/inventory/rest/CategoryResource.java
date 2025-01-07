@@ -3,29 +3,43 @@ package de.equipli.inventory.rest;
 import de.equipli.inventory.jpa.*;
 import de.equipli.inventory.rest.dto.CreateCategoryRequest;
 import de.equipli.inventory.rest.dto.UpdateCategoryRequest;
+import io.minio.GetObjectArgs;
+import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
+import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.jboss.resteasy.reactive.RestForm;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 
+@Authenticated
 @Path("/categories")
 public class CategoryResource {
 
     private final CategoryRepository categoryRepository;
     private final InventoryRepository inventoryRepository;
+    private final MinioClient minioClient;
+
+    @ConfigProperty(name = "minio.bucket-name")
+    String bucketName;
 
     @Inject
-    public CategoryResource(CategoryRepository categoryRepository, InventoryRepository inventoryRepository) {
+    public CategoryResource(CategoryRepository categoryRepository, InventoryRepository inventoryRepository, MinioClient minioClient) {
         this.categoryRepository = categoryRepository;
         this.inventoryRepository = inventoryRepository;
+        this.minioClient = minioClient;
     }
 
     @POST
@@ -37,6 +51,7 @@ public class CategoryResource {
             @APIResponse(responseCode = "400", description = "Category name null or empty", content = @Content(mediaType = "application/json")),
             @APIResponse(responseCode = "400", description = "Category name already exists", content = @Content(mediaType = "application/json"))
     })
+    @RolesAllowed("user")
     public Response createCategory(CreateCategoryRequest request) {
         if (request.getName() == null || request.getName().isEmpty()) {
             throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity("Category name cannot be null or empty").build());
@@ -79,9 +94,10 @@ public class CategoryResource {
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Categories returned successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Category.class)))
     })
+    @RolesAllowed("user")
     public Response getCategories() {
         return Response.ok(categoryRepository.listAll())
-                .header("Cache-Control", "max-age=300")
+                .header("Cache-Control", "no-cache, no-store, must-revalidate")
                 .build();
     }
 
@@ -92,13 +108,14 @@ public class CategoryResource {
             @APIResponse(responseCode = "200", description = "Category returned successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Category.class))),
             @APIResponse(responseCode = "404", description = "Category not found", content = @Content(mediaType = "application/json"))
     })
+    @RolesAllowed("user")
     public Response getCategory(@PathParam("id") Long id) {
         Category category = categoryRepository.findById(id);
         if (category == null) {
             throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Category " + id + " not found").build());
         }
         return Response.ok(category)
-                .header("Cache-Control", "max-age=300")
+                .header("Cache-Control", "no-cache, no-store, must-revalidate")
                 .build();
     }
 
@@ -112,6 +129,7 @@ public class CategoryResource {
             @APIResponse(responseCode = "404", description = "Category not found", content = @Content(mediaType = "application/json")),
             @APIResponse(responseCode = "400", description = "Category name already exists", content = @Content(mediaType = "application/json"))
     })
+    @RolesAllowed("user")
     public Response updateCategory(@PathParam("id") Long id, UpdateCategoryRequest request) {
         Category existingCategory = categoryRepository.findById(id);
         if (existingCategory == null) {
@@ -143,6 +161,7 @@ public class CategoryResource {
             @APIResponse(responseCode = "204", description = "Category deleted successfully"),
             @APIResponse(responseCode = "404", description = "Category not found", content = @Content(mediaType = "application/json"))
     })
+    @RolesAllowed("user")
     public Response deleteCategory(@PathParam("id") Long id) {
         Category category = categoryRepository.findById(id);
         if (category == null) {
@@ -157,6 +176,75 @@ public class CategoryResource {
         return Response.noContent()
                 .header("Cache-Control", "no-cache, no-store, must-revalidate")
                 .build();
+    }
+
+    // Image upload/download endpoints
+
+    @GET
+    @Path("/{id}/image")
+    @Operation(summary = "Get a category image by ID", description = "Returns a category image by its ID.")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Category image returned successfully"),
+            @APIResponse(responseCode = "404", description = "Category not found", content = @Content(mediaType = "application/json"))
+    })
+    @RolesAllowed("user")
+    public Response getCategoryImage(@PathParam("id") Long id) {
+        Category category = categoryRepository.findById(id);
+        if (category == null) {
+            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Category " + id + " not found").build());
+        }
+
+        try (InputStream photo = minioClient.getObject(
+                GetObjectArgs.builder()
+                        .bucket(bucketName)
+                        .object("category-" + id + ".jpg")
+                        .build())) {
+
+            byte[] imageBytes = photo.readAllBytes();
+
+            return Response.ok(imageBytes)
+                    .header("Content-Type", "image/jpeg")
+                    .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                    .build();
+        } catch (Exception e) {
+            throw new InternalServerErrorException(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error retrieving category photo").build());
+        }
+    }
+
+    @POST
+    @Path("/{id}/image")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Transactional
+    @Operation(summary = "Upload a category image by ID", description = "Uploads a category image by its ID as a file.")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "201", description = "Category image uploaded successfully"),
+            @APIResponse(responseCode = "404", description = "Category not found", content = @Content(mediaType = "application/json"))
+    })
+    public Response uploadCategoryImage(@PathParam("id") Long id, @RestForm InputStream fileContent, @RestForm String contentType) {
+        Category category = categoryRepository.findById(id);
+        if (category == null) {
+            throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Category " + id + " not found").build());
+        }
+
+        if (fileContent == null) {
+            throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity("File content cannot be null").build());
+        }
+
+        try (InputStream image = fileContent) {
+            minioClient.putObject(
+                    PutObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object("category-" + id + ".jpg")
+                            .stream(image, image.available(), -1)
+                            .contentType(contentType)
+                            .build()
+            );
+            return Response.ok()
+                    .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                    .build();
+        } catch (Exception e) {
+            throw new InternalServerErrorException(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error uploading category image").build());
+        }
     }
 
 }

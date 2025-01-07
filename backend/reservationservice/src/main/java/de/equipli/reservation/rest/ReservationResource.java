@@ -2,6 +2,8 @@ package de.equipli.reservation.rest;
 
 import de.equipli.reservation.jpa.ReservationRepository;
 import de.equipli.reservation.jpa.Reservation;
+import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
@@ -15,6 +17,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import java.time.LocalDate;
 import java.util.List;
 
+@Authenticated
 @Path("/reservations")
 public class ReservationResource {
 
@@ -31,6 +34,7 @@ public class ReservationResource {
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Reservations found", content = @Content(mediaType = "application/json"))
     })
+    @RolesAllowed("user")
     public List<Reservation> getReservations() {
         return reservationRepository.listAll();
     }
@@ -43,6 +47,7 @@ public class ReservationResource {
             @APIResponse(responseCode = "200", description = "Reservation found", content = @Content(mediaType = "application/json")),
             @APIResponse(responseCode = "404", description = "Reservation not found", content = @Content(mediaType = "text/plain"))
     })
+    @RolesAllowed("user")
     public Reservation getReservation(@PathParam("id") Long id) {
         Reservation reservation = reservationRepository.findById(id);
         if (reservation == null) {
@@ -62,6 +67,7 @@ public class ReservationResource {
             @APIResponse(responseCode = "400", description = "Item is already reserved for this time slot", content = @Content(mediaType = "text/plain")),
             @APIResponse(responseCode = "400", description = "Required fields are missing", content = @Content(mediaType = "text/plain"))
     })
+    @RolesAllowed("user")
     public Response addReservation(Reservation reservation) {
         if (reservation.getItemId() == null || reservation.getUserId() == null || reservation.getStartDate() == null || reservation.getEndDate() == null) {
             throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity("Required fields are missing: itemId, userId, startDate, endDate").build());
@@ -102,6 +108,7 @@ public class ReservationResource {
             @APIResponse(responseCode = "400", description = "Item is already reserved for this time slot", content = @Content(mediaType = "text/plain")),
             @APIResponse(responseCode = "400", description = "Required fields are missing", content = @Content(mediaType = "text/plain"))
     })
+    @RolesAllowed("user")
     public Response updateReservation(@PathParam("id") Long id, Reservation reservation) {
         if(reservation.getItemId() == null || reservation.getUserId() == null || reservation.getStartDate() == null || reservation.getEndDate() == null) {
             throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity("Required fields are missing: itemId, userId, startDate, endDate").build());
@@ -149,6 +156,7 @@ public class ReservationResource {
             @APIResponse(responseCode = "204", description = "Reservation deleted"),
             @APIResponse(responseCode = "404", description = "Reservation not found", content = @Content(mediaType = "text/plain"))
     })
+    @RolesAllowed("user")
     public Response deleteReservation(@PathParam("id") Long id) {
         Reservation reservation = reservationRepository.findById(id);
         if (reservation == null) {
