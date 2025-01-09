@@ -7,6 +7,7 @@ import de.equipli.reservation.rest.AvailabilityResource;
 import de.equipli.reservation.services.InventoryItem;
 import de.equipli.reservation.services.InventoryService;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,6 +46,7 @@ private ReservationRepository reservationRepository;
     }
 
     @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testAddReservation() {
         Reservation reservation = new Reservation();
         reservation.setStartDate(LocalDate.now().plusDays(10));
@@ -65,6 +67,7 @@ private ReservationRepository reservationRepository;
     }
 
     @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testAddReservationWithInvalidDates() {
         Reservation reservation = new Reservation();
         reservation.setStartDate(LocalDate.now().plusDays(5));
@@ -82,6 +85,7 @@ private ReservationRepository reservationRepository;
     }
 
     @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testAddReservationWithPastStartDate() {
         Reservation reservation = new Reservation();
         reservation.setStartDate(LocalDate.now().minusDays(1));
@@ -99,6 +103,7 @@ private ReservationRepository reservationRepository;
     }
 
     @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testAddReservationWithOverlap() {
         // Erst eine bestehende Reservierung hinzufügen
         Reservation existingReservation = new Reservation();
@@ -132,6 +137,7 @@ private ReservationRepository reservationRepository;
     }
 
     @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testGetReservations() {
         given()
                 .when()
@@ -141,6 +147,7 @@ private ReservationRepository reservationRepository;
     }
 
     @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testUpdateReservations() {
         Reservation reservation = new Reservation();
         reservation.setStartDate(LocalDate.now().plusDays(10));
@@ -176,6 +183,7 @@ private ReservationRepository reservationRepository;
     }
 
     @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testGetReservationTimeSlotsByItem() {
         Long itemId = 1L;
         Reservation reservation = new Reservation();
@@ -193,11 +201,12 @@ private ReservationRepository reservationRepository;
     }
 
     @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testGetReservationTimeSlotsByCategory() {
         Long categoryId = 1L;
         InventoryItem item1 = new InventoryItem(1L, "AVAILABLE", "Location 1");
         InventoryItem item2 = new InventoryItem(2L, "AVAILABLE", "Location 2");
-        when(inventoryService.getInventoryItems(categoryId)).thenReturn(List.of(item1, item2));
+        when(inventoryService.getInventoryItems(categoryId, "dummyToken")).thenReturn(List.of(item1, item2));
 
         Reservation reservation1 = new Reservation();
         reservation1.setStartDate(LocalDate.now().plusDays(1));
@@ -208,7 +217,7 @@ private ReservationRepository reservationRepository;
         when(reservationRepository.findByItemId(1L)).thenReturn(List.of(reservation1));
         when(reservationRepository.findByItemId(2L)).thenReturn(List.of(reservation2));
 
-        Response response = availabilityResource.getReservationTimeSlotsByCategory(categoryId);
+        Response response = availabilityResource.getReservationTimeSlotsByCategory(categoryId, "dummyToken");
 
         assertEquals(200, response.getStatus());
         List<Map<String, Object>> items = (List<Map<String, Object>>) response.getEntity();
@@ -226,6 +235,7 @@ private ReservationRepository reservationRepository;
     }
 
     @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testGetAvailableItemsByCategoryAndDateRange() {
         String startDate = LocalDate.now().plusDays(10).toString();
         String endDate = LocalDate.now().plusDays(15).toString();
@@ -233,7 +243,7 @@ private ReservationRepository reservationRepository;
 
         InventoryItem item1 = new InventoryItem(1L, "AVAILABLE", "Location 1");
         InventoryItem item2 = new InventoryItem(2L, "AVAILABLE", "Location 2");
-        when(inventoryService.getInventoryItems(categoryId)).thenReturn(List.of(item1, item2));
+        when(inventoryService.getInventoryItems(categoryId, "dummyToken")).thenReturn(List.of(item1, item2));
 
         Reservation reservation1 = new Reservation();
         reservation1.setStartDate(LocalDate.now().plusDays(5));
@@ -246,7 +256,7 @@ private ReservationRepository reservationRepository;
         when(reservationRepository.findByItemId(1L)).thenReturn(List.of(reservation1));
         when(reservationRepository.findByItemId(2L)).thenReturn(List.of(reservation2));
 
-        Response response = availabilityResource.getAvailableItemsByCategoryAndDateRange(categoryId, startDate, endDate);
+        Response response = availabilityResource.getAvailableItemsByCategoryAndDateRange(categoryId, startDate, endDate, "dummyToken");
 
         assertEquals(200, response.getStatus());
         List<InventoryItem> items = (List<InventoryItem>) response.getEntity();
