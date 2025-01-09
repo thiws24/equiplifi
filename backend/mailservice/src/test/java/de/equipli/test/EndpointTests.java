@@ -59,31 +59,19 @@ public class EndpointTests {
     @Test
     public void sanityCheckTest() throws Exception {
 
-            // Erwartete Ausgabe
             String expected = "hello camel";
 
-            // Mock-Endpoint vorbereiten
             mockEndpoint.expectedBodiesReceived(expected);
 
-            // Nachricht an die Route senden
-            producerTemplate.sendBody("direct:asd", "hello camel");
+            producerTemplate.sendBody("direct:testRoute", "hello camel");
 
-            // Verifikation
             mockEndpoint.assertIsSatisfied();
-        }
+    }
 
 
 
     @Test
     public void testRequestConfirmation() throws Exception {
-//        String mappedSmtpHost = System.getProperty("smtp.config.host");
-//        String mappedSmtpPort = System.getProperty("smtp.config.port");
-//
-//        System.out.println("SMTP Host: " + mappedSmtpHost);
-//        System.out.println("SMTP Port: " + mappedSmtpPort);
-//
-//        camelContext.getGlobalOptions().put("smtp.config.host", mappedSmtpHost);
-//        camelContext.getGlobalOptions().put("smtp.config.port", mappedSmtpPort);
 
         RestAssured
                 .given()

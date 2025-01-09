@@ -9,7 +9,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-import org.keycloak.common.util.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +57,5 @@ public class GetItemToItemIdProcessor implements Processor {
         logger.info("Item 'itemId="+ itemId  +"' found in inventory service", item.toString());
         exchange.setProperty("item", item);
 
-        Object obj =  exchange.getAllProperties();
     }
 }

@@ -10,7 +10,7 @@ public class SimpleRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("direct:asd")
+        from("direct:testRoute")
                 .log("Received: ${body}")
                 .transform(body().convertToString())
                 .to("mock:result");
