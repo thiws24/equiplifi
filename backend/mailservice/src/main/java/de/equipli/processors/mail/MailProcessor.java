@@ -1,9 +1,6 @@
 package de.equipli.processors.mail;
 
-import de.equipli.dto.inventoryservice.InventoryItemDto;
-import de.equipli.dto.mail.MailCreateDto;
 import de.equipli.dto.mail.MailDto;
-import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 import io.quarkus.qute.runtime.TemplateProducer;
 import jakarta.enterprise.context.ApplicationScoped;

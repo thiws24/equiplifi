@@ -91,6 +91,5 @@ public class GetUserDataFromKeycloakProcessor implements Processor {
         exchange.setProperty("firstName", firstName);
         exchange.setProperty("lastName", lastName);
 
-        Object obj =  exchange.getAllProperties();
     }
 }
