@@ -37,11 +37,24 @@ public class GetUserDataFromKeycloakProcessor implements Processor {
     @ConfigProperty(name = "quarkus.keycloak.admin-client.grant-type")
     String keycloakGrantType;
 
+    @ConfigProperty(name = "quarkus.profile")
+    String activeProfile;
+
 
 
     @Override
     public void process(Exchange exchange) throws Exception {
         MailCreateDto mailCreateDto = exchange.getIn().getBody(MailCreateDto.class);
+
+        if(activeProfile.equals("test")) {
+
+            exchange.setProperty("receiverMail", "test@example.de");
+            exchange.setProperty("firstName", "Max");
+            exchange.setProperty("lastName", "Mustermann");
+
+            return;
+        }
+
 
         Keycloak keycloak = Keycloak.getInstance(
                 keycloakServerUrl,       // Server URL

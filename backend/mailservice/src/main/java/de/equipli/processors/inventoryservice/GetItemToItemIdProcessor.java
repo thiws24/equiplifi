@@ -7,7 +7,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.keycloak.common.util.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +22,9 @@ public class GetItemToItemIdProcessor implements Processor {
     @RestClient
     InventoryService inventoryService;
 
+    @ConfigProperty(name = "quarkus.profile")
+    String activeProfile;
+
     @Override
     public void process(Exchange exchange) throws Exception {
         MailCreateDto mailCreateDto = exchange.getMessage().getBody(MailCreateDto.class);
@@ -28,8 +33,20 @@ public class GetItemToItemIdProcessor implements Processor {
         String itemId = exchange.getMessage().getBody(MailCreateDto.class).getItemId();
         // Get item from inventory service with http request
         InventoryItemDto item = null;
+
         try {
-            item = inventoryService.getInventoryItem(itemId);
+
+            if(activeProfile.equals("test")) {
+                item = new InventoryItemDto();
+                item.setId(1);
+                item.setName("TestProduct");
+                item.setName("TestItem");
+                item.setIcon("\uD83E\uDDEA");
+                item.setPhotoUrl("https://www.example.com");
+            }
+            else {
+                item = inventoryService.getInventoryItem(itemId);
+            }
         }
         catch (Exception e) {
             throw new RuntimeException("Could not get item 'itemId="+ itemId  +"' from inventory service");
