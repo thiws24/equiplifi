@@ -53,9 +53,38 @@ public class MailRoute extends RouteBuilder {
         JacksonDataFormat mailDtoFormat = new JacksonDataFormat(MailCreateDto[].class);
 
 
+        rest()
+                .post("/request-confirmation/")
+                .to("direct:request-confirmation")
+
+                .post("/reservation-confirmation/")
+                .to("direct:reservation-confirmation")
+
+                .post("/storekeeper-confirmation/")
+                .to("direct:storekeeper-confirmation")
+
+                .post("/cancellation-confirmation/")
+                .to("direct:cancellation-confirmation")
+
+                .post("/return-confirmation/")
+                .to("direct:return-confirmation")
+
+                .post("/return-reminder/")
+                .to("direct:return-reminder")
+
+                .post("/reservation-rejection/")
+                .to("direct:reservation-rejection");
+
+
 // Request Confirmation Route
         from("activemq:queue:request-confirmation")
-                .routeId("sendRequestConfirmation-Route")
+                .routeId("sendRequestConfirmation-queue-Route")
+                .unmarshal(mailDtoFormat)
+                .setProperty("mailTemplate", simple("request-confirmation-mail.html"))
+                .to("direct:sendMail");
+
+        from("direct:request-confirmation")
+                .routeId("sendRequestConfirmation-rest-Route")
                 .unmarshal(mailDtoFormat)
                 .setProperty("mailTemplate", simple("request-confirmation-mail.html"))
                 .to("direct:sendMail");
@@ -63,21 +92,39 @@ public class MailRoute extends RouteBuilder {
 
 // Reservation Confirmation Route
         from("activemq:queue:reservation-confirmation")
-                .routeId("sendReservationConfirmation-Route")
+                .routeId("sendReservationConfirmation-queue-Route")
+                .unmarshal(mailDtoFormat)
+                .setProperty("mailTemplate", simple("reservation-confirmation-mail.html"))
+                .to("direct:sendMail");
+
+        from("direct:reservation-confirmation")
+                .routeId("sendReservationConfirmation-rest-Route")
                 .unmarshal(mailDtoFormat)
                 .setProperty("mailTemplate", simple("reservation-confirmation-mail.html"))
                 .to("direct:sendMail");
 
 // storekeeper-confirmation Route
         from("activemq:queue:storekeeper-confirmation")
-                .routeId("sendStorekeeperConfirmation-Route")
+                .routeId("sendStorekeeperConfirmation-queue-Route")
+                .unmarshal(mailDtoFormat)
+                .setProperty("mailTemplate", simple("storekeeper-confirmation-mail.html"))
+                .to("direct:sendMail");
+
+        from("direct:storekeeper-confirmation")
+                .routeId("sendStorekeeperConfirmation-rest-Route")
                 .unmarshal(mailDtoFormat)
                 .setProperty("mailTemplate", simple("storekeeper-confirmation-mail.html"))
                 .to("direct:sendMail");
 
 // cancellation-confirmation Route
         from("activemq:queue:cancellation-confirmation")
-                .routeId("sendCancellationConfirmation-Route")
+                .routeId("sendCancellationConfirmation-queue-Route")
+                .unmarshal(mailDtoFormat)
+                .setProperty("mailTemplate", simple("cancellation-confirmation-mail.html"))
+                .to("direct:sendMail");
+
+        from("direct:cancellation-confirmation")
+                .routeId("sendCancellationConfirmation-rest-Route")
                 .unmarshal(mailDtoFormat)
                 .setProperty("mailTemplate", simple("cancellation-confirmation-mail.html"))
                 .to("direct:sendMail");
@@ -85,21 +132,39 @@ public class MailRoute extends RouteBuilder {
 
 // Return Confirmation Route
         from("activemq:queue:return-confirmation")
-                .routeId("sendReturnConfirmation-Route")
+                .routeId("sendReturnConfirmation-queue-Route")
+                .unmarshal(mailDtoFormat)
+                .setProperty("mailTemplate", simple("return-confirmation-mail.html"))
+                .to("direct:sendMail");
+
+        from("direct:return-confirmation")
+                .routeId("sendReturnConfirmation-rest-Route")
                 .unmarshal(mailDtoFormat)
                 .setProperty("mailTemplate", simple("return-confirmation-mail.html"))
                 .to("direct:sendMail");
 
 // Return Reminder Route
         from("activemq:queue:return-reminder")
-                .routeId("sendReturnReminder-Route")
+                .routeId("sendReturnReminder-queue-Route")
+                .unmarshal(mailDtoFormat)
+                .setProperty("mailTemplate", simple("return-reminder-mail.html"))
+                .to("direct:sendMail");
+
+        from("direct:return-reminder")
+                .routeId("sendReturnReminder-rest-Route")
                 .unmarshal(mailDtoFormat)
                 .setProperty("mailTemplate", simple("return-reminder-mail.html"))
                 .to("direct:sendMail");
 
 // reservation-rejection Route
         from("activemq:queue:reservation-rejection")
-                .routeId("reservationRejection-Route")
+                .routeId("reservationRejection-queue-Route")
+                .unmarshal(mailDtoFormat)
+                .setProperty("mailTemplate", simple("reservation-rejection.html"))
+                .to("direct:sendMail");
+
+        from("direct:reservation-rejection")
+                .routeId("reservationRejection-rest-Route")
                 .unmarshal(mailDtoFormat)
                 .setProperty("mailTemplate", simple("reservation-rejection.html"))
                 .to("direct:sendMail");
@@ -115,8 +180,16 @@ public class MailRoute extends RouteBuilder {
                 .end()
                 .process(mailProcessor)
                 .choice()
+
+                //dev
                 .when(simple(String.valueOf("dev".equals(activeProfile))))
                 .to("smtp://{{smtp.config.host}}:{{smtp.config.port}}")
+
+                //test
+                .when(simple(String.valueOf("test".equals(activeProfile))))
+                .to("smtp://{{smtp.config.host}}:{{smtp.config.port}}")
+
+                //prod
                 .otherwise()
                 .to("smtps://{{smtp.config.host}}:{{smtp.config.port}}"
                     + "?username={{smtp.config.username}}&password={{smtp.config.password}}")
