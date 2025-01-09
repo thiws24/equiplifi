@@ -27,8 +27,8 @@ import java.util.logging.Logger;
 @Authenticated
 @Path("/qr")
 public class QRGeneratorResource {
-    // Define 300 dpi and 62mm label size
-    private static final float DPI = 300;
+    // Define 1000 dpi and 62mm label size
+    private static final float DPI = 1000;
     private static final float LABEL_SIZE_IN_MM = 62.0f;
 
     private static final Logger LOGGER = Logger.getLogger(QRGeneratorResource.class.getName());
