@@ -4,146 +4,299 @@ Ermöglicht das Erstellen, Abrufen, Aktualisieren und Löschen von InventoryItem
 
 ---
 
-### Hinzufügen eines InventoryItems
+## REST API Dokumentation
 
-Fügt ein neues InventoryItem hinzu.
+### Category
 
-```http
-POST /inventoryitems
-```
+#### GET /categories
 
-#### Request Body
+Gibt alle Kategorien und die dazugehörigen Items zurück.
+
+**Response:**
+
+- Status: `200 OK`
+    ```json
+    [
+      {
+        "id": 1,
+        "name": "Volleyball",
+        "icon": "🏐",
+        "description": "Volleyball-Set bestehend aus Netz, Bällen und Pumpe",
+        "items": [
+          {
+            "id": 1,
+            "status": "OK",
+            "location": "THI Sportplatz"
+          },
+          ...
+        ]
+        
+      },
+      ...
+    ]
+    ```
+
+#### GET /categories/{id}
+
+Gibt die Kategorie mit der ID {id} und die dazugehörigen Items zurück.
+
+**Response:**
+
+- Status: `200 OK`
+    ```json
+    {
+      "id": 1,
+      "name": "Volleyball",
+      "icon": "🏐",
+      "description": "Volleyball-Set bestehend aus Netz, Bällen und Pumpe",
+      "items": [
+        {
+          "id": 1,
+          "status": "OK",
+          "location": "THI Sportplatz"
+        },
+        ...
+      ]
+    }
+    ```
+
+- Status: `404 Not Found`: Kategorie nicht gefunden.
+
+#### POST /categories
+
+Erstellt eine neue Kategorie.
+
+**Request Body:**
 
 ```json
 {
   "name": "Volleyball",
-  "photoUrl": "https://example.com/photo.jpg",
   "icon": "🏐",
-  "urn": "example-urn"
+  "description": "Volleyball-Set bestehend aus Netz, Bällen und Pumpe",
+  "itemCount": 3,
+  "itemLocation": "THI Sportplatz"
 }
 ```
 
-#### Response
+**Response:**
 
-    Status 201 (Created): Das InventoryItem wurde erfolgreich erstellt.
-    Status 400 (Bad Request): Der Name des InventoryItems darf nicht leer sein.
+- Status: `201 Created`
+    ```json
+    {
+      "id": 1,
+      "name": "Volleyball",
+      "icon": "🏐",
+      "description": "Volleyball-Set bestehend aus Netz, Bällen und Pumpe",
+      "items": [
+        {
+          "id": 1,
+          "status": "OK",
+          "location": "THI Sportplatz"
+        },
+        ...
+      ]
+    }
+    ```
+- Status: `400 Bad Request`: Name leer oder bereits vorhanden.
+
+#### PUT /categories/{id}
+
+Aktualisiert die Kategorie mit der ID {id}.
+
+**Request Body:**
 
 ```json
 {
-  "id": 1,
   "name": "Volleyball",
-  "photoUrl": "https://example.com/photo.jpg",
   "icon": "🏐",
-  "urn": "example-urn"
+  "description": "Volleyball-Set bestehend aus Netz, Bällen und Pumpe"
 }
 ```
 
----
+**Response:**
 
-### Alle InventoryItems abrufen
+- Status: `200 OK`
+    ```json
+    {
+      "id": 1,
+      "name": "Volleyball",
+      "icon": "??",
+      "description": "Volleyball-Set bestehend aus Netz, Bällen und Pumpe",
+      "items": [
+        {
+          "id": 1,
+          "status": "OK",
+          "location": "THI Sportplatz"
+        },
+        ...
+      ]
+    }
+    ```
+- Status: `404 Not Found`: Kategorie nicht gefunden.
+- Status: `400 Bad Request`: Name leer oder bereits vorhanden.
 
-```http
-GET /inventoryitems
-```
+#### DELETE /categories/{id}
 
-#### Response
+Löscht die Kategorie mit der ID {id} und alle dazugehörigen Items.
 
-    Status 200 (OK)
+**Response:**
 
-```json
-[
-  {
-    "id": 1,
-    "name": "Volleyball",
-    "photoUrl": "https://example.com/photo.jpg",
-    "icon": "🏐",
-    "urn": "example-urn"
-  },
-  {
-    "id": 2,
-    "name": "Basketball",
-    "photoUrl": "https://example.com/photo.jpg",
-    "icon": "🏀",
-    "urn": "example-urn"
-  }
-]
-```
+- Status: `204 No Content`: Kategorie gelöscht.
+- Status: `404 Not Found`: Kategorie nicht gefunden.
 
----
+#### GET /categories/{categoryId}/image
 
-### Einzelnes InventoryItem abrufen
+Gibt das Bild der Kategorie mit der ID {categoryId} zurück.
 
-Ruft ein spezifisches InventoryItem anhand seiner ID ab.
+**Response:**
 
-```http
-GET /inventoryitems/{id}
-```
+- Status: `200 OK`
+    - Content-Type: `image/jpeg`
+    - Body: Bild-Datei
+- Status: `404 Not Found`: Kategorie nicht gefunden.
 
-#### Response
+#### POST /categories/{categoryId}/image
 
-    Status 200 (OK)
-    Status 404 (Not Found): InventoryItem nicht gefunden.
+Lädt ein Bild für die Kategorie mit der ID {categoryId} hoch.
+
+**Request Body:**
+
+- Multipart-Form-Data: `image`
+- fileContent: Bild-Datei
+- contentType: `image/jpeg` oder `image/png`
+
+**Response:**
+
+- Status: `201 Created`: Bild erfolgreich hochgeladen.
+- Status: `404 Not Found`: Kategorie nicht gefunden.
+
+## InventoryItem
+
+#### GET /categories/{categoryId}/items
+
+Gibt alle Items der Kategorie mit der ID {categoryId} zurück.
+
+**Response:**
+
+- Status: `200 OK`
+    ```json
+    [
+      {
+        "id": 1,
+        "status": "OK",
+        "location": "THI Sportplatz"
+      },
+      ...
+    ]
+    ```
+- Status: `404 Not Found`: Kategorie nicht gefunden.
+
+#### GET /categories/{categoryId}/items/{itemId}
+
+Gibt das Item mit der ID {itemId} der Kategorie mit der ID {categoryId} zurück.
+
+**Response:**
+
+- Status: `200 OK`
+    ```json
+    {
+      "id": 1,
+      "status": "OK",
+      "location": "THI Sportplatz"
+    }
+    ```
+- Status: `404 Not Found`: Kategorie oder Item nicht gefunden.
+
+#### POST /categories/{categoryId}/items
+
+Erstellt ein neues Item in der Kategorie mit der ID {categoryId}.
+
+**Request Body:**
 
 ```json
 {
-  "id": 1,
-  "name": "Volleyball",
-  "photoUrl": "https://example.com/photo.jpg",
-  "icon": "🏐",
-  "urn": "example-urn"
+  "status": "OK",
+  "location": "THI Sportplatz"
 }
 ```
 
----
+**Response:**
 
-### InventoryItem aktualisieren
+- Status: `201 Created`
+    ```json
+    {
+      "id": 1,
+      "status": "OK",
+      "location": "THI Sportplatz"
+    }
+    ```
 
-Aktualisiert ein bestehendes InventoryItem anhand seiner ID.
+- Status `404 Not Found`: Kategorie nicht gefunden.
 
-```http
-PUT /inventoryitems/{id}
-```
+#### PUT /categories/{categoryId}/items/{itemId}
 
-#### Request Body
+Aktualisiert das Item mit der ID {itemId} der Kategorie mit der ID {categoryId}.
+
+**Request Body:**
 
 ```json
 {
-  "name": "Fußball",
-  "photoUrl": "https://example.com/newphoto.jpg",
-  "icon": "⚽️",
-  "urn": "new-urn"
+  "status": "OK",
+  "location": "THI Sportplatz"
 }
 ```
 
-#### Response
+**Response:**
 
-    Status 200 (OK): InventoryItem erfolgreich aktualisiert.
-    Status 404 (Not Found): InventoryItem nicht gefunden.
+- Status: `200 OK`
+    ```json
+    {
+      "id": 1,
+      "status": "OK",
+      "location": "THI Sportplatz"
+    }
+    ```
+- Status: `404 Not Found`: Kategorie oder Item nicht gefunden.
 
-```json
-{
-  "id": 1,
-  "name": "Fußball",
-  "photoUrl": "https://example.com/newphoto.jpg",
-  "icon": "⚽️",
-  "urn": "new-urn"
-}
-```
+#### DELETE /categories/{categoryId}/items/{itemId}
+
+Löscht das Item mit der ID {itemId} der Kategorie mit der ID {categoryId}.
+
+**Response:**
+
+- Status: `204 No Content`: Item gelöscht.
+- Status: `404 Not Found`: Kategorie oder Item nicht gefunden.
+
+#### GET /items/{itemId}
+
+Gibt das Item mit der ID {itemId} inklusive aller Attribute seiner Kategorie zurück.
+
+**Response:**
+
+- Status: `200 OK`
+    ```json
+    {
+      "id": 1,
+      "categoryId": 1,
+      "name": "Volleyball",
+      "description": "Volleyball-Set bestehend aus Netz, Bällen und Pumpe",
+      "icon": "🏐",
+      "status": "OK",
+      "location": "THI Sportplatz"
+    }
+    ```
+- Status: `404 Not Found`: Item nicht gefunden.
 
 ---
 
-### InventoryItem löschen
+### Verfügbare Item-Status
 
-Löscht ein spezifisches InventoryItem anhand seiner ID.
-
-```http
-DELETE /inventoryitems/{id}
-```
-
-#### Response
-
-    Status 204 (No Content): InventoryItem erfolgreich gelöscht.
-    Status 404 (Not Found): InventoryItem nicht gefunden.
+- `OK`: Item ist verfügbar.
+- `LENT`: Item ist verliehen.
+- `BROKEN`: Item ist defekt.
+- `IN_MAINTENANCE`: Item wird gewartet.
+- `MAINTENANCE_REQUIRED`: Wartung erforderlich.
+- `LOST`: Item ist verloren.
 
 ---
 
@@ -151,17 +304,25 @@ DELETE /inventoryitems/{id}
 
 ## Umgebungsvariablen
 
-Um den InventoryService mit einer Datenbank zu verbinden, müssen folgende Umgebungsvariablen gesetzt werden:
+Die folgenden Umgebungsvariablen müssen gesetzt werden, um den InventoryService zu starten:
 
-| Variable                     | Beschreibung                   |
-|:-----------------------------|:-------------------------------|
-| QUARKUS_DATASOURCE_JDBC_URL  | JDBC-URL der Datenbank         |    
-| QUARKUS_DATASOURCE_USERNAME  | Benutzername für die Datenbank |      
-| QUARKUS_DATASOURCE_PASSWORD  | Passwort für die Datenbank     |
+| Variable                        | Beschreibung                                                                       |
+|:--------------------------------|:-----------------------------------------------------------------------------------|
+| QUARKUS_DATASOURCE_JDBC_URL     | JDBC-URL der Datenbank                                                             |    
+| QUARKUS_DATASOURCE_USERNAME     | Benutzername für die Datenbank                                                     |      
+| QUARKUS_DATASOURCE_PASSWORD     | Passwort für die Datenbank                                                         |
+| QUARKUS_HTTP_CORS_ORIGINS       | Erlaubte CORS-Origins (z.B. `https://app.equipli.de` oder `http://localhost:3000`) |
+| QUARKUS_OIDC_AUTH_SERVER_URL    | URL des Keycloak-Servers                                                           |
+| QUARKUS_OIDC_CLIENT_ID          | Client-ID für den Keycloak-Client                                                  |
+| QUARKUS_OIDC_CREDENTIALS_SECRET | Secret für den Keycloak-Client                                                     |
+| QUARKUS_MINIO_URL               | URL des MinIO-Servers                                                              |
+| QUARKUS_MINIO_PORT              | Port des MinIO-Servers                                                             |
+| QUARKUS_MINIO_ACCESS_KEY        | Access Key für den MinIO-Client                                                    |
+| QUARKUS_MINIO_SECRET_KEY        | Secret Key für den MinIO-Client                                                    |
+| QUARKUS_MINIO_BUCKET_NAME       | Name des MinIO-Buckets (z.B. inventory-images)                                     |
+| QUARKUS_MINIO_SECURE            | `true` für HTTPS, `false` für HTTP                                                 |
 
----
-
-# inventoryservice
+# Quarkus Getting Started
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
@@ -218,9 +379,13 @@ If you want to learn more about building native executables, please consult <htt
 
 ## Related Guides
 
-- REST ([guide](https://quarkus.io/guides/rest)): A Jakarta REST implementation utilizing build time processing and Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it.
-- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
-- Hibernate ORM with Panache ([guide](https://quarkus.io/guides/hibernate-orm-panache)): Simplify your persistence code for Hibernate ORM via the active record or the repository pattern
+- REST ([guide](https://quarkus.io/guides/rest)): A Jakarta REST implementation utilizing build time processing and
+  Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on
+  it.
+- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus
+  REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
+- Hibernate ORM with Panache ([guide](https://quarkus.io/guides/hibernate-orm-panache)): Simplify your persistence code
+  for Hibernate ORM via the active record or the repository pattern
 - JDBC Driver - PostgreSQL ([guide](https://quarkus.io/guides/datasource)): Connect to the PostgreSQL database via JDBC
 
 ## Provided Code
@@ -232,7 +397,6 @@ Create your first JPA entity
 [Related guide section...](https://quarkus.io/guides/hibernate-orm)
 
 [Related Hibernate with Panache section...](https://quarkus.io/guides/hibernate-orm-panache)
-
 
 ### REST
 

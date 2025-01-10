@@ -5,6 +5,7 @@
 - **InventoryService:** Verwaltung und Übersicht von Inventargegenständen.
 - **QRService:** Generierung von QR-Codes für die Inventargegenstände als PDF.
 - **ReservationService:** Verwaltung von Reservierungen für verfügbare Inventargegenstände.
+- **MailService:** Versenden von E-Mails an in Keycloak registrierte Benutzer.
 
 
 ## InventoryService
@@ -24,9 +25,9 @@ Der ReservationService ermöglicht das Erstellen und Abrufen von Reservierungen 
 
 [👉 Detaillierte Dokumentation des ReservationService](./reservationservice/README.md)
 
-## Mailservice
-Der Mailservice ermöglicht das senden von E-Mails an in Keycloak registrierte Benutzer.
+## MailService
+Der MailService ermöglicht das Senden von E-Mails an in Keycloak registrierte Benutzer.
 
-[👉 Detaillierte Dokumentation des Mailservice](./mailservice/README.md)
+[👉 Detaillierte Dokumentation des MailService](./mailservice/README.md)
 
 
