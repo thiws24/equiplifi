@@ -111,27 +111,33 @@ public class AvailabilityResource {
                                                             @QueryParam("startDate") String startDate,
                                                             @QueryParam("endDate") String endDate,
                                                             @HeaderParam("Authorization") String authorizationHeader) {
+        if (startDate == null || endDate == null) {
+            throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity("Query parameters startDate and endDate are required").build());
+        }
+
+        List<InventoryItem> items;
+
         try {
-            List<InventoryItem> items = inventoryService.getInventoryItems(categoryId, authorizationHeader);
-
-            List<Long> itemIds = items.stream()
-                    .map(InventoryItem::id)
-                    .toList();
-
-            List<Long> unavailableItemIds = itemIds.stream()
-                    .filter(itemId -> reservationRepository.findByItemId(itemId).stream()
-                            .anyMatch(reservation ->
-                                    (LocalDate.parse(startDate).isBefore(reservation.getEndDate()) && LocalDate.parse(endDate).isAfter(reservation.getStartDate()))))
-                    .toList();
-
-            List<InventoryItem> availableItems = items.stream()
-                    .filter(item -> !unavailableItemIds.contains(item.id()))
-                    .toList();
-
-            return Response.ok(availableItems).build();
+            items = inventoryService.getInventoryItems(categoryId, authorizationHeader);
         } catch (Exception e) {
             throw new NotFoundException(Response.status(Response.Status.NOT_FOUND).entity("Category " + categoryId + " not found").build());
         }
+
+        List<Long> itemIds = items.stream()
+                .map(InventoryItem::id)
+                .toList();
+
+        List<Long> unavailableItemIds = itemIds.stream()
+                .filter(itemId -> reservationRepository.findByItemId(itemId).stream()
+                        .anyMatch(reservation ->
+                                (LocalDate.parse(startDate).isBefore(reservation.getEndDate()) && LocalDate.parse(endDate).isAfter(reservation.getStartDate()))))
+                .toList();
+
+        List<InventoryItem> availableItems = items.stream()
+                .filter(item -> !unavailableItemIds.contains(item.id()))
+                .toList();
+
+        return Response.ok(availableItems).build();
     }
 
 }
