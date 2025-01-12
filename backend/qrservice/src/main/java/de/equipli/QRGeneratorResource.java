@@ -27,8 +27,10 @@ import java.util.logging.Logger;
 @Authenticated
 @Path("/qr")
 public class QRGeneratorResource {
-    // Define 1400 dpi and 62mm label size
-    private static final float DPI = 1400;
+
+    // Define 1000 dpi and 62mm label size
+    private static final float DPI = 1000;
+  
     private static final float LABEL_SIZE_IN_MM = 62.0f;
 
     private static final Logger LOGGER = Logger.getLogger(QRGeneratorResource.class.getName());
@@ -128,28 +130,30 @@ public class QRGeneratorResource {
 
     //Create PNG as a byte array
     private byte[] writePng(BufferedImage image) throws IOException {
-        ByteArrayOutputStream pngStream = new ByteArrayOutputStream();
-        javax.imageio.ImageIO.write(image, "png", pngStream);
-        return pngStream.toByteArray();
+        try (ByteArrayOutputStream pngStream = new ByteArrayOutputStream()) {
+            ImageIO.write(image, "png", pngStream);
+            return pngStream.toByteArray();
+        }
     }
 
     //Create PDF as a byte array
     private byte[] writePdf(BufferedImage image) throws IOException {
-        PDDocument document = new PDDocument();
-        float sizeInPoints = LABEL_SIZE_IN_MM * 2.835f;
-        PDPage page = new PDPage(new PDRectangle(sizeInPoints, sizeInPoints));
-        document.addPage(page);
+        try (PDDocument document = new PDDocument()) {
+            float sizeInPoints = LABEL_SIZE_IN_MM * 2.835f;
+            PDPage page = new PDPage(new PDRectangle(sizeInPoints, sizeInPoints));
+            document.addPage(page);
 
-        // no additional close needed, because of try-with-resources
-        try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-            PDImageXObject pdImage = LosslessFactory.createFromImage(document, image);
-            contentStream.drawImage(pdImage, 0, 0, sizeInPoints, sizeInPoints);
+            // no additional close needed, because of try-with-resources
+            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+                PDImageXObject pdImage = LosslessFactory.createFromImage(document, image);
+                contentStream.drawImage(pdImage, 0, 0, sizeInPoints, sizeInPoints);
+            }
+
+            try (ByteArrayOutputStream pdfStream = new ByteArrayOutputStream()) {
+                document.save(pdfStream);
+                return pdfStream.toByteArray();
+            }
         }
-
-        ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();
-        document.save(pdfStream);
-        document.close();
-        return pdfStream.toByteArray();
     }
 
     // Use PublicSans-SemiBold font
