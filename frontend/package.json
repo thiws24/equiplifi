@@ -36,7 +36,7 @@
     "keycloak-js": "^26.0.7",
     "lodash": "^4.17.21",
     "lucide-react": "^0.469.0",
-    "pdfjs-dist": "^4.9.155",
+    "pdfjs-dist": "^4.10.38",
     "qr-scanner": "^1.4.2",
     "react": "^19.0.0",
     "react-day-picker": "^9.4.4",
