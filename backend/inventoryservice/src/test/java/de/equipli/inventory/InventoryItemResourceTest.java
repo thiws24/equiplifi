@@ -6,7 +6,10 @@ import de.equipli.inventory.rest.dto.CreateCategoryRequest;
 import de.equipli.inventory.rest.dto.UpdateCategoryRequest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
+import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.parsing.Parser;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -17,6 +20,11 @@ import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
 class InventoryItemResourceTest {
+
+    @BeforeAll
+    static void setup() {
+        RestAssured.registerParser("text/plain", Parser.TEXT);
+    }
 
     @Test
     @TestSecurity(user = "Bob", roles = {"user"})
@@ -287,5 +295,60 @@ class InventoryItemResourceTest {
                 .then()
                 .statusCode(404);
     }
+
+    @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
+    void testCreateInventoryItemWithNonExistentCategory() {
+        InventoryItem item = new InventoryItem();
+        item.setLocation("Test Location");
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(item)
+                .when()
+                .post("/categories/9999/items")
+                .then()
+                .statusCode(404)
+                .body(is("Category 9999 not found"));
+    }
+
+    @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
+    void testGetInventoryItemWithNonExistentCategory() {
+        given()
+                .when()
+                .get("/categories/9999/items/1")
+                .then()
+                .statusCode(404)
+                .body(is("Category 9999 not found"));
+    }
+
+    @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
+    void testUpdateInventoryItemWithNonExistentCategory() {
+        InventoryItem item = new InventoryItem();
+        item.setLocation("Updated Location");
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(item)
+                .when()
+                .put("/categories/9999/items/1")
+                .then()
+                .statusCode(404)
+                .body(is("Category 9999 not found"));
+    }
+
+    @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
+    void testDeleteInventoryItemWithNonExistentCategory() {
+        given()
+                .when()
+                .delete("/categories/9999/items/1")
+                .then()
+                .statusCode(404)
+                .body(is("Item 1 not found"));
+    }
+
 
 }
