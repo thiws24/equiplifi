@@ -31,7 +31,7 @@ export const PickUpScan: React.FC<Props> = ({ processId, isModalOpen, setIsModal
     async function confirmLendingByReservation(reservationId: number): Promise<boolean> {
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_SPIFF}/api/v1.0/messages/Check_out_inventoryitem_12`,
+                `${import.meta.env.VITE_SPIFF}/api/v1.0/messages/Check_out_inventoryitem_13`,
                 {
                     method: "POST",
                     headers: {
