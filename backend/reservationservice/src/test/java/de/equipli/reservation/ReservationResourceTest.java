@@ -150,6 +150,35 @@ private ReservationRepository reservationRepository;
 
     @Test
     @TestSecurity(user = "Bob", roles = {"user"})
+    void testGetReservation() {
+        Reservation reservation = new Reservation();
+        reservation.setStartDate(LocalDate.now().plusDays(10));
+        reservation.setEndDate(LocalDate.now().plusDays(15));
+        reservation.setStatus(null);
+        reservation.setItemId(1L);
+        reservation.setUserId("user1");
+
+        int id = given()
+                .contentType(ContentType.JSON)
+                .body(reservation)
+                .when()
+                .post("/reservations")
+                .then()
+                .statusCode(201)
+                .extract().path("id");
+
+        given()
+                .when()
+                .get("/reservations/" + id)
+                .then()
+                .statusCode(200)
+                .body("startDate", is(reservation.getStartDate().toString()))
+                .body("endDate", is(reservation.getEndDate().toString()))
+                .body("itemId", is(reservation.getItemId().intValue()));
+    }
+
+    @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testUpdateReservations() {
         Reservation reservation = new Reservation();
         reservation.setStartDate(LocalDate.now().plusDays(10));
