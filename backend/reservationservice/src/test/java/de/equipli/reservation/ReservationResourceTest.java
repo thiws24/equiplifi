@@ -31,8 +31,8 @@ import static org.mockito.Mockito.when;
 @QuarkusTest
 class ReservationResourceTest {
 
-@Mock
-private ReservationRepository reservationRepository;
+    @Mock
+    private ReservationRepository reservationRepository;
 
     @Mock
     private InventoryService inventoryService;
@@ -41,7 +41,7 @@ private ReservationRepository reservationRepository;
     private AvailabilityResource availabilityResource;
 
     @BeforeEach
-    public void setUp() {
+    public void setup() {
         MockitoAnnotations.openMocks(this);
     }
 
