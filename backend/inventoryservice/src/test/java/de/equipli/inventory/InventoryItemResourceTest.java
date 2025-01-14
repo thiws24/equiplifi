@@ -1,15 +1,11 @@
 package de.equipli.inventory;
 
-import de.equipli.inventory.jpa.Category;
-import de.equipli.inventory.jpa.InventoryItem;
+import de.equipli.inventory.jpa.*;
 import de.equipli.inventory.rest.dto.CreateCategoryRequest;
 import de.equipli.inventory.rest.dto.UpdateCategoryRequest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import io.restassured.parsing.Parser;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -20,11 +16,6 @@ import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
 class InventoryItemResourceTest {
-
-    @BeforeAll
-    static void setup() {
-        RestAssured.registerParser("text/plain", Parser.TEXT);
-    }
 
     @Test
     @TestSecurity(user = "Bob", roles = {"user"})
@@ -55,6 +46,72 @@ class InventoryItemResourceTest {
 
     @Test
     @TestSecurity(user = "Bob", roles = {"user"})
+    void testAddCategoryWithItems() {
+        String name = "Test Category With Items";
+        String description = "This is a test category";
+        String icon = "icon";
+
+        CreateCategoryRequest category = new CreateCategoryRequest();
+        category.setName(name);
+        category.setDescription(description);
+        category.setIcon(icon);
+        category.setItemCount(3L);
+        category.setItemLocation("Test Location");
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(category)
+                .when()
+                .post("/categories")
+                .then()
+                .statusCode(201)
+                .body("name", is(name))
+                .body("description", is(description))
+                .body("icon", is(icon))
+                .body("items.size()", is(3))
+                .extract().path("id");
+    }
+
+    @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
+    void testAddCategoryWithEmptyName() {
+        Category category = new Category();
+        category.setName("");
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(category)
+                .when()
+                .post("/categories")
+                .then()
+                .statusCode(400);
+    }
+
+    @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
+    void testAddCategoryWithExistingName() {
+        Category category = new Category();
+        category.setName("Test Category Existing");
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(category)
+                .when()
+                .post("/categories")
+                .then()
+                .statusCode(201);
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(category)
+                .when()
+                .post("/categories")
+                .then()
+                .statusCode(400);
+    }
+
+    @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testGetCategories() {
         given()
                 .when()
@@ -65,8 +122,30 @@ class InventoryItemResourceTest {
 
     @Test
     @TestSecurity(user = "Bob", roles = {"user"})
+    void testGetCategory() {
+        Category category = new Category();
+        category.setName("Test Category Get");
+
+        int id = given()
+                .contentType(ContentType.JSON)
+                .body(category)
+                .when()
+                .post("/categories")
+                .then()
+                .statusCode(201)
+                .extract().path("id");
+
+        given()
+                .when()
+                .get("/categories/" + id)
+                .then()
+                .statusCode(200);
+    }
+
+    @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testUpdateCategory() {
-        CreateCategoryRequest request = new CreateCategoryRequest();
+        UpdateCategoryRequest request = new UpdateCategoryRequest();
         request.setName("Test Category Update");
         request.setDescription("This is a test category");
         request.setIcon("icon");
@@ -219,6 +298,40 @@ class InventoryItemResourceTest {
 
     @Test
     @TestSecurity(user = "Bob", roles = {"user"})
+    void testGetInventoryItem() {
+        Category category = new Category();
+        category.setName("Test Category Get Item");
+
+        int categoryId = given()
+                .contentType(ContentType.JSON)
+                .body(category)
+                .when()
+                .post("/categories")
+                .then()
+                .statusCode(201)
+                .extract().path("id");
+
+        InventoryItem item = new InventoryItem();
+        item.setLocation("Test Location");
+
+        int id = given()
+                .contentType(ContentType.JSON)
+                .body(item)
+                .when()
+                .post("/categories/" + categoryId + "/items")
+                .then()
+                .statusCode(201)
+                .extract().path("id");
+
+        given()
+                .when()
+                .get("/categories/" + categoryId + "/items/" + id)
+                .then()
+                .statusCode(200);
+    }
+
+    @Test
+    @TestSecurity(user = "Bob", roles = {"user"})
     void testUpdateInventoryItem() {
         Category category = new Category();
         category.setName("Test Category Update Item");
@@ -341,13 +454,45 @@ class InventoryItemResourceTest {
 
     @Test
     @TestSecurity(user = "Bob", roles = {"user"})
-    void testDeleteInventoryItemWithNonExistentCategory() {
+    void testGetInventoryItemDetails() {
+        Category category = new Category();
+        category.setName("Test Category Get Item Details");
+        category.setDescription("This is a test category");
+        category.setIcon("icon");
+
+        int categoryId = given()
+                .contentType(ContentType.JSON)
+                .body(category)
+                .when()
+                .post("/categories")
+                .then()
+                .statusCode(201)
+                .extract().path("id");
+
+        InventoryItem item = new InventoryItem();
+        item.setLocation("Test Location");
+        item.setStatus(ItemStatus.OK);
+
+        int id = given()
+                .contentType(ContentType.JSON)
+                .body(item)
+                .when()
+                .post("/categories/" + categoryId + "/items")
+                .then()
+                .statusCode(201)
+                .extract().path("id");
+
         given()
                 .when()
-                .delete("/categories/9999/items/1")
+                .get("/items/" + id)
                 .then()
-                .statusCode(404)
-                .body(is("Item 1 not found"));
+                .statusCode(200)
+                .body("location", is("Test Location"))
+                .body("status", is("OK"))
+                .body("name" , is("Test Category Get Item Details"))
+                .body("categoryId" , is(categoryId))
+                .body("description" , is("This is a test category"))
+                .body("icon" , is("icon"));
     }
 
 
