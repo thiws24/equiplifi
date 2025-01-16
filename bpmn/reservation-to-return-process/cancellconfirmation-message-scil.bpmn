@@ -2,6 +2,10 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
   <bpmn:collaboration id="Collaboration_07v7cjg">
     <bpmn:participant id="Participant_1o4jhwu" name="Cancellation-confirmation Message SCIL" processRef="Process_cancellconfirmation_message_scil_bxmxh2a" />
+    <bpmn:participant id="Participant_0gekje7" name="Reservation to return process" />
+    <bpmn:participant id="Participant_1rxjfje" name="Member" />
+    <bpmn:messageFlow id="Flow_0elt4xb" name="Cancellation-confirmation" sourceRef="Participant_0gekje7" targetRef="Event_1tr6f2u" />
+    <bpmn:messageFlow id="Flow_0oz8cqs" name="Cancellation-confirmation" sourceRef="Activity_1lrmhpe" targetRef="Participant_1rxjfje" />
     <bpmn:correlationKey id="CorrelationKey_0gubljg" name="MainCorrelationKey" />
   </bpmn:collaboration>
   <bpmn:process id="Process_cancellconfirmation_message_scil_bxmxh2a" isExecutable="true">
@@ -40,14 +44,14 @@
       <bpmn:outgoing>Flow_1p1c1fm</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_1p1c1fm" sourceRef="Activity_1lrmhpe" targetRef="Gateway_0fh6se3" />
-    <bpmn:exclusiveGateway id="Gateway_0fh6se3" name="Message sent successfully?" default="Flow_1dhbtuw">
+    <bpmn:exclusiveGateway id="Gateway_0fh6se3" name="Was the message sent successfully?" default="Flow_1dhbtuw">
       <bpmn:incoming>Flow_1p1c1fm</bpmn:incoming>
       <bpmn:outgoing>Flow_1dhbtuw</bpmn:outgoing>
       <bpmn:outgoing>Flow_1dv135y</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_1dhbtuw" name="Yes" sourceRef="Gateway_0fh6se3" targetRef="Event_0gu8f1e" />
     <bpmn:sequenceFlow id="Flow_1dv135y" name="No" sourceRef="Gateway_0fh6se3" targetRef="Event_0rmj2qe">
-      <bpmn:conditionExpression>messageResult["http_status"] != 200</bpmn:conditionExpression>
+      <bpmn:conditionExpression>postResult["http_status"] != 200</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:endEvent id="Event_0gu8f1e" name="Successfully cancelled">
       <bpmn:incoming>Flow_1dhbtuw</bpmn:incoming>
@@ -66,7 +70,7 @@
       <bpmndi:BPMNShape id="Event_149oir9_di" bpmnElement="Event_1tr6f2u">
         <dc:Bounds x="122" y="162" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="108" y="205" width="65" height="40" />
+          <dc:Bounds x="107" y="112" width="65" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_02eh31c_di" bpmnElement="Activity_1lrmhpe">
@@ -76,7 +80,7 @@
       <bpmndi:BPMNShape id="Gateway_0fh6se3_di" bpmnElement="Gateway_0fh6se3" isMarkerVisible="true">
         <dc:Bounds x="395" y="155" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="466" y="170" width="69" height="27" />
+          <dc:Bounds x="456" y="170" width="90" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0gu8f1e_di" bpmnElement="Event_0gu8f1e">
@@ -113,6 +117,28 @@
         <di:waypoint x="532" y="240" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="431" y="220" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_1k7l5bk_di" bpmnElement="Participant_0gekje7" isHorizontal="true">
+        <dc:Bounds x="40" y="360" width="610" height="60" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_1fmux11_di" bpmnElement="Participant_1rxjfje" isHorizontal="true">
+        <dc:Bounds x="40" y="-130" width="610" height="60" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0elt4xb_di" bpmnElement="Flow_0elt4xb">
+        <di:waypoint x="140" y="360" />
+        <di:waypoint x="140" y="198" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="147" y="316" width="65" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0oz8cqs_di" bpmnElement="Flow_0oz8cqs">
+        <di:waypoint x="260" y="140" />
+        <di:waypoint x="260" y="-70" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="267" y="-4" width="65" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

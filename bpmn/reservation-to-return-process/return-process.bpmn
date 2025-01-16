@@ -2,16 +2,24 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
   <bpmn:collaboration id="Collaboration_163032b">
     <bpmn:participant id="Participant_1jwbijs" name="Return process" processRef="Process_return_process_xydodk3" />
-    <bpmn:participant id="Participant_02iicni" name="Manage Damage process" />
-    <bpmn:messageFlow id="Flow_0uofie5" name="damaged-InventoryItem" sourceRef="Activity_0eb35c2" targetRef="Participant_02iicni" />
-    <bpmn:correlationKey id="CorrelationKey_0yt1iu2" name="MainCorrelationKey" />
+    <bpmn:participant id="Participant_02iicni" name="Manage damage process" />
+    <bpmn:participant id="Participant_0cu02p8" name="Inventory-manager" />
+    <bpmn:messageFlow id="Flow_0uofie5" name="Damaged-inventory-item" sourceRef="Activity_0eb35c2" targetRef="Participant_02iicni" />
+    <bpmn:messageFlow id="Flow_1v5ptsh" name="Check-in-confirmation" sourceRef="Participant_0cu02p8" targetRef="Activity_18fa7mp" />
+    <bpmn:correlationKey id="CorrelationKey_12yyv5d" name="MainCorrelationKey">
+      <bpmn:correlationPropertyRef>reservation_id</bpmn:correlationPropertyRef>
+    </bpmn:correlationKey>
   </bpmn:collaboration>
   <bpmn:process id="Process_return_process_xydodk3" isExecutable="true">
     <bpmn:ioSpecification>
-      <bpmn:dataInput id="activereservationbug" name="Active Reservation" />
-      <bpmn:dataOutput id="returnedreservation" name="Returned Reservation" />
+      <bpmn:dataInput id="activereservationbug" name="Active- reservation" />
+      <bpmn:dataInput id="AuthenticationToken" name="AuthenticationToken" />
+      <bpmn:dataOutput id="returnedreservation" name="Returned- reservation" />
       <bpmn:inputSet>
         <bpmn:dataInputRefs>activereservationbug</bpmn:dataInputRefs>
+      </bpmn:inputSet>
+      <bpmn:inputSet>
+        <bpmn:dataInputRefs>AuthenticationToken</bpmn:dataInputRefs>
       </bpmn:inputSet>
       <bpmn:outputSet>
         <bpmn:dataOutputRefs>returnedreservation</bpmn:dataOutputRefs>
@@ -38,7 +46,7 @@
     <bpmn:sequenceFlow id="Flow_0sbdq6f" name="No" sourceRef="Gateway_0c9vx7c" targetRef="Activity_0eb35c2">
       <bpmn:conditionExpression>check_in_inventoryitem["check_in_status"] != "OK"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:startEvent id="Event_02afkrd" name="InventoryItem has been returned">
+    <bpmn:startEvent id="Event_02afkrd" name="Inventory-item has been returned">
       <bpmn:outgoing>Flow_03tcjtu</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_1ru85hw" sourceRef="Activity_0sxsqek" targetRef="Gateway_1dm4hfs" />
@@ -49,9 +57,13 @@
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_0zz8gyy" sourceRef="Gateway_0bcudvy" targetRef="Activity_18fa7mp" />
     <bpmn:sequenceFlow id="Flow_0vaac8a" sourceRef="Activity_18fa7mp" targetRef="Gateway_0iuhw7s" />
-    <bpmn:receiveTask id="Activity_18fa7mp" name="Check-in InventoryItem" messageRef="check_in_inventoryitem_1">
+    <bpmn:receiveTask id="Activity_18fa7mp" name="Wait for check-in-confirmation" messageRef="check_in_inventoryitem_1" spiffworkflow:isMatchingCorrelation="true">
       <bpmn:extensionElements>
         <spiffworkflow:messageVariable>check_in_inventoryitem</spiffworkflow:messageVariable>
+        <spiffworkflow:processVariableCorrelation>
+          <spiffworkflow:propertyId>reservation_id</spiffworkflow:propertyId>
+          <spiffworkflow:expression>activereservationbug["id"]</spiffworkflow:expression>
+        </spiffworkflow:processVariableCorrelation>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0zz8gyy</bpmn:incoming>
       <bpmn:outgoing>Flow_0vaac8a</bpmn:outgoing>
@@ -64,7 +76,7 @@
     <bpmn:sequenceFlow id="Flow_1vcgk9p" name="No" sourceRef="Gateway_0iuhw7s" targetRef="Gateway_0bcudvy">
       <bpmn:conditionExpression>activereservationbug["id"] != check_in_inventoryitem["reservation_id"]</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_04x3ddv" sourceRef="Gateway_0iuhw7s" targetRef="Gateway_0c9vx7c">
+    <bpmn:sequenceFlow id="Flow_04x3ddv" name="Yes" sourceRef="Gateway_0iuhw7s" targetRef="Gateway_0c9vx7c">
       <bpmn:conditionExpression>activereservationbug["id"] == check_in_inventoryitem["reservation_id"]</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:exclusiveGateway id="Gateway_0c9vx7c" name="Condition okay?">
@@ -72,12 +84,12 @@
       <bpmn:outgoing>Flow_1n8470h</bpmn:outgoing>
       <bpmn:outgoing>Flow_0sbdq6f</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Activity_0sxsqek" name="Update InventoryItem">
+    <bpmn:serviceTask id="Activity_0sxsqek" name="Update inventory-item">
       <bpmn:extensionElements>
         <spiffworkflow:serviceTaskOperator id="http/PutRequestV2" resultVariable="putResult">
           <spiffworkflow:parameters>
             <spiffworkflow:parameter id="url" type="str" value="&#34;https://inventory.equipli.de/categories/&#34;+str(activereservationbug[&#34;categoryId&#34;])+&#34;/items/&#34;+str(activereservationbug[&#34;itemId&#34;])" />
-            <spiffworkflow:parameter id="headers" type="any" value="{&#34;Accept&#34;:&#34;application/json&#34;}" />
+            <spiffworkflow:parameter id="headers" type="any" value="{   &#34;Accept&#34;: &#34;application/json&#34;,   &#34;Authorization&#34;: AuthenticationToken}" />
             <spiffworkflow:parameter id="data" type="any" value="{&#34;status&#34;: &#34;OK&#34;}" />
             <spiffworkflow:parameter id="basic_auth_username" type="str" />
             <spiffworkflow:parameter id="basic_auth_password" type="str" />
@@ -90,7 +102,7 @@ returnedreservation["lendingStatus"]= "returned"</spiffworkflow:postScript>
       <bpmn:incoming>Flow_1n8470h</bpmn:incoming>
       <bpmn:outgoing>Flow_1ru85hw</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sendTask id="Activity_0eb35c2" name="Handle damaged InventoryItem" messageRef="inventory-item-damaged">
+    <bpmn:sendTask id="Activity_0eb35c2" name="Handle damaged inventory-item" messageRef="inventory-item-damaged">
       <bpmn:extensionElements>
         <spiffworkflow:messagePayload>activereservationbug</spiffworkflow:messagePayload>
         <spiffworkflow:postScript>returnedreservation = activereservationbug
@@ -113,6 +125,11 @@ returnedreservation["lendingStatus"]= "returned"</spiffworkflow:postScript>
   </bpmn:process>
   <bpmn:message id="inventory-item-damaged" name="inventory-item-damaged" />
   <bpmn:message id="check_in_inventoryitem_1" name="check_in_inventoryitem_1" />
+  <bpmn:correlationProperty id="reservation_id" name="reservation_id">
+    <bpmn:correlationPropertyRetrievalExpression messageRef="check_in_inventoryitem_1">
+      <bpmn:formalExpression>reservation_id</bpmn:formalExpression>
+    </bpmn:correlationPropertyRetrievalExpression>
+  </bpmn:correlationProperty>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_163032b">
       <bpmndi:BPMNShape id="Participant_1jwbijs_di" bpmnElement="Participant_1jwbijs" isHorizontal="true">
@@ -123,10 +140,28 @@ returnedreservation["lendingStatus"]= "returned"</spiffworkflow:postScript>
         <dc:Bounds x="50" y="-70" width="1200" height="480" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataInput-388263309-1DI" bpmnElement="activereservationbug">
+        <dc:Bounds x="82" y="-45" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="74" y="12" width="55" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataInput-388263369-1DI" bpmnElement="AuthenticationToken">
+        <dc:Bounds x="172" y="-45" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="151" y="12" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataOutput-731653660-1DI" bpmnElement="returnedreservation">
+        <dc:Bounds x="1162" y="-45" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1152" y="16" width="55" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1izrr1o_di" bpmnElement="Event_02afkrd">
         <dc:Bounds x="102" y="122" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="76" y="165" width="88" height="27" />
+          <dc:Bounds x="75" y="165" width="90" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0bcudvy_di" bpmnElement="Gateway_0bcudvy" isMarkerVisible="true">
@@ -163,18 +198,6 @@ returnedreservation["lendingStatus"]= "returned"</spiffworkflow:postScript>
         <dc:Bounds x="1162" y="122" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1136" y="165" width="88" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="DataInput-388263309-1DI" bpmnElement="activereservationbug">
-        <dc:Bounds x="112" y="-35" width="36" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="102" y="22" width="59" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="DataOutput-731653660-1DI" bpmnElement="returnedreservation">
-        <dc:Bounds x="1122" y="-35" width="36" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1110" y="26" width="59" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_03tcjtu_di" bpmnElement="Flow_03tcjtu">
@@ -220,6 +243,9 @@ returnedreservation["lendingStatus"]= "returned"</spiffworkflow:postScript>
       <bpmndi:BPMNEdge id="Flow_04x3ddv_di" bpmnElement="Flow_04x3ddv">
         <di:waypoint x="505" y="140" />
         <di:waypoint x="605" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="546" y="122" width="18" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1d0wudz_di" bpmnElement="Flow_1d0wudz">
         <di:waypoint x="1035" y="140" />
@@ -234,11 +260,22 @@ returnedreservation["lendingStatus"]= "returned"</spiffworkflow:postScript>
         <dc:Bounds x="20" y="510" width="1230" height="60" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_0drlwjg_di" bpmnElement="Participant_0cu02p8" isHorizontal="true">
+        <dc:Bounds x="20" y="-220" width="1230" height="60" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0uofie5_di" bpmnElement="Flow_0uofie5">
         <di:waypoint x="800" y="320" />
         <di:waypoint x="800" y="510" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="806" y="436" width="67" height="27" />
+          <dc:Bounds x="805" y="436" width="70" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1v5ptsh_di" bpmnElement="Flow_1v5ptsh">
+        <di:waypoint x="340" y="-160" />
+        <di:waypoint x="340" y="100" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="360" y="-124" width="60" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

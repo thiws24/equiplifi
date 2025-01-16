@@ -2,6 +2,10 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
   <bpmn:collaboration id="Collaboration_1wa9lgc">
     <bpmn:participant id="Participant_0sxwgmx" name="Return-confirmation Message SCIL" processRef="Process_returnconfirmation_message_scil_fdceze2" />
+    <bpmn:participant id="Participant_14rbfut" name="Reservation to return process" />
+    <bpmn:participant id="Participant_13xi6e5" name="Member" />
+    <bpmn:messageFlow id="Flow_1bwsz5e" name="Return-confirmation" sourceRef="Participant_14rbfut" targetRef="Event_1vid8x8" />
+    <bpmn:messageFlow id="Flow_013rb45" name="Return-confirmation" sourceRef="Activity_01z7wbe" targetRef="Participant_13xi6e5" />
     <bpmn:correlationKey id="CorrelationKey_03j50uy" name="MainCorrelationKey" />
   </bpmn:collaboration>
   <bpmn:process id="Process_returnconfirmation_message_scil_fdceze2" isExecutable="true">
@@ -40,10 +44,7 @@
         </bpmn:extensionElements>
       </bpmn:messageEventDefinition>
     </bpmn:startEvent>
-    <bpmn:endEvent id="Event_06t2348" name="Return-confirmation sent">
-      <bpmn:incoming>Flow_00h6624</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:exclusiveGateway id="Gateway_00b6p70" name="Message sent successfully?" default="Flow_00h6624">
+    <bpmn:exclusiveGateway id="Gateway_00b6p70" name="Was the message sent successfully?" default="Flow_00h6624">
       <bpmn:incoming>Flow_10vfr5g</bpmn:incoming>
       <bpmn:outgoing>Flow_00h6624</bpmn:outgoing>
       <bpmn:outgoing>Flow_1v77k03</bpmn:outgoing>
@@ -55,6 +56,9 @@
     </bpmn:sequenceFlow>
     <bpmn:endEvent id="Event_12tu4bm" name="Return-confirmation not sent">
       <bpmn:incoming>Flow_1v77k03</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_06t2348" name="Return-confirmation sent">
+      <bpmn:incoming>Flow_00h6624</bpmn:incoming>
     </bpmn:endEvent>
   </bpmn:process>
   <bpmn:message id="return_confirmation" name="return_confirmation" />
@@ -71,25 +75,25 @@
       <bpmndi:BPMNShape id="Event_0w2wpa8_di" bpmnElement="Event_1vid8x8">
         <dc:Bounds x="162" y="282" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="151" y="325" width="60" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_06t2348_di" bpmnElement="Event_06t2348">
-        <dc:Bounds x="562" y="212" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="538" y="255" width="85" height="27" />
+          <dc:Bounds x="150" y="232" width="60" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_00b6p70_di" bpmnElement="Gateway_00b6p70" isMarkerVisible="true">
         <dc:Bounds x="415" y="275" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="486" y="290" width="69" height="27" />
+          <dc:Bounds x="476" y="290" width="90" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_12tu4bm_di" bpmnElement="Event_12tu4bm">
         <dc:Bounds x="572" y="332" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="551" y="375" width="80" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_06t2348_di" bpmnElement="Event_06t2348">
+        <dc:Bounds x="572" y="212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="548" y="255" width="85" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1qiseko_di" bpmnElement="Flow_1qiseko">
@@ -103,7 +107,7 @@
       <bpmndi:BPMNEdge id="Flow_00h6624_di" bpmnElement="Flow_00h6624">
         <di:waypoint x="440" y="275" />
         <di:waypoint x="440" y="230" />
-        <di:waypoint x="562" y="230" />
+        <di:waypoint x="572" y="230" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="446" y="250" width="18" height="14" />
         </bpmndi:BPMNLabel>
@@ -114,6 +118,28 @@
         <di:waypoint x="572" y="350" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="449" y="335" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_0iovdj0_di" bpmnElement="Participant_14rbfut" isHorizontal="true">
+        <dc:Bounds x="90" y="480" width="560" height="60" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_0ptkoyz_di" bpmnElement="Participant_13xi6e5" isHorizontal="true">
+        <dc:Bounds x="90" y="60" width="560" height="60" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1bwsz5e_di" bpmnElement="Flow_1bwsz5e">
+        <di:waypoint x="180" y="480" />
+        <di:waypoint x="180" y="318" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="190" y="436" width="60" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_013rb45_di" bpmnElement="Flow_013rb45">
+        <di:waypoint x="300" y="260" />
+        <di:waypoint x="300" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="310" y="136" width="60" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
