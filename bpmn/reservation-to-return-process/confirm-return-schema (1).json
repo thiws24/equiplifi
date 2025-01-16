@@ -1,0 +1,15 @@
+{
+  "title": "Confirmation",
+  "description": "confirmed or not confirmed",
+  "type": "object",
+  "required": [
+    "return_confirmation"
+  ],
+  "properties": {
+    "return_confirmation": {
+      "type": "string",
+      "title": "Confirmation",
+      "default": "confirmed"
+    }
+  }
+}

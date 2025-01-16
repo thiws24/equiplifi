@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev">
   <bpmn:collaboration id="Collaboration_042fdsz">
-    <bpmn:participant id="Participant_0cbg6tt" name="Manage Damage" processRef="Process_manage_damage_z24p3su" />
+    <bpmn:participant id="Participant_0cbg6tt" name="Manage damage" processRef="Process_manage_damage_z24p3su" />
+    <bpmn:participant id="Participant_18f6nlj" name="Reservation to return process" />
+    <bpmn:messageFlow id="Flow_0ox0d8m" name="Damaged-inventory-item-message" sourceRef="Participant_18f6nlj" targetRef="StartEvent_1" />
     <bpmn:correlationKey id="CorrelationKey_19w31tq" name="MainCorrelationKey" />
   </bpmn:collaboration>
   <bpmn:process id="Process_manage_damage_z24p3su" isExecutable="true">
@@ -17,13 +19,13 @@
     </bpmn:ioSpecification>
     <bpmn:sequenceFlow id="Flow_17db3yp" sourceRef="StartEvent_1" targetRef="Activity_14u49io" />
     <bpmn:sequenceFlow id="Flow_12pkbxb" sourceRef="Activity_0qpzdpu" targetRef="Gateway_0pqe4ia" />
-    <bpmn:sequenceFlow id="Flow_0b9me0b" name="OK" sourceRef="Gateway_0pqe4ia" targetRef="Activity_1m3e8a3">
+    <bpmn:sequenceFlow id="Flow_0b9me0b" name="ok" sourceRef="Gateway_0pqe4ia" targetRef="Activity_1m3e8a3">
       <bpmn:conditionExpression>repairStatus == "OK"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1ymzqbl" name="broken" sourceRef="Gateway_0pqe4ia" targetRef="Activity_1f1x533">
       <bpmn:conditionExpression>repairStatus == "BROKEN"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:startEvent id="StartEvent_1" name="InventoryItem is damaged">
+    <bpmn:startEvent id="StartEvent_1" name="Inventory-item is damaged">
       <bpmn:outgoing>Flow_17db3yp</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_0kt7ntm" messageRef="inventory-item-damaged">
         <bpmn:extensionElements />
@@ -31,25 +33,25 @@
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_1c0umqt" sourceRef="Activity_1m3e8a3" targetRef="EndEvent_1" />
     <bpmn:sequenceFlow id="Flow_0qcjiel" sourceRef="Activity_1f1x533" targetRef="Event_0wkyikh" />
-    <bpmn:exclusiveGateway id="Gateway_0pqe4ia" name="InventoryItem status">
+    <bpmn:exclusiveGateway id="Gateway_0pqe4ia" name="What is the inventory-item status?">
       <bpmn:incoming>Flow_12pkbxb</bpmn:incoming>
       <bpmn:outgoing>Flow_0b9me0b</bpmn:outgoing>
       <bpmn:outgoing>Flow_1ymzqbl</bpmn:outgoing>
       <bpmn:outgoing>Flow_1b692f6</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:endEvent id="EndEvent_1" name="InventoryItem is ok">
+    <bpmn:endEvent id="EndEvent_1" name="Inventory-item is ok">
       <bpmn:incoming>Flow_1c0umqt</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:endEvent id="Event_0wkyikh" name="InventoryItem is broken">
+    <bpmn:endEvent id="Event_0wkyikh" name="Inventory-item is broken">
       <bpmn:incoming>Flow_0qcjiel</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:serviceTask id="Activity_1m3e8a3" name="Update InventoryItem as OK">
+    <bpmn:serviceTask id="Activity_1m3e8a3" name="Update inventory-item as OK">
       <bpmn:extensionElements>
         <spiffworkflow:serviceTaskOperator id="http/PutRequestV2" resultVariable="putResult">
           <spiffworkflow:parameters>
-            <spiffworkflow:parameter id="url" type="str" />
-            <spiffworkflow:parameter id="headers" type="any" />
-            <spiffworkflow:parameter id="data" type="any" />
+            <spiffworkflow:parameter id="url" type="str" value="&#34;https://inventory.equipli.de/categories/&#34;+str(activereservationbug[&#34;categoryId&#34;])+&#34;/items/&#34;+str(activereservationbug[&#34;itemId&#34;])" />
+            <spiffworkflow:parameter id="headers" type="any" value="{&#34;Accept&#34;:&#34;application/json&#34;}" />
+            <spiffworkflow:parameter id="data" type="any" value="{&#34;status&#34;: &#34;OK&#34;}" />
             <spiffworkflow:parameter id="basic_auth_username" type="str" />
             <spiffworkflow:parameter id="basic_auth_password" type="str" />
           </spiffworkflow:parameters>
@@ -58,13 +60,13 @@
       <bpmn:incoming>Flow_0b9me0b</bpmn:incoming>
       <bpmn:outgoing>Flow_1c0umqt</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_1f1x533" name="Update InventoryItem as Broken">
+    <bpmn:serviceTask id="Activity_1f1x533" name="Update inventory-item as broken">
       <bpmn:extensionElements>
         <spiffworkflow:serviceTaskOperator id="http/PutRequestV2" resultVariable="putResult">
           <spiffworkflow:parameters>
-            <spiffworkflow:parameter id="url" type="str" />
-            <spiffworkflow:parameter id="headers" type="any" />
-            <spiffworkflow:parameter id="data" type="any" />
+            <spiffworkflow:parameter id="url" type="str" value="&#34;https://inventory.equipli.de/categories/&#34;+str(activereservationbug[&#34;categoryId&#34;])+&#34;/items/&#34;+str(activereservationbug[&#34;itemId&#34;])" />
+            <spiffworkflow:parameter id="headers" type="any" value="{&#34;Accept&#34;:&#34;application/json&#34;}" />
+            <spiffworkflow:parameter id="data" type="any" value="{&#34;status&#34;: &#34;BROKEN&#34;}" />
             <spiffworkflow:parameter id="basic_auth_username" type="str" />
             <spiffworkflow:parameter id="basic_auth_password" type="str" />
           </spiffworkflow:parameters>
@@ -74,7 +76,7 @@
       <bpmn:outgoing>Flow_0qcjiel</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_1jse3k3" sourceRef="Activity_14u49io" targetRef="Activity_0qpzdpu" />
-    <bpmn:serviceTask id="Activity_14u49io" name="Update InventoryItem as &#34;In Maintenance&#34;">
+    <bpmn:serviceTask id="Activity_14u49io" name="Update inventory-item as &#34;In Maintenance&#34;">
       <bpmn:extensionElements>
         <spiffworkflow:serviceTaskOperator id="http/PutRequestV2" resultVariable="putResult">
           <spiffworkflow:parameters>
@@ -89,7 +91,7 @@
       <bpmn:incoming>Flow_17db3yp</bpmn:incoming>
       <bpmn:outgoing>Flow_1jse3k3</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:userTask id="Activity_0qpzdpu" name="Repair Item">
+    <bpmn:userTask id="Activity_0qpzdpu" name="Repair inventory-item">
       <bpmn:extensionElements>
         <spiffworkflow:instructionsForEndUser>This is an example **Manual Task**. A **Manual Task** is designed to allow someone to complete a task outside of the system and then report back that it is complete. You can click the *Continue* button to proceed. When you are done running this process, you can edit the **Process Model** to include a:
 
@@ -110,13 +112,13 @@ You can also change the text you are reading here by updating the *Instructions*
     <bpmn:sequenceFlow id="Flow_1b692f6" name="lost" sourceRef="Gateway_0pqe4ia" targetRef="Activity_1qm00lm">
       <bpmn:conditionExpression>repairStatus == "LOST"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:serviceTask id="Activity_1qm00lm" name="Update InventoryItem as Lost">
+    <bpmn:serviceTask id="Activity_1qm00lm" name="Update inventory-item as lost">
       <bpmn:extensionElements>
         <spiffworkflow:serviceTaskOperator id="http/PutRequestV2">
           <spiffworkflow:parameters>
-            <spiffworkflow:parameter id="url" type="str" />
-            <spiffworkflow:parameter id="headers" type="any" />
-            <spiffworkflow:parameter id="data" type="any" />
+            <spiffworkflow:parameter id="url" type="str" value="&#34;https://inventory.equipli.de/categories/&#34;+str(activereservationbug[&#34;categoryId&#34;])+&#34;/items/&#34;+str(activereservationbug[&#34;itemId&#34;])" />
+            <spiffworkflow:parameter id="headers" type="any" value="{&#34;Accept&#34;:&#34;application/json&#34;}" />
+            <spiffworkflow:parameter id="data" type="any" value="{&#34;status&#34;: &#34;IN_MAINTENANCE&#34;}" />
             <spiffworkflow:parameter id="basic_auth_username" type="str" />
             <spiffworkflow:parameter id="basic_auth_password" type="str" />
           </spiffworkflow:parameters>
@@ -126,7 +128,7 @@ You can also change the text you are reading here by updating the *Instructions*
       <bpmn:outgoing>Flow_0v2xqag</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_0v2xqag" sourceRef="Activity_1qm00lm" targetRef="Event_1h3sz00" />
-    <bpmn:endEvent id="Event_1h3sz00" name="InventoryItem is lost">
+    <bpmn:endEvent id="Event_1h3sz00" name="Inventory-item is lost">
       <bpmn:incoming>Flow_0v2xqag</bpmn:incoming>
     </bpmn:endEvent>
   </bpmn:process>
@@ -134,38 +136,40 @@ You can also change the text you are reading here by updating the *Instructions*
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_042fdsz">
       <bpmndi:BPMNShape id="Participant_0cbg6tt_di" bpmnElement="Participant_0cbg6tt" isHorizontal="true">
-        <dc:Bounds x="-30" y="45" width="990" height="505" />
+        <dc:Bounds x="-30" y="45" width="990" height="445" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0utxa20_di" bpmnElement="StartEvent_1">
         <dc:Bounds x="52" y="172" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="31" y="215" width="78" height="27" />
+          <dc:Bounds x="29" y="135" width="82" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0pqe4ia_di" bpmnElement="Gateway_0pqe4ia" isMarkerVisible="true">
         <dc:Bounds x="445" y="165" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="437" y="141" width="68" height="27" />
+          <dc:Bounds x="437" y="100" width="70" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_14za570_di" bpmnElement="EndEvent_1">
         <dc:Bounds x="812" y="172" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="792" y="215" width="78" height="27" />
+          <dc:Bounds x="791" y="215" width="82" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0wkyikh_di" bpmnElement="Event_0wkyikh">
         <dc:Bounds x="812" y="282" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="791" y="325" width="78" height="27" />
+          <dc:Bounds x="790" y="325" width="82" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_10gyocr_di" bpmnElement="Activity_1m3e8a3">
         <dc:Bounds x="580" y="150" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0445646_di" bpmnElement="Activity_1f1x533">
         <dc:Bounds x="580" y="260" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_05w4dsa_di" bpmnElement="Activity_14u49io">
         <dc:Bounds x="140" y="150" width="100" height="80" />
@@ -173,14 +177,16 @@ You can also change the text you are reading here by updating the *Instructions*
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1nshbu8_di" bpmnElement="Activity_0qpzdpu">
         <dc:Bounds x="290" y="150" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1ikdrz0_di" bpmnElement="Activity_1qm00lm">
         <dc:Bounds x="580" y="370" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1h3sz00_di" bpmnElement="Event_1h3sz00">
         <dc:Bounds x="812" y="392" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="791" y="435" width="78" height="27" />
+          <dc:Bounds x="790" y="435" width="82" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_17db3yp_di" bpmnElement="Flow_17db3yp">
@@ -195,7 +201,7 @@ You can also change the text you are reading here by updating the *Instructions*
         <di:waypoint x="495" y="190" />
         <di:waypoint x="580" y="190" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="512" y="172" width="17" height="14" />
+          <dc:Bounds x="514" y="172" width="13" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1ymzqbl_di" bpmnElement="Flow_1ymzqbl">
@@ -223,12 +229,23 @@ You can also change the text you are reading here by updating the *Instructions*
         <di:waypoint x="470" y="410" />
         <di:waypoint x="580" y="410" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="512" y="393" width="19" height="14" />
+          <dc:Bounds x="513" y="393" width="18" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0v2xqag_di" bpmnElement="Flow_0v2xqag">
         <di:waypoint x="680" y="410" />
         <di:waypoint x="812" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_0xh7ciz_di" bpmnElement="Participant_18f6nlj" isHorizontal="true">
+        <dc:Bounds x="-30" y="580" width="990" height="60" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0ox0d8m_di" bpmnElement="Flow_0ox0d8m">
+        <di:waypoint x="70" y="580" />
+        <di:waypoint x="70" y="208" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="83" y="516" width="74" height="40" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
