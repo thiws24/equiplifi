@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:spiffworkflow="http://spiffworkflow.org/bpmn/schema/1.0/core" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_96f6665" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.0.0-dev" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+  <bpmn:collaboration id="Collaboration_18hgrt9">
+    <bpmn:participant id="Participant_02v7qtl" name="Reservationprocess" processRef="Process_reservation_lz0tjs5" />
+    <bpmn:participant id="Participant_1ly6wff" name="Member" />
+    <bpmn:messageFlow id="Flow_1j559sl" name="Reservation-confirmation" sourceRef="Activity_0sgbuv4" targetRef="Participant_1ly6wff" />
+    <bpmn:textAnnotation id="TextAnnotation_1nxm82o">
+      <bpmn:text>Input</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1qq8h8z" associationDirection="None" sourceRef="DataObjectReference_15u3yzn" targetRef="TextAnnotation_1nxm82o" />
+    <bpmn:textAnnotation id="TextAnnotation_0rf3ua9">
+      <bpmn:text>Output</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1wg244c" associationDirection="None" sourceRef="DataObjectReference_0ub00nx" targetRef="TextAnnotation_0rf3ua9" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_reservation_lz0tjs5" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_17db3yp</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Activity_0qpzdpu" name="check availability of InventoryItem">
+      <bpmn:extensionElements>
+        <spiffworkflow:instructionsForEndUser>This is an example **Manual Task**. A **Manual Task** is designed to allow someone to complete a task outside of the system and then report back that it is complete. You can click the *Continue* button to proceed. When you are done running this process, you can edit the **Process Model** to include a:
+
+ * **Script Task** - write a short snippet of python code to update some data
+ *  **User Task** - generate a form that collects information from a user
+ * **Service Task** - communicate with an external API to fetch or update some data.
+
+You can also change the text you are reading here by updating the *Instructions* on this example manual task.</spiffworkflow:instructionsForEndUser>
+        <spiffworkflow:serviceTaskOperator id="example/Example">
+          <spiffworkflow:parameters>
+            <spiffworkflow:parameter id="message" type="str" />
+          </spiffworkflow:parameters>
+        </spiffworkflow:serviceTaskOperator>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_17db3yp</bpmn:incoming>
+      <bpmn:outgoing>Flow_12pkbxb</bpmn:outgoing>
+      <bpmn:ioSpecification>
+        <bpmn:inputSet />
+        <bpmn:outputSet />
+      </bpmn:ioSpecification>
+      <bpmn:property id="Property_0tlt1cq" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_02m7fob">
+        <bpmn:sourceRef>DataObjectReference_15u3yzn</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0tlt1cq</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation id="DataInputAssociation_00usb83">
+        <bpmn:sourceRef>DataStoreReference_0mpqf23</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0tlt1cq</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_17db3yp" sourceRef="StartEvent_1" targetRef="Activity_0qpzdpu" />
+    <bpmn:sequenceFlow id="Flow_12pkbxb" sourceRef="Activity_0qpzdpu" targetRef="Activity_0rp26o1" />
+    <bpmn:dataObject id="DataObject_03f6ney" name="Reservation" />
+    <bpmn:boundaryEvent id="Event_0h0sxip" name="Failure: Not available" attachedToRef="Activity_0qpzdpu">
+      <bpmn:outgoing>Flow_1ubvooe</bpmn:outgoing>
+      <bpmn:escalationEventDefinition id="EscalationEventDefinition_1fspooo" />
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="Event_0vdxgjm" name="Reservation unsuccessful">
+      <bpmn:incoming>Flow_1ubvooe</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1ubvooe" sourceRef="Event_0h0sxip" targetRef="Event_0vdxgjm" />
+    <bpmn:sequenceFlow id="Flow_0gmlxmd" sourceRef="Activity_0rp26o1" targetRef="Activity_0sgbuv4" />
+    <bpmn:serviceTask id="Activity_0rp26o1" name="create Reservation">
+      <bpmn:incoming>Flow_12pkbxb</bpmn:incoming>
+      <bpmn:outgoing>Flow_0gmlxmd</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_03lmnec">
+        <bpmn:targetRef>DataStoreReference_0mpqf23</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_18rzqff">
+        <bpmn:targetRef>DataObjectReference_0ub00nx</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1edltnu" sourceRef="Activity_0sgbuv4" targetRef="EndEvent_1" />
+    <bpmn:endEvent id="EndEvent_1" name="Reservation successful">
+      <bpmn:incoming>Flow_1edltnu</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sendTask id="Activity_0sgbuv4" name="send reservation- confirmation">
+      <bpmn:incoming>Flow_0gmlxmd</bpmn:incoming>
+      <bpmn:outgoing>Flow_1edltnu</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:dataObjectReference id="DataObjectReference_0u8ozvv" dataObjectRef="DataObject_03f6ney" />
+    <bpmn:dataObject id="DataObject_1mwfqo6" name="Reservation-request" />
+    <bpmn:dataObjectReference id="DataObjectReference_15u3yzn" name="Reservation-request" dataObjectRef="DataObject_1mwfqo6" />
+    <bpmn:dataStoreReference id="DataStoreReference_0mpqf23" name="Reservations" />
+    <bpmn:dataObjectReference id="DataObjectReference_0ub00nx" name="Reservation" dataObjectRef="DataObject_03f6ney" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_18hgrt9">
+      <bpmndi:BPMNShape id="Participant_02v7qtl_di" bpmnElement="Participant_02v7qtl" isHorizontal="true">
+        <dc:Bounds x="10" y="130" width="890" height="408" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="102" y="332" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1uheev8_di" bpmnElement="Activity_0qpzdpu">
+        <dc:Bounds x="230" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0vdxgjm_di" bpmnElement="Event_0vdxgjm">
+        <dc:Bounds x="392" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="378" y="485" width="65" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_02njh5m_di" bpmnElement="Activity_0rp26o1">
+        <dc:Bounds x="440" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_14za570_di" bpmnElement="EndEvent_1">
+        <dc:Bounds x="772" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="761" y="375" width="59" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0soz7t4_di" bpmnElement="Activity_0sgbuv4">
+        <dc:Bounds x="620" y="310" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataObjectReference_15u3yzn_di" bpmnElement="DataObjectReference_15u3yzn">
+        <dc:Bounds x="212" y="195" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="199" y="252" width="63" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataStoreReference_0mpqf23_di" bpmnElement="DataStoreReference_0mpqf23">
+        <dc:Bounds x="355" y="195" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="348" y="253" width="65" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataObjectReference_0ub00nx_di" bpmnElement="DataObjectReference_0ub00nx">
+        <dc:Bounds x="472" y="195" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="460" y="171" width="59" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0oyltte_di" bpmnElement="Event_0h0sxip">
+        <dc:Bounds x="312" y="372" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="351" y="380" width="58" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_17db3yp_di" bpmnElement="Flow_17db3yp">
+        <di:waypoint x="138" y="350" />
+        <di:waypoint x="230" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12pkbxb_di" bpmnElement="Flow_12pkbxb">
+        <di:waypoint x="330" y="350" />
+        <di:waypoint x="440" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ubvooe_di" bpmnElement="Flow_1ubvooe">
+        <di:waypoint x="330" y="408" />
+        <di:waypoint x="330" y="460" />
+        <di:waypoint x="392" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gmlxmd_di" bpmnElement="Flow_0gmlxmd">
+        <di:waypoint x="540" y="350" />
+        <di:waypoint x="620" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1edltnu_di" bpmnElement="Flow_1edltnu">
+        <di:waypoint x="720" y="350" />
+        <di:waypoint x="772" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_1x09fih_di" bpmnElement="Participant_1ly6wff" isHorizontal="true">
+        <dc:Bounds x="10" y="10" width="890" height="60" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1qq8h8z_di" bpmnElement="Association_1qq8h8z">
+        <di:waypoint x="248" y="201" />
+        <di:waypoint x="276" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1wg244c_di" bpmnElement="Association_1wg244c">
+        <di:waypoint x="508" y="208" />
+        <di:waypoint x="567" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_02m7fob_di" bpmnElement="DataInputAssociation_02m7fob">
+        <di:waypoint x="243" y="245" />
+        <di:waypoint x="275" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_00usb83_di" bpmnElement="DataInputAssociation_00usb83">
+        <di:waypoint x="358" y="245" />
+        <di:waypoint x="301" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_03lmnec_di" bpmnElement="DataOutputAssociation_03lmnec">
+        <di:waypoint x="453" y="310" />
+        <di:waypoint x="394" y="245" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_18rzqff_di" bpmnElement="DataOutputAssociation_18rzqff">
+        <di:waypoint x="491" y="310" />
+        <di:waypoint x="492" y="245" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1j559sl_di" bpmnElement="Flow_1j559sl">
+        <di:waypoint x="670" y="310" />
+        <di:waypoint x="670" y="70" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="688" y="187" width="63" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_1nxm82o_di" bpmnElement="TextAnnotation_1nxm82o">
+        <dc:Bounds x="240" y="140" width="99.99999237060547" height="29.993555068969727" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0rf3ua9_di" bpmnElement="TextAnnotation_0rf3ua9">
+        <dc:Bounds x="540" y="140" width="99.99999237060547" height="29.993555068969727" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
